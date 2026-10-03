@@ -10,6 +10,7 @@ using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Logger;
 using Tawtheef.Domain.Entities.Lookups;
+using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.TestSessions.Handlers.Queries;
@@ -49,6 +50,16 @@ public sealed class GetTestSessionForEditQueryHandler(IUnitOfWork unitOfWork)
 
         if (session is null || !request.ViewMode && !IsEditable(session.StatusId))
             return Result.Fail<TestSessionEditDto>(ErrorsCodes.InvalidRequest);
+
+        var persistedCandidates = request.ViewMode
+            ? await unitOfWork.Context.Set<Invitation>().AsNoTracking()
+                .Where(invitation => unitOfWork.Context.Set<TestSessionCandidate>().Any(candidate =>
+                    candidate.TestSessionId == session.Id && candidate.InvitationId == invitation.Id))
+                .OrderBy(invitation => invitation.Applicant!.FullNameAr)
+                .ThenBy(invitation => invitation.Id)
+                .Select(TestSessionCandidateProjection.ForLanguage(isArabic))
+                .ToListAsync(ct)
+            : new List<TestSessionCandidateListItemDto>();
 
         var availableCapacity = 0;
         if (session.TestSlotId.HasValue && session.StartTime.HasValue && session.EndTime.HasValue &&
@@ -114,7 +125,7 @@ public sealed class GetTestSessionForEditQueryHandler(IUnitOfWork unitOfWork)
             session.TestSlotId, session.SlotName, session.SlotDate, session.SlotStartTime,
             session.SlotEndTime, session.RoomId, session.RoomName, session.RoomCapacity,
             session.StartTime, session.EndTime, availableCapacity, decisionNote, decisionByName,
-            decisionAt, statusBackendName));
+            decisionAt, statusBackendName, persistedCandidates));
     }
 
     private static bool IsEditable(Guid statusId) =>

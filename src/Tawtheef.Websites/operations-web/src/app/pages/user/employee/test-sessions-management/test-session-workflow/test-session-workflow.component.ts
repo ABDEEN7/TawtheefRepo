@@ -13,6 +13,7 @@ import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-na
 import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
 import {
   TestSessionCandidateConflictDto,
+  TestSessionCandidateListItemDto,
   TestSessionCandidateSummaryDto,
 } from '../models/test-session-candidate.dto';
 import { TestSessionExamDetailsDto } from '../models/test-session-exam-details.dto';
@@ -86,6 +87,7 @@ export class TestSessionWorkflowComponent {
   readonly candidateGenderFilter = signal<TestSessionGenderFilter>(null);
   readonly candidateNationalityFilter = signal<TestSessionNationalityFilter>(null);
   readonly selectedCandidateIds = signal<string[]>([]);
+  readonly editCandidates = signal<TestSessionCandidateListItemDto[]>([]);
   readonly candidateConflicts = signal<TestSessionCandidateConflictDto[]>([]);
   readonly localSession = signal<LocalTestSession | null>(null);
   readonly testSessionId = signal<string | null>(null);
@@ -191,6 +193,7 @@ export class TestSessionWorkflowComponent {
     this.candidateGenderFilter.set(session.genderFilter);
     this.candidateNationalityFilter.set(session.nationalityFilter);
     this.selectedCandidateIds.set(session.invitationIds);
+    this.editCandidates.set(session.persistedCandidates ?? []);
     this.candidateConflicts.set([]);
     this.candidateSelectionInitialized.set(this.viewMode() || session.invitationIds.length > 0);
 

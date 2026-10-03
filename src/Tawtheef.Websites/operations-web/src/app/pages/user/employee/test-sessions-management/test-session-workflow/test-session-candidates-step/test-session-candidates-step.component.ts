@@ -53,6 +53,7 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
   readonly examId = input.required<string>();
   readonly testSessionId = input<string | null>(null);
   readonly readOnly = input(false);
+  readonly persistedCandidates = input<TestSessionCandidateListItemDto[]>([]);
   readonly genderFilter = input<'Male' | 'Female' | null>(null);
   readonly nationalityFilter = input<'Qatari' | 'NonQatari' | null>(null);
   readonly selectedCandidateIds = input<string[]>([]);
@@ -124,8 +125,16 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
     const backendFiltersChanged =
       (!!changes['genderFilter'] && !changes['genderFilter'].firstChange) ||
       (!!changes['nationalityFilter'] && !changes['nationalityFilter'].firstChange);
-    if (!changes['examId'] && !changes['genderFilter'] && !changes['nationalityFilter'] &&
-      !changes['testSessionId']) return;
+    if (
+      !changes['examId'] &&
+      !changes['genderFilter'] &&
+      !changes['nationalityFilter'] &&
+      !changes['testSessionId'] &&
+      !changes['readOnly'] &&
+      !changes['persistedCandidates']
+    ) {
+      return;
+    }
 
     this.filters.update((filters) => ({
       ...filters,
@@ -178,6 +187,29 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
   }
 
   private loadCandidates(reselectAllOnResult = false): void {
+    if (this.readOnly()) {
+      const persistedCandidates = this.persistedCandidates();
+      this.candidates.set(persistedCandidates);
+      const summary = {
+        total: persistedCandidates.length,
+        eligible: persistedCandidates.filter(
+          candidate => candidate.eligibilityStatus === 'Eligible',
+        ).length,
+        notReady: persistedCandidates.filter(
+          candidate => candidate.eligibilityStatus === 'NotReady',
+        ).length,
+        excluded: persistedCandidates.filter(
+          candidate => candidate.eligibilityStatus === 'Excluded',
+        ).length,
+      };
+      this.summary.set(summary);
+      this.summaryChanged.emit(summary);
+      this.loading.set(false);
+      this.loadFailed.set(false);
+      this.stateChanged.emit(true);
+      return;
+    }
+
     if (!this.filters().examId) return;
 
     const loadSequence = ++this.loadSequence;

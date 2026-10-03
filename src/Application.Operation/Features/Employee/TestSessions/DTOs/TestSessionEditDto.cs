@@ -24,4 +24,5 @@ public sealed record TestSessionEditDto(
     string? DecisionNote,
     string? DecisionByName,
     DateTime? DecisionAt,
-    string? StatusBackendName);
+    string? StatusBackendName,
+    IReadOnlyList<TestSessionCandidateListItemDto> PersistedCandidates);
