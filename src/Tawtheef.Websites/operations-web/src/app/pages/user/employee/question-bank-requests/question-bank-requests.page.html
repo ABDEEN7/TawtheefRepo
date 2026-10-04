@@ -122,7 +122,7 @@
               </td>
               <td>{{ name(r.submittedByNameAr, r.submittedByNameEn) }}</td>
               <td>{{ r.submittedAt | date: 'medium' }}</td>
-              <td>
+              <td class="d-flex flex-wrap gap-2">
                 <button
                   pButton
                   type="button"
@@ -131,6 +131,17 @@
                   [label]="'QUESTION_BANK_REQUESTS.VIEW' | translate"
                   (click)="view(r.id)"
                 ></button>
+                @if (r.statusId === QuestionBankRequestStatusIds.PendingReview) {
+                  <button
+                    *hasPermission="Permissions.QuestionBankRequests.Review"
+                    pButton
+                    type="button"
+                    class="p-button-text p-button-sm"
+                    icon="pi pi-check-square"
+                    [label]="'QUESTION_BANK_REQUESTS.REVIEW_QUESTIONS' | translate"
+                    (click)="review(r.id)"
+                  ></button>
+                }
               </td>
             </tr> </ng-template
           ><ng-template pTemplate="emptymessage">

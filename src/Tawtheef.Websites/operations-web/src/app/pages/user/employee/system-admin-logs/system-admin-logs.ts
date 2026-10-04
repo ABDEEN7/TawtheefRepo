@@ -30,7 +30,7 @@ import { ReviewStatus } from '../profile-managment/approval-list/models/profile-
     Select,
     DatePicker,
     Dialog,
-  ]
+  ],
 })
 export class SystemAdminLogsComponent implements OnInit {
   private systemAdminLogsService = inject(SystemAdminLogsService);
@@ -66,18 +66,18 @@ export class SystemAdminLogsComponent implements OnInit {
   ngOnInit(): void {
     this.loadUserOptions();
     this.loadLogs();
-    this.language.current$.subscribe(lang => this.currentLang.set(lang));
+    this.language.current$.subscribe((lang) => this.currentLang.set(lang));
   }
 
   loadUserOptions() {
     this.systemAdminLogsService.getUsersLookup().subscribe({
       next: (users) => {
-        const options = (users || []).map(u => ({
+        const options = (users || []).map((u) => ({
           id: u.id,
-          label: u.name
+          label: u.name,
         }));
         this._userOptions.set(options.sort((a, b) => a.label.localeCompare(b.label)));
-      }
+      },
     });
   }
 
@@ -101,28 +101,28 @@ export class SystemAdminLogsComponent implements OnInit {
         this._paginationMetadata.set(response.metadata);
 
         if (response.metadata) {
-          this.filters.update(f => ({
+          this.filters.update((f) => ({
             ...f,
             pageNumber: response.metadata.currentPage,
             pageSize: response.metadata.pageSize,
           }));
         }
-      }
+      },
     });
   }
 
   onFiltersChanged() {
-    this.filters.update(f => ({ ...f, pageNumber: 1 }));
+    this.filters.update((f) => ({ ...f, pageNumber: 1 }));
     this.loadLogs();
   }
 
   onPageChange(page: number) {
-    this.filters.update(f => ({ ...f, pageNumber: page }));
+    this.filters.update((f) => ({ ...f, pageNumber: page }));
     this.loadLogs();
   }
 
   onPageSizeChange(size: number) {
-    this.filters.update(f => ({ ...f, pageSize: size, pageNumber: 1 }));
+    this.filters.update((f) => ({ ...f, pageSize: size, pageNumber: 1 }));
     this.loadLogs();
   }
 
@@ -194,7 +194,7 @@ export class SystemAdminLogsComponent implements OnInit {
 
     const isProfileLog = log.source === 'UserProfileLogger';
     const prefix = isProfileLog ? 'PROFILE_LOGS.ACTIONS.' : 'ADMIN_ACTIONS.';
-    
+
     const key = prefix + log.actionType;
     const translated = this.translate.instant(key);
 
@@ -271,12 +271,18 @@ export class SystemAdminLogsComponent implements OnInit {
       }
 
       if (parsed.message && typeof parsed.message === 'string') {
-        return this.joinSummaryWithOwner(log.userProfileOwnerName, this.translateNoteMessage(parsed.message));
+        return this.joinSummaryWithOwner(
+          log.userProfileOwnerName,
+          this.translateNoteMessage(parsed.message),
+        );
       }
 
       const payloadSummary = this.formatAllFields(parsed);
       if (payloadSummary !== '-') {
-        return this.joinSummaryWithOwner(log.userProfileOwnerName, payloadSummary.replace(/\n/g, ' | '));
+        return this.joinSummaryWithOwner(
+          log.userProfileOwnerName,
+          payloadSummary.replace(/\n/g, ' | '),
+        );
       }
     }
 
@@ -287,7 +293,8 @@ export class SystemAdminLogsComponent implements OnInit {
       return this.joinSummaryWithOwner(log.userProfileOwnerName, summary);
     }
 
-    const legacyEventSummary = this.tryFormatAssignmentReassigned(log.notes) || this.formatLegacyNote(log.notes);
+    const legacyEventSummary =
+      this.tryFormatAssignmentReassigned(log.notes) || this.formatLegacyNote(log.notes);
     if (legacyEventSummary && legacyEventSummary !== log.notes) {
       return this.joinSummaryWithOwner(log.userProfileOwnerName, legacyEventSummary);
     }
@@ -365,7 +372,10 @@ export class SystemAdminLogsComponent implements OnInit {
     if (parsed?.eventType === 'ReviewSectionDecision') {
       return this.formatReviewSectionDecision(parsed);
     }
-    if (parsed?.eventType === 'ProfileChangeRequested' || parsed?.eventType === 'ProfileChangeUpdated') {
+    if (
+      parsed?.eventType === 'ProfileChangeRequested' ||
+      parsed?.eventType === 'ProfileChangeUpdated'
+    ) {
       return this.formatProfileChangeEvent(parsed);
     }
 
@@ -383,7 +393,9 @@ export class SystemAdminLogsComponent implements OnInit {
     const parts: string[] = [];
 
     if (actionKind) {
-      parts.push(`${this.translate.instant('PROFILE_LOGS.NOTES.TYPE')}: ${this.translateActionKind(actionKind)}`);
+      parts.push(
+        `${this.translate.instant('PROFILE_LOGS.NOTES.TYPE')}: ${this.translateActionKind(actionKind)}`,
+      );
     }
     if (target) {
       parts.push(`${this.translate.instant('PROFILE_LOGS.NOTES.TARGET')}: ${target}`);
@@ -410,16 +422,19 @@ export class SystemAdminLogsComponent implements OnInit {
       return payload.command;
     }
 
-    const firstObjectEntry = Object.values(payload).find(v => v && typeof v === 'object' && !Array.isArray(v));
+    const firstObjectEntry = Object.values(payload).find(
+      (v) => v && typeof v === 'object' && !Array.isArray(v),
+    );
     return firstObjectEntry || payload;
   }
 
   private extractStatusValue(payload: any): string | null {
     if (!payload || typeof payload !== 'object') return null;
-    const statusKey = Object.keys(payload).find(k =>
-      k.toLowerCase() === 'status' ||
-      k.toLowerCase() === 'isactive' ||
-      k.toLowerCase() === 'isblocked'
+    const statusKey = Object.keys(payload).find(
+      (k) =>
+        k.toLowerCase() === 'status' ||
+        k.toLowerCase() === 'isactive' ||
+        k.toLowerCase() === 'isblocked',
     );
     if (!statusKey) return null;
 
@@ -448,7 +463,10 @@ export class SystemAdminLogsComponent implements OnInit {
     if (Array.isArray(changedFields) && changedFields.length > 0) {
       const lines = changedFields
         .filter((c: any) => c && c.field)
-        .map((c: any) => `${this.translateFieldLabel(c.field)}: ${this.formatNoteValue(c.oldValue)} -> ${this.formatNoteValue(c.newValue)}`);
+        .map(
+          (c: any) =>
+            `${this.translateFieldLabel(c.field)}: ${this.formatNoteValue(c.oldValue)} -> ${this.formatNoteValue(c.newValue)}`,
+        );
       if (lines.length > 0) {
         return lines.join(' | ');
       }
@@ -464,7 +482,7 @@ export class SystemAdminLogsComponent implements OnInit {
   private formatLegacyChanges(changes: string): string {
     return changes
       .split('\n')
-      .map(line => {
+      .map((line) => {
         const match = line.match(/^([^:]+):\s*(.*?)\s*->\s*(.*)$/);
         if (!match) return line;
         return `${this.translateFieldLabel(match[1])}: ${this.formatNoteValue(match[2])} -> ${this.formatNoteValue(match[3])}`;
@@ -510,10 +528,14 @@ export class SystemAdminLogsComponent implements OnInit {
       return this.translate.instant('SYSTEM_ADMIN_LOGS.VALUES.NO');
     }
     const normalized = String(value).toLowerCase();
-    if (normalized === 'approved') return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.APPROVED');
-    if (normalized === 'rejected') return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.REJECTED');
-    if (normalized === 'pending') return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.PENDING');
-    if (normalized === 'returned') return this.translate.instant('SYSTEM_ADMIN_LOGS.VALUES.RETURNED');
+    if (normalized === 'approved')
+      return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.APPROVED');
+    if (normalized === 'rejected')
+      return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.REJECTED');
+    if (normalized === 'pending')
+      return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.PENDING');
+    if (normalized === 'returned')
+      return this.translate.instant('SYSTEM_ADMIN_LOGS.VALUES.RETURNED');
 
     return String(value);
   }
@@ -541,24 +563,33 @@ export class SystemAdminLogsComponent implements OnInit {
   private formatReviewItemDecision(note: any): string {
     const section = note.section ? this.translateSection(note.section) : '-';
     const status = this.mapStatusLabel(note.status);
-    const itemLabel = note.entityName || note.fieldPath || this.translate.instant('PROFILE_LOGS.ACTIONS.ReviewItemDecision');
-    const reviewerNote = note.reviewerNote ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}` : '';
+    const itemLabel =
+      note.entityName ||
+      note.fieldPath ||
+      this.translate.instant('PROFILE_LOGS.ACTIONS.ReviewItemDecision');
+    const reviewerNote = note.reviewerNote
+      ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}`
+      : '';
     return `${this.translate.instant('PROFILE_LOGS.NOTES.ITEM_REVIEW_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.ITEM')}: ${itemLabel} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${status}${reviewerNote}`;
   }
 
   private formatReviewSectionDecision(note: any): string {
     const section = note.section ? this.translateSection(note.section) : '-';
     const status = this.mapStatusLabel(note.status);
-    const reviewerNote = note.reviewerNote ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}` : '';
+    const reviewerNote = note.reviewerNote
+      ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}`
+      : '';
     return `${this.translate.instant('PROFILE_LOGS.NOTES.SECTION_REVIEW_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${status}${reviewerNote}`;
   }
 
   private formatProfileChangeEvent(note: any): string {
     const section = note.section ? this.translateSection(note.section) : '-';
-    const target = note.entityName || note.fieldPath || note.attachmentTitle || note.targetType || '-';
-    const action = note.eventType === 'ProfileChangeRequested'
-      ? this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeRequested')
-      : this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeUpdated');
+    const target =
+      note.entityName || note.fieldPath || note.attachmentTitle || note.targetType || '-';
+    const action =
+      note.eventType === 'ProfileChangeRequested'
+        ? this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeRequested')
+        : this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeUpdated');
     return `${action} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.TARGET')}: ${target}`;
   }
 
@@ -584,7 +615,9 @@ export class SystemAdminLogsComponent implements OnInit {
     if (changeMatch) {
       const targetType = changeMatch[1];
       const targetValue = changeMatch[2];
-      const sanitizedTarget = /^[0-9a-f-]{36}$/i.test(targetValue) ? this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_DATA') : targetValue;
+      const sanitizedTarget = /^[0-9a-f-]{36}$/i.test(targetValue)
+        ? this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_DATA')
+        : targetValue;
       return `${this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_CHANGE_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.TYPE')}: ${targetType} | ${this.translate.instant('PROFILE_LOGS.NOTES.TARGET')}: ${sanitizedTarget}`;
     }
 
@@ -596,9 +629,23 @@ export class SystemAdminLogsComponent implements OnInit {
 
     // Prioritized list of keys that represent a "main name"
     const primaryKeys = [
-      'nameEn', 'fullNameEn', 'adminNameEn', 'titleEn', 'questionEn', 'email',
-      'menuLabel', 'targetUrl', 'attachmentTitle', 'attachmentTitleEn', 'fileName',
-      'nameAr', 'fullNameAr', 'adminNameAr', 'titleAr', 'questionAr', 'code'
+      'nameEn',
+      'fullNameEn',
+      'adminNameEn',
+      'titleEn',
+      'questionEn',
+      'email',
+      'menuLabel',
+      'targetUrl',
+      'attachmentTitle',
+      'attachmentTitleEn',
+      'fileName',
+      'nameAr',
+      'fullNameAr',
+      'adminNameAr',
+      'titleAr',
+      'questionAr',
+      'code',
     ];
 
     // Check current level
@@ -654,7 +701,7 @@ export class SystemAdminLogsComponent implements OnInit {
       order: this.translateFieldLabel('order'),
       type: this.translateFieldLabel('type'),
       roleIds: this.translateFieldLabel('roleIds'),
-      permissionKeys: this.translateFieldLabel('permissionKeys')
+      permissionKeys: this.translateFieldLabel('permissionKeys'),
     };
 
     const skipPatterns = /^(id|countryId|cityId|officeId|userId|userProfileId)$/i;
@@ -680,7 +727,7 @@ export class SystemAdminLogsComponent implements OnInit {
 
       let displayVal = '';
       if (Array.isArray(value)) {
-        const filteredArr = value.filter(v => typeof v !== 'string' || !guidPattern.test(v));
+        const filteredArr = value.filter((v) => typeof v !== 'string' || !guidPattern.test(v));
         if (filteredArr.length > 0) {
           displayVal = filteredArr.join(', ');
         } else if (value.length > 0) {
@@ -708,13 +755,20 @@ export class SystemAdminLogsComponent implements OnInit {
     if (normalized === 'rejected' || normalized === String(ReviewStatus.Rejected)) {
       return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.REJECTED');
     }
-    if (normalized === 'needscorrection' || normalized === 'needs_correction' || normalized === String(ReviewStatus.NeedsCorrection)) {
+    if (
+      normalized === 'needscorrection' ||
+      normalized === 'needs_correction' ||
+      normalized === String(ReviewStatus.NeedsCorrection)
+    ) {
       return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.NEEDS_CORRECTION');
     }
-    if (normalized === 'notreviewed' || normalized === 'not_reviewed' || normalized === String(ReviewStatus.NotReviewed)) {
+    if (
+      normalized === 'notreviewed' ||
+      normalized === 'not_reviewed' ||
+      normalized === String(ReviewStatus.NotReviewed)
+    ) {
       return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.NOT_REVIEWED');
     }
     return String(status);
   }
-
 }
