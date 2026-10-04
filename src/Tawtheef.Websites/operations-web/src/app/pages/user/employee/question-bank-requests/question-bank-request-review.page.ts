@@ -89,6 +89,23 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
     return !value.decisionId || (this.noteRequired(itemId) && !value.reviewNote.trim());
   }
 
+  reviewIncomplete(): boolean {
+    const review = this.review();
+    return !review || review.items.some((item) => this.itemInvalid(item.requestItemId));
+  }
+
+  allApproved(): boolean {
+    const review = this.review();
+    return !!review && review.items.length > 0 && !this.reviewIncomplete() &&
+      review.items.every((item) => this.value(item.requestItemId).decisionId === this.decisions.Approved);
+  }
+
+  submitLabel(): string {
+    return this.allApproved()
+      ? 'QUESTION_BANK_REQUESTS.APPROVE_AND_ISSUE'
+      : 'QUESTION_BANK_REQUESTS.SUBMIT_REVIEW_RESULT';
+  }
+
   back(): void {
     void this.router.navigateByUrl(portalRoutes.questionBankRequestDetails(this.requestId));
   }
@@ -96,7 +113,7 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
   submit(): void {
     this.submitted.set(true);
     const review = this.review();
-    if (!review || review.items.some((item) => this.itemInvalid(item.requestItemId))) return;
+    if (!review || this.reviewIncomplete()) return;
     const reviews: QuestionReviewInput[] = review.items.map((item) => ({
       requestItemId: item.requestItemId,
       reviewedRevisionId: item.currentProposedRevisionId,

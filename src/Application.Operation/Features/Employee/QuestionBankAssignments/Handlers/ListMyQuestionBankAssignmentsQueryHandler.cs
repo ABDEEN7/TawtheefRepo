@@ -30,7 +30,9 @@ public sealed class ListMyQuestionBankAssignmentsQueryHandler(IUnitOfWork uow, I
                 x.QuestionBankRequest.QuestionBank.JobTitle == null ? null : x.QuestionBankRequest.QuestionBank.JobTitle.JobNameAr,
                 x.QuestionBankRequest.QuestionBank.JobTitle == null ? null : x.QuestionBankRequest.QuestionBank.JobTitle.JobNameEn,
                 x.StatusId, x.Status.NameAr, x.Status.NameEn, x.MinimumQuestionCount,
-                x.RequestItems.Count(i => !i.IsDeleted && i.RequestId == x.QuestionBankRequestId && i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST),
+                x.RequestItems.Count(i => !i.IsDeleted && i.RequestId == x.QuestionBankRequestId &&
+                    i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST &&
+                    i.StatusId != QuestionBankRequestItemStatusIds.REJECTED),
                 x.AssignedAt, x.QuestionEntryStartedAt, x.QuestionEntryCompletedAt));
         var count = await query.CountAsync(ct);
         var items = await query.Skip((r.PageNumber - 1) * r.PageSize).Take(r.PageSize).ToListAsync(ct);

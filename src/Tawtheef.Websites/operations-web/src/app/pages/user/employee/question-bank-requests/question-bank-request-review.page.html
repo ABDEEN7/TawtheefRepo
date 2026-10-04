@@ -197,8 +197,8 @@
         pButton
         type="button"
         icon="pi pi-check"
-        [label]="'QUESTION_BANK_REQUESTS.SUBMIT_REVIEW' | translate"
-        [disabled]="submitting()"
+        [label]="submitLabel() | translate"
+        [disabled]="submitting() || reviewIncomplete()"
         (click)="submit()"
       ></button>
     </div>

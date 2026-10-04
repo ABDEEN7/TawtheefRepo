@@ -456,6 +456,8 @@ export class EndpointsService {
     question: (id: string, itemId: string) =>
       this.getFullUrl(`/questionbankassignments/${id}/questions/${itemId}`),
     finish: (id: string) => this.getFullUrl(`/questionbankassignments/${id}/finish`),
+    finishModifications: (id: string) =>
+      this.getFullUrl(`/questionbankassignments/${id}/finish-modifications`),
   };
 
   questionBankRequests = {

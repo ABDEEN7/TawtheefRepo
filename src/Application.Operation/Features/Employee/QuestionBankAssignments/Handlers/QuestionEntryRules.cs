@@ -28,6 +28,7 @@ internal static class QuestionEntryRules
             .AnyAsync(x => x.Id == resourceId && ImageTypes.Contains(x.Type) && x.Size > 0, ct);
     }
     public static bool Editable(Guid status) => status == QuestionBankAssignmentStatusIds.Assigned || status == QuestionBankAssignmentStatusIds.QuestionEntryInProgress;
+    public static bool CorrectionEditable(Guid status) => status == QuestionBankAssignmentStatusIds.ReturnedForModification;
     public static QuestionInput Sanitize(QuestionInput q, IRichTextSanitizer sanitizer) => q with
     {
         QuestionTextAr = sanitizer.Sanitize(q.QuestionTextAr),

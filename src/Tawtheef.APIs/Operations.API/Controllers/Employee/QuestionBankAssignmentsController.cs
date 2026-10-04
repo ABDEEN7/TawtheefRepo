@@ -93,4 +93,11 @@ public sealed class QuestionBankAssignmentsController(IMediator mediator, ICurre
         var command = new FinishQuestionBankAssignmentEntryCommand(assignmentId);
         return (await mediator.Send(command, cancellationToken)).ToActionResult();
     }
+
+    [HttpPost("{assignmentId:guid}/finish-modifications")]
+    public async Task<IActionResult> FinishModifications(Guid assignmentId, CancellationToken cancellationToken)
+    {
+        var command = new FinishQuestionBankAssignmentModificationCommand(assignmentId);
+        return (await mediator.Send(command, cancellationToken)).ToActionResult();
+    }
 }
