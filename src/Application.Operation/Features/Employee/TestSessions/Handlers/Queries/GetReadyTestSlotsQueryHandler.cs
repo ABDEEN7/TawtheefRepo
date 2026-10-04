@@ -72,8 +72,7 @@ public sealed class GetReadyTestSlotsQueryHandler(IUnitOfWork unitOfWork)
                 ExistingSessionCount = slotSessions.Count, ExistingExamSessionCount = slotSessions.Count(s => s.ExamId == request.ExamId),
                 RemainingCapacity = availableSeats, Status = slot.Status
             };
-        }).Where(slot => slot.RemainingCapacity >= request.SelectedCandidateCount).OrderBy(slot => slot.SlotDate)
-            .ThenBy(slot => slot.StartTime).ToList();
+        }).OrderBy(slot => slot.SlotDate).ThenBy(slot => slot.StartTime).ToList();
 
         var pageNumber = Math.Max(1, request.PageNumber);
         var pageSize = Math.Clamp(request.PageSize, 1, 50);
