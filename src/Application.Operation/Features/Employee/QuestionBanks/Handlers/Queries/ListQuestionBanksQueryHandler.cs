@@ -19,7 +19,7 @@ public sealed class ListQuestionBanksQueryHandler(IUnitOfWork unitOfWork, IMappe
         CancellationToken cancellationToken)
     {
         var searchTerm = request.Search?.Trim();
-        var questionBanks = await unitOfWork
+        var query = unitOfWork
             .GetEntityRepository<QuestionBank>()
             .DbSet
             .AsNoTracking()
@@ -52,12 +52,33 @@ public sealed class ListQuestionBanksQueryHandler(IUnitOfWork unitOfWork, IMappe
                 request.JobTitleId.HasValue,
                 questionBank => questionBank.JobTitleId == request.JobTitleId)
             .WhereIf(request.StageId.HasValue, questionBank => questionBank.StageId == request.StageId)
-            .WhereIf(request.IsActive.HasValue, questionBank => questionBank.IsActive == request.IsActive)
-            .OrderByDescending(questionBank => questionBank.UpdatedDate ?? questionBank.CreatedDate)
-            .ThenBy(questionBank => questionBank.Id)
+            .WhereIf(request.IsActive.HasValue, questionBank => questionBank.IsActive == request.IsActive);
+
+        var descending = string.Equals(request.SortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+        var sorted = request.SortBy?.Trim().ToLowerInvariant() switch
+        {
+            "questionbanktype" => descending
+                ? query.OrderByDescending(x => x.QuestionBankType.NameEn).ThenBy(x => x.Id)
+                : query.OrderBy(x => x.QuestionBankType.NameEn).ThenBy(x => x.Id),
+            "management" => descending
+                ? query.OrderByDescending(x => x.Management == null ? string.Empty : x.Management.NameEn).ThenBy(x => x.Id)
+                : query.OrderBy(x => x.Management == null ? string.Empty : x.Management.NameEn).ThenBy(x => x.Id),
+            "jobtitle" => descending
+                ? query.OrderByDescending(x => x.JobTitle == null ? string.Empty : x.JobTitle.JobNameEn).ThenBy(x => x.Id)
+                : query.OrderBy(x => x.JobTitle == null ? string.Empty : x.JobTitle.JobNameEn).ThenBy(x => x.Id),
+            "currentversion" => descending
+                ? query.OrderByDescending(x => x.CurrentApprovedVersion == null ? 0 : x.CurrentApprovedVersion.VersionNo).ThenBy(x => x.Id)
+                : query.OrderBy(x => x.CurrentApprovedVersion == null ? 0 : x.CurrentApprovedVersion.VersionNo).ThenBy(x => x.Id),
+            "status" => descending
+                ? query.OrderByDescending(x => x.IsActive).ThenBy(x => x.Id)
+                : query.OrderBy(x => x.IsActive).ThenBy(x => x.Id),
+            _ => query.OrderByDescending(x => x.UpdatedDate ?? x.CreatedDate).ThenBy(x => x.Id)
+        };
+
+        var questionBanks = await sorted
             .ToPaginatedListAsync<QuestionBank, QuestionBankListItemDto>(
                 mapper,
-                request,
+                request with { SortBy = null },
                 cancellationToken);
 
         return Result.Ok(questionBanks);

@@ -20,6 +20,10 @@ import {
   QuestionBankRequestStatusIds,
 } from './models/question-bank-request.models';
 import { QuestionBankRequestsService } from './services/question-bank-requests.service';
+import {
+  questionBankAssignmentStatusSeverity,
+  questionBankRequestStatusSeverity,
+} from '../../../../shared/utils/question-bank-status.util';
 
 @Component({
   selector: 'app-question-bank-request-details',
@@ -49,6 +53,8 @@ export class QuestionBankRequestDetailsPage implements OnInit {
   readonly loading = signal(false);
   readonly currentLang = signal<Lang>(this.language.get());
   readonly id = this.route.snapshot.paramMap.get('id')!;
+  readonly requestStatusSeverity = questionBankRequestStatusSeverity;
+  readonly assignmentStatusSeverity = questionBankAssignmentStatusSeverity;
   ngOnInit(): void {
     this.language.current$
       .pipe(takeUntilDestroyed(this.destroyRef))

@@ -38,9 +38,29 @@ public sealed class ListQuestionBankRequestsQueryHandler(IUnitOfWork unitOfWork,
             .WhereIf(request.QuestionBankTypeId.HasValue, x => x.QuestionBank.QuestionBankTypeId == request.QuestionBankTypeId)
             .WhereIf(request.StatusId.HasValue, x => x.StatusId == request.StatusId)
             .WhereIf(request.ManagementId.HasValue, x => x.QuestionBank.ManagementId == request.ManagementId)
-            .WhereIf(request.JobTitleId.HasValue, x => x.QuestionBank.JobTitleId == request.JobTitleId)
-            .OrderByDescending(x => x.SubmittedAt).ThenBy(x => x.Id);
+            .WhereIf(request.JobTitleId.HasValue, x => x.QuestionBank.JobTitleId == request.JobTitleId);
 
-        return Result.Ok(await query.ToPaginatedListAsync<QuestionBankRequest, QuestionBankRequestListItemDto>(mapper, request, cancellationToken));
+        var descending = string.Equals(request.SortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+        var sorted = request.SortBy?.Trim().ToLowerInvariant() switch
+        {
+            "requesttype" => Order(query, x => x.RequestType.NameEn, descending),
+            "questionbanktype" => Order(query, x => x.QuestionBank.QuestionBankType.NameEn, descending),
+            "management" => Order(query, x => x.QuestionBank.Management == null ? string.Empty : x.QuestionBank.Management.NameEn, descending),
+            "jobtitle" => Order(query, x => x.QuestionBank.JobTitle == null ? string.Empty : x.QuestionBank.JobTitle.JobNameEn, descending),
+            "status" => Order(query, x => x.Status.DisplayOrder, descending),
+            "submittedby" => Order(query, x => x.SubmittedBy.FullNameEn ?? string.Empty, descending),
+            "submittedat" => Order(query, x => x.SubmittedAt, descending),
+            _ => query.OrderByDescending(x => x.SubmittedAt).ThenBy(x => x.Id)
+        };
+
+        return Result.Ok(await sorted.ToPaginatedListAsync<QuestionBankRequest, QuestionBankRequestListItemDto>(
+            mapper, request with { SortBy = null }, cancellationToken));
     }
+
+    private static IOrderedQueryable<QuestionBankRequest> Order<TKey>(
+        IQueryable<QuestionBankRequest> query,
+        System.Linq.Expressions.Expression<Func<QuestionBankRequest, TKey>> key,
+        bool descending) => descending
+            ? query.OrderByDescending(key).ThenBy(x => x.Id)
+            : query.OrderBy(key).ThenBy(x => x.Id);
 }

@@ -2,7 +2,14 @@
   <p-confirmDialog />
   @if (workspace(); as workspace) {
     <div class="d-flex justify-content-between">
-      <h1>{{ (correctionMode ? 'QUESTION_ASSIGNMENTS.CORRECTION_TITLE' : 'QUESTION_ASSIGNMENTS.ENTRY_TITLE') | translate }}</h1>
+      <h1>
+        {{
+          (correctionMode
+            ? 'QUESTION_ASSIGNMENTS.CORRECTION_TITLE'
+            : 'QUESTION_ASSIGNMENTS.ENTRY_TITLE'
+          ) | translate
+        }}
+      </h1>
       <p-button
         icon="pi pi-arrow-left"
         [label]="'QUESTION_ASSIGNMENTS.BACK' | translate"
@@ -49,12 +56,12 @@
         <div class="col-md-3">
           <strong>{{ 'QUESTION_ASSIGNMENTS.STATUS' | translate }}</strong>
           <div>
-            {{
-              localized(
-                workspace.assignment.statusNameAr,
-                workspace.assignment.statusNameEn
-              )
-            }}
+            <p-tag
+              [severity]="assignmentStatusSeverity(workspace.assignment.statusId)"
+              [value]="
+                localized(workspace.assignment.statusNameAr, workspace.assignment.statusNameEn)
+              "
+            />
           </div>
         </div>
       </div>
@@ -84,54 +91,127 @@
       />
     }
 
-    <p-table class="d-block mt-3" [value]="workspace.questions">
-      <ng-template #header>
-        <tr>
-          <th>{{ 'QUESTION_ASSIGNMENTS.QUESTION' | translate }}</th>
-          <th>{{ 'QUESTION_ASSIGNMENTS.TYPE' | translate }}</th>
-          <th>{{ 'QUESTION_ASSIGNMENTS.DIFFICULTY' | translate }}</th>
-          <th>{{ 'QUESTION_ASSIGNMENTS.STATUS' | translate }}</th>
-          @if (editable || correctionMode) {
-            <th>{{ 'QUESTION_ASSIGNMENTS.ACTIONS' | translate }}</th>
-          }
-        </tr>
-      </ng-template>
+    <div class="table-card rounded overflow-hidden mt-3" [class.loading-shimmer]="loading()">
+      <div class="table-responsive">
+        <p-table [value]="workspace.questions" [loading]="loading()">
+          <ng-template #header>
+            <tr>
+              <th>{{ 'QUESTION_ASSIGNMENTS.QUESTION' | translate }}</th>
+              <th>{{ 'QUESTION_ASSIGNMENTS.TYPE' | translate }}</th>
+              <th>{{ 'QUESTION_ASSIGNMENTS.DIFFICULTY' | translate }}</th>
+              <th>{{ 'QUESTION_ASSIGNMENTS.STATUS' | translate }}</th>
+              @if (editable || correctionMode) {
+                <th>{{ 'QUESTION_ASSIGNMENTS.ACTIONS' | translate }}</th>
+              }
+            </tr>
+          </ng-template>
 
-      <ng-template #body let-question>
-        <tr>
-          <td>
-            @if (localizedContent(question.questionTextAr, question.questionTextEn); as content) {
-              <app-rich-content-renderer [content]="content" />
-            } @else if (question.resourceId) {
-              <i class="pi pi-image" [title]="'QUESTION_ASSIGNMENTS.IMAGE_ONLY' | translate"></i>
+          <ng-template #body let-question>
+            <tr>
+              <td>
+                @if (
+                  localizedContent(question.questionTextAr, question.questionTextEn);
+                  as content
+                ) {
+                  <app-rich-content-renderer [content]="content" />
+                } @else if (question.resourceId) {
+                  <i
+                    class="pi pi-image"
+                    [title]="'QUESTION_ASSIGNMENTS.IMAGE_ONLY' | translate"
+                  ></i>
+                }
+              </td>
+              <td>{{ localized(question.questionTypeNameAr, question.questionTypeNameEn) }}</td>
+              <td>{{ localized(question.difficultyNameAr, question.difficultyNameEn) }}</td>
+              <td>
+                <p-tag
+                  [severity]="itemStatusSeverity(question.statusId)"
+                  [value]="localized(question.statusNameAr, question.statusNameEn)"
+                />
+              </td>
+              @if (editable || correctionMode) {
+                <td class="col-actions">
+                  <div class="action-buttons">
+                    @if (canEdit(question)) {
+                      <button
+                        type="button"
+                        class="btn btn-action-icon"
+                        (click)="edit(question)"
+                        [pTooltip]="'QUESTION_ASSIGNMENTS.EDIT' | translate"
+                        tooltipPosition="top"
+                        [attr.aria-label]="'QUESTION_ASSIGNMENTS.EDIT' | translate"
+                      >
+                        <i class="pi pi-pencil"></i>
+                      </button>
+                    }
+                    @if (canRemove(question)) {
+                      <button
+                        type="button"
+                        class="btn btn-action-icon text-danger"
+                        (click)="remove(question)"
+                        [pTooltip]="
+                          (question.statusId === itemStatuses.rejected
+                            ? 'QUESTION_ASSIGNMENTS.REMOVE_FROM_REQUEST'
+                            : 'QUESTION_ASSIGNMENTS.REMOVE'
+                          ) | translate
+                        "
+                        tooltipPosition="top"
+                        [attr.aria-label]="
+                          (question.statusId === itemStatuses.rejected
+                            ? 'QUESTION_ASSIGNMENTS.REMOVE_FROM_REQUEST'
+                            : 'QUESTION_ASSIGNMENTS.REMOVE'
+                          ) | translate
+                        "
+                      >
+                        <i class="pi pi-trash"></i>
+                      </button>
+                    }
+                  </div>
+                </td>
+              }
+            </tr>
+            @if (correctionMode && question.latestReviewNote) {
+              <tr>
+                <td colspan="5">
+                  <strong>{{ 'QUESTION_ASSIGNMENTS.MANAGER_FEEDBACK' | translate }}:</strong>
+                  {{ question.latestReviewNote }}
+                  @if (question.latestReviewRound) {
+                    ({{ 'QUESTION_ASSIGNMENTS.REVIEW_ROUND' | translate }}
+                    {{ question.latestReviewRound }})
+                  }
+                </td>
+              </tr>
             }
-          </td>
-          <td>{{ localized(question.questionTypeNameAr, question.questionTypeNameEn) }}</td>
-          <td>{{ localized(question.difficultyNameAr, question.difficultyNameEn) }}</td>
-          <td>{{ localized(question.statusNameAr, question.statusNameEn) }}</td>
-          @if (editable || correctionMode) {
-            <td>
-              @if (canEdit(question)) {
-                <p-button icon="pi pi-pencil" [label]="'QUESTION_ASSIGNMENTS.EDIT' | translate" [text]="true" (onClick)="edit(question)" />
-              }
-              @if (canRemove(question)) {
-                <p-button icon="pi pi-trash" severity="danger" [label]="(question.statusId === itemStatuses.rejected ? 'QUESTION_ASSIGNMENTS.REMOVE_FROM_REQUEST' : 'QUESTION_ASSIGNMENTS.REMOVE') | translate" [text]="true" (onClick)="remove(question)" />
-              }
-            </td>
-          }
-        </tr>
-        @if (correctionMode && question.latestReviewNote) {
-          <tr><td colspan="5"><strong>{{ 'QUESTION_ASSIGNMENTS.MANAGER_FEEDBACK' | translate }}:</strong> {{ question.latestReviewNote }}
-            @if (question.latestReviewRound) { ({{ 'QUESTION_ASSIGNMENTS.REVIEW_ROUND' | translate }} {{ question.latestReviewRound }}) }
-          </td></tr>
-        }
-      </ng-template>
-    </p-table>
+          </ng-template>
+          <ng-template #emptymessage
+            ><tr>
+              <td
+                [attr.colspan]="editable || correctionMode ? 5 : 4"
+                class="text-center py-5"
+                [class.d-none]="loading()"
+              >
+                <div class="empty-state-container">
+                  <i class="hgi hgi-stroke hgi-file-empty-02 mb-3 text-muted display-4"></i>
+                  <div class="empty__title h5 fw-bold text-muted">
+                    {{ 'QUESTION_ASSIGNMENTS.NO_QUESTIONS' | translate }}
+                  </div>
+                </div>
+              </td>
+            </tr></ng-template
+          >
+        </p-table>
+      </div>
+    </div>
 
     @if (editable || correctionMode) {
       <div class="mt-4 text-end">
         <p-button
-          [label]="(correctionMode ? 'QUESTION_ASSIGNMENTS.FINISH_MODIFICATIONS' : 'QUESTION_ASSIGNMENTS.FINISH') | translate"
+          [label]="
+            (correctionMode
+              ? 'QUESTION_ASSIGNMENTS.FINISH_MODIFICATIONS'
+              : 'QUESTION_ASSIGNMENTS.FINISH'
+            ) | translate
+          "
           [disabled]="!workspace.progress.canFinish"
           (onClick)="finish()"
         />
