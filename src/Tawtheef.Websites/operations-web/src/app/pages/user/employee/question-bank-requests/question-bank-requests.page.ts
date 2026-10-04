@@ -26,7 +26,6 @@ import { CreateQuestionBankRequestDialogComponent } from './dialogs/create-quest
 import {
   QuestionBankRequestFilters,
   QuestionBankRequestListItem,
-  QuestionBankRequestStatusIds,
 } from './models/question-bank-request.models';
 import { QuestionBankRequestsService } from './services/question-bank-requests.service';
 import { portalRoutes } from '../../../../routes/portal-routes';
@@ -77,7 +76,6 @@ export class QuestionBankRequestsPage implements OnInit {
   readonly requestTypes = signal<dropdownOptionsModel[]>([]);
   readonly statuses = signal<dropdownOptionsModel[]>([]);
   protected readonly Permissions = Permissions;
-  protected readonly QuestionBankRequestStatusIds = QuestionBankRequestStatusIds;
   search = '';
   statusId?: string;
   requestTypeId?: string;

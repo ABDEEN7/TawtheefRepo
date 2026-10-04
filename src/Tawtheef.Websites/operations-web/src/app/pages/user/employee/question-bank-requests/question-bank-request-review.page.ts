@@ -131,7 +131,7 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
         next: (result) => {
           this.notification.success(
             this.translate.instant(
-              result.changesRequired
+              result.changesRequired || !result.issued
                 ? 'QUESTION_BANK_REQUESTS.REVIEW_CHANGES_SUCCESS'
                 : 'QUESTION_BANK_REQUESTS.REVIEW_APPROVED_SUCCESS',
             ),
@@ -165,10 +165,12 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
             if (item.imageUrl) this.loadImage(item.requestItemId, item.imageUrl);
           });
         },
-        error: () =>
+        error: () => {
           this.notification.error(
-            this.translate.instant('QUESTION_BANK_REQUESTS.REVIEW_LOAD_ERROR'),
-          ),
+            this.translate.instant('QUESTION_BANK_REQUESTS.REVIEW_NOT_AVAILABLE'),
+          );
+          this.back();
+        },
       });
   }
 

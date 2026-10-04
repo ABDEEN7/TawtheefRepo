@@ -35,7 +35,7 @@ public sealed class GetQuestionBankRequestDetailsQueryHandler(IUnitOfWork unitOf
                 JobTitleNameEn = x.QuestionBank.JobTitle == null ? null : x.QuestionBank.JobTitle.JobNameEn,
                 IsActive = x.QuestionBank.IsActive,
                 CanReview = x.StatusId == Tawtheef.Domain.Entities.Lookups.QuestionBankRequestStatusIds.PendingReview &&
-                    x.Items.Any(i => !i.IsDeleted && i.RemovedAt == null && i.CurrentProposedRevisionId != null &&
+                    x.Items.Any(i => !i.IsDeleted && i.RemovedAt == null &&
                                      i.StatusId == Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatusIds.PENDING_REVIEW),
                 PendingReviewItemCount = x.Items.Count(i => !i.IsDeleted && i.StatusId == Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatusIds.PENDING_REVIEW),
                 ApprovedItemCount = x.Items.Count(i => !i.IsDeleted && i.StatusId == Tawtheef.Domain.Entities.Lookups.QuestionBankRequestItemStatusIds.APPROVED),

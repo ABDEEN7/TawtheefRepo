@@ -1,5 +1,6 @@
 using Application.Operation.Features.Employee.QuestionBankRequests.DTOs;
 using Mapster;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.QuestionsBank;
 
 namespace Application.Operation.Features.Employee.QuestionBankRequests.Mappers;
@@ -23,6 +24,9 @@ public sealed class QuestionBankRequestProfile : IRegister
             .Map(d => d.JobTitleNameAr, s => s.QuestionBank.JobTitle == null ? null : s.QuestionBank.JobTitle.JobNameAr)
             .Map(d => d.JobTitleNameEn, s => s.QuestionBank.JobTitle == null ? null : s.QuestionBank.JobTitle.JobNameEn)
             .Map(d => d.SubmittedByNameAr, s => s.SubmittedBy.FullNameAr)
-            .Map(d => d.SubmittedByNameEn, s => s.SubmittedBy.FullNameEn);
+            .Map(d => d.SubmittedByNameEn, s => s.SubmittedBy.FullNameEn)
+            .Map(d => d.CanReview, s => s.StatusId == QuestionBankRequestStatusIds.PendingReview &&
+                s.Items.Any(i => !i.IsDeleted && i.RemovedAt == null &&
+                    i.StatusId == QuestionBankRequestItemStatusIds.PENDING_REVIEW));
     }
 }
