@@ -39,13 +39,19 @@ public sealed class GetQuestionBankAssignmentWorkspaceQueryHandler(IUnitOfWork u
                 x.CurrentProposedRevision.ResourceId == null ? null : x.CurrentProposedRevision.Resource!.Url,
                 x.StatusId, x.Status.NameAr, x.Status.NameEn,
                 x.CurrentProposedRevision.Options.OrderBy(o => o.DisplayOrder)
-                    .Select(o => new QuestionOptionDto(o.Id, o.OptionTextAr, o.OptionTextEn, o.IsCorrect, o.DisplayOrder)).ToList())).ToListAsync(ct);
-        var current = questions.Count; var bank = a.QuestionBankRequest.QuestionBank;
+                    .Select(o => new QuestionOptionDto(o.Id, o.OptionTextAr, o.OptionTextEn, o.IsCorrect, o.DisplayOrder)).ToList(),
+                x.Reviews.OrderByDescending(review => review.ReviewRound).Select(review => (Guid?)review.DecisionId).FirstOrDefault(),
+                x.Reviews.OrderByDescending(review => review.ReviewRound).Select(review => review.ReviewNote).FirstOrDefault(),
+                x.Reviews.OrderByDescending(review => review.ReviewRound).Select(review => (int?)review.ReviewRound).FirstOrDefault())).ToListAsync(ct);
+        var current = questions.Count(x => x.StatusId != QuestionBankRequestItemStatusIds.REJECTED); var bank = a.QuestionBankRequest.QuestionBank;
         return Result.Ok(new QuestionBankAssignmentWorkspaceDto(
             new(a.Id, a.StatusId, a.Status.NameAr, a.Status.NameEn, a.MinimumQuestionCount, a.Notes, a.AssignedAt, a.QuestionEntryStartedAt, a.QuestionEntryCompletedAt),
             new(a.QuestionBankRequestId, a.QuestionBankRequest.StatusId),
             new(bank.QuestionBankTypeId, bank.QuestionBankType.NameAr, bank.QuestionBankType.NameEn,
                 bank.Management?.NameAr, bank.Management?.NameEn, bank.JobTitle?.JobNameAr, bank.JobTitle?.JobNameEn),
-            new(a.MinimumQuestionCount, current, Math.Max(0, a.MinimumQuestionCount-current), current >= a.MinimumQuestionCount && current > 0), questions));
+            new(a.MinimumQuestionCount, current, Math.Max(0, a.MinimumQuestionCount-current),
+                current >= a.MinimumQuestionCount && current > 0 &&
+                questions.All(x => x.StatusId != QuestionBankRequestItemStatusIds.NEEDS_MODIFICATION &&
+                                   x.StatusId != QuestionBankRequestItemStatusIds.REJECTED)), questions));
     }
 }

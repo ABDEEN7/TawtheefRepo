@@ -69,6 +69,10 @@ export class QuestionBankAssignmentsService {
     return this.http.post<void>(this.endpoints.questionBankAssignments.finish(id), {});
   }
 
+  finishModifications(id: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.questionBankAssignments.finishModifications(id), {});
+  }
+
   private toBase64Url(value: string): string {
     const bytes = new TextEncoder().encode(value);
     let binary = '';

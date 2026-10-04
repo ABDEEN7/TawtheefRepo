@@ -49,6 +49,10 @@ export class QuestionBankAssignmentsPage {
       return 'QUESTION_ASSIGNMENTS.CONTINUE';
     }
 
+    if (assignment.statusId === this.statuses.returnedForModification) {
+      return 'QUESTION_ASSIGNMENTS.MODIFY';
+    }
+
     return 'QUESTION_ASSIGNMENTS.VIEW';
   }
 

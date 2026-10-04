@@ -33,14 +33,22 @@ public sealed class EditAssignmentQuestionCommandHandler(
         {
             var item = await uow.GetEntityRepository<QuestionBankRequestItem>().DbSet
                 .Include(x => x.QuestionBankAssignment).ThenInclude(x => x.QuestionBankRequest)
-                .SingleOrDefaultAsync(x => x.Id == r.ItemId && x.QuestionBankAssignmentId == r.AssignmentId && !x.IsDeleted && x.StatusId == QuestionBankRequestItemStatusIds.DRAFT, token);
+                .SingleOrDefaultAsync(x => x.Id == r.ItemId && x.QuestionBankAssignmentId == r.AssignmentId && !x.IsDeleted &&
+                    (x.StatusId == QuestionBankRequestItemStatusIds.DRAFT || x.StatusId == QuestionBankRequestItemStatusIds.NEEDS_MODIFICATION), token);
             if (item is null || item.QuestionBankAssignment.EmployeeId != employeeId || item.RequestId != item.QuestionBankAssignment.QuestionBankRequestId)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentQuestionNotFound);
-            if (!QuestionEntryRules.Editable(item.QuestionBankAssignment.StatusId) || item.QuestionBankAssignment.QuestionBankRequest.StatusId != QuestionBankRequestStatusIds.QuestionEntryInProgress)
+            var initialEntry = item.StatusId == QuestionBankRequestItemStatusIds.DRAFT && QuestionEntryRules.Editable(item.QuestionBankAssignment.StatusId) &&
+                               item.QuestionBankAssignment.QuestionBankRequest.StatusId == QuestionBankRequestStatusIds.QuestionEntryInProgress;
+            var correction = (item.StatusId == QuestionBankRequestItemStatusIds.DRAFT || item.StatusId == QuestionBankRequestItemStatusIds.NEEDS_MODIFICATION) &&
+                             QuestionEntryRules.CorrectionEditable(item.QuestionBankAssignment.StatusId) &&
+                             item.QuestionBankAssignment.QuestionBankRequest.StatusId == QuestionBankRequestStatusIds.ModificationInProgress;
+            if (!initialEntry && !correction)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentNotEditable);
             var next = await uow.GetEntityRepository<QuestionRevision>().DbSet.Where(x => x.QuestionId == item.QuestionId).MaxAsync(x => (int?)x.RevisionNo, token) ?? 0;
             var revision = QuestionEntryRules.Revision(item.QuestionId, next + 1, item.Id, questionInput);
-            await uow.GetEntityRepository<QuestionRevision>().AddAsync(revision, token); item.CurrentProposedRevisionId = revision.Id;
+            await uow.GetEntityRepository<QuestionRevision>().AddAsync(revision, token);
+            item.CurrentProposedRevisionId = revision.Id;
+            item.StatusId = QuestionBankRequestItemStatusIds.DRAFT;
             await uow.SaveChangesAsync(token); return Result.Ok(Unit.Value);
         }, ct);
     }

@@ -56,5 +56,14 @@
   "QUESTION_ASSIGNMENTS.MIN_OPTIONS": "يلزم إدخال خيارين للإجابة على الأقل.",
   "QUESTION_ASSIGNMENTS.ONE_CORRECT_OPTION": "اختر إجابة صحيحة واحدة فقط.",
   "QUESTION_ASSIGNMENTS.CORRECT": "صحيحة",
-  "QUESTION_ASSIGNMENTS.LOADING_IMAGE": "جارٍ تحميل معاينة الصورة…"
+  "QUESTION_ASSIGNMENTS.LOADING_IMAGE": "جارٍ تحميل معاينة الصورة…",
+  "QUESTION_ASSIGNMENTS.MODIFY": "تعديل الأسئلة",
+  "QUESTION_ASSIGNMENTS.CORRECTION_TITLE": "أسئلة معادة للتعديل",
+  "QUESTION_ASSIGNMENTS.REMOVE": "إزالة",
+  "QUESTION_ASSIGNMENTS.REMOVE_FROM_REQUEST": "إزالة من الطلب",
+  "QUESTION_ASSIGNMENTS.REMOVE_REJECTED_CONFIRM": "هل تريد إزالة السؤال المرفوض من الطلب؟",
+  "QUESTION_ASSIGNMENTS.MANAGER_FEEDBACK": "ملاحظات المدير",
+  "QUESTION_ASSIGNMENTS.REVIEW_ROUND": "جولة المراجعة",
+  "QUESTION_ASSIGNMENTS.FINISH_MODIFICATIONS": "إنهاء التعديلات",
+  "QUESTION_ASSIGNMENTS.MODIFICATIONS_SUCCESS": "تم إرسال تعديلات الأسئلة بنجاح."
 }

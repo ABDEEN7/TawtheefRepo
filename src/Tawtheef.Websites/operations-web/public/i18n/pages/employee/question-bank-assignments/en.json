@@ -56,5 +56,14 @@
   "QUESTION_ASSIGNMENTS.MIN_OPTIONS": "At least two answer options are required.",
   "QUESTION_ASSIGNMENTS.ONE_CORRECT_OPTION": "Select exactly one correct answer.",
   "QUESTION_ASSIGNMENTS.CORRECT": "Correct",
-  "QUESTION_ASSIGNMENTS.LOADING_IMAGE": "Loading image preview…"
+  "QUESTION_ASSIGNMENTS.LOADING_IMAGE": "Loading image preview…",
+  "QUESTION_ASSIGNMENTS.MODIFY": "Modify Questions",
+  "QUESTION_ASSIGNMENTS.CORRECTION_TITLE": "Questions Returned for Modification",
+  "QUESTION_ASSIGNMENTS.REMOVE": "Remove",
+  "QUESTION_ASSIGNMENTS.REMOVE_FROM_REQUEST": "Remove from Request",
+  "QUESTION_ASSIGNMENTS.REMOVE_REJECTED_CONFIRM": "Remove this rejected question from the request?",
+  "QUESTION_ASSIGNMENTS.MANAGER_FEEDBACK": "Manager feedback",
+  "QUESTION_ASSIGNMENTS.REVIEW_ROUND": "Review round",
+  "QUESTION_ASSIGNMENTS.FINISH_MODIFICATIONS": "Finish Modifications",
+  "QUESTION_ASSIGNMENTS.MODIFICATIONS_SUCCESS": "Question modifications submitted successfully."
 }
