@@ -262,38 +262,38 @@ export class CandidateUsersManagementPage implements OnInit {
     this.showAdvancedFilters.update((value) => !value);
   }
 
- clearFilters(): void {
-  const current = this.filters();
+  clearFilters(): void {
+    const current = this.filters();
 
-  this.filters.set({
-    pageNumber: 1,
-    pageSize: current.pageSize,
-    search: null,
-    isBlocked: null,
-    profileStatuses: null,
-    profileStatus: undefined,
-    year: undefined,
+    this.filters.set({
+      pageNumber: 1,
+      pageSize: current.pageSize,
+      search: null,
+      isBlocked: null,
+      profileStatuses: null,
+      profileStatus: undefined,
+      year: undefined,
 
-    // هذا نحافظ عليه لأنه scope الوصول،
-    // وليس فلتر UI عادي.
-    scope: current.scope,
-  });
+      // هذا نحافظ عليه لأنه scope الوصول،
+      // وليس فلتر UI عادي.
+      scope: current.scope,
+    });
 
-  this.searchChanges$.next('');
-  this.showAdvancedFilters.set(false);
+    this.searchChanges$.next('');
+    this.showAdvancedFilters.set(false);
 
-  void this.router.navigate([], {
-    relativeTo: this.route,
-    queryParams: {
-      profileStatus: null,
-      year: null,
-    },
-    queryParamsHandling: 'merge',
-    replaceUrl: true,
-  });
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        profileStatus: null,
+        year: null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
 
-  this.loadUsers(true);
-}
+    this.loadUsers(true);
+  }
 
   onPageChange(page: number): void {
     this.filters.update((f) => ({ ...f, pageNumber: page }));
