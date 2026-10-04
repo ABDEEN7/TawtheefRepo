@@ -10,4 +10,4 @@ public sealed record SubmitQuestionBankRequestReviewCommand(
 public sealed record QuestionReviewInput(
     Guid RequestItemId, Guid ReviewedRevisionId, Guid DecisionId, string? ReviewNote);
 
-public sealed record SubmitQuestionBankRequestReviewResult(bool ChangesRequired, int ReviewRound);
+public sealed record SubmitQuestionBankRequestReviewResult(bool ChangesRequired, bool Issued, int ReviewRound);

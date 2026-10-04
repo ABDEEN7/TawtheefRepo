@@ -131,7 +131,7 @@
                   [label]="'QUESTION_BANK_REQUESTS.VIEW' | translate"
                   (click)="view(r.id)"
                 ></button>
-                @if (r.statusId === QuestionBankRequestStatusIds.PendingReview) {
+                @if (r.canReview) {
                   <button
                     *hasPermission="Permissions.QuestionBankRequests.Review"
                     pButton

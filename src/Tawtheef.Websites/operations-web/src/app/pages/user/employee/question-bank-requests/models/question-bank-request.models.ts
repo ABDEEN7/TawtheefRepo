@@ -31,6 +31,7 @@ export interface QuestionBankRequestListItem {
   submittedByNameEn?: string;
   submittedAt: string;
   currentReviewRound: number;
+  canReview: boolean;
 }
 export interface CreateQuestionBankRequest {
   questionBankTypeId: string;
@@ -153,5 +154,6 @@ export interface QuestionReviewInput {
 }
 export interface SubmitQuestionBankReviewResult {
   changesRequired: boolean;
+  issued: boolean;
   reviewRound: number;
 }
