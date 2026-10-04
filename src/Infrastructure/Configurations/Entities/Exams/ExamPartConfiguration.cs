@@ -10,6 +10,9 @@ public class ExamPartConfiguration : BaseEntityConfiguration<ExamPart>
     {
         base.Configure(builder);
 
+        builder.Property(x => x.QualificationScore)
+            .HasPrecision(18, 2);
+
         builder.HasOne(x => x.Exam)
             .WithMany()
             .HasForeignKey(x => x.ExamId)

@@ -30,7 +30,9 @@ export class TestSessionSetupDialogComponent implements OnInit {
   readonly selectedCandidateCount = this.config.data.selectedCandidateCount;
   readonly initialSession = this.config.data.initialSession;
   from = this.normalizeTime(this.initialSession?.startTime ?? this.slot.startTime);
-  to = this.initialSession?.endTime ?? this.addMinutes(this.from, this.exam.durationMinutes);
+  to =
+    this.initialSession?.endTime ??
+    this.addMinutes(this.from, this.exam.durationMinutes + this.exam.minimumEntryWindowMinutes);
   added = signal(!!this.initialSession);
   readonly sessions = computed(() => (this.added() ? [true] : []));
   availableSeats = signal(this.initialSession?.availableCapacity ?? 0);
@@ -55,7 +57,10 @@ export class TestSessionSetupDialogComponent implements OnInit {
     this.validate();
   }
   onFromChanged(): void {
-    this.to = this.addMinutes(this.from, this.exam.durationMinutes);
+    this.to = this.addMinutes(
+      this.from,
+      this.exam.durationMinutes + this.exam.minimumEntryWindowMinutes,
+    );
     this.validate();
   }
   validate(): void {
@@ -65,7 +70,8 @@ export class TestSessionSetupDialogComponent implements OnInit {
       this.timeValue(this.from) < this.timeValue(this.slot.startTime) ||
       this.timeValue(this.to) > this.timeValue(this.slot.endTime) ||
       this.timeValue(this.to) <= this.timeValue(this.from) ||
-      this.minutes(this.from, this.to) < this.exam.durationMinutes
+      this.minutes(this.from, this.to) <
+        this.exam.durationMinutes + this.exam.minimumEntryWindowMinutes
     ) {
       this.validationPending.set(false);
       this.error.set('TEST_SESSION_WIZARD.SESSION_TIME_INVALID');

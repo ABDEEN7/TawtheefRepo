@@ -218,9 +218,9 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = -6261347,
+                            Id = -1050949868,
                             ClaimType = "permission",
-                            ClaimValue = "examWorkflowActions",
+                            ClaimValue = "exams.workflow-action",
                             RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
                         },
                         new
@@ -620,6 +620,27 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = -1900294407,
                             ClaimType = "permission",
                             ClaimValue = "rooms.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -1822399971,
+                            ClaimType = "permission",
+                            ClaimValue = "test-sessions.create",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -1786189931,
+                            ClaimType = "permission",
+                            ClaimValue = "test-sessions.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -599213015,
+                            ClaimType = "permission",
+                            ClaimValue = "test-sessions.workflow-action",
                             RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
                         },
                         new
@@ -2601,6 +2622,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnOrder(96);
 
                     b.Property<decimal>("WeightPercent")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -2739,6 +2761,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("QualificationScore")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TitleAr")
@@ -2798,12 +2821,14 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnOrder(98);
 
                     b.Property<decimal?>("EducationalScore")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("ExamResultReportId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("FinalScore")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("InvitationId")
@@ -2822,12 +2847,14 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("SkillsScore")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("SnapshotAt")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("SpecializedScore")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("TestAttemptId")
@@ -2919,6 +2946,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnOrder(99);
 
                     b.Property<decimal>("SpecializedQualificationThreshold")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("StatusId")
@@ -3465,8 +3493,15 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnOrder(98);
 
+                    b.Property<TimeOnly?>("EndTime")
+                        .HasColumnType("time");
+
                     b.Property<Guid>("ExamId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("GenderFilter")
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -3474,13 +3509,22 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasDefaultValue(false)
                         .HasColumnOrder(99);
 
-                    b.Property<int>("SessionNo")
-                        .HasColumnType("int");
+                    b.Property<string>("NationalityFilter")
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("SessionNo")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<TimeOnly?>("StartTime")
+                        .HasColumnType("time");
 
                     b.Property<Guid>("StatusId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TestSlotId")
+                    b.Property<Guid?>("TestSlotId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
@@ -3502,6 +3546,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("ExamId");
 
                     b.HasIndex("IsDeleted");
+
+                    b.HasIndex("SessionNo")
+                        .IsUnique();
 
                     b.HasIndex("StatusId");
 
@@ -13021,6 +13068,39 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "ملغاة",
                             NameEn = "Cancelled"
+                        },
+                        new
+                        {
+                            Id = new Guid("3ccad4ec-72a6-43bc-9299-050b399c7aa5"),
+                            BackendName = "PendingApproval",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 7,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "بانتظار الاعتماد",
+                            NameEn = "Pending Approval"
+                        },
+                        new
+                        {
+                            Id = new Guid("f44d7a03-9eaf-498c-a3ad-6b6810b4c2da"),
+                            BackendName = "Rejected",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 8,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مرفوضة",
+                            NameEn = "Rejected"
+                        },
+                        new
+                        {
+                            Id = new Guid("6c7b42ab-a356-47e6-93a1-a5e5a2dd09d4"),
+                            BackendName = "Returned",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 9,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معادة",
+                            NameEn = "Returned"
                         });
                 });
 
@@ -18345,8 +18425,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("46e7fb1a-7503-355f-8f83-016cfef177c1"),
-                            BackendName = "examWorkflowActions",
+                            Id = new Guid("a2e10097-67d8-dc5b-a79d-0f2d6d7c87bb"),
+                            BackendName = "exams.workflow-action",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 108,
                             IsActive = true,
@@ -18426,6 +18506,42 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "فترات الاختبار - إدارة الفترة",
                             NameEn = "Exam Periods - Manage Period"
+                        },
+                        new
+                        {
+                            Id = new Guid("764cb011-3839-0158-b863-8a0345721de6"),
+                            BackendName = "test-sessions.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 113,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "جلسات الاختبار - عرض",
+                            NameEn = "Test Sessions - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("b49b90e1-57b6-e150-9bdc-2b8edcf98bf3"),
+                            BackendName = "test-sessions.create",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 114,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "جلسات الاختبار - إنشاء",
+                            NameEn = "Test Sessions - Create"
+                        },
+                        new
+                        {
+                            Id = new Guid("8dd78700-f9aa-0050-9912-3ee1ca4917c0"),
+                            BackendName = "test-sessions.workflow-action",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 115,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "إجراءات سير عمل جلسات الاختبار",
+                            NameEn = "Test Sessions - Workflow Actions"
                         },
                         new
                         {
@@ -20797,8 +20913,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Exams.TestSlot", "TestSlot")
                         .WithMany()
                         .HasForeignKey("TestSlotId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()
@@ -20860,7 +20975,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Exams.TestSession", "TestSession")
-                        .WithMany()
+                        .WithMany("TestSessionCandidates")
                         .HasForeignKey("TestSessionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -25748,6 +25863,11 @@ namespace Tawtheef.Infrastructure.Migrations
             modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestAttemptPart", b =>
                 {
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSession", b =>
+                {
+                    b.Navigation("TestSessionCandidates");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSessionCandidate", b =>

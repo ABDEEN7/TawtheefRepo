@@ -10,6 +10,8 @@ public class CandidateExamConnectionConfiguration : IEntityTypeConfiguration<Can
     {
         builder.HasKey(x => x.ConnectionId);
 
+        builder.HasQueryFilter(x => !x.TestAttempt.IsDeleted);
+
         builder.Property(x => x.ConnectionId)
             .HasMaxLength(256);
 

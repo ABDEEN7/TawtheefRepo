@@ -121,14 +121,16 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   }
 
   private canAct(candidate: TestSlotCandidateListItemDto): boolean {
-    return (
-      this.data.isCurrentUserRoomHead &&
-      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
-      candidate.sessionStatusBackendName === 'InProgress' &&
-      candidate.candidateStatusBackendName === 'Assigned' &&
-      this.actingCandidateId() === null
-    );
-  }
+  return (
+    this.data.isCurrentUserRoomHead &&
+    this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
+    ['Approved', 'Ready', 'InProgress'].includes(
+      candidate.sessionStatusBackendName,
+    ) &&
+    candidate.candidateStatusBackendName === 'Assigned' &&
+    this.actingCandidateId() === null
+  );
+}
 
   canMarkPresent(candidate: TestSlotCandidateListItemDto): boolean {
     return this.canAct(candidate) && candidate.attendanceStatusBackendName === 'Pending';

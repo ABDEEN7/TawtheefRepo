@@ -10,6 +10,18 @@ public class ExamResultCandidateConfiguration : BaseEntityConfiguration<ExamResu
     {
         base.Configure(builder);
 
+        builder.Property(x => x.SpecializedScore)
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.EducationalScore)
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.SkillsScore)
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.FinalScore)
+            .HasPrecision(18, 2);
+
         builder.HasOne(x => x.ExamResultReport)
             .WithMany(x => x.Candidates)
             .HasForeignKey(x => x.ExamResultReportId)

@@ -10,6 +10,9 @@ public class ExamResultReportConfiguration : BaseEntityConfiguration<ExamResultR
     {
         base.Configure(builder);
 
+        builder.Property(x => x.SpecializedQualificationThreshold)
+            .HasPrecision(18, 2);
+
         builder.Property(x => x.DecisionNotes)
             .HasMaxLength(4000);
 

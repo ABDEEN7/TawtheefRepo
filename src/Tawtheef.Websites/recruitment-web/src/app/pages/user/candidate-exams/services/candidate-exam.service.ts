@@ -27,7 +27,11 @@ export class CandidateExamService {
   private readonly endpoints = inject(EndpointsService);
 
   getAssignments(): Observable<CandidateExamAssignment[]> {
-    return this.http.get<CandidateExamAssignment[]>(this.endpoints.candidateExams.list);
+    return this.http.get<CandidateExamAssignment[]>(this.endpoints.candidateExams.list, undefined, {
+      headers: new HttpHeaders({
+        'X-Skip-Loading': 'true',
+      }),
+    });
   }
 
   validateAccessCode(
