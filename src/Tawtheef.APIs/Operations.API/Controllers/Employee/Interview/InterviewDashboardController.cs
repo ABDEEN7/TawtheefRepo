@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure.Extensions;
 
-namespace Operations.API.Controllers.Interview;
+namespace Operations.API.Controllers.Employee.Interview;
 
 // Read-only. The endpoint gate is "holds any Interview permission whose data the dashboard shows";
 // what each caller actually sees is decided per section by InterviewDashboardAccessResolver.

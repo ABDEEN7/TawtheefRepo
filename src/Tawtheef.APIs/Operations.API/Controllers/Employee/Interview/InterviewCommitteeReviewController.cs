@@ -7,7 +7,7 @@ using Tawtheef.Application.Common.Security;
 using Tawtheef.Application.Features.Lookups.Queries;
 using Tawtheef.Infrastructure.Extensions;
 
-namespace Operations.API.Controllers.Interview;
+namespace Operations.API.Controllers.Employee.Interview;
 
 // Committee Head Review - the chair's step between result generation and Approve Interview Results.
 // The View permission opens the endpoints; the handlers restrict access to the schedule's own chair

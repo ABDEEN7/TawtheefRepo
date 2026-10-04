@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Infrastructure.Extensions;
 
-namespace Operations.API.Controllers.Interview;
+namespace Operations.API.Controllers.Employee.Interview;
 
 [Route("api/[controller]")]
 [ApiController]
