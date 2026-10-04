@@ -74,23 +74,27 @@
           <ng-template #body
             ><tr>
               <td>
-                <input
-                  type="time"
-                  class="form-control"
-                  [min]="normalizeTime(slot.startTime)"
-                  [max]="normalizeTime(slot.endTime)"
-                  [(ngModel)]="from"
-                  (ngModelChange)="onFromChanged()"
+                <p-datepicker
+                  inputId="test-session-start-time"
+                  class="w-100"
+                  [class.p-invalid]="error() === 'TEST_SESSION_WIZARD.SESSION_TIME_INVALID'"
+                  [ngModel]="fromPickerValue"
+                  (ngModelChange)="onFromPickerChanged($event)"
+                  [timeOnly]="true"
+                  hourFormat="12"
+                  appendTo="body"
                 />
               </td>
               <td>
-                <input
-                  type="time"
-                  class="form-control"
-                  [min]="normalizeTime(slot.startTime)"
-                  [max]="normalizeTime(slot.endTime)"
-                  [(ngModel)]="to"
-                  (ngModelChange)="validate()"
+                <p-datepicker
+                  inputId="test-session-end-time"
+                  class="w-100"
+                  [class.p-invalid]="error() === 'TEST_SESSION_WIZARD.SESSION_TIME_INVALID'"
+                  [ngModel]="toPickerValue"
+                  (ngModelChange)="onToPickerChanged($event)"
+                  [timeOnly]="true"
+                  hourFormat="12"
+                  appendTo="body"
                 />
               </td>
               <td>{{ availableSeats() }}</td>
