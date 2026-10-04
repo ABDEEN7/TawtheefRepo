@@ -12,6 +12,7 @@ import {hasMeaningfulRichContent} from '../../../../../shared/rich-content/rich-
 import {AssignmentOption, AssignmentQuestion, QuestionTypes,} from '../models/question-bank-assignment.models';
 import {QuestionBankAssignmentsService} from '../services/question-bank-assignments.service';
 
+
 @Component({
   selector: 'app-question-dialog',
   standalone: true,
