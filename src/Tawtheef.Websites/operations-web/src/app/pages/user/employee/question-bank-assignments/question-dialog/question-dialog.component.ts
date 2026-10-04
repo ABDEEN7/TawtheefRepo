@@ -11,6 +11,9 @@ import {startWith, Subscription} from 'rxjs';
 import {hasMeaningfulRichContent} from '../../../../../shared/rich-content/rich-content.utils';
 import {AssignmentOption, AssignmentQuestion, QuestionTypes,} from '../models/question-bank-assignment.models';
 import {QuestionBankAssignmentsService} from '../services/question-bank-assignments.service';
+import {RichContentEditorComponent} from '../../../../../shared/rich-content/rich-content-editor.component';
+import {RichContentInputComponent} from '../../../../../shared/rich-content/rich-content-input.component';
+
 
 
 @Component({
@@ -25,6 +28,8 @@ import {QuestionBankAssignmentsService} from '../services/question-bank-assignme
     InputTextModule,
     Select,
     Checkbox,
+    RichContentEditorComponent,
+    RichContentInputComponent,
 
   ],
 })
