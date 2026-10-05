@@ -66,8 +66,9 @@ namespace Application.Operation
                 services.RegisterJobManagementServices();
                 services.RegisterJobInvitationSummaryServices();
                 services.AddScoped<ExamService>();
-                services.RegisterInterviewServices();
+                services.AddScoped<TestSlotCandidateHallActionService>();
                 services.AddScoped<TestSessionNoShowService>();
+                services.RegisterInterviewServices();
             }
 
             private void RegisterEmployeeCommonServices()

@@ -1,5 +1,7 @@
 using Application.Recruitment.Features.CandidateExams.Models;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
@@ -9,7 +11,8 @@ namespace Application.Recruitment.Features.CandidateExams.Services;
 public sealed class CandidateExamResumeService(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
-    CandidateExamEntryValidationService entryValidation)
+    CandidateExamEntryValidationService entryValidation,
+    IApplicationLockService applicationLockService)
 {
     public Task<CandidateExamResumeResult?> ResumeAsync(Guid userId, Guid attemptId, string accessCode,
         Guid activeSessionId, CancellationToken cancellationToken) =>
@@ -25,8 +28,11 @@ public sealed class CandidateExamResumeService(
                 return null;
 
             // Lock order must stay Slot -> Attempt.
-            await AcquireTestSlotLockAsync(testSlotId.Value, token);
-            await AcquireAttemptLockAsync(attemptId, token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.CandidateExamTestSlot(testSlotId.Value), token);
+
+            await applicationLockService.AcquireExclusiveAsync(ApplicationLockResources.CandidateExamAttempt(attemptId),
+                token);
 
 
             var attempt = await unitOfWork.Context.Set<TestAttempt>()
@@ -127,10 +133,9 @@ public sealed class CandidateExamResumeService(
                 return null;
 
             var newDeadline = oldDeadline.Add(compensatedDuration);
-            part.EffectiveDeadlineAt = newDeadline;
-            part.StatusId = TestAttemptPartStatusIds.InProgress;
-            attempt.StatusId = TestAttemptStatusIds.InProgress;
-            attempt.ActiveSessionId = activeSessionId;
+
+            part.Resume(newDeadline);
+            attempt.Resume(activeSessionId);
             interruption.StatusId = TestAttemptInterruptionStatusIds.Resolved;
             interruption.ResolvedAt = resumeAt;
 
@@ -143,21 +148,4 @@ public sealed class CandidateExamResumeService(
             return new CandidateExamResumeResult(attemptId, part.Id, activeSessionId, newDeadline,
                 part.LastQuestionNo!.Value, currentPart.AllowPreviousQuestion, true);
         }, cancellationToken);
-    
-    private Task AcquireTestSlotLockAsync(
-        Guid testSlotId,
-        CancellationToken cancellationToken) =>
-        unitOfWork.Context.Database.ExecuteSqlRawAsync(
-            "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-            "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-            "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Candidate exam resume slot lock unavailable', 1;",
-            [$"Tawtheef.CandidateExam.TestSlot.{testSlotId}"],
-            cancellationToken);
-
-    private Task AcquireAttemptLockAsync(Guid attemptId, CancellationToken cancellationToken) =>
-        unitOfWork.Context.Database.ExecuteSqlRawAsync(
-            "DECLARE @result int; EXEC @result = sys.sp_getapplock "
-            + "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', "
-            + "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Candidate exam resume lock unavailable', 1;",
-            [$"Tawtheef.CandidateExam.Attempt.{attemptId}"], cancellationToken);
 }

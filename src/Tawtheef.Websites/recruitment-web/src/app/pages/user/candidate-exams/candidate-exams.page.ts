@@ -7,15 +7,15 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { LanguageService } from '../../../core/services/language.service';
 import { routes } from '../../../routes/routes';
 import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
-import { CandidateExamAccessCodeDialogComponent } from './dialogs/candidate-exam-access-code.dialog';
-import { CandidateExamResumeDialogComponent } from './dialogs/candidate-exam-resume.dialog';
+import { CandidateExamAccessCodeDialogComponent } from './dialogs/candidate-exam-access-code/candidate-exam-access-code.dialog';
+import { CandidateExamResumeDialogComponent } from './dialogs/candidate-exam-resume/candidate-exam-resume.dialog';
 import { CandidateExamAssignment, CandidateExamEntryState } from './models/candidate-exam.model';
 import { CandidateExamService } from './services/candidate-exam.service';
 import { CandidateExamSessionService } from './services/candidate-exam-session.service';
 import { CandidateExamPendingStartService } from './services/candidate-exam-pending-start.service';
 import { CandidateExamPendingResumeService } from './services/candidate-exam-pending-resume.service';
 
-type CandidateExamStatusTone = 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+type CandidateExamStatusTone = 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'secondary';
 
 interface CandidateExamStatusPresentation {
   readonly labelKey: string;
@@ -131,16 +131,20 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
   }
 
   statusPresentation(assignment: CandidateExamAssignment): CandidateExamStatusPresentation {
-    if (assignment.entryState !== 'Started') {
-      return ENTRY_STATE_PRESENTATION[assignment.entryState];
-    }
-
-    if (assignment.attemptStatus?.backendName === 'Interrupted') {
-      return { labelKey: 'candidate_exams.states.interrupted', tone: 'warning' };
-    }
-
-    return ENTRY_STATE_PRESENTATION.Started;
+  if (assignment.slotStatus.backendName === 'Closed') {
+    return { labelKey: 'candidate_exams.states.closed', tone: 'secondary' };
   }
+
+  if (assignment.entryState !== 'Started') {
+    return ENTRY_STATE_PRESENTATION[assignment.entryState];
+  }
+
+  if (assignment.attemptStatus?.backendName === 'Interrupted') {
+    return { labelKey: 'candidate_exams.states.interrupted', tone: 'warning' };
+  }
+
+  return ENTRY_STATE_PRESENTATION.Started;
+}
 
   canEnterExam(assignment: CandidateExamAssignment): boolean {
     return assignment.entryState === 'ReadyToEnter';
@@ -170,6 +174,7 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
   canRecoverResume(assignment: CandidateExamAssignment): boolean {
     return (
       assignment.entryState === 'Started' &&
+      assignment.slotStatus.backendName === 'Started' &&
       assignment.attemptStatus?.backendName === 'InProgress' &&
       assignment.testAttemptId !== null &&
       this.pendingResume.get(assignment.testAttemptId) !== null
@@ -179,6 +184,7 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
   canResumeExam(assignment: CandidateExamAssignment): boolean {
     return (
       assignment.entryState === 'Started' &&
+      assignment.slotStatus.backendName === 'Started' &&
       assignment.attemptStatus?.backendName === 'Interrupted' &&
       assignment.resumeAuthorized &&
       assignment.testAttemptId !== null

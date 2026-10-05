@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Entities.Exams;
@@ -10,7 +12,8 @@ namespace Application.Recruitment.Features.CandidateExams.Services;
 public sealed class CandidateExamInterruptionService(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
-    IOptions<CandidateExamRealtimeSettings> options)
+    IOptions<CandidateExamRealtimeSettings> options,
+    IApplicationLockService applicationLockService)
 {
     private const string ConnectionLostReason = "Candidate realtime connection lost";
     private readonly CandidateExamRealtimeSettings _settings = options.Value;
@@ -69,7 +72,8 @@ public sealed class CandidateExamInterruptionService(
     private Task<bool> TryInterruptCoreAsync(Guid attemptId, Guid? userId, CancellationToken cancellationToken) =>
         unitOfWork.ExecuteInTransactionAsync(async token =>
         {
-            await AcquireAttemptLockAsync(attemptId, token);
+            await applicationLockService.AcquireExclusiveAsync(ApplicationLockResources.CandidateExamAttempt(attemptId),
+                token);
 
             var attempt = await unitOfWork.Context.Set<TestAttempt>()
                 .Where(x => x.Id == attemptId && x.StatusId == TestAttemptStatusIds.InProgress
@@ -154,9 +158,8 @@ public sealed class CandidateExamInterruptionService(
             if (hasOpenInterruption)
                 return false;
 
-            attempt.StatusId = TestAttemptStatusIds.Interrupted;
-            attempt.ActiveSessionId = null;
-            activeParts[0].StatusId = TestAttemptPartStatusIds.Interrupted;
+            attempt.Interrupt();
+            activeParts[0].Interrupt();
 
             await unitOfWork.Context.Set<TestAttemptInterruption>()
                 .AddAsync(
@@ -177,11 +180,4 @@ public sealed class CandidateExamInterruptionService(
 
             return true;
         }, cancellationToken);
-
-    private Task AcquireAttemptLockAsync(Guid attemptId, CancellationToken cancellationToken) =>
-        unitOfWork.Context.Database.ExecuteSqlRawAsync(
-            "DECLARE @result int; EXEC @result = sys.sp_getapplock "
-            + "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', "
-            + "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Candidate exam interruption lock unavailable', 1;",
-            [$"Tawtheef.CandidateExam.Attempt.{attemptId}"], cancellationToken);
 }

@@ -6,13 +6,13 @@ import { firstValueFrom } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InputText } from 'primeng/inputtext';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { routes } from '../../../../routes/routes';
-import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
-import { CandidateExamRealtimeService } from '../services/candidate-exam-realtime.service';
-import { CandidateExamService } from '../services/candidate-exam.service';
-import { CandidateExamSessionService } from '../services/candidate-exam-session.service';
-import { CandidateExamPendingStartService } from '../services/candidate-exam-pending-start.service';
-import { StartCandidateExamResponse } from '../models/candidate-exam.model';
+import { routes } from '../../../../../routes/routes';
+import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
+import { CandidateExamRealtimeService } from '../../services/candidate-exam-realtime.service';
+import { CandidateExamService } from '../../services/candidate-exam.service';
+import { CandidateExamSessionService } from '../../services/candidate-exam-session.service';
+import { CandidateExamPendingStartService } from '../../services/candidate-exam-pending-start.service';
+import { StartCandidateExamResponse } from '../../models/candidate-exam.model';
 
 interface CandidateExamAccessCodeDialogData {
   readonly testSessionCandidateId: string;

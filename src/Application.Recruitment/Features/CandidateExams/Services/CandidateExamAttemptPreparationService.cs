@@ -1,6 +1,8 @@
 using Application.Recruitment.Features.CandidateExams.DTOs;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
@@ -8,7 +10,9 @@ using Tawtheef.Domain.Entities.Lookups;
 
 namespace Application.Recruitment.Features.CandidateExams.Services;
 
-public sealed class CandidateExamAttemptPreparationService(IUnitOfWork unitOfWork)
+public sealed class CandidateExamAttemptPreparationService(
+    IUnitOfWork unitOfWork,
+    IApplicationLockService applicationLockService)
 {
     public Task<IResult<CandidateExamAttemptPreparationResult>> PrepareAsync(
         Guid testSessionCandidateId,
@@ -16,17 +20,14 @@ public sealed class CandidateExamAttemptPreparationService(IUnitOfWork unitOfWor
         CancellationToken cancellationToken) =>
         unitOfWork.ExecuteInTransactionAsync<IResult<CandidateExamAttemptPreparationResult>>(async token =>
         {
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-                "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Candidate exam slot preparation lock unavailable', 1;",
-                [$"Tawtheef.CandidateExam.TestSlot.{testSlotId}"], token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.CandidateExamTestSlot(testSlotId),
+                token);
 
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-                "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Candidate exam attempt lock unavailable', 1;",
-                [$"Tawtheef.CandidateExam.TestSessionCandidate.{testSessionCandidateId}"], token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.CandidateExamTestSessionCandidate(
+                    testSessionCandidateId),
+                token);
 
             var examId = await unitOfWork.Context.Set<TestSessionCandidate>()
                 .AsNoTracking()

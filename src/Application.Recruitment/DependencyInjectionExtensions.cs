@@ -22,6 +22,9 @@ namespace Application.Recruitment
                 services.AddValidatorsFromAssembly(typeof(RecruitmentAssemblyMarker).Assembly);
                 services.AddScoped<CandidateExamEntryValidationService>();
                 services.AddScoped<CandidateExamExecutionMutationService>();
+                services.AddScoped<CandidateExamExecutionStateService>();
+                services.AddScoped<CandidateExamPartTransitionContextService>();
+                services.AddScoped<CandidateExamExecutionMutationService>();
                 services.AddScoped<CandidateExamAttemptPreparationService>();
                 services.AddScoped<CandidateExamQuestionGenerationService>();
                 services.AddScoped<CandidateExamConnectionService>();

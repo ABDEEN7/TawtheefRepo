@@ -1,9 +1,12 @@
+using Application.Recruitment.Features.CandidateExams.Common;
 using Application.Recruitment.Features.CandidateExams.DTOs;
 using Application.Recruitment.Features.CandidateExams.Models;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
 using Tawtheef.Application.Common.Constants;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
@@ -15,31 +18,40 @@ namespace Application.Recruitment.Features.CandidateExams.Services;
 public sealed class CandidateExamExecutionMutationService(
     IUnitOfWork unitOfWork,
     TimeProvider timeProvider,
-    CandidateExamScoringService scoringService)
+    CandidateExamScoringService scoringService,
+    IApplicationLockService applicationLockService,
+    CandidateExamExecutionStateService executionStateService,
+    CandidateExamPartTransitionContextService transitionContextService)
 {
     public async Task<IResult<SaveCandidateExamAnswerResponse>> SaveAnswerAsync(Guid userId, Guid attemptId,
-        Guid activeSessionId,
-        Guid attemptQuestionId, Guid selectedOptionId, CancellationToken cancellationToken)
+        Guid activeSessionId, Guid attemptQuestionId, Guid selectedOptionId, CancellationToken cancellationToken)
     {
         if (!await AttemptIsOwnedAsync(userId, attemptId, activeSessionId, cancellationToken))
-            return Failure<SaveCandidateExamAnswerResponse>(
-                ErrorsCodes.CandidateExamAttemptNotFound, StatusCodes.Status404NotFound);
+            return Failure<SaveCandidateExamAnswerResponse>(ErrorsCodes.CandidateExamAttemptNotFound,
+                StatusCodes.Status404NotFound);
 
         return await unitOfWork.ExecuteInTransactionAsync<IResult<SaveCandidateExamAnswerResponse>>(async token =>
         {
-            await AcquireAttemptLockAsync(attemptId, token);
-            var loaded = await LoadCurrentStateAsync(userId, attemptId, activeSessionId, token);
-            if (loaded.State is null) return Failure<SaveCandidateExamAnswerResponse>(loaded.Error!);
-            var state = loaded.State;
+            await applicationLockService.AcquireExclusiveAsync(ApplicationLockResources.CandidateExamAttempt(attemptId),
+                token);
+            var stateResult = await executionStateService.LoadCurrentAsync(userId, attemptId, activeSessionId, token);
+
+            if (stateResult.IsFailed)
+            {
+                return Result.Fail<SaveCandidateExamAnswerResponse>(stateResult.Errors);
+            }
+
+            var state = stateResult.Value;
             var now = timeProvider.GetUtcNow().UtcDateTime;
             if (now >= state.Part.EffectiveDeadlineAt!.Value)
                 return Failure<SaveCandidateExamAnswerResponse>(ErrorsCodes.CandidateExamPartTimeExpired);
             if (state.Question.Id != attemptQuestionId)
                 return Failure<SaveCandidateExamAnswerResponse>(ErrorsCodes.CandidateExamCurrentQuestionInvalid);
 
-            var optionIsValid = await unitOfWork.Context.Set<QuestionRevisionOption>().AsNoTracking()
-                .AnyAsync(x => x.Id == selectedOptionId &&
-                               x.QuestionRevisionId == state.Question.QuestionRevisionId, token);
+            var optionIsValid = await unitOfWork.Context.Set<QuestionRevisionOption>()
+                .AsNoTracking()
+                .AnyAsync(x => x.Id == selectedOptionId && x.QuestionRevisionId == state.Question.QuestionRevisionId,
+                    token);
             if (!optionIsValid)
                 return Failure<SaveCandidateExamAnswerResponse>(ErrorsCodes.CandidateExamInvalidQuestionOption);
 
@@ -59,19 +71,24 @@ public sealed class CandidateExamExecutionMutationService(
     }
 
     public async Task<IResult<NavigateCandidateExamResponse>> NavigateAsync(Guid userId, Guid attemptId,
-        Guid activeSessionId,
-        int targetQuestionNumber, CancellationToken cancellationToken)
+        Guid activeSessionId, int targetQuestionNumber, CancellationToken cancellationToken)
     {
         if (!await AttemptIsOwnedAsync(userId, attemptId, activeSessionId, cancellationToken))
-            return Failure<NavigateCandidateExamResponse>(
-                ErrorsCodes.CandidateExamAttemptNotFound, StatusCodes.Status404NotFound);
+            return Failure<NavigateCandidateExamResponse>(ErrorsCodes.CandidateExamAttemptNotFound,
+                StatusCodes.Status404NotFound);
 
         return await unitOfWork.ExecuteInTransactionAsync<IResult<NavigateCandidateExamResponse>>(async token =>
         {
-            await AcquireAttemptLockAsync(attemptId, token);
-            var loaded = await LoadCurrentStateAsync(userId, attemptId, activeSessionId, token);
-            if (loaded.State is null) return Failure<NavigateCandidateExamResponse>(loaded.Error!);
-            var state = loaded.State;
+            await applicationLockService.AcquireExclusiveAsync(ApplicationLockResources.CandidateExamAttempt(attemptId),
+                token);
+            var stateResult = await executionStateService.LoadCurrentAsync(userId, attemptId, activeSessionId, token);
+
+            if (stateResult.IsFailed)
+            {
+                return Result.Fail<NavigateCandidateExamResponse>(stateResult.Errors);
+            }
+
+            var state = stateResult.Value;
             var now = timeProvider.GetUtcNow().UtcDateTime;
             if (now >= state.Part.EffectiveDeadlineAt!.Value)
                 return Failure<NavigateCandidateExamResponse>(ErrorsCodes.CandidateExamPartTimeExpired);
@@ -81,8 +98,8 @@ public sealed class CandidateExamExecutionMutationService(
                 return NavigationResult(state, false);
             if (targetQuestionNumber == current + 1 && current == state.TotalQuestions)
                 return Failure<NavigateCandidateExamResponse>(ErrorsCodes.CandidateExamNoNextQuestion);
-            if (targetQuestionNumber < 1 || targetQuestionNumber > state.TotalQuestions ||
-                Math.Abs(targetQuestionNumber - current) != 1)
+            if (targetQuestionNumber < 1 || targetQuestionNumber > state.TotalQuestions
+                                         || Math.Abs(targetQuestionNumber - current) != 1)
                 return Failure<NavigateCandidateExamResponse>(ErrorsCodes.CandidateExamInvalidNavigationTarget);
 
             if (targetQuestionNumber == current - 1 && !state.AllowPreviousQuestion)
@@ -94,101 +111,61 @@ public sealed class CandidateExamExecutionMutationService(
         }, cancellationToken);
     }
 
-    public async Task<IResult<SubmitCandidateExamPartResponse>> SubmitPartAsync(
-        Guid userId,
-        Guid attemptId,
-        Guid activeSessionId,
-        Guid requestedPartId,
-        CancellationToken cancellationToken)
+    public async Task<IResult<SubmitCandidateExamPartResponse>> SubmitPartAsync(Guid userId, Guid attemptId,
+        Guid activeSessionId, Guid requestedPartId, CancellationToken cancellationToken)
     {
         if (!await AttemptBelongsToApplicantAsync(userId, attemptId, cancellationToken))
         {
-            return Failure<SubmitCandidateExamPartResponse>(
-                ErrorsCodes.CandidateExamAttemptNotFound,
+            return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamAttemptNotFound,
                 StatusCodes.Status404NotFound);
         }
 
-        return await unitOfWork.ExecuteInTransactionAsync<
-            IResult<SubmitCandidateExamPartResponse>>(async token =>
+        return await unitOfWork.ExecuteInTransactionAsync<IResult<SubmitCandidateExamPartResponse>>(async token =>
         {
-            await AcquireAttemptLockAsync(attemptId, token);
+            await applicationLockService.AcquireExclusiveAsync(ApplicationLockResources.CandidateExamAttempt(attemptId),
+                token);
 
-            var attempt = await unitOfWork.Context.Set<TestAttempt>()
-                .Include(x => x.TestSessionCandidate)
-                .ThenInclude(x => x!.TestSession)
-                .ThenInclude(x => x!.TestSlot)
-                .Include(x => x.TestSessionCandidate)
-                .ThenInclude(x => x!.TestSession)
-                .ThenInclude(x => x!.Exam)
-                .Where(x =>
-                    x.Id == attemptId &&
-                    x.TestSessionCandidate!.Invitation!.ApplicantId == userId)
-                .SingleOrDefaultAsync(token);
+            var contextResult = await transitionContextService.LoadAsync(userId, attemptId, requestedPartId, token);
 
-            if (attempt is null)
+            if (contextResult.IsFailed)
             {
-                return Failure<SubmitCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamAttemptNotFound,
-                    StatusCodes.Status404NotFound);
+                return Result.Fail<SubmitCandidateExamPartResponse>(contextResult.Errors);
             }
 
-            var activeSessionMatches = attempt.ActiveSessionId == activeSessionId;
-            var terminalReplay = attempt.ActiveSessionId is null &&
-                (attempt.StatusId == TestAttemptStatusIds.Completed ||
-                 attempt.StatusId == TestAttemptStatusIds.TimedOut) &&
-                attempt.TestSessionCandidate!.StatusId == TestSessionCandidateStatusIds.Completed;
-            if (!activeSessionMatches && !terminalReplay)
+            var context = contextResult.Value;
+
+            var attempt = context.Attempt;
+            var candidate = context.Candidate;
+            var requested = context.Requested;
+            var next = context.Next;
+            var requestedIndex = context.RequestedIndex;
+
+            var activeSessionMatches = context.ActiveSessionMatches(activeSessionId);
+
+            if (!activeSessionMatches && !context.IsTerminalReplay)
             {
                 return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamActiveSessionInvalid);
             }
-
-            var candidate = attempt.TestSessionCandidate!;
-            var session = candidate.TestSession!;
-            var slot = session.TestSlot!;
-            var exam = session.Exam!;
-
-            var parts = await unitOfWork.Context.Set<TestAttemptPart>()
-                .Where(x => x.TestAttemptId == attemptId)
-                .OrderBy(x => x.ExamPart!.PartNo)
-                .Select(x => new CandidateExamPartTransitionData(
-                    x,
-                    x.ExamPart!.PartNo,
-                    x.ExamPart.DurationMinutes,
-                    x.ExamPart.QualificationScore))
-                .ToListAsync(token);
-
-            var requestedIndex = parts.FindIndex(x => x.Part.Id == requestedPartId);
-
-            if (requestedIndex < 0)
-            {
-                return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartNotCurrent,
-                    StatusCodes.Status404NotFound);
-            }
-
-            var requested = parts[requestedIndex];
-
-            CandidateExamPartTransitionData? next = requestedIndex + 1 < parts.Count
-                ? parts[requestedIndex + 1]
-                : null;
 
             if (!activeSessionMatches)
             {
                 if (requested.Part.StatusId != TestAttemptPartStatusIds.Completed)
                     return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamActiveSessionInvalid);
-                return await ExistingCompleteResult(attempt, candidate, requested, next,
-                    exam.AllowPreviousQuestion, token);
+                return await ExistingCompleteResult(attempt, candidate, requested, next, context.AllowPreviousQuestion,
+                    token);
             }
 
             // Idempotency must be checked before current attempt/session/deadline checks.
             if (requested.Part.StatusId == TestAttemptPartStatusIds.Completed)
             {
-                return await ExistingCompleteResult(attempt, candidate, requested, next, exam.AllowPreviousQuestion,
+                return await ExistingCompleteResult(attempt, candidate, requested, next, context.AllowPreviousQuestion,
                     token);
             }
 
             if (attempt.StatusId != TestAttemptStatusIds.InProgress)
             {
-                return Failure<SubmitCandidateExamPartResponse>(AttemptStateError(attempt.StatusId));
+                return Failure<SubmitCandidateExamPartResponse>(CandidateExamAttemptStatusErrors.Resolve(
+                    attempt.StatusId));
             }
 
             if (candidate.StatusId != TestSessionCandidateStatusIds.Started)
@@ -196,25 +173,22 @@ public sealed class CandidateExamExecutionMutationService(
                 return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamCurrentStateInvalid);
             }
 
-            if (slot.StatusId != TestSlotStatusIds.Started)
+            if (context.SlotStatusId != TestSlotStatusIds.Started)
             {
                 return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamSlotNotRunning);
             }
 
-            if (session.StatusId != TestSessionStatusIds.InProgress)
+            if (context.SessionStatusId != TestSessionStatusIds.InProgress)
             {
                 return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamSessionNotRunning);
             }
 
-            var runningParts = parts.Where(x =>
-                x.Part.StatusId == TestAttemptPartStatusIds.InProgress).ToList();
-
-            if (runningParts.Count != 1 || runningParts[0].Part.Id != requestedPartId)
+            if (!context.IsRequestedPartTheOnlyRunningPart())
             {
                 return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartNotCurrent);
             }
 
-            if (!HasValidRunningState(requested.Part))
+            if (!requested.Part.HasValidRunningState)
             {
                 return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartTransitionStateInvalid);
             }
@@ -235,57 +209,28 @@ public sealed class CandidateExamExecutionMutationService(
 
             if (requestedIndex == 0)
             {
-                var score = await scoringService.CalculatePartScoreAsync(
-                    attemptId,
-                    requested.Part.Id,
-                    token);
+                var score = await scoringService.CalculatePartScoreAsync(attemptId, requested.Part.Id, token);
 
-                if (!score.HasValue)
-                {
-                    return Failure<SubmitCandidateExamPartResponse>(
-                        ErrorsCodes.CandidateExamConfigurationInvalid);
-                }
-
-                requested.Part.StatusId = TestAttemptPartStatusIds.Completed;
-                requested.Part.CompletedAt = transitionTimeUtc;
-
-                if (!requested.QualificationScore.HasValue)
+                if (!score.HasValue || !requested.QualificationScore.HasValue)
                 {
                     return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamConfigurationInvalid);
                 }
 
                 var passed = score.Value >= requested.QualificationScore.Value;
 
+                requested.Part.Complete(transitionTimeUtc);
+
                 if (!passed)
                 {
-                    requested.Part.StatusId = TestAttemptPartStatusIds.Completed;
-                    requested.Part.CompletedAt = transitionTimeUtc;
-                    
-                    attempt.StatusId = TestAttemptStatusIds.Completed;
-                    attempt.CompletedAt = transitionTimeUtc;
-                    attempt.ActiveSessionId = null;
-                    candidate.StatusId = TestSessionCandidateStatusIds.Completed;
-
-                    await unitOfWork.Context
-                        .Set<CandidateExamConnection>()
-                        .Where(x => x.TestAttemptId == attemptId)
-                        .ExecuteDeleteAsync(token);
+                    await CompleteAttemptAsync(attempt, candidate, transitionTimeUtc, token);
 
                     await unitOfWork.SaveChangesAsync(token);
 
-                    return CompleteResult(
-                        attemptId,
-                        requested,
-                        CandidateExamSubmissionOutcomes.Failed,
-                        null,
-                        null,
-                        attempt.StatusId,
-                        true,
-                        exam.AllowPreviousQuestion,
-                        true);
+                    return CompleteResult(attemptId, requested, CandidateExamSubmissionOutcomes.Failed, null, null,
+                        attempt.StatusId, true, context.AllowPreviousQuestion, true);
                 }
 
-                if (next is null || !IsCompletelyNotStarted(next.Part))
+                if (next is null || !next.Part.IsCompletelyNotStarted)
                 {
                     return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamNextPartStateInvalid);
                 }
@@ -303,798 +248,412 @@ public sealed class CandidateExamExecutionMutationService(
                 }
 
                 // Part 2 starts immediately at the same transition time.
-                next.Part.StatusId =
-                    TestAttemptPartStatusIds.InProgress;
-
-                next.Part.StartedAt = transitionTimeUtc;
-
-                next.Part.DurationMinutesSnapshot =
-                    next.DurationMinutes;
-
-                next.Part.EffectiveDeadlineAt =
-                    transitionTimeUtc.AddMinutes(
-                        next.DurationMinutes);
-
-                next.Part.LastQuestionNo = 1;
+                next.Part.Start(transitionTimeUtc, next.DurationMinutes);
 
                 await unitOfWork.SaveChangesAsync(token);
 
-                return CompleteResult(
-                    attemptId,
-                    requested,
-                    CandidateExamSubmissionOutcomes.Passed,
-                    next,
-                    nextQuestionCount.Value,
-                    attempt.StatusId,
-                    false,
-                    exam.AllowPreviousQuestion,
-                    true);
+                return CompleteResult(attemptId, requested, CandidateExamSubmissionOutcomes.Passed, next,
+                    nextQuestionCount.Value, attempt.StatusId, false, context.AllowPreviousQuestion, true);
             }
 
             // PART 2 must be the final part.
             if (requestedIndex != 1 || next is not null)
             {
-                return Failure<SubmitCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamConfigurationInvalid);
+                return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamConfigurationInvalid);
             }
 
             // PART 2: no candidate-facing qualification result.
-            requested.Part.StatusId = TestAttemptPartStatusIds.Completed;
-            requested.Part.CompletedAt = transitionTimeUtc;
+            requested.Part.Complete(transitionTimeUtc);
 
-            attempt.StatusId =
-                TestAttemptStatusIds.Completed;
-
-            attempt.CompletedAt = transitionTimeUtc;
-            attempt.ActiveSessionId = null;
-
-            candidate.StatusId =
-                TestSessionCandidateStatusIds.Completed;
-
-            await unitOfWork.Context
-                .Set<CandidateExamConnection>()
-                .Where(x => x.TestAttemptId == attemptId)
-                .ExecuteDeleteAsync(token);
+            await CompleteAttemptAsync(attempt, candidate, transitionTimeUtc, token);
 
             await unitOfWork.SaveChangesAsync(token);
 
-            return CompleteResult(
-                attemptId,
-                requested,
-                CandidateExamSubmissionOutcomes.Completed,
-                null,
-                null,
-                attempt.StatusId,
-                true,
-                exam.AllowPreviousQuestion,
-                true);
+            return CompleteResult(attemptId, requested, CandidateExamSubmissionOutcomes.Completed, null, null,
+                attempt.StatusId, true, context.AllowPreviousQuestion, true);
         }, cancellationToken);
     }
 
-    public async Task<IResult<TimeoutCandidateExamPartResponse>> TimeoutPartAsync(
-        Guid userId,
-        Guid attemptId,
-        Guid activeSessionId,
-        Guid requestedPartId,
-        CancellationToken cancellationToken)
+    public async Task<IResult<TimeoutCandidateExamPartResponse>> TimeoutPartAsync(Guid userId, Guid attemptId,
+        Guid activeSessionId, Guid requestedPartId, CancellationToken cancellationToken)
     {
-        if (!await AttemptBelongsToApplicantAsync(
-                userId,
-                attemptId,
-                cancellationToken))
+        if (!await AttemptBelongsToApplicantAsync(userId, attemptId, cancellationToken))
         {
-            return Failure<TimeoutCandidateExamPartResponse>(
-                ErrorsCodes.CandidateExamAttemptNotFound,
+            return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamAttemptNotFound,
                 StatusCodes.Status404NotFound);
         }
 
-        return await unitOfWork.ExecuteInTransactionAsync<
-            IResult<TimeoutCandidateExamPartResponse>>(async token =>
+        return await unitOfWork.ExecuteInTransactionAsync<IResult<TimeoutCandidateExamPartResponse>>(async token =>
         {
-            await AcquireAttemptLockAsync(attemptId, token);
+            await applicationLockService.AcquireExclusiveAsync(ApplicationLockResources.CandidateExamAttempt(attemptId),
+                token);
 
-            var attempt = await unitOfWork.Context.Set<TestAttempt>()
-                .Where(x =>
-                    x.Id == attemptId &&
-                    x.TestSessionCandidate!.Invitation!.ApplicantId == userId)
-                .Select(x => new
-                {
-                    Attempt = x,
-                    x.ActiveSessionId,
-                    Candidate = x.TestSessionCandidate!,
-                    SessionStatusId =
-                        x.TestSessionCandidate!.TestSession!.StatusId,
-                    SlotStatusId =
-                        x.TestSessionCandidate.TestSession.TestSlot!.StatusId
-                })
-                .SingleOrDefaultAsync(token);
+            var contextResult = await transitionContextService.LoadAsync(userId, attemptId, requestedPartId, token);
 
-            if (attempt is null)
+            if (contextResult.IsFailed)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamAttemptNotFound,
-                    StatusCodes.Status404NotFound);
+                return Result.Fail<TimeoutCandidateExamPartResponse>(contextResult.Errors);
             }
 
-            var activeSessionMatches = attempt.ActiveSessionId == activeSessionId;
-            var terminalReplay = attempt.ActiveSessionId is null &&
-                (attempt.Attempt.StatusId == TestAttemptStatusIds.Completed ||
-                 attempt.Attempt.StatusId == TestAttemptStatusIds.TimedOut) &&
-                attempt.Candidate.StatusId == TestSessionCandidateStatusIds.Completed;
-            if (!activeSessionMatches && !terminalReplay)
+            var context = contextResult.Value;
+
+            var attempt = context.Attempt;
+            var candidate = context.Candidate;
+            var requested = context.Requested;
+            var next = context.Next;
+            var requestedIndex = context.RequestedIndex;
+
+            var activeSessionMatches = context.ActiveSessionMatches(activeSessionId);
+
+            if (!activeSessionMatches && !context.IsTerminalReplay)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamActiveSessionInvalid);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamActiveSessionInvalid);
             }
-
-            var parts = await unitOfWork.Context.Set<TestAttemptPart>()
-                .Where(x => x.TestAttemptId == attemptId)
-                .OrderBy(x => x.ExamPart!.PartNo)
-                .Select(x => new CandidateExamPartTransitionData(
-                    x,
-                    x.ExamPart!.PartNo,
-                    x.ExamPart.DurationMinutes,
-                    x.ExamPart.QualificationScore))
-                .ToListAsync(token);
-
-            var requestedIndex =
-                parts.FindIndex(x => x.Part.Id == requestedPartId);
-
-            if (requestedIndex < 0)
-            {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamPartNotCurrent,
-                    StatusCodes.Status404NotFound);
-            }
-
-            var requested = parts[requestedIndex];
-
-            CandidateExamPartTransitionData? next =
-                requestedIndex + 1 < parts.Count
-                    ? parts[requestedIndex + 1]
-                    : null;
 
             if (!activeSessionMatches)
             {
                 if (requested.Part.StatusId != TestAttemptPartStatusIds.TimedOut)
                     return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamActiveSessionInvalid);
-                return await ExistingTimeoutResult(attempt.Attempt, attempt.Candidate,
-                    requested, next, token);
+                return await ExistingTimeoutResult(attempt, candidate, requested, next, token);
             }
 
             // Idempotency first.
-            if (requested.Part.StatusId ==
-                TestAttemptPartStatusIds.TimedOut)
+            if (requested.Part.StatusId == TestAttemptPartStatusIds.TimedOut)
             {
-                return await ExistingTimeoutResult(
-                    attempt.Attempt,
-                    attempt.Candidate,
-                    requested,
-                    next,
-                    token);
+                return await ExistingTimeoutResult(attempt, candidate, requested, next, token);
             }
 
-            if (requested.Part.StatusId ==
-                TestAttemptPartStatusIds.Completed)
+            if (requested.Part.StatusId == TestAttemptPartStatusIds.Completed)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamPartAlreadyCompleted);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartAlreadyCompleted);
             }
 
-            if (attempt.Attempt.StatusId ==
-                TestAttemptStatusIds.Interrupted ||
-                requested.Part.StatusId ==
-                TestAttemptPartStatusIds.Interrupted)
+            if (attempt.StatusId == TestAttemptStatusIds.Interrupted
+                || requested.Part.StatusId == TestAttemptPartStatusIds.Interrupted)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamAttemptInterrupted);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamAttemptInterrupted);
             }
 
-            if (attempt.Attempt.StatusId !=
-                TestAttemptStatusIds.InProgress)
+            if (attempt.StatusId != TestAttemptStatusIds.InProgress)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    AttemptStateError(attempt.Attempt.StatusId));
+                return Failure<TimeoutCandidateExamPartResponse>(CandidateExamAttemptStatusErrors.Resolve(
+                    attempt.StatusId));
             }
 
-            if (attempt.Candidate.StatusId !=
-                TestSessionCandidateStatusIds.Started)
+            if (candidate.StatusId != TestSessionCandidateStatusIds.Started)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamCurrentStateInvalid);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamCurrentStateInvalid);
             }
 
-            if (attempt.SlotStatusId != TestSlotStatusIds.Started)
+            if (context.SlotStatusId != TestSlotStatusIds.Started)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamSlotNotRunning);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamSlotNotRunning);
             }
 
-            if (attempt.SessionStatusId !=
-                TestSessionStatusIds.InProgress)
+            if (context.SessionStatusId != TestSessionStatusIds.InProgress)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamSessionNotRunning);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamSessionNotRunning);
             }
 
-            var runningParts = parts
-                .Where(x =>
-                    x.Part.StatusId ==
-                    TestAttemptPartStatusIds.InProgress)
-                .ToList();
-
-            if (runningParts.Count != 1 ||
-                runningParts[0].Part.Id != requestedPartId)
+            if (!context.IsRequestedPartTheOnlyRunningPart())
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamPartNotCurrent);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartNotCurrent);
             }
 
-            if (!HasValidRunningState(requested.Part))
+            if (!requested.Part.HasValidRunningState)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamTimeoutStateInvalid);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamTimeoutStateInvalid);
             }
 
-            var currentQuestionCount =
-                await ValidatePartQuestionOrderAsync(
-                    requested.Part.Id,
-                    token);
+            var currentQuestionCount = await ValidatePartQuestionOrderAsync(requested.Part.Id, token);
 
-            if (!currentQuestionCount.HasValue ||
-                requested.Part.LastQuestionNo >
-                currentQuestionCount.Value)
+            if (!currentQuestionCount.HasValue || requested.Part.LastQuestionNo > currentQuestionCount.Value)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamTimeoutStateInvalid);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamTimeoutStateInvalid);
             }
 
-            var transitionTimeUtc =
-                timeProvider.GetUtcNow().UtcDateTime;
+            var transitionTimeUtc = timeProvider.GetUtcNow().UtcDateTime;
 
-            if (transitionTimeUtc <
-                requested.Part.EffectiveDeadlineAt!.Value)
+            if (transitionTimeUtc < requested.Part.EffectiveDeadlineAt!.Value)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamPartTimeNotExpired);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartTimeNotExpired);
             }
 
             // PART 1
             if (requestedIndex == 0)
             {
-                var score =
-                    await scoringService.CalculatePartScoreAsync(
-                        attemptId,
-                        requested.Part.Id,
-                        token);
+                var score = await scoringService.CalculatePartScoreAsync(attemptId, requested.Part.Id, token);
 
                 if (!score.HasValue || !requested.QualificationScore.HasValue)
                 {
-                    return Failure<TimeoutCandidateExamPartResponse>(
-                        ErrorsCodes.CandidateExamConfigurationInvalid);
+                    return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamConfigurationInvalid);
                 }
 
 
-                var passed =
-                    score.Value >=
-                    requested.QualificationScore.Value;
+                var passed = score.Value >= requested.QualificationScore.Value;
 
                 if (!passed)
                 {
-                    requested.Part.StatusId =
-                        TestAttemptPartStatusIds.TimedOut;
+                    var timedOutAtNotPassed = requested.Part.EffectiveDeadlineAt!.Value;
 
-                    requested.Part.CompletedAt =
-                        requested.Part.EffectiveDeadlineAt;
+                    requested.Part.MarkTimedOut();
 
-                    attempt.Attempt.StatusId =
-                        TestAttemptStatusIds.TimedOut;
-
-                    attempt.Attempt.CompletedAt =
-                        requested.Part.EffectiveDeadlineAt;
-                    attempt.Attempt.ActiveSessionId = null;
-
-                    attempt.Candidate.StatusId =
-                        TestSessionCandidateStatusIds.Completed;
-
-                    await unitOfWork.Context
-                        .Set<CandidateExamConnection>()
-                        .Where(x => x.TestAttemptId == attemptId)
-                        .ExecuteDeleteAsync(token);
+                    await TimeOutAttemptAsync(attempt, candidate, timedOutAtNotPassed, token);
 
                     await unitOfWork.SaveChangesAsync(token);
 
-                    return TimeoutResult(
-                        attemptId,
-                        requested,
-                        CandidateExamSubmissionOutcomes.Failed,
-                        null,
-                        null,
-                        attempt.Attempt.StatusId,
-                        true,
-                        true);
+                    return TimeoutResult(attemptId, requested, CandidateExamSubmissionOutcomes.Failed, null, null,
+                        attempt.StatusId, true, true);
                 }
 
-                if (next is null || !IsCompletelyNotStarted(next.Part))
+                if (next is null || !next.Part.IsCompletelyNotStarted)
                 {
-                    return Failure<TimeoutCandidateExamPartResponse>(
-                        ErrorsCodes.CandidateExamNextPartStateInvalid);
+                    return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamNextPartStateInvalid);
                 }
 
                 if (next.DurationMinutes <= 0)
                 {
-                    return Failure<TimeoutCandidateExamPartResponse>(
-                        ErrorsCodes.CandidateExamNextPartDurationInvalid);
+                    return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamNextPartDurationInvalid);
                 }
 
-                var nextQuestionCount =
-                    await ValidatePartQuestionOrderAsync(
-                        next.Part.Id,
-                        token);
+                var nextQuestionCount = await ValidatePartQuestionOrderAsync(next.Part.Id, token);
 
                 if (!nextQuestionCount.HasValue)
                 {
-                    return Failure<TimeoutCandidateExamPartResponse>(
-                        ErrorsCodes.CandidateExamNextPartQuestionsInvalid);
+                    return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamNextPartQuestionsInvalid);
                 }
 
-                requested.Part.StatusId =
-                    TestAttemptPartStatusIds.TimedOut;
+                var nextPartStartedAt = requested.Part.EffectiveDeadlineAt!.Value;
 
-                requested.Part.CompletedAt =
-                    requested.Part.EffectiveDeadlineAt;
+                requested.Part.MarkTimedOut();
 
-                // Part 2 starts when the timeout transition is processed.
-                next.Part.StatusId =
-                    TestAttemptPartStatusIds.InProgress;
-
-                var nextPartStartedAt =
-                    requested.Part.EffectiveDeadlineAt!.Value;
-
-                next.Part.StartedAt = nextPartStartedAt;
-
-                next.Part.DurationMinutesSnapshot =
-                    next.DurationMinutes;
-
-                next.Part.EffectiveDeadlineAt =
-                    nextPartStartedAt.AddMinutes(
-                        next.DurationMinutes);
-
-                next.Part.LastQuestionNo = 1;
+                next.Part.Start(nextPartStartedAt, next.DurationMinutes);
 
                 await unitOfWork.SaveChangesAsync(token);
 
-                return TimeoutResult(
-                    attemptId,
-                    requested,
-                    CandidateExamSubmissionOutcomes.Passed,
-                    next,
-                    nextQuestionCount.Value,
-                    attempt.Attempt.StatusId,
-                    false,
-                    true);
+                return TimeoutResult(attemptId, requested, CandidateExamSubmissionOutcomes.Passed, next,
+                    nextQuestionCount.Value, attempt.StatusId, false, true);
             }
 
             // Part 2 must be the final part.
             if (next is not null)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamConfigurationInvalid);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamConfigurationInvalid);
             }
 
-            requested.Part.StatusId =
-                TestAttemptPartStatusIds.TimedOut;
+            var timedOutAt = requested.Part.EffectiveDeadlineAt!.Value;
 
-            requested.Part.CompletedAt =
-                requested.Part.EffectiveDeadlineAt;
+            requested.Part.MarkTimedOut();
 
-            attempt.Attempt.StatusId =
-                TestAttemptStatusIds.TimedOut;
-
-            attempt.Attempt.CompletedAt =
-                requested.Part.EffectiveDeadlineAt;
-            attempt.Attempt.ActiveSessionId = null;
-
-            attempt.Candidate.StatusId =
-                TestSessionCandidateStatusIds.Completed;
-
-            await unitOfWork.Context
-                .Set<CandidateExamConnection>()
-                .Where(x => x.TestAttemptId == attemptId)
-                .ExecuteDeleteAsync(token);
+            await TimeOutAttemptAsync(attempt, candidate, timedOutAt, token);
 
             await unitOfWork.SaveChangesAsync(token);
 
-            return TimeoutResult(
-                attemptId,
-                requested,
-                CandidateExamSubmissionOutcomes.Completed,
-                null,
-                null,
-                attempt.Attempt.StatusId,
-                true,
-                true);
+            return TimeoutResult(attemptId, requested, CandidateExamSubmissionOutcomes.Completed, null, null,
+                attempt.StatusId, true, true);
         }, cancellationToken);
     }
 
-    private async Task<IResult<TimeoutCandidateExamPartResponse>>
-        ExistingTimeoutResult(
-            TestAttempt attempt,
-            TestSessionCandidate candidate,
-            CandidateExamPartTransitionData requested,
-            CandidateExamPartTransitionData? next,
-            CancellationToken token)
+    private async Task CompleteAttemptAsync(TestAttempt attempt, TestSessionCandidate candidate, DateTime completedAt,
+        CancellationToken cancellationToken)
     {
-        if (requested.Part.EffectiveDeadlineAt is null ||
-            requested.Part.CompletedAt !=
-            requested.Part.EffectiveDeadlineAt)
+        attempt.Complete(completedAt);
+
+        candidate.StatusId = TestSessionCandidateStatusIds.Completed;
+
+        await DeleteAttemptConnectionsAsync(attempt.Id, cancellationToken);
+    }
+
+    private async Task TimeOutAttemptAsync(TestAttempt attempt, TestSessionCandidate candidate, DateTime completedAt,
+        CancellationToken cancellationToken)
+    {
+        attempt.MarkTimedOut(completedAt);
+
+        candidate.StatusId = TestSessionCandidateStatusIds.Completed;
+
+        await DeleteAttemptConnectionsAsync(attempt.Id, cancellationToken);
+    }
+
+    private Task<int> DeleteAttemptConnectionsAsync(Guid attemptId, CancellationToken cancellationToken) =>
+        unitOfWork.Context.Set<CandidateExamConnection>()
+            .Where(x => x.TestAttemptId == attemptId)
+            .ExecuteDeleteAsync(cancellationToken);
+
+    private async Task<IResult<TimeoutCandidateExamPartResponse>> ExistingTimeoutResult(TestAttempt attempt,
+        TestSessionCandidate candidate, CandidateExamPartTransitionData requested,
+        CandidateExamPartTransitionData? next, CancellationToken token)
+    {
+        if (requested.Part.EffectiveDeadlineAt is null
+            || requested.Part.CompletedAt != requested.Part.EffectiveDeadlineAt)
         {
-            return Failure<TimeoutCandidateExamPartResponse>(
-                ErrorsCodes.CandidateExamTimeoutStateInvalid);
+            return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamTimeoutStateInvalid);
         }
 
         // Final part already timed out.
         if (next is null)
         {
-            if (attempt.StatusId != TestAttemptStatusIds.TimedOut ||
-                attempt.CompletedAt !=
-                requested.Part.EffectiveDeadlineAt ||
-                candidate.StatusId !=
-                TestSessionCandidateStatusIds.Completed)
+            if (attempt.StatusId != TestAttemptStatusIds.TimedOut
+                || attempt.CompletedAt != requested.Part.EffectiveDeadlineAt
+                || candidate.StatusId != TestSessionCandidateStatusIds.Completed)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamTimeoutStateInvalid);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamTimeoutStateInvalid);
             }
 
-            return TimeoutResult(
-                attempt.Id,
-                requested,
-                CandidateExamSubmissionOutcomes.Completed,
-                null,
-                null,
-                attempt.StatusId,
-                true,
-                false);
+            return TimeoutResult(attempt.Id, requested, CandidateExamSubmissionOutcomes.Completed, null, null,
+                attempt.StatusId, true, false);
         }
 
         // Part 1 passed previously, so Part 2 was started.
         if (HasValidStartedHistory(next.Part))
         {
-            var count =
-                await ValidatePartQuestionOrderAsync(
-                    next.Part.Id,
-                    token);
+            var count = await ValidatePartQuestionOrderAsync(next.Part.Id, token);
 
             if (!count.HasValue)
             {
-                return Failure<TimeoutCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamTimeoutStateInvalid);
+                return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamTimeoutStateInvalid);
             }
 
-            return TimeoutResult(
-                attempt.Id,
-                requested,
-                CandidateExamSubmissionOutcomes.Passed,
-                next,
-                count.Value,
-                attempt.StatusId,
-                attempt.StatusId != TestAttemptStatusIds.InProgress,
-                false);
+            return TimeoutResult(attempt.Id, requested, CandidateExamSubmissionOutcomes.Passed, next, count.Value,
+                attempt.StatusId, attempt.StatusId != TestAttemptStatusIds.InProgress, false);
         }
 
         // Part 1 failed previously, so Part 2 never started.
-        if (attempt.StatusId == TestAttemptStatusIds.TimedOut &&
-            candidate.StatusId ==
-            TestSessionCandidateStatusIds.Completed &&
-            IsCompletelyNotStarted(next.Part))
+        if (attempt.StatusId == TestAttemptStatusIds.TimedOut
+            && candidate.StatusId == TestSessionCandidateStatusIds.Completed && next.Part.IsCompletelyNotStarted)
         {
-            return TimeoutResult(
-                attempt.Id,
-                requested,
-                CandidateExamSubmissionOutcomes.Failed,
-                null,
-                null,
-                attempt.StatusId,
-                true,
-                false);
+            return TimeoutResult(attempt.Id, requested, CandidateExamSubmissionOutcomes.Failed, null, null,
+                attempt.StatusId, true, false);
         }
 
-        return Failure<TimeoutCandidateExamPartResponse>(
-            ErrorsCodes.CandidateExamTimeoutStateInvalid);
+        return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamTimeoutStateInvalid);
     }
 
-    private static IResult<TimeoutCandidateExamPartResponse> TimeoutResult(
-        Guid attemptId,
-        CandidateExamPartTransitionData timedOut,
-        string outcome,
-        CandidateExamPartTransitionData? next,
-        int? nextQuestionCount,
-        Guid attemptStatusId,
-        bool examEnded,
-        bool changed)
+    private static IResult<TimeoutCandidateExamPartResponse> TimeoutResult(Guid attemptId,
+        CandidateExamPartTransitionData timedOut, string outcome, CandidateExamPartTransitionData? next,
+        int? nextQuestionCount, Guid attemptStatusId, bool examEnded, bool changed)
     {
         StartedCandidateExamPartDto? nextPart = null;
 
         if (next is not null)
         {
-            nextPart = new StartedCandidateExamPartDto(
-                next.Part.Id,
-                next.PartNo,
-                next.Part.StartedAt!.Value,
-                next.Part.DurationMinutesSnapshot!.Value,
-                next.Part.EffectiveDeadlineAt!.Value,
-                next.Part.LastQuestionNo!.Value,
-                nextQuestionCount!.Value);
+            nextPart = new StartedCandidateExamPartDto(next.Part.Id, next.PartNo, next.Part.StartedAt!.Value,
+                next.Part.DurationMinutesSnapshot!.Value, next.Part.EffectiveDeadlineAt!.Value,
+                next.Part.LastQuestionNo!.Value, nextQuestionCount!.Value);
         }
 
-        return Result.Ok(
-            new TimeoutCandidateExamPartResponse(
-                attemptId,
-                new TimedOutCandidateExamPartDto(
-                    timedOut.Part.Id,
-                    timedOut.PartNo,
-                    timedOut.Part.CompletedAt!.Value),
-                outcome,
-                next is not null,
-                nextPart,
-                attemptStatusId,
-                examEnded,
-                changed));
+        return Result.Ok(new TimeoutCandidateExamPartResponse(attemptId,
+            new TimedOutCandidateExamPartDto(timedOut.Part.Id, timedOut.PartNo, timedOut.Part.CompletedAt!.Value),
+            outcome, next is not null, nextPart, attemptStatusId, examEnded, changed));
     }
 
     private async Task<int?> ValidatePartQuestionOrderAsync(Guid partId, CancellationToken token)
     {
-        var order = await unitOfWork.Context.Set<TestAttemptQuestion>().AsNoTracking()
-            .Where(x => x.TestAttemptPartId == partId).OrderBy(x => x.OrderNo)
-            .Select(x => x.OrderNo).ToListAsync(token);
+        var order = await unitOfWork.Context.Set<TestAttemptQuestion>()
+            .AsNoTracking()
+            .Where(x => x.TestAttemptPartId == partId)
+            .OrderBy(x => x.OrderNo)
+            .Select(x => x.OrderNo)
+            .ToListAsync(token);
         return order.Count > 0 && order.SequenceEqual(Enumerable.Range(1, order.Count)) ? order.Count : null;
     }
 
-    private static bool HasValidRunningState(TestAttemptPart part) =>
-        part.StartedAt is not null && part.CompletedAt is null && part is
-            { DurationMinutesSnapshot: > 0, EffectiveDeadlineAt: not null, LastQuestionNo: > 0 };
-
-    private static bool IsCompletelyNotStarted(TestAttemptPart part) =>
-        part.StatusId == TestAttemptPartStatusIds.NotStarted && part.StartedAt is null &&
-        part.CompletedAt is null && part.DurationMinutesSnapshot is null &&
-        part.EffectiveDeadlineAt is null && part.LastQuestionNo is null;
-
     private static bool HasValidStartedHistory(TestAttemptPart part) =>
-        (part.StatusId == TestAttemptPartStatusIds.InProgress ||
-         part.StatusId == TestAttemptPartStatusIds.Completed ||
-         part.StatusId == TestAttemptPartStatusIds.TimedOut) &&
-        part.StartedAt is not null && part.DurationMinutesSnapshot is > 0 &&
-        part.EffectiveDeadlineAt >= part.StartedAt.Value.AddMinutes(part.DurationMinutesSnapshot.Value) &&
-        part.LastQuestionNo is > 0 &&
-        (part.StatusId == TestAttemptPartStatusIds.InProgress || part.CompletedAt is not null);
+        (part.StatusId == TestAttemptPartStatusIds.InProgress || part.StatusId == TestAttemptPartStatusIds.Completed
+                                                              || part.StatusId == TestAttemptPartStatusIds.TimedOut)
+        && part.StartedAt is not null && part.DurationMinutesSnapshot is > 0
+        && part.EffectiveDeadlineAt >= part.StartedAt.Value.AddMinutes(part.DurationMinutesSnapshot.Value)
+        && part.LastQuestionNo is > 0
+        && (part.StatusId == TestAttemptPartStatusIds.InProgress || part.CompletedAt is not null);
 
-    private static IResult<SubmitCandidateExamPartResponse> CompleteResult(
-        Guid attemptId,
-        CandidateExamPartTransitionData completed,
-        string outcome,
-        CandidateExamPartTransitionData? next,
-        int? nextQuestionCount,
-        Guid attemptStatusId,
-        bool examEnded,
-        bool allowPreviousQuestion,
-        bool changed)
+    private static IResult<SubmitCandidateExamPartResponse> CompleteResult(Guid attemptId,
+        CandidateExamPartTransitionData completed, string outcome, CandidateExamPartTransitionData? next,
+        int? nextQuestionCount, Guid attemptStatusId, bool examEnded, bool allowPreviousQuestion, bool changed)
     {
         StartedCandidateExamPartDto? nextPart = null;
 
         if (next is not null)
         {
-            nextPart = new StartedCandidateExamPartDto(
-                next.Part.Id,
-                next.PartNo,
-                next.Part.StartedAt!.Value,
-                next.Part.DurationMinutesSnapshot!.Value,
-                next.Part.EffectiveDeadlineAt!.Value,
-                next.Part.LastQuestionNo!.Value,
-                nextQuestionCount!.Value);
+            nextPart = new StartedCandidateExamPartDto(next.Part.Id, next.PartNo, next.Part.StartedAt!.Value,
+                next.Part.DurationMinutesSnapshot!.Value, next.Part.EffectiveDeadlineAt!.Value,
+                next.Part.LastQuestionNo!.Value, nextQuestionCount!.Value);
         }
 
-        return Result.Ok(
-            new SubmitCandidateExamPartResponse(
-                attemptId,
-                new CompletedCandidateExamPartDto(
-                    completed.Part.Id,
-                    completed.PartNo,
-                    completed.Part.CompletedAt!.Value),
-                outcome,
-                next is not null,
-                nextPart,
-                attemptStatusId,
-                examEnded,
-                allowPreviousQuestion,
-                changed));
+        return Result.Ok(new SubmitCandidateExamPartResponse(attemptId,
+            new CompletedCandidateExamPartDto(completed.Part.Id, completed.PartNo, completed.Part.CompletedAt!.Value),
+            outcome, next is not null, nextPart, attemptStatusId, examEnded, allowPreviousQuestion, changed));
     }
 
     private Task<bool> AttemptBelongsToApplicantAsync(
-        Guid userId,
-        Guid attemptId,
+        Guid userId, Guid attemptId, CancellationToken cancellationToken) =>
+        unitOfWork.Context.Set<TestAttempt>()
+            .AsNoTracking()
+            .AnyAsync(x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId,
+                cancellationToken);
+
+    private Task<bool> AttemptIsOwnedAsync(Guid userId, Guid attemptId, Guid activeSessionId,
         CancellationToken cancellationToken) =>
         unitOfWork.Context.Set<TestAttempt>()
             .AsNoTracking()
-            .AnyAsync(x => x.Id == attemptId &&
-                x.TestSessionCandidate!.Invitation!.ApplicantId == userId,
-                cancellationToken);
+            .AnyAsync(
+                x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId
+                                       && x.ActiveSessionId == activeSessionId, cancellationToken);
 
-    private Task<bool> AttemptIsOwnedAsync(
-        Guid userId,
-        Guid attemptId,
-        Guid activeSessionId,
-        CancellationToken cancellationToken) =>
-        unitOfWork.Context.Set<TestAttempt>()
-            .AsNoTracking()
-            .AnyAsync(x =>
-                    x.Id == attemptId &&
-                    x.TestSessionCandidate!.Invitation!.ApplicantId == userId &&
-                    x.ActiveSessionId == activeSessionId,
-                cancellationToken);
-
-    private async Task<(CandidateExamExecutionState? State, string? Error)> LoadCurrentStateAsync(
-        Guid userId,
-        Guid attemptId,
-        Guid activeSessionId,
-        CancellationToken token)
-    {
-        var attempt = await unitOfWork.Context.Set<TestAttempt>().AsNoTracking()
-            .Where(x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId)
-            .Select(x => new
-            {
-                x.Id,
-                x.StatusId,
-                x.ActiveSessionId,
-                CandidateStatusId = x.TestSessionCandidate!.StatusId,
-                SessionStatusId = x.TestSessionCandidate.TestSession!.StatusId,
-                SlotStatusId = x.TestSessionCandidate.TestSession.TestSlot!.StatusId,
-                x.TestSessionCandidate.TestSession.Exam!.AllowPreviousQuestion
-            })
-            .SingleOrDefaultAsync(token);
-        if (attempt is null) return (null, ErrorsCodes.CandidateExamAttemptNotFound);
-        if (attempt.StatusId != TestAttemptStatusIds.InProgress)
-            return (null, AttemptStateError(attempt.StatusId));
-        if (attempt.CandidateStatusId != TestSessionCandidateStatusIds.Started)
-            return (null, ErrorsCodes.CandidateExamCurrentStateInvalid);
-        if (attempt.SlotStatusId != TestSlotStatusIds.Started)
-            return (null, ErrorsCodes.CandidateExamSlotNotRunning);
-        if (attempt.SessionStatusId != TestSessionStatusIds.InProgress)
-            return (null, ErrorsCodes.CandidateExamSessionNotRunning);
-        if (attempt.ActiveSessionId != activeSessionId)
-            return (null, ErrorsCodes.CandidateExamActiveSessionInvalid);
-
-        var runningParts = await unitOfWork.Context.Set<TestAttemptPart>()
-            .Where(x => x.TestAttemptId == attemptId && x.StatusId == TestAttemptPartStatusIds.InProgress)
-            .Take(2).ToListAsync(token);
-        if (runningParts.Count != 1) return (null, ErrorsCodes.CandidateExamCurrentStateInvalid);
-        var part = runningParts[0];
-        if (part.StartedAt is null || part.DurationMinutesSnapshot is not > 0 ||
-            part.EffectiveDeadlineAt is null || part.LastQuestionNo is not > 0)
-            return (null, ErrorsCodes.CandidateExamCurrentStateInvalid);
-
-        var total = await unitOfWork.Context.Set<TestAttemptQuestion>().AsNoTracking()
-            .CountAsync(x => x.TestAttemptPartId == part.Id, token);
-        if (total == 0 || part.LastQuestionNo > total)
-            return (null, ErrorsCodes.CandidateExamCurrentQuestionInvalid);
-        var currentQuestions = await unitOfWork.Context.Set<TestAttemptQuestion>()
-            .Where(x => x.TestAttemptId == attemptId && x.TestAttemptPartId == part.Id &&
-                        x.OrderNo == part.LastQuestionNo.Value).Take(2).ToListAsync(token);
-        if (currentQuestions.Count != 1)
-            return (null, ErrorsCodes.CandidateExamCurrentQuestionInvalid);
-
-        return (new CandidateExamExecutionState(attempt.Id, part, currentQuestions[0], total,
-            attempt.AllowPreviousQuestion), null);
-    }
-
-    private async Task<IResult<SubmitCandidateExamPartResponse>>
-        ExistingCompleteResult(
-            TestAttempt attempt,
-            TestSessionCandidate candidate,
-            CandidateExamPartTransitionData requested,
-            CandidateExamPartTransitionData? next,
-            bool allowPreviousQuestion,
-            CancellationToken token)
+    private async Task<IResult<SubmitCandidateExamPartResponse>> ExistingCompleteResult(TestAttempt attempt,
+        TestSessionCandidate candidate, CandidateExamPartTransitionData requested,
+        CandidateExamPartTransitionData? next, bool allowPreviousQuestion, CancellationToken token)
     {
         if (requested.Part.CompletedAt is null)
         {
-            return Failure<SubmitCandidateExamPartResponse>(
-                ErrorsCodes.CandidateExamPartTransitionStateInvalid);
+            return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartTransitionStateInvalid);
         }
 
         // Final part was already submitted successfully.
         if (next is null)
         {
-            if (attempt.StatusId != TestAttemptStatusIds.Completed ||
-                candidate.StatusId !=
-                TestSessionCandidateStatusIds.Completed)
+            if (attempt.StatusId != TestAttemptStatusIds.Completed
+                || candidate.StatusId != TestSessionCandidateStatusIds.Completed)
             {
-                return Failure<SubmitCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamPartTransitionStateInvalid);
+                return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartTransitionStateInvalid);
             }
 
-            return CompleteResult(
-                attempt.Id,
-                requested,
-                CandidateExamSubmissionOutcomes.Completed,
-                null,
-                null,
-                attempt.StatusId,
-                true,
-                allowPreviousQuestion,
-                false);
+            return CompleteResult(attempt.Id, requested, CandidateExamSubmissionOutcomes.Completed, null, null,
+                attempt.StatusId, true, allowPreviousQuestion, false);
         }
 
         // Part 1 passed previously: Part 2 has started.
         if (HasValidStartedHistory(next.Part))
         {
-            var nextQuestionCount =
-                await ValidatePartQuestionOrderAsync(
-                    next.Part.Id,
-                    token);
+            var nextQuestionCount = await ValidatePartQuestionOrderAsync(next.Part.Id, token);
 
             if (!nextQuestionCount.HasValue)
             {
-                return Failure<SubmitCandidateExamPartResponse>(
-                    ErrorsCodes.CandidateExamPartTransitionStateInvalid);
+                return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartTransitionStateInvalid);
             }
 
-            return CompleteResult(
-                attempt.Id,
-                requested,
-                CandidateExamSubmissionOutcomes.Passed,
-                next,
-                nextQuestionCount.Value,
-                attempt.StatusId,
-                attempt.StatusId != TestAttemptStatusIds.InProgress,
-                allowPreviousQuestion,
-                false);
+            return CompleteResult(attempt.Id, requested, CandidateExamSubmissionOutcomes.Passed, next,
+                nextQuestionCount.Value, attempt.StatusId, attempt.StatusId != TestAttemptStatusIds.InProgress,
+                allowPreviousQuestion, false);
         }
 
         // Part 1 failed previously: Part 2 never started.
-        if (attempt.StatusId == TestAttemptStatusIds.Completed &&
-            candidate.StatusId ==
-            TestSessionCandidateStatusIds.Completed &&
-            IsCompletelyNotStarted(next.Part))
+        if (attempt.StatusId == TestAttemptStatusIds.Completed
+            && candidate.StatusId == TestSessionCandidateStatusIds.Completed && next.Part.IsCompletelyNotStarted)
         {
-            return CompleteResult(
-                attempt.Id,
-                requested,
-                CandidateExamSubmissionOutcomes.Failed,
-                null,
-                null,
-                attempt.StatusId,
-                true,
-                allowPreviousQuestion,
-                false);
+            return CompleteResult(attempt.Id, requested, CandidateExamSubmissionOutcomes.Failed, null, null,
+                attempt.StatusId, true, allowPreviousQuestion, false);
         }
 
-        return Failure<SubmitCandidateExamPartResponse>(
-            ErrorsCodes.CandidateExamPartTransitionStateInvalid);
+        return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartTransitionStateInvalid);
     }
 
-    private Task AcquireAttemptLockAsync(Guid attemptId, CancellationToken token) =>
-        unitOfWork.Context.Database.ExecuteSqlRawAsync(
-            "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-            "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-            "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Candidate exam execution lock unavailable', 1;",
-            [$"Tawtheef.CandidateExam.Attempt.{attemptId}"], token);
-
-    private static IResult<NavigateCandidateExamResponse> NavigationResult(
-        CandidateExamExecutionState state, bool changed)
+    private static IResult<NavigateCandidateExamResponse> NavigationResult(CandidateExamExecutionState state,
+        bool changed)
     {
         var current = state.Part.LastQuestionNo!.Value;
         return Result.Ok(new NavigateCandidateExamResponse(state.AttemptId, state.Part.Id, current,
-            state.TotalQuestions, state.AllowPreviousQuestion && current > 1,
-            current < state.TotalQuestions, state.AllowPreviousQuestion, changed));
+            state.TotalQuestions, state.AllowPreviousQuestion && current > 1, current < state.TotalQuestions,
+            state.AllowPreviousQuestion, changed));
     }
-
-    private static string AttemptStateError(Guid statusId) =>
-        statusId == TestAttemptStatusIds.NotStarted ? ErrorsCodes.CandidateExamAttemptNotStarted :
-        statusId == TestAttemptStatusIds.Interrupted ? ErrorsCodes.CandidateExamAttemptInterrupted :
-        statusId == TestAttemptStatusIds.Completed ? ErrorsCodes.CandidateExamAttemptCompleted :
-        statusId == TestAttemptStatusIds.TimedOut ? ErrorsCodes.CandidateExamAttemptTimedOut :
-        statusId == TestAttemptStatusIds.Cancelled ? ErrorsCodes.CandidateExamAttemptCancelled :
-        ErrorsCodes.CandidateExamCurrentStateInvalid;
 
     private static IResult<T> Failure<T>(string code, int statusCode = 409) =>
         Result.Fail<T>(new Error(code).WithMetadata("Code", code).WithMetadata("StatusCode", statusCode));

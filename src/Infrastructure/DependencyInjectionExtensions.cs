@@ -25,6 +25,7 @@ using Microsoft.FeatureManagement;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.NotificationServices;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
@@ -46,6 +47,7 @@ using Tawtheef.Infrastructure.Repositories.Base;
 using Tawtheef.Infrastructure.Services;
 using Tawtheef.Infrastructure.Services.Authorization;
 using Tawtheef.Infrastructure.Services.BackgroundJobs;
+using Tawtheef.Infrastructure.Services.Concurrency;
 using Tawtheef.Infrastructure.Services.HttpClients;
 using Tawtheef.Infrastructure.Services.Identity;
 using Tawtheef.Infrastructure.Services.Localization;
@@ -178,6 +180,7 @@ namespace Tawtheef.Infrastructure
                 services.AddScoped<ISessionService, EfSessionService>();
 
                 services.AddScoped<ICurrentUserService, CurrentUserService>();
+                services.AddScoped<IApplicationLockService, SqlServerApplicationLockService>();
                 services.AddDataProtection();
                 services.AddScoped<IAccessCodeProtector, AccessCodeProtector>();
                 services.AddScoped<IIdentityFieldProtectionContext, IdentityFieldProtectionContext>();

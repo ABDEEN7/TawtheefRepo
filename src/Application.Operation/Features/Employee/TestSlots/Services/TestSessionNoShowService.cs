@@ -1,162 +1,109 @@
-﻿using Application.Operation.Features.Employee.TestSlots.Handlers.Commands;
-using FluentResults;
+﻿using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
 
 namespace Application.Operation.Features.Employee.TestSlots.Services;
 
-public sealed record DueTestSessionNoShowCandidate(
-    Guid CandidateId,
-    Guid TestSlotId);
+public sealed record DueTestSessionNoShowCandidate(Guid CandidateId, Guid TestSlotId);
 
 public sealed class TestSessionNoShowService(
     IUnitOfWork unitOfWork,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    IApplicationLockService applicationLockService)
 {
-    public async Task<IReadOnlyList<DueTestSessionNoShowCandidate>>
-        GetDueAsync(
-            int take,
-            CancellationToken ct)
+    public async Task<IReadOnlyList<DueTestSessionNoShowCandidate>> GetDueAsync(int take, CancellationToken ct)
     {
         if (take <= 0)
             return [];
 
-        var localNow =
-            timeProvider.GetLocalNow().DateTime;
+        var localNow = timeProvider.GetLocalNow().DateTime;
 
-        var localDate =
-            DateOnly.FromDateTime(localNow);
+        var localDate = DateOnly.FromDateTime(localNow);
 
-        var localTime =
-            TimeOnly.FromDateTime(localNow);
+        var localTime = TimeOnly.FromDateTime(localNow);
 
-        return await unitOfWork.Context
-            .Set<TestSessionCandidate>()
+        return await unitOfWork.Context.Set<TestSessionCandidate>()
             .AsNoTracking()
-            .Where(candidate =>
-                candidate.StatusId ==
-                TestSessionCandidateStatusIds.Assigned &&
-                candidate.AttendanceStatusId ==
-                TestSessionCandidateAttendanceStatusIds.Pending &&
-                candidate.AuthorizedAt == null &&
-                candidate.TestAttempt == null &&
-                candidate.TestSession != null &&
-                candidate.TestSession.EndTime != null &&
-                (
-                    candidate.TestSession.StatusId ==
-                    TestSessionStatusIds.Approved ||
-                    candidate.TestSession.StatusId ==
-                    TestSessionStatusIds.Ready ||
-                    candidate.TestSession.StatusId ==
-                    TestSessionStatusIds.InProgress
-                ) &&
-                candidate.TestSession.TestSlot != null &&
-                candidate.TestSession.TestSlot.StatusId ==
-                TestSlotStatusIds.Started &&
-                (
-                    candidate.TestSession.TestSlot.SlotDate <
-                    localDate ||
-                    (
-                        candidate.TestSession.TestSlot.SlotDate ==
-                        localDate &&
-                        candidate.TestSession.EndTime.Value <=
-                        localTime
-                    )
-                ))
-            .OrderBy(candidate =>
-                candidate.TestSession!.TestSlot!.SlotDate)
-            .ThenBy(candidate =>
-                candidate.TestSession!.EndTime)
+            .Where(candidate => candidate.StatusId == TestSessionCandidateStatusIds.Assigned
+                                && candidate.AttendanceStatusId == TestSessionCandidateAttendanceStatusIds.Pending
+                                && candidate.AuthorizedAt == null && candidate.TestAttempt == null
+                                && candidate.TestSession != null && candidate.TestSession.EndTime != null
+                                && (candidate.TestSession.StatusId == TestSessionStatusIds.Approved
+                                    || candidate.TestSession.StatusId == TestSessionStatusIds.Ready
+                                    || candidate.TestSession.StatusId == TestSessionStatusIds.InProgress)
+                                && candidate.TestSession.TestSlot != null
+                                && candidate.TestSession.TestSlot.StatusId == TestSlotStatusIds.Started
+                                && (candidate.TestSession.TestSlot.SlotDate < localDate
+                                    || (candidate.TestSession.TestSlot.SlotDate == localDate
+                                        && candidate.TestSession.EndTime.Value <= localTime)))
+            .OrderBy(candidate => candidate.TestSession!.TestSlot!.SlotDate)
+            .ThenBy(candidate => candidate.TestSession!.EndTime)
             .Select(candidate =>
-                new DueTestSessionNoShowCandidate(
-                    candidate.Id,
-                    candidate.TestSession!.TestSlotId!.Value))
+                new DueTestSessionNoShowCandidate(candidate.Id, candidate.TestSession!.TestSlotId!.Value))
             .Take(take)
             .ToListAsync(ct);
     }
 
-    public Task<IResult<bool>> ProcessAsync(
-        DueTestSessionNoShowCandidate dueCandidate,
-        CancellationToken ct) =>
-        unitOfWork.ExecuteInTransactionAsync<IResult<bool>>(
-            async token =>
+    public Task<IResult<bool>> ProcessAsync(DueTestSessionNoShowCandidate dueCandidate, CancellationToken ct) =>
+        unitOfWork.ExecuteInTransactionAsync<IResult<bool>>(async token =>
+        {
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.CandidateExamTestSlot(dueCandidate.TestSlotId), token);
+
+            var candidate = await unitOfWork.Context.Set<TestSessionCandidate>()
+                .Include(x => x.TestAttempt)
+                .Include(x => x.TestSession)
+                .ThenInclude(x => x!.TestSlot)
+                .SingleOrDefaultAsync(x => x.Id == dueCandidate.CandidateId, token);
+
+            if (candidate?.TestSession?.TestSlot is not { } slot || candidate.TestSession.EndTime is null)
             {
-                await TestSlotCandidateHallState.LockAsync(
-                    unitOfWork,
-                    dueCandidate.TestSlotId,
-                    token);
+                return Result.Ok(false);
+            }
 
-                var candidate = await unitOfWork.Context
-                    .Set<TestSessionCandidate>()
-                    .Include(x => x.TestAttempt)
-                    .Include(x => x.TestSession)
-                    .ThenInclude(x => x!.TestSlot)
-                    .SingleOrDefaultAsync(
-                        x => x.Id ==
-                             dueCandidate.CandidateId,
-                        token);
+            var session = candidate.TestSession;
 
-                if (candidate?.TestSession?.TestSlot is not { } slot ||
-                    candidate.TestSession.EndTime is null)
-                {
-                    return Result.Ok(false);
-                }
+            if (slot.Id != dueCandidate.TestSlotId || slot.StatusId != TestSlotStatusIds.Started)
+            {
+                return Result.Ok(false);
+            }
 
-                var session =
-                    candidate.TestSession;
+            if (session.StatusId != TestSessionStatusIds.Approved && session.StatusId != TestSessionStatusIds.Ready
+                                                                  && session.StatusId
+                                                                  != TestSessionStatusIds.InProgress)
+            {
+                return Result.Ok(false);
+            }
 
-                if (slot.Id != dueCandidate.TestSlotId ||
-                    slot.StatusId != TestSlotStatusIds.Started)
-                {
-                    return Result.Ok(false);
-                }
+            if (candidate.StatusId != TestSessionCandidateStatusIds.Assigned
+                || candidate.AttendanceStatusId != TestSessionCandidateAttendanceStatusIds.Pending
+                || candidate.AuthorizedAt is not null || candidate.TestAttempt is not null)
+            {
+                return Result.Ok(false);
+            }
 
-                if (session.StatusId !=
-                    TestSessionStatusIds.Approved &&
-                    session.StatusId !=
-                    TestSessionStatusIds.Ready &&
-                    session.StatusId !=
-                    TestSessionStatusIds.InProgress)
-                {
-                    return Result.Ok(false);
-                }
+            var localNow = timeProvider.GetLocalNow().DateTime;
 
-                if (candidate.StatusId !=
-                    TestSessionCandidateStatusIds.Assigned ||
-                    candidate.AttendanceStatusId !=
-                    TestSessionCandidateAttendanceStatusIds.Pending ||
-                    candidate.AuthorizedAt is not null ||
-                    candidate.TestAttempt is not null)
-                {
-                    return Result.Ok(false);
-                }
+            var sessionEnd = slot.SlotDate.ToDateTime(session.EndTime.Value);
 
-                var localNow =
-                    timeProvider.GetLocalNow().DateTime;
+            if (localNow < sessionEnd)
+            {
+                return Result.Ok(false);
+            }
 
-                var sessionEnd =
-                    slot.SlotDate.ToDateTime(
-                        session.EndTime.Value);
+            var markNoShowResult = candidate.MarkNoShow();
 
-                if (localNow < sessionEnd)
-                {
-                    return Result.Ok(false);
-                }
+            if (markNoShowResult.IsFailed)
+            {
+                return Result.Fail<bool>(markNoShowResult.Errors);
+            }
 
-                var markNoShowResult =
-                    candidate.MarkNoShow();
+            await unitOfWork.SaveChangesAsync(token);
 
-                if (markNoShowResult.IsFailed)
-                {
-                    return Result.Fail<bool>(
-                        markNoShowResult.Errors);
-                }
-
-                await unitOfWork.SaveChangesAsync(token);
-
-                return Result.Ok(true);
-            },
-            ct);
+            return Result.Ok(true);
+        }, ct);
 }

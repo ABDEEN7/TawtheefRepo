@@ -5,12 +5,12 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputText } from 'primeng/inputtext';
-import { routes } from '../../../../routes/routes';
-import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
-import { CandidateExamResumeResult } from '../models/candidate-exam-realtime.model';
-import { CandidateExamRealtimeService } from '../services/candidate-exam-realtime.service';
-import { CandidateExamSessionService } from '../services/candidate-exam-session.service';
-import { CandidateExamPendingResumeService } from '../services/candidate-exam-pending-resume.service';
+import { routes } from '../../../../../routes/routes';
+import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
+import { CandidateExamResumeResult } from '../../models/candidate-exam-realtime.model';
+import { CandidateExamRealtimeService } from '../../services/candidate-exam-realtime.service';
+import { CandidateExamSessionService } from '../../services/candidate-exam-session.service';
+import { CandidateExamPendingResumeService } from '../../services/candidate-exam-pending-resume.service';
 
 interface CandidateExamResumeDialogData {
   readonly testAttemptId: string;
