@@ -111,6 +111,7 @@ public static class PermissionCatalog
         Permissions.TestSlots.View,
         Permissions.TestSlots.Create,
         Permissions.TestSlots.ViewAccessCode,
+        Permissions.TestSlots.SendCandidateNotification,
         Permissions.TestSlots.ManagePeriod,
 
         Permissions.TestSessions.View,

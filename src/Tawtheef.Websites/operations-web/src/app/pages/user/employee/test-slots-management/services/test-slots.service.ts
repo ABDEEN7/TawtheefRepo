@@ -13,7 +13,14 @@ import {
   TestSlotConfigurationDto,
   UpdateTestSlotAssignmentsDto,
 } from '../models/create-test-slot.dto';
-import { TestSlotAccessCodeDto, TestSlotCandidateFilters, TestSlotCandidateListItemDto, TestSlotDetailsDto, TestSlotSessionDto } from '../models/test-slot-details.dto';
+import {
+  TestSlotAccessCodeDto,
+  TestSlotCandidateFilters,
+  TestSlotCandidateListItemDto,
+  TestSlotCandidateNotificationResultDto,
+  TestSlotDetailsDto,
+  TestSlotSessionDto,
+} from '../models/test-slot-details.dto';
 
 @Injectable({ providedIn: 'root' })
 export class TestSlotsService {
@@ -50,6 +57,16 @@ export class TestSlotsService {
 
   accessCode(id: string): Observable<TestSlotAccessCodeDto> {
     return this.http.get<TestSlotAccessCodeDto>(this.endpoints.testSlots.accessCode(id));
+  }
+
+  sendCandidateNotifications(
+    id: string,
+    testSessionId: string | null,
+  ): Observable<TestSlotCandidateNotificationResultDto> {
+    return this.http.post<TestSlotCandidateNotificationResultDto>(
+      this.endpoints.testSlots.candidateNotifications(id),
+      { testSessionId },
+    );
   }
 
   start(id: string): Observable<void> {

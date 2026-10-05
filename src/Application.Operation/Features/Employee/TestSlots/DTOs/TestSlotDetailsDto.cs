@@ -1,4 +1,5 @@
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Domain.Entities.Exams;
 
 namespace Application.Operation.Features.Employee.TestSlots.DTOs;
 
@@ -25,6 +26,7 @@ public sealed class TestSlotDetailsDto
 }
 
 public sealed record TestSlotStaffDetailsDto(Guid UserId, string Name, string RoleName);
+
 public sealed record TestSlotCandidateListItemDto(
     Guid CandidateId,
     string CandidateName,
@@ -36,5 +38,18 @@ public sealed record TestSlotCandidateListItemDto(
     string AttendanceStatus,
     string AttemptStatus,
     string? NotificationStatus);
-public sealed record TestSlotSessionDto(Guid Id, string SessionNo, string ExamNo, string StatusName, int CandidateCount);
+
+public sealed record TestSlotSessionDto(
+    Guid Id,
+    string SessionNo,
+    string JobName,
+    string ExamName,
+    string ExamCode,
+    int CandidateCount,
+    TimeOnly? StartTime,
+    TimeOnly? EndTime,
+    TestSessionGenderFilter? GenderFilter,
+    TestSessionNationalityFilter? NationalityFilter,
+    string StatusName);
+
 public sealed record TestSlotAccessCodeDto(string AccessCode);

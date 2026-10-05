@@ -28,6 +28,7 @@ public static class RolePermissionCatalog
                 Permissions.TestSlots.View.Key,
                 Permissions.TestSlots.Create.Key,
                 Permissions.TestSlots.ManagePeriod.Key,
+                Permissions.TestSlots.SendCandidateNotification.Key,
                 Permissions.TestSessions.View.Key,
                 Permissions.TestSessions.Create.Key,
                 Permissions.TestSessions.WorkflowActions.Key,
@@ -147,6 +148,7 @@ public static class RolePermissionCatalog
             [SystemRoleIds.TestSlotStaffMember] = [
                 Permissions.TestSlots.View.Key,
                 Permissions.TestSlots.ViewAccessCode.Key,
+                Permissions.TestSlots.SendCandidateNotification.Key,
                 Permissions.TestSlots.ManagePeriod.Key,
             ],
 

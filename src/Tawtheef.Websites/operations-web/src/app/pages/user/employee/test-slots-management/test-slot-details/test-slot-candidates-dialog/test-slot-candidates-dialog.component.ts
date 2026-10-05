@@ -14,7 +14,7 @@ import { LanguageService } from '../../../../../../core/services/language.servic
 import { TestSlotCandidateFilters, TestSlotCandidateListItemDto, TestSlotSessionDto } from '../../models/test-slot-details.dto';
 import { TestSlotsService } from '../../services/test-slots.service';
 
-interface TestSlotCandidatesDialogData { testSlotId: string; }
+interface TestSlotCandidatesDialogData { testSlotId: string; testSessionId?: string; }
 
 @Component({
   selector: 'app-test-slot-candidates-dialog',
@@ -34,25 +34,35 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   readonly sessions = signal<TestSlotSessionDto[]>([]);
   readonly sessionOptions = computed(() => this.sessions().map(session => ({
     id: session.id,
-    label: `${session.examNo} - ${session.sessionNo}`,
+    label: `${session.examCode} - ${session.sessionNo}`,
   })));
   readonly totalItems = signal(0);
   readonly loading = signal(false);
+  readonly fixedSessionMode = !!this.data.testSessionId;
   readonly filters = signal<TestSlotCandidateFilters>({
     pageNumber: 1,
     pageSize: 10,
     language: this.language.get(),
     search: null,
-    sessionId: null,
+    sessionId: this.data.testSessionId ?? null,
   });
   search = '';
-  selectedSessionId: string | null = null;
+  selectedSessionId: string | null = this.data.testSessionId ?? null;
 
   ngOnInit(): void {
     this.service.sessions(this.data.testSlotId, this.language.get())
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(sessions => this.sessions.set(sessions));
-    this.loadCandidates();
+      .subscribe(sessions => {
+        this.sessions.set(sessions);
+        if (this.data.testSessionId) {
+          this.selectedSessionId = sessions.some(session => session.id === this.data.testSessionId)
+            ? this.data.testSessionId
+            : null;
+          this.filters.update(filters => ({ ...filters, sessionId: this.data.testSessionId! }));
+          this.loadCandidates();
+        }
+      });
+    if (!this.data.testSessionId) this.loadCandidates();
   }
 
   applyFilters(): void {
@@ -60,14 +70,14 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
       ...filters,
       pageNumber: 1,
       search: this.search.trim() || null,
-      sessionId: this.selectedSessionId,
+      sessionId: this.data.testSessionId ?? this.selectedSessionId,
     }));
     this.loadCandidates();
   }
 
   clearFilters(): void {
     this.search = '';
-    this.selectedSessionId = null;
+    this.selectedSessionId = this.data.testSessionId ?? null;
     this.applyFilters();
   }
 

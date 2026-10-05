@@ -88,4 +88,11 @@ public sealed class TestSlotsController(IMediator mediator) : ControllerBase
     [AuthorizePermission(PermissionKeys.TestSlots.ViewAccessCode)]
     public async Task<IActionResult> GetAccessCode(Guid id, CancellationToken cancellationToken)
         => (await mediator.Send(new GetTestSlotAccessCodeQuery(id), cancellationToken)).ToActionResult();
+
+    [HttpPost("{id:guid}/candidate-notifications")]
+    [AuthorizePermission(PermissionKeys.TestSlots.SendCandidateNotification)]
+    public async Task<IActionResult> SendCandidateNotifications(Guid id,
+        [FromBody] SendTestSlotCandidateNotificationsRequest request, CancellationToken cancellationToken)
+        => (await mediator.Send(new SendTestSlotCandidateNotificationsCommand(id, request.TestSessionId), cancellationToken))
+            .ToActionResult();
 }

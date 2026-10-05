@@ -418,6 +418,7 @@ export class EndpointsService {
     sessions: (id: string) => this.getFullUrl(`/test-slots/${id}/sessions`),
     candidates: (id: string) => this.getFullUrl(`/test-slots/${id}/candidates`),
     accessCode: (id: string) => this.getFullUrl(`/test-slots/${id}/access-code`),
+    candidateNotifications: (id: string) => this.getFullUrl(`/test-slots/${id}/candidate-notifications`),
     start: (id: string) => this.getFullUrl(`/test-slots/${id}/start`),
     close: (id: string) => this.getFullUrl(`/test-slots/${id}/close`),
     assignments: (id: string) => this.getFullUrl(`/test-slots/${id}/assignments`),

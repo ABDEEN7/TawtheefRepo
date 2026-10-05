@@ -9,20 +9,68 @@
               <th>{{ 'TEST_SLOT_DETAILS.SESSION' | translate }}</th>
               <th>{{ 'TEST_SLOT_DETAILS.EXAM' | translate }}</th>
               <th>{{ 'TEST_SLOT_DETAILS.CANDIDATE_COUNT' | translate }}</th>
+              <th>{{ 'TEST_SLOT_DETAILS.TEST_TIME' | translate }}</th>
+              <th>{{ 'TEST_SLOT_DETAILS.GENDER' | translate }}</th>
+              <th>{{ 'TEST_SLOT_DETAILS.NATIONALITY' | translate }}</th>
               <th>{{ 'TEST_SLOT_DETAILS.STATUS' | translate }}</th>
+              <th class="text-center">{{ 'TEST_SLOT_DETAILS.ACTIONS' | translate }}</th>
             </tr>
           </ng-template>
           <ng-template #body let-session>
             <tr>
-              <td>{{ session.sessionNo }}</td>
-              <td>{{ session.examNo }}</td>
+              <td class="fw-semibold">
+                <bdi>{{ session.sessionNo }}</bdi>
+              </td>
+              <td>
+                <div class="fw-semibold">{{ session.jobName }}</div>
+                <div>{{ session.examName }}</div>
+                <small class="text-muted"
+                  ><bdi>{{ session.examCode }}</bdi></small
+                >
+              </td>
               <td>{{ session.candidateCount }}</td>
+              <td class="text-nowrap">
+                <bdi>{{ session.startTime }} - {{ session.endTime }}</bdi>
+              </td>
+              <td>{{ genderLabel(session.genderFilter) | translate }}</td>
+              <td>{{ nationalityLabel(session.nationalityFilter) | translate }}</td>
               <td>{{ session.statusName }}</td>
+              <td class="text-center">
+                <div class="action-buttons justify-content-center">
+                  <button
+                    type="button"
+                    class="btn btn-action-icon"
+                    [pTooltip]="'TEST_SLOT_DETAILS.VIEW' | translate"
+                    tooltipPosition="top"
+                    [attr.aria-label]="'TEST_SLOT_DETAILS.VIEW' | translate"
+                    (click)="viewSession.emit(session.id)"
+                  >
+                    <i class="hgi hgi-stroke hgi-view"></i>
+                  </button>
+                  <button
+                    *hasPermission="permissions.TestSlots.SendCandidateNotification"
+                    type="button"
+                    class="btn btn-action-icon"
+                    [disabled]="sendingNotifications"
+                    [pTooltip]="'TEST_SLOT_DETAILS.SEND_NOTIFICATION' | translate"
+                    tooltipPosition="top"
+                    [attr.aria-label]="'TEST_SLOT_DETAILS.SEND_NOTIFICATION' | translate"
+                    (click)="
+                      sendSessionNotifications.emit({
+                        id: session.id,
+                        sessionNo: session.sessionNo,
+                      })
+                    "
+                  >
+                    <i class="hgi hgi-stroke hgi-notification-02"></i>
+                  </button>
+                </div>
+              </td>
             </tr>
           </ng-template>
           <ng-template #emptymessage>
             <tr>
-              <td colspan="4" class="text-center py-4 text-muted">
+              <td colspan="8" class="text-center py-4 text-muted">
                 {{ 'TEST_SLOT_DETAILS.NO_SESSIONS' | translate }}
               </td>
             </tr>

@@ -15,12 +15,14 @@
   <div class="col-12 col-lg-4">
     <p-select
       class="w-100"
+      [class.bg-light]="fixedSessionMode"
       [options]="sessionOptions()"
       optionLabel="label"
       optionValue="id"
       [(ngModel)]="selectedSessionId"
       (onChange)="applyFilters()"
       [showClear]="true"
+      [disabled]="fixedSessionMode"
       [placeholder]="'TEST_SLOT_DETAILS.ALL_SESSIONS' | translate"
       appendTo="body"
     />
