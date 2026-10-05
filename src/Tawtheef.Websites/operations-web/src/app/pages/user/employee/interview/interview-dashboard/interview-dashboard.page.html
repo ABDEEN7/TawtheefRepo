@@ -1,0 +1,431 @@
+<section
+  [i18nNamespace]="namespaces"
+  class="ref-dashboard-wrap interview-dashboard"
+  [attr.dir]="store.isRtl() ? 'rtl' : 'ltr'"
+  [style.--dashboard-font-scale]="fontScale()"
+>
+  <main class="main">
+    <section class="tab-panel active">
+      <!-- Print-only report header (PDF export). -->
+      <header class="print-header">
+        <div class="print-header-top">
+          <div>
+            <h1>{{ 'INTERVIEW_DASHBOARD.TITLE' | translate }}</h1>
+            <p>{{ 'INTERVIEW_DASHBOARD.PRINT.SUBTITLE' | translate }}</p>
+          </div>
+          <div class="print-meta">
+            <span>{{ 'INTERVIEW_DASHBOARD.PRINT.GENERATED_AT' | translate }}</span>
+            <bdi dir="ltr">{{ generatedAt | date: 'dd-MM-yyyy HH:mm' }}</bdi>
+          </div>
+        </div>
+        <div class="print-filters">
+          <strong>{{ 'INTERVIEW_DASHBOARD.PRINT.FILTERS' | translate }}:</strong>
+          @for (row of filterSummary(); track row.labelKey) {
+            <span class="print-filter-chip"
+              >{{ row.labelKey | translate }}: <bdi>{{ row.value }}</bdi></span
+            >
+          } @empty {
+            <span>{{ 'INTERVIEW_DASHBOARD.PRINT.NO_FILTERS' | translate }}</span>
+          }
+        </div>
+      </header>
+
+      <div class="section-title interview-dashboard-title">
+        <div>
+          <h2>
+            <b>{{ 'INTERVIEW_DASHBOARD.TITLE' | translate }}</b>
+          </h2>
+          <h6 class="text-muted my-3">{{ 'INTERVIEW_DASHBOARD.SUBTITLE' | translate }}</h6>
+        </div>
+        <div class="title-actions no-print">
+          <button
+            type="button"
+            class="btn btn-outline-primary dashboard-action-btn"
+            (click)="facade.refresh()"
+            [disabled]="store.overviewLoading()"
+          >
+            <i class="hgi-stroke hgi-refresh" aria-hidden="true"></i>
+            <span>{{ 'INTERVIEW_DASHBOARD.ACTIONS.REFRESH' | translate }}</span>
+          </button>
+          <!-- <button
+            type="button"
+            class="btn btn-primary dashboard-action-btn"
+            (click)="facade.exportPdf()"
+            [disabled]="store.overviewLoading() || !store.overview() || store.printing()"
+            [pTooltip]="'INTERVIEW_DASHBOARD.ACTIONS.EXPORT_PDF_HINT' | translate"
+            tooltipPosition="bottom"
+          >
+            <i class="hgi-stroke hgi-printer" aria-hidden="true"></i>
+            <span>{{ 'INTERVIEW_DASHBOARD.ACTIONS.EXPORT_PDF' | translate }}</span>
+          </button> -->
+        </div>
+      </div>
+
+      <app-dashboard-filters class="no-print" />
+
+      @if (store.overviewError()) {
+        <section class="dashboard-section error-state" role="alert">
+          <i class="hgi-stroke hgi-alert-02" aria-hidden="true"></i>
+          <div>
+            <h4>{{ 'INTERVIEW_DASHBOARD.ERROR.TITLE' | translate }}</h4>
+            <p>{{ 'INTERVIEW_DASHBOARD.ERROR.MESSAGE' | translate }}</p>
+          </div>
+          <button type="button" class="btn btn-primary" (click)="facade.refresh()">
+            {{ 'INTERVIEW_DASHBOARD.ERROR.RETRY' | translate }}
+          </button>
+        </section>
+      } @else {
+        <!-- Main indicators -->
+        <section class="dashboard-section main-indicators-section">
+          <div class="dashboard-section-header">
+            <h3>{{ 'INTERVIEW_DASHBOARD.SECTIONS.MAIN_INDICATORS' | translate }}</h3>
+          </div>
+
+          @if (store.overviewLoading() && !store.overview()) {
+            <section class="kpi-grid">
+              @for (item of skeletonCards; track item) {
+                <article class="kpi-card figma-kpi-card skeleton-card">
+                  <div class="skeleton-line skeleton-icon"></div>
+                  <div class="skeleton-line skeleton-text"></div>
+                  <div class="skeleton-line skeleton-value"></div>
+                  <div class="skeleton-line skeleton-help"></div>
+                </article>
+              }
+            </section>
+          } @else {
+            <section
+              class="kpi-grid figma-kpi-grid"
+              [class.is-refreshing]="store.overviewLoading()"
+            >
+              @for (kpi of mainKpis(); track kpi.key) {
+                <ng-container *ngTemplateOutlet="kpiCard; context: { $implicit: kpi }" />
+              } @empty {
+                <p class="text-muted m-0 empty-inline">
+                  {{ 'INTERVIEW_DASHBOARD.EMPTY.NO_SECTIONS' | translate }}
+                </p>
+              }
+            </section>
+          }
+        </section>
+
+        <!-- Preparation & pipeline -->
+        @if (pipelineKpis().length > 0) {
+          <section class="dashboard-section pipeline-section">
+            <div class="dashboard-section-header">
+              <h3>{{ 'INTERVIEW_DASHBOARD.SECTIONS.PIPELINE' | translate }}</h3>
+              @if (store.canSeeTemplates() || store.canSeeCommittees()) {
+                <span
+                  class="section-hint"
+                  [pTooltip]="'INTERVIEW_DASHBOARD.FILTERS.SETUP_HINT' | translate"
+                  tooltipPosition="left"
+                  tabindex="0"
+                  [attr.aria-label]="'INTERVIEW_DASHBOARD.FILTERS.SETUP_HINT' | translate"
+                >
+                  <i class="pi pi-info-circle" aria-hidden="true"></i>
+                </span>
+              }
+            </div>
+            <section class="pipeline-grid" [class.is-refreshing]="store.overviewLoading()">
+              @for (kpi of pipelineKpis(); track kpi.key) {
+                <ng-container
+                  *ngTemplateOutlet="kpiCard; context: { $implicit: kpi, compact: true }"
+                />
+              }
+            </section>
+          </section>
+        }
+
+        <!-- Visual analytics -->
+        @if (store.overview(); as overview) {
+          <section class="dashboard-section analytics-section">
+            <div class="dashboard-section-header">
+              <h3>{{ 'INTERVIEW_DASHBOARD.SECTIONS.ANALYTICS' | translate }}</h3>
+            </div>
+
+            <div class="operational-summary-grid">
+              @if (overview.schedules) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    doughnutCard;
+                    context: {
+                      titleKey: 'INTERVIEW_DASHBOARD.CHARTS.SCHEDULE_STATUS',
+                      icon: 'hgi-calendar-03',
+                      color: 'blue',
+                      chart: scheduleChart(),
+                      items: scheduleStatusItems(),
+                      total: overview.schedules.total,
+                      drillTab: 'schedules',
+                    }
+                  "
+                />
+              }
+              @if (overview.candidates) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    doughnutCard;
+                    context: {
+                      titleKey: 'INTERVIEW_DASHBOARD.CHARTS.ATTENDANCE',
+                      icon: 'hgi-user-multiple',
+                      color: 'green',
+                      chart: attendanceChart(),
+                      items: attendanceItems(),
+                      total: overview.candidates.scheduled,
+                      drillTab: 'candidates',
+                    }
+                  "
+                />
+              }
+              @if (overview.results) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    doughnutCard;
+                    context: {
+                      titleKey: 'INTERVIEW_DASHBOARD.CHARTS.DECISIONS',
+                      icon: 'hgi-task-done-01',
+                      color: 'purple',
+                      chart: decisionChart(),
+                      items: decisionItems(),
+                      total: overview.results.candidates,
+                      drillTab: 'results',
+                      footer: reportStatusItems(),
+                    }
+                  "
+                />
+              }
+              @if (overview.candidates) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    doughnutCard;
+                    context: {
+                      titleKey: 'INTERVIEW_DASHBOARD.CHARTS.INTERVIEW_TYPE',
+                      icon: 'hgi-user-question-02',
+                      color: 'orange',
+                      chart: typeChart(),
+                      items: typeItems(),
+                      total: overview.candidates.scheduled,
+                      drillTab: 'candidates',
+                    }
+                  "
+                />
+              }
+            </div>
+
+            @if (overview.activity || overview.issues) {
+              <div class="analytics-wide-grid">
+                @if (overview.activity) {
+                  <article class="operation-card chart-card activity-card">
+                    <div class="operation-card-header">
+                      <div class="operation-card-title">
+                        <div class="operation-card-icon blue">
+                          <i class="hgi-stroke hgi-chart-line-data-01"></i>
+                        </div>
+                        <div>
+                          <h4>{{ 'INTERVIEW_DASHBOARD.CHARTS.ACTIVITY' | translate }}</h4>
+                          <small class="text-muted">
+                            {{
+                              (overview.activity.granularity === 'Month'
+                                ? 'INTERVIEW_DASHBOARD.CHARTS.BY_MONTH'
+                                : 'INTERVIEW_DASHBOARD.CHARTS.BY_DAY'
+                              ) | translate
+                            }}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                    @if (hasActivity()) {
+                      <div class="wide-chart-wrapper">
+                        <p-chart
+                          type="line"
+                          [data]="activityChart()"
+                          [options]="activityOptions()"
+                          height="100%"
+                        />
+                      </div>
+                    } @else {
+                      <ng-container *ngTemplateOutlet="chartEmpty" />
+                    }
+                  </article>
+                }
+                @if (overview.issues) {
+                  <article class="operation-card chart-card issues-card">
+                    <div class="operation-card-header">
+                      <div class="operation-card-title">
+                        <div class="operation-card-icon orange">
+                          <i class="hgi-stroke hgi-alert-02"></i>
+                        </div>
+                        <div>
+                          <h4>{{ 'INTERVIEW_DASHBOARD.CHARTS.ISSUES' | translate }}</h4>
+                          <small class="text-muted">
+                            {{
+                              'INTERVIEW_DASHBOARD.CHARTS.ISSUES_SUMMARY'
+                                | translate
+                                  : { open: overview.issues.open, total: overview.issues.total }
+                            }}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                    @if (overview.issues.total > 0) {
+                      <div class="wide-chart-wrapper">
+                        <p-chart
+                          type="bar"
+                          [data]="issueChart()"
+                          [options]="issueOptions()"
+                          height="100%"
+                        />
+                      </div>
+                      <button
+                        class="operation-card-btn no-print"
+                        type="button"
+                        (click)="drill('issues')"
+                      >
+                        <i class="hgi-stroke hgi-view"></i>
+                        <span>{{ 'INTERVIEW_DASHBOARD.ACTIONS.VIEW_DETAILS' | translate }}</span>
+                      </button>
+                    } @else {
+                      <ng-container *ngTemplateOutlet="chartEmpty" />
+                    }
+                  </article>
+                }
+              </div>
+            }
+          </section>
+        }
+
+        <!-- Detailed reports -->
+        @if (store.availableTabs().length > 0) {
+          <section id="interview-dashboard-reports" class="reports-anchor">
+            <app-dashboard-reports />
+          </section>
+        }
+
+        <!-- Module shortcuts (same pattern as the Dashboard's quick actions) -->
+        @if (moduleLinks().length > 0) {
+          <section class="dashboard-section quick-actions-section no-print">
+            <div class="dashboard-section-header">
+              <h3>{{ 'INTERVIEW_DASHBOARD.SECTIONS.MODULES' | translate }}</h3>
+            </div>
+            <div class="quick-actions-grid">
+              @for (link of moduleLinks(); track link.key) {
+                <button class="quick-action-card" type="button" (click)="openModule(link)">
+                  <div class="quick-action-square">
+                    <div class="quick-action-icon">
+                      <i class="hgi-stroke" [ngClass]="link.icon"></i>
+                    </div>
+                  </div>
+                  <span>{{ link.labelKey | translate }}</span>
+                </button>
+              }
+            </div>
+          </section>
+        }
+      }
+    </section>
+  </main>
+</section>
+
+<ng-template #kpiCard let-kpi let-compact="compact">
+  <article
+    class="kpi-card figma-kpi-card"
+    [class.compact-kpi-card]="compact"
+    [class.kpi-card-clickable]="!!kpi.drill"
+    [attr.role]="kpi.drill ? 'link' : null"
+    [attr.tabindex]="kpi.drill ? 0 : null"
+    (click)="kpi.drill?.()"
+    (keydown.enter)="kpi.drill?.()"
+    (keydown.space)="$event.preventDefault(); kpi.drill?.()"
+  >
+    <div class="figma-kpi-top">
+      <div class="kpi-label">
+        {{ kpi.labelKey | translate }}
+        <i
+          class="pi pi-info-circle kpi-help no-print"
+          [pTooltip]="kpi.helpKey | translate"
+          tooltipPosition="top"
+          [attr.aria-label]="kpi.helpKey | translate"
+          (click)="$event.stopPropagation()"
+        ></i>
+      </div>
+      <div [class]="'kpi-icon ' + kpi.color">
+        <i [class]="'hgi-stroke ' + kpi.icon" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div
+      class="kpi-value"
+      [attr.aria-label]="(kpi.labelKey | translate) + ': ' + (kpi.value | number: '1.0-0')"
+    >
+      {{ kpi.value | number: '1.0-0' }}
+    </div>
+    <div class="kpi-status figma-kpi-status">
+      @if (kpi.noteKey) {
+        <span>{{ kpi.noteKey | translate: kpi.noteParams }}</span>
+      }
+    </div>
+  </article>
+</ng-template>
+
+<ng-template
+  #doughnutCard
+  let-titleKey="titleKey"
+  let-icon="icon"
+  let-color="color"
+  let-chart="chart"
+  let-items="items"
+  let-total="total"
+  let-drillTab="drillTab"
+  let-footer="footer"
+>
+  <article class="operation-card">
+    <div class="operation-card-header">
+      <div class="operation-card-title">
+        <div [class]="'operation-card-icon ' + color"><i [class]="'hgi-stroke ' + icon"></i></div>
+        <h4>{{ titleKey | translate }}</h4>
+      </div>
+    </div>
+
+    <div class="candidate-chart-wrapper">
+      <p-chart type="doughnut" [data]="chart" [options]="doughnutOptions" />
+      <div class="candidate-chart-center">
+        <span>{{ 'INTERVIEW_DASHBOARD.CHARTS.TOTAL' | translate }}</span>
+        <strong>{{ total | number: '1.0-0' }}</strong>
+      </div>
+    </div>
+
+    <div class="operation-legend">
+      @for (item of items; track item.label) {
+        <div class="operation-legend-row">
+          <i [style.background]="item.color"></i>
+          <span>{{ item.label }}</span>
+          <strong>{{ item.count | number: '1.0-0' }}</strong>
+        </div>
+      } @empty {
+        <p class="text-muted text-center m-0">
+          {{ 'INTERVIEW_DASHBOARD.EMPTY.NO_DATA' | translate }}
+        </p>
+      }
+    </div>
+
+    @if (footer?.length) {
+      <div class="legend-footer">
+        <span class="text-muted">{{ 'INTERVIEW_DASHBOARD.CHARTS.REPORTS' | translate }}:</span>
+        @for (row of footer; track row.label) {
+          <span class="legend-footer-chip"
+            >{{ row.label }} <strong>{{ row.count }}</strong></span
+          >
+        }
+      </div>
+    }
+
+    <button class="operation-card-btn no-print" type="button" (click)="drill(drillTab)">
+      <i class="hgi-stroke hgi-view"></i>
+      <span>{{ 'INTERVIEW_DASHBOARD.ACTIONS.VIEW_DETAILS' | translate }}</span>
+    </button>
+  </article>
+</ng-template>
+
+<ng-template #chartEmpty>
+  <div class="chart-empty">
+    <i class="hgi-stroke hgi-chart-line-data-01" aria-hidden="true"></i>
+    <span>{{ 'INTERVIEW_DASHBOARD.EMPTY.NO_ACTIVITY' | translate }}</span>
+  </div>
+</ng-template>

@@ -7,6 +7,8 @@ import { catchError, distinctUntilChanged, forkJoin, map, of } from 'rxjs';
 
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { LanguageService } from '../../../../../core/services/language.service';
+import { AuthService } from '../../../../../core/auth/auth.service';
+import { Permissions } from '../../../../../core/constants/permissions';
 
 import { InterviewScheduleService } from '../interview-schedule/services/interview-schedule.service';
 import { AppointmentModel } from '../interview-schedule/models/appointment.model';
@@ -21,6 +23,9 @@ import {
 } from './services/interview-evaluation.service';
 import { AttendanceStatus } from './models/enums';
 import { SessionListRowModel } from './models/session-row.model';
+import { CommitteeReviewModel, SaveCommitteeReviewPayload } from './models/committee-review.model';
+import { CommitteeReviewService } from './services/committee-review.service';
+import { FinalDecision } from '../interview-result-report/models/enums';
 
 // Which appointment statuses count as "evaluation done" for the sessions list Progress column.
 const COMPLETED_APPOINTMENT_STATUSES = [AppointmentStatus.Completed, AppointmentStatus.Closed];
@@ -32,6 +37,8 @@ const INACTIVE_APPOINTMENT_STATUSES = [AppointmentStatus.Cancelled, AppointmentS
 // URL, not only in the store, or the user is dropped back on the list.
 const SESSION_QUERY_PARAM = 'schedule';
 const APPOINTMENT_QUERY_PARAM = 'appointment';
+// ?schedule=<id>&review=1 opens the Committee Head Review of that schedule's result report.
+const REVIEW_QUERY_PARAM = 'review';
 
 @Injectable()
 export class InterviewEvaluationFacade {
@@ -39,6 +46,8 @@ export class InterviewEvaluationFacade {
   private store = inject(InterviewEvaluationStore);
   private scheduleApi = inject(InterviewScheduleService);
   private evaluationApi = inject(InterviewEvaluationService);
+  private committeeReviewApi = inject(CommitteeReviewService);
+  private auth = inject(AuthService);
   private notify = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
@@ -51,16 +60,28 @@ export class InterviewEvaluationFacade {
 
     this.route.queryParamMap
       .pipe(
-        map((params) => ({ schedule: params.get(SESSION_QUERY_PARAM), appointment: params.get(APPOINTMENT_QUERY_PARAM) })),
-        distinctUntilChanged((a, b) => a.schedule === b.schedule && a.appointment === b.appointment),
+        map((params) => ({
+          schedule: params.get(SESSION_QUERY_PARAM),
+          appointment: params.get(APPOINTMENT_QUERY_PARAM),
+          review: params.get(REVIEW_QUERY_PARAM) === '1',
+        })),
+        distinctUntilChanged((a, b) => a.schedule === b.schedule && a.appointment === b.appointment && a.review === b.review),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(({ schedule, appointment }) => this.syncViewWithUrl(schedule, appointment));
+      .subscribe(({ schedule, appointment, review }) => this.syncViewWithUrl(schedule, appointment, review));
 
+    // Also loads the Committee Review availability (see loadSessions).
     this.loadSessions();
   }
 
-  private syncViewWithUrl(scheduleId: string | null, appointmentId: string | null) {
+  private syncViewWithUrl(scheduleId: string | null, appointmentId: string | null, review: boolean) {
+    if (scheduleId && review) {
+      if (this.store.view() === 'review' && this.store.review()?.interviewScheduleId === scheduleId) return;
+      this.store.setView('review');
+      this.loadReview(scheduleId);
+      return;
+    }
+
     if (scheduleId && appointmentId) {
       if (this.store.view() === 'candidate' && this.store.selectedAppointmentId() === appointmentId) return;
       this.store.setView('candidate');
@@ -93,10 +114,14 @@ export class InterviewEvaluationFacade {
     this.loadSessionDetail(scheduleId, then);
   }
 
-  private setUrl(scheduleId: string | null, appointmentId: string | null) {
+  private setUrl(scheduleId: string | null, appointmentId: string | null, review = false) {
     void this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { [SESSION_QUERY_PARAM]: scheduleId, [APPOINTMENT_QUERY_PARAM]: appointmentId },
+      queryParams: {
+        [SESSION_QUERY_PARAM]: scheduleId,
+        [APPOINTMENT_QUERY_PARAM]: appointmentId,
+        [REVIEW_QUERY_PARAM]: review ? '1' : null,
+      },
       queryParamsHandling: 'merge',
     });
   }
@@ -108,6 +133,7 @@ export class InterviewEvaluationFacade {
   // ======== Sessions list ========
   loadSessions() {
     this.store.listLoading.set(true);
+    this.loadCommitteeReviews();
     this.evaluationApi.listMySessions().subscribe({
       next: (items) => this.enrichAndSetSessions(items),
       error: () => this.store.listLoading.set(false),
@@ -288,6 +314,8 @@ export class InterviewEvaluationFacade {
     const appointmentId = this.store.selectedAppointmentId();
     if (appointmentId) this.loadCandidate(appointmentId);
     this.refreshDetailAppointments();
+    // The mutation may have finished the schedule and generated its result report.
+    this.loadCommitteeReviews();
   }
 
   private refreshDetailAppointments() {
@@ -298,8 +326,8 @@ export class InterviewEvaluationFacade {
 
   // ======== Attendance ========
   // Registering Present chains StartAppointmentInterview right after (Scheduled -> InInterview,
-  // domain-required before axes unlock); any other status leaves the appointment Scheduled and axes
-  // stay locked, matching InterviewAppointment.StartInterview()'s own rule.
+  // domain-required before axes unlock). Absent (NoShow) closes the appointment server-side
+  // (InterviewAppointment.ApplyAttendanceOutcome) - axes stay locked for good.
   registerAttendance(appointmentId: string, status: AttendanceStatus) {
     this.scheduleApi.recordAppointmentAttendance(appointmentId, status).subscribe({
       next: () => {
@@ -396,6 +424,117 @@ export class InterviewEvaluationFacade {
   toggleOperationalIssueBlocking(appointmentId: string, issueId: string, isBlocking: boolean) {
     this.evaluationApi.updateOperationalIssueBlocking(issueId, isBlocking).subscribe({
       next: () => this.loadOperationalIssues(appointmentId),
+    });
+  }
+
+  // ======== Committee Head Review ========
+  // Which schedules already have a report this user can review - drives the Committee Review action
+  // on the sessions list, the session view and the evaluation form.
+  loadCommitteeReviews() {
+    if (!this.auth.hasPermission(Permissions.InterviewCommitteeReview.View)) return;
+    this.committeeReviewApi
+      .list()
+      .pipe(catchError(() => of([])))
+      .subscribe((items) => this.store.setCommitteeReviews(items));
+  }
+
+  openCommitteeReview(scheduleId: string) {
+    if (this.store.committeeReviewState(scheduleId) !== 'enabled') return;
+    this.setUrl(scheduleId, null, true);
+  }
+
+  backFromReview() {
+    this.setUrl(this.store.review()?.interviewScheduleId ?? null, null);
+  }
+
+  loadReview(scheduleId: string) {
+    this.store.setReviewLoading(true);
+    this.store.setReview(null);
+    if (this.store.schoolStages().length === 0) {
+      this.committeeReviewApi
+        .schoolStages()
+        .pipe(catchError(() => of([])))
+        .subscribe((stages) => this.store.setSchoolStages(stages));
+    }
+    this.committeeReviewApi.getBySchedule(scheduleId).subscribe({
+      next: (review) => {
+        this.store.setReview(review);
+        this.seedReview(review);
+        this.store.setReviewLoading(false);
+      },
+      error: () => {
+        this.store.setReviewLoading(false);
+        this.backToList();
+      },
+    });
+  }
+
+  // The chair's saved recommendation wins; otherwise the system suggestion pre-fills the dropdown.
+  private seedReview(review: CommitteeReviewModel) {
+    const decisions: Record<string, FinalDecision> = {};
+    const reasons: Record<string, string> = {};
+    const stages: Record<string, string | null> = {};
+    for (const c of review.candidates) {
+      decisions[c.id] = c.chairRecommendedDecision ?? c.suggestedDecision;
+      if (c.chairRecommendationReason) reasons[c.id] = c.chairRecommendationReason;
+      stages[c.id] = c.recommendedSchoolStageId;
+    }
+    this.store.seedReview(decisions, reasons, stages);
+  }
+
+  setReviewDecision(candidateId: string, decision: FinalDecision) {
+    this.store.setReviewDecision(candidateId, decision);
+  }
+
+  setReviewReason(candidateId: string, reason: string) {
+    this.store.setReviewReason(candidateId, reason);
+  }
+
+  setReviewStage(candidateId: string, stageId: string | null) {
+    this.store.setReviewStage(candidateId, stageId);
+  }
+
+  // Picking the suggestion again clears the override (recommendedDecision null). Without the override
+  // permission the saved recommendation is sent back unchanged - the server rejects any change anyway.
+  saveReview(sendForApproval: boolean) {
+    const review = this.store.review();
+    if (!review) return;
+
+    const decisions = this.store.reviewDecisions();
+    const reasons = this.store.reviewReasons();
+    const stages = this.store.reviewStages();
+    const payload: SaveCommitteeReviewPayload = {
+      reportId: review.reportId,
+      sendForApproval,
+      candidates: review.candidates.map((c) => {
+        if (!review.canOverrideSuggestion) {
+          return {
+            candidateId: c.id,
+            recommendedDecision: c.chairRecommendedDecision,
+            reason: c.chairRecommendationReason,
+            schoolStageId: stages[c.id] ?? null,
+          };
+        }
+        const decision = decisions[c.id];
+        const overridden = decision !== c.suggestedDecision;
+        return {
+          candidateId: c.id,
+          recommendedDecision: overridden ? decision : null,
+          reason: overridden ? reasons[c.id]?.trim() || null : null,
+          schoolStageId: stages[c.id] ?? null,
+        };
+      }),
+    };
+
+    this.store.setReviewSaving(true);
+    this.committeeReviewApi.save(payload).subscribe({
+      next: () => {
+        this.store.setReviewSaving(false);
+        this.toast(sendForApproval ? 'INTERVIEW_EVALUATION.REVIEW.SENT_SUCCESS' : 'INTERVIEW_EVALUATION.REVIEW.SAVED_SUCCESS');
+        this.loadCommitteeReviews();
+        this.loadReview(review.interviewScheduleId);
+      },
+      error: () => this.store.setReviewSaving(false),
     });
   }
 

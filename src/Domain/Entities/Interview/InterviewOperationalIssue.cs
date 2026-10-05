@@ -82,7 +82,10 @@ public enum OperationalIssueType
     IncompleteEvaluation = 3,
     TechnicalProblem = 4,
     CouldNotBeConducted = 5,
-    RescheduleRequest = 6
+    RescheduleRequest = 6,
+    // The candidate arrived late: attendance stays Present, the appointment is not closed, and the
+    // candidate is flagged IsLate for the Final Reviewer (lateness can affect selection priority).
+    Late = 7
 }
 
 public enum OperationalIssueStatus

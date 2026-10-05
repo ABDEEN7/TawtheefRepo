@@ -26,4 +26,9 @@ public static class InterviewResultReportAuditActions
     public const string GenerationSkippedUnsupportedMethod = "GenerationSkippedUnsupportedMethod";
     public const string Approved = "Approved";
     public const string Returned = "Returned";
+    // Soft-deleted because its candidate set changed (an appointment was rescheduled) before approval. // we need to discuss in BRD
+    public const string Discarded = "Discarded";
+    // Committee Head Review - the chair saved recommendations, or sent the report on to final approval.
+    public const string CommitteeReviewSaved = "CommitteeReviewSaved";
+    public const string SentForApproval = "SentForApproval";
 }

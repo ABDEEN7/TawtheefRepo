@@ -6,16 +6,28 @@
 /*--------------------------------------------------------------
 # Vendor Imports
 --------------------------------------------------------------*/
-@use "assets/styles/hugeicons/css/hgi-stroke-rounded.css";
-@use "assets/styles/cairo";
+@use 'assets/styles/hugeicons/css/hgi-stroke-rounded.css';
+@use 'assets/styles/cairo';
 
 /*--------------------------------------------------------------
 # Variables
 --------------------------------------------------------------*/
-$font-default: "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto,
-  "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
-  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-$font-primary: "Cairo", sans-serif;
+$font-default:
+  'Open Sans',
+  system-ui,
+  -apple-system,
+  'Segoe UI',
+  Roboto,
+  'Helvetica Neue',
+  Arial,
+  'Noto Sans',
+  'Liberation Sans',
+  sans-serif,
+  'Apple Color Emoji',
+  'Segoe UI Emoji',
+  'Segoe UI Symbol',
+  'Noto Color Emoji';
+$font-primary: 'Cairo', sans-serif;
 
 $color-primary: #8a1538;
 $bs-primary-rgb: #8a1538;
@@ -66,15 +78,20 @@ a {
 /*--------------------------------------------------------------
 # Font Utilities
 --------------------------------------------------------------*/
-@each $size, $value in (8: 0.5rem,
-  10: 0.625rem,
-  12: 0.75rem,
-  14: 0.875rem,
-  16: 1rem,
-  18: 1.125rem,
-  22: 1.375rem,
-  25: 1.5625rem,
-  32: 2rem) {
+@each $size,
+  $value
+    in (
+      8: 0.5rem,
+      10: 0.625rem,
+      12: 0.75rem,
+      14: 0.875rem,
+      16: 1rem,
+      18: 1.125rem,
+      22: 1.375rem,
+      25: 1.5625rem,
+      32: 2rem
+    )
+{
   .fs-#{$size} {
     font-size: $value !important;
   }
@@ -110,7 +127,7 @@ a {
 
 .bg-info-light {
   background-color: #ecf5fe !important;
-  color: #1f3a8b
+  color: #1f3a8b;
 }
 
 .bg-light {
@@ -160,7 +177,6 @@ a {
       }
     }
   }
-
 }
 
 p {
@@ -169,7 +185,6 @@ p {
 }
 
 .btn-primary {
-
   &:hover,
   &:focus,
   &:active {
@@ -190,9 +205,6 @@ p {
   font-weight: 400;
   line-height: 1.5;
 }
-
-
-
 
 /*--------------------------------------------------------------
 # Layout
@@ -297,7 +309,6 @@ header.topbar {
   }
 }
 
-
 /*--------------------------------------------------------------
 # Notification
 --------------------------------------------------------------*/
@@ -341,7 +352,7 @@ header.topbar {
   width: 80px;
   height: 80px;
 
-  input[type="file"] {
+  input[type='file'] {
     display: none;
   }
 
@@ -389,7 +400,7 @@ header.topbar {
   gap: 3px;
 
   span {
-    @media (max-width:576px) {
+    @media (max-width: 576px) {
       display: none;
     }
   }
@@ -434,7 +445,6 @@ header.topbar {
 # Flatpickr
 --------------------------------------------------------------*/
 .flatpickr-calendar {
-
   &:before,
   &:after {
     display: none !important;
@@ -487,18 +497,18 @@ $badge-bg-select: rgba(241, 230, 229, 1);
 /* Table row backgrounds */
 .table-bordered {
   &.table-striped {
-    >tbody>tr.even td {
+    > tbody > tr.even td {
       background-color: $table-light-bg;
     }
   }
 
-  >tbody {
-    >tr {
-      &:nth-of-type(2n + 1)>* {
+  > tbody {
+    > tr {
+      &:nth-of-type(2n + 1) > * {
         background-color: $table-white-bg;
       }
 
-      >td {
+      > td {
         background-color: $table-light-bg;
       }
     }
@@ -550,7 +560,7 @@ $badge-bg-select: rgba(241, 230, 229, 1);
 
 /* Table header */
 .table {
-  >thead {
+  > thead {
     &.table-light {
       tr {
         th {
@@ -563,26 +573,25 @@ $badge-bg-select: rgba(241, 230, 229, 1);
   }
 }
 
-.p-datatable-tbody>*>* {
+.p-datatable-tbody > * > * {
   border-color: rgba(203, 203, 203, 1) !important;
   border-width: 0 0 1px 1px !important;
 }
 
-.ltr .p-datatable-tbody>tr>td:last-child {
-  border-right: 1px solid rgba(203, 203, 203, 1) !important
+.ltr .p-datatable-tbody > tr > td:last-child {
+  border-right: 1px solid rgba(203, 203, 203, 1) !important;
 }
 
-.p-datatable-tbody>tr:last-child>td:first-child {
+.p-datatable-tbody > tr:last-child > td:first-child {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0.6rem;
 }
 
-.rtl .p-datatable-tbody>tr>td:first-child {
+.rtl .p-datatable-tbody > tr > td:first-child {
   border-right: 1px solid rgba(203, 203, 203, 1) !important;
-
 }
 
-.rtl .p-datatable-tbody>tr:last-child>td:first-child {
+.rtl .p-datatable-tbody > tr:last-child > td:first-child {
   border-bottom-right-radius: 0.6rem;
   border-bottom-left-radius: 0;
 }
@@ -595,7 +604,6 @@ $badge-bg-select: rgba(241, 230, 229, 1);
 .rtl .p-datatable-tbody tr:last-child td:last-child {
   border-bottom-right-radius: 0rem !important;
   border-bottom-left-radius: 0.6rem !important;
-
 }
 
 /* Square bullet list */
@@ -692,10 +700,10 @@ body.ltr
   padding: 0.75rem 1rem !important;
 }
 
-.p-datatable-thead>*>* {
+.p-datatable-thead > * > * {
   border: 1px solid #dee2e6;
   border-width: 1px !important;
-  padding: .5rem .5rem !important;
+  padding: 0.5rem 0.5rem !important;
 }
 
 // Shared wizard summary layout. Used by Exam and TestSlot workflows.
@@ -724,22 +732,56 @@ body.ltr
   min-height: 5.25rem;
   padding: 1rem;
 
-  &__icon { font-size: 1.25rem; }
-  &__content { display: grid; gap: 0.25rem; min-width: 0; }
-  &__label { color: #6c757d; font-size: 0.75rem; font-weight: 600; }
-  &__value { color: #2c142f; font-size: 0.9375rem; overflow-wrap: anywhere; }
+  &__icon {
+    font-size: 1.25rem;
+  }
+  &__content {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+  &__label {
+    color: #6c757d;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  &__value {
+    color: #2c142f;
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+  }
 
   &--candidate {
     justify-content: space-between;
 
-    .workflow-review-summary-card__content { order: 1; }
-    .workflow-review-summary-card__icon { order: 2; }
+    .workflow-review-summary-card__content {
+      order: 1;
+    }
+    .workflow-review-summary-card__icon {
+      order: 2;
+    }
   }
 
-  &--room { background-color: #eef4ff; border-color: #d7e4fb; color: #3569ba; }
-  &--date { background-color: #eef8f2; border-color: #d4e9dd; color: #29875d; }
-  &--time { background-color: #fff7e6; border-color: #f2dfb3; color: #b77916; }
-  &--team { background-color: #fff1f5; border-color: #f2d8e1; color: #c14b70; }
+  &--room {
+    background-color: #eef4ff;
+    border-color: #d7e4fb;
+    color: #3569ba;
+  }
+  &--date {
+    background-color: #eef8f2;
+    border-color: #d4e9dd;
+    color: #29875d;
+  }
+  &--time {
+    background-color: #fff7e6;
+    border-color: #f2dfb3;
+    color: #b77916;
+  }
+  &--team {
+    background-color: #fff1f5;
+    border-color: #f2d8e1;
+    color: #c14b70;
+  }
 }
 
 @media (max-width: 767.98px) {
@@ -747,8 +789,6 @@ body.ltr
     margin-bottom: 0.75rem;
   }
 }
-
-
 
 /*--------------------------------------------------------------
 # Form Styles
@@ -771,8 +811,7 @@ body.ltr
   border-radius: 2rem !important;
   border-color: $grey-border !important;
   // background-color: $grey-100 !important;
-  padding: .579rem .75rem !important;
-
+  padding: 0.579rem 0.75rem !important;
 }
 
 .form-select,
@@ -889,8 +928,6 @@ body.rtl .p-datepicker-year-next-button {
   border: 1px solid $grey-border !important;
 }
 
-
-
 /*--------------------------------------------------------------
 # Pill Styles
 --------------------------------------------------------------*/
@@ -952,11 +989,54 @@ body.rtl .p-datepicker-year-next-button {
   }
 }
 
-
 .small-pill {
   font-size: 0.75rem;
   padding: 4px 10px;
 }
+/*--------------------------------------------------------------
+# Date / Time Table Cell
+--------------------------------------------------------------*/
+.date-time-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  white-space: nowrap;
+
+  .date-time-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .date-time-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: #f1e6e9;
+    color: #8a1538;
+
+    &.time {
+      background: #eef6ff;
+      color: #1a5fb4;
+    }
+  }
+
+  .date-time-date {
+    font-weight: 600;
+    color: #212529;
+  }
+
+  .date-time-time {
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+}
+/*-----------------------------------------
 
 
 /*--------------------------------------------------------------
@@ -968,7 +1048,6 @@ body.rtl .p-datepicker-year-next-button {
   padding: 6px 12px;
   font-weight: 700;
 }
-
 
 /*--------------------------------------------------------------
 # Action Buttons Section
@@ -1013,15 +1092,13 @@ body.rtl .p-datepicker-year-next-button {
       background-color: #fff;
     }
   }
-
-
 }
 
 .grey-div {
   border-radius: 2rem;
   border: 1px solid rgba(203, 203, 203, 1);
   background-color: rgba(251, 251, 251, 1);
-  padding: 0.500rem 1rem;
+  padding: 0.5rem 1rem;
   display: flex;
   align-items: center;
 }
@@ -1033,14 +1110,12 @@ body.rtl .p-datepicker-year-next-button {
 
 :dir(rtl) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container {
   right: 0 !important;
-  left: auto !IMPORTANT;
-
+  left: auto !important;
 }
 
 :dir(ltr) .qatar-otp-dialog .prime-tel-input .iti--allow-dropdown .iti__flag-container {
   right: auto;
   left: 0;
-
 }
 
 :dir(rtl) .office-phone .iti--allow-dropdown .iti__flag-container {
@@ -1055,7 +1130,7 @@ body.rtl .p-datepicker-year-next-button {
 
 :dir(rtl) .sidebar {
   border-right: 0 !important;
-  border-left: 1px solid #CBCBCB;
+  border-left: 1px solid #cbcbcb;
 }
 
 :dir(rtl) .sidebar .sidebar-nav .nav-item.active::after {
@@ -1069,10 +1144,9 @@ body.rtl .p-datepicker-year-next-button {
 }
 
 .iti__flag-container .dropdown-menu {
-  font-size: 0.80rem !important;
+  font-size: 0.8rem !important;
   min-width: 14rem !important;
 }
-
 
 .sidebar.collapsed .sidebar-nav .nav-item.active::after {
   right: 1px !important;
@@ -1095,7 +1169,7 @@ body.rtl .p-datepicker-year-next-button {
 
 :dir(rtl) .iti__flag-container .dropdown-menu {
   left: auto;
-  right: 0 !important
+  right: 0 !important;
 }
 
 .decorations {
@@ -1105,33 +1179,161 @@ body.rtl .p-datepicker-year-next-button {
 /*--------------------------------------------------------------
 # Workflow steppers
 --------------------------------------------------------------*/
-.workflow-stepper-card { overflow: hidden; }
-.workflow-stepper-container { overflow-x: auto; }
-.workflow-stepper { display: flex; align-items: stretch; width: 100%; min-width: 680px; margin-inline: auto; }
-.workflow-step-wrapper { display: flex; flex: 1 1 0; flex-direction: column; min-width: 0; position: relative; }
-.workflow-step-label, .workflow-step-circle { padding: 0; border: 0; background: transparent; }
-.workflow-step-label { display: flex; flex: 1; align-items: center; justify-content: center; gap: 4px; min-width: 0; min-height: 48px; color: #999; font-family: $font-primary; font-size: 16px; font-weight: 600; text-align: center; transition: color .3s ease; }
-.workflow-step-label.active, .workflow-step-label.completed { color: $color-primary; }
-.workflow-step-label i { flex: 0 0 auto; font-size: 18px; }
-.workflow-step-progress { display: flex; flex-shrink: 0; align-items: center; justify-content: center; position: relative; width: 100%; margin-top: 8px; }
-.workflow-step-circle { display: flex; flex: 0 0 auto; align-items: center; justify-content: center; position: relative; z-index: 1; width: 32px; height: 32px; border: 2px solid #cbcbcb; border-radius: 50%; background: #fff; color: #fff; transition: all .3s ease; }
-.workflow-step-circle.active { border-color: $color-primary; }
-.workflow-step-circle.completed { border-color: $color-primary; background: $color-primary; }
-.workflow-step-inner-circle { width: 12px; height: 12px; border-radius: 50%; background: $color-primary; }
-.workflow-step-checkmark { color: #fff; font-size: 16px; line-height: 1; }
-.workflow-connector-line { position: absolute; z-index: 0; inset-inline-start: 50%; top: 50%; width: 100%; height: 3px; border-radius: 2px; background: #cbcbcb; transform: translateY(-50%); transition: background .3s ease; }
-.workflow-connector-line.completed { background: $color-primary; }
-.workflow-form, .workflow-form-grid, .workflow-form-grid > * { min-width: 0; }
-.workflow-form-grid .p-inputtext, .workflow-form-grid .p-select, .workflow-form-grid .p-datepicker { max-width: 100%; min-width: 0; }
+.workflow-stepper-card {
+  overflow: hidden;
+}
+.workflow-stepper-container {
+  overflow-x: auto;
+}
+.workflow-stepper {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 680px;
+  margin-inline: auto;
+}
+.workflow-step-wrapper {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+}
+.workflow-step-label,
+.workflow-step-circle {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.workflow-step-label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 48px;
+  color: #999;
+  font-family: $font-primary;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+.workflow-step-label.active,
+.workflow-step-label.completed {
+  color: $color-primary;
+}
+.workflow-step-label i {
+  flex: 0 0 auto;
+  font-size: 18px;
+}
+.workflow-step-progress {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  margin-top: 8px;
+}
+.workflow-step-circle {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #cbcbcb;
+  border-radius: 50%;
+  background: #fff;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+.workflow-step-circle.active {
+  border-color: $color-primary;
+}
+.workflow-step-circle.completed {
+  border-color: $color-primary;
+  background: $color-primary;
+}
+.workflow-step-inner-circle {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: $color-primary;
+}
+.workflow-step-checkmark {
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+}
+.workflow-connector-line {
+  position: absolute;
+  z-index: 0;
+  inset-inline-start: 50%;
+  top: 50%;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: #cbcbcb;
+  transform: translateY(-50%);
+  transition: background 0.3s ease;
+}
+.workflow-connector-line.completed {
+  background: $color-primary;
+}
+.workflow-form,
+.workflow-form-grid,
+.workflow-form-grid > * {
+  min-width: 0;
+}
+.workflow-form-grid .p-inputtext,
+.workflow-form-grid .p-select,
+.workflow-form-grid .p-datepicker {
+  max-width: 100%;
+  min-width: 0;
+}
 
 @media (max-width: 640px) {
-  .workflow-stepper-container { overflow: visible; }
-  .workflow-stepper { flex-direction: column; align-items: stretch; width: 100%; min-width: 0; }
-  .workflow-step-wrapper { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: start; column-gap: 12px; flex: none; }
-  .workflow-step-wrapper:not(:last-child) { padding-bottom: 24px; }
-  .workflow-step-progress { grid-column: 1; grid-row: 1; position: static; width: 32px; margin-top: 0; }
-  .workflow-step-circle { box-sizing: border-box; }
-  .workflow-connector-line { inset-inline-start: 15px; top: 16px; width: 2px; height: 100%; transform: none; }
+  .workflow-stepper-container {
+    overflow: visible;
+  }
+  .workflow-stepper {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+  }
+  .workflow-step-wrapper {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    align-items: start;
+    column-gap: 12px;
+    flex: none;
+  }
+  .workflow-step-wrapper:not(:last-child) {
+    padding-bottom: 24px;
+  }
+  .workflow-step-progress {
+    grid-column: 1;
+    grid-row: 1;
+    position: static;
+    width: 32px;
+    margin-top: 0;
+  }
+  .workflow-step-circle {
+    box-sizing: border-box;
+  }
+  .workflow-connector-line {
+    inset-inline-start: 15px;
+    top: 16px;
+    width: 2px;
+    height: 100%;
+    transform: none;
+  }
 }
 
 .management-list-shell {

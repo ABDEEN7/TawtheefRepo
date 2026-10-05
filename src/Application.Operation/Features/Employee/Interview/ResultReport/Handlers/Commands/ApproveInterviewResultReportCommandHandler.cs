@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Application.Operation.Features.Employee.Interview.ResultReport.Commands;
+using Application.Operation.Features.Employee.Interview.ResultReport.Services;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -63,6 +64,11 @@ public sealed class ApproveInterviewResultReportCommandHandler(IUnitOfWork unitO
             var appointment = appointments.FirstOrDefault(a => a.Id == candidate.InterviewAppointmentId);
             appointment?.Invitation?.ChangeInvitationStatus(invitationStatusId);
         }
+
+        // Report stays Approved; its schedule + appointments close, and the committee too if now fully done.
+        var closeResult = await InterviewClosureService.CloseAfterReportApprovalAsync(unitOfWork, report, cancellationToken);
+        if (closeResult.IsFailed)
+            return Result.Fail<Unit>(closeResult.Errors);
 
         // Per-candidate decision detail (not just a count) - lets anyone reviewing the audit trail see
         // exactly which decision was made for which candidate, by whom and when (user/timestamp come

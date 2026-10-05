@@ -544,6 +544,15 @@ public class ErrorsCodes
     public const string InterviewAppointmentAlreadyRescheduledOnce = "INTERVIEW_APPOINTMENT_ALREADY_RESCHEDULED_ONCE";
     public const string InterviewAppointmentNotEvaluable = "INTERVIEW_APPOINTMENT_NOT_EVALUABLE";
     public const string InterviewAppointmentAttendanceForbidden = "INTERVIEW_APPOINTMENT_ATTENDANCE_FORBIDDEN";
+    public const string InterviewAppointmentRescheduleSlotNotFound = "INTERVIEW_APPOINTMENT_RESCHEDULE_SLOT_NOT_FOUND";
+    public const string InterviewAppointmentRescheduleSlotTaken = "INTERVIEW_APPOINTMENT_RESCHEDULE_SLOT_TAKEN";
+    public const string InterviewAppointmentRescheduleSlotInPast = "INTERVIEW_APPOINTMENT_RESCHEDULE_SLOT_IN_PAST";
+    public const string InterviewAppointmentRescheduleSameSlot = "INTERVIEW_APPOINTMENT_RESCHEDULE_SAME_SLOT";
+    public const string InterviewAppointmentConcurrentUpdate = "INTERVIEW_APPOINTMENT_CONCURRENT_UPDATE";
+    public const string InterviewAppointmentAttendanceStatusNotAllowed = "INTERVIEW_APPOINTMENT_ATTENDANCE_STATUS_NOT_ALLOWED";
+    public const string InterviewAppointmentAttendanceFinal = "INTERVIEW_APPOINTMENT_ATTENDANCE_FINAL";
+    public const string InterviewAppointmentAbsentAfterStart = "INTERVIEW_APPOINTMENT_ABSENT_AFTER_START";
+    public const string InterviewAppointmentWithdrawalNotAllowed = "INTERVIEW_APPOINTMENT_WITHDRAWAL_NOT_ALLOWED";
     #endregion
 
     #region Interview - Member Evaluation
@@ -571,6 +580,15 @@ public class ErrorsCodes
     public const string InterviewResultReportCalculationMethodNotSupported = "INTERVIEW_RESULT_REPORT_CALCULATION_METHOD_NOT_SUPPORTED";
     public const string InterviewResultReportMissingInvitationStatusMapping = "INTERVIEW_RESULT_REPORT_MISSING_INVITATION_STATUS_MAPPING";
     public const string InterviewResultReportNotReadyForReschedule = "INTERVIEW_RESULT_REPORT_NOT_READY_FOR_RESCHEDULE";
+    public const string InterviewResultReportFinalizedNoReschedule = "INTERVIEW_RESULT_REPORT_FINALIZED_NO_RESCHEDULE";
+    public const string InterviewResultReportNotInCommitteeReview = "INTERVIEW_RESULT_REPORT_NOT_IN_COMMITTEE_REVIEW";
+    public const string InterviewCommitteeReviewForbidden = "INTERVIEW_COMMITTEE_REVIEW_FORBIDDEN";
+    public const string InterviewCommitteeReviewOverrideForbidden = "INTERVIEW_COMMITTEE_REVIEW_OVERRIDE_FORBIDDEN";
+    public const string InterviewSchoolStageNotFound = "INTERVIEW_SCHOOL_STAGE_NOT_FOUND";
+    #endregion
+
+    #region Interview - Dashboard
+    public const string InterviewDashboardSectionForbidden = "INTERVIEW_DASHBOARD_SECTION_FORBIDDEN";
     #endregion
 }
 public static class CandidateEligibilityConditionCodes

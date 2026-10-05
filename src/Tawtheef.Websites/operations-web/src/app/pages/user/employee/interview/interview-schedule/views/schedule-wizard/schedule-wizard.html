@@ -299,7 +299,7 @@
                   <small class="text-muted">{{ 'INTERVIEW_SCHEDULE.QID_LABEL' | translate }}: <bdi dir="ltr">{{ slot.candidateQid }}</bdi></small>
                 }
               </td>
-              <td>{{ slot.slot.date | date: 'dd-MM-yyyy' }}</td>
+              <td>{{ slot.slot.startAt | date: 'dd-MM-yyyy' }}</td>
               <td><bdi dir="ltr">{{ slot.slot.startAt | date: 'h:mm a' }} - {{ slot.slot.endAt | date: 'h:mm a' }}</bdi></td>
               <td>{{ slotLocation(slot) || '—' }}</td>
               <td>
@@ -432,7 +432,7 @@
                   <small class="text-muted">{{ 'INTERVIEW_SCHEDULE.QID_LABEL' | translate }}: <bdi dir="ltr">{{ slot.candidateQid }}</bdi></small>
                 }
               </td>
-              <td>{{ slot.slot.date | date: 'dd-MM-yyyy' }}</td>
+              <td>{{ slot.slot.startAt | date: 'dd-MM-yyyy' }}</td>
               <td><bdi dir="ltr">{{ slot.slot.startAt | date: 'h:mm a' }} - {{ slot.slot.endAt | date: 'h:mm a' }}</bdi></td>
               <td>{{ slotLocation(slot) || '—' }}</td>
             </tr>

@@ -12,7 +12,10 @@ import { DialogHelperService } from '../../../../../../../core/services/dialog-h
 
 import { InterviewScheduleStore } from '../../interview-schedule.store';
 import { InterviewScheduleFacade } from '../../interview-schedule.facade';
-import { RescheduleDialogComponent } from '../../components/reschedule-dialog/reschedule-dialog';
+import {
+  RescheduleDialogComponent,
+  RescheduleDialogData,
+} from '../../components/reschedule-dialog/reschedule-dialog';
 import { AppointmentModel } from '../../models/appointment.model';
 import {
   APPOINTMENT_STATUS_LABELS,
@@ -114,6 +117,17 @@ export class ScheduleDetailComponent {
 
   canReschedule(scheduleStatus: ScheduleStatus): boolean {
     return scheduleStatus === ScheduleStatus.Approved || scheduleStatus === ScheduleStatus.Returned;
+  }
+
+  // Only a candidate's live booking can move (server: InterviewAppointment.MarkRescheduled). A superseded
+  // (Rescheduled) or Cancelled row keeps its candidate for history, and an interview that already started
+  // is locked. Completed stays movable for the Final Review corrective reschedule, which the server checks.
+  isMovable(appointment: AppointmentModel): boolean {
+    return (
+      !!appointment.invitationId &&
+      (appointment.status === AppointmentStatus.Scheduled ||
+        appointment.status === AppointmentStatus.Completed)
+    );
   }
 
   edit() {
@@ -223,14 +237,22 @@ export class ScheduleDetailComponent {
   }
 
   reschedule(appointment: AppointmentModel) {
+    const schedule = this.store.detailSchedule();
+    if (!schedule) return;
+
+    const data: RescheduleDialogData = {
+      scheduleId: schedule.id,
+      appointment,
+      candidateName: this.candidateLabel(appointment),
+      isRtl: this.store.isRtl(),
+      loadSlots: this.service.loadRescheduleSlots,
+    };
+
     const ref = this.dialogService.open(RescheduleDialogComponent, {
       header: this.translate.instant('INTERVIEW_SCHEDULE.DETAIL.RESCHEDULE'),
-      width: '32rem',
-      data: {
-        appointment,
-        candidateName: this.candidateLabel(appointment),
-        searchRooms: this.service.searchRooms,
-      },
+      width: '42rem',
+      breakpoints: { '768px': '95vw' },
+      data,
     });
 
     ref?.onClose.subscribe((payload: RescheduleAppointmentPayload | undefined) => {

@@ -1,0 +1,228 @@
+<div class="card card-table mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <button type="button" class="btn btn-link p-0 text-primary d-inline-flex align-items-center gap-1" (click)="service.backFromReview()">
+        <i class="hgi hgi-stroke hgi-arrow-right-01"></i>{{ 'INTERVIEW_EVALUATION.SESSION.BACK_TO_SESSION' | translate }}
+      </button>
+
+      @if (store.reviewEditable()) {
+        <div class="d-flex gap-2 flex-wrap">
+          <button type="button" class="btn btn-outline-primary" [disabled]="store.reviewSaving()" (click)="save()">
+            <i class="hgi hgi-stroke hgi-floppy-disk me-1"></i>{{ 'INTERVIEW_EVALUATION.REVIEW.SAVE' | translate }}
+          </button>
+          @if (store.reviewInCommitteeStage()) {
+            <button type="button" class="btn btn-primary" [disabled]="store.reviewSaving()" (click)="sendForApproval()">
+              <i class="hgi hgi-stroke hgi-sent me-1"></i>{{ 'INTERVIEW_EVALUATION.REVIEW.SEND_FOR_APPROVAL' | translate }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <h5 class="fw-bold mb-3">{{ 'INTERVIEW_EVALUATION.REVIEW.TITLE' | translate }}</h5>
+    @if (store.review(); as review) {
+      <div class="row g-3">
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.SERIAL' | translate }}</span>
+          <strong><bdi dir="ltr">{{ review.code }}</bdi></strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.JOB' | translate }}</span>
+          <strong>{{ jobName() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.SCHEDULE' | translate }}</span>
+          <strong>{{ scheduleTitle() || '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.QUALIFICATION_SCORE' | translate }}</span>
+          <strong>{{ review.appliedQualificationScore !== null ? (review.appliedQualificationScore | number: '1.0-2') : '—' }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.CANDIDATE_COUNT' | translate }}</span>
+          <strong>{{ review.candidates.length }}</strong>
+        </div>
+        <div class="col-md-4">
+          <span class="text-muted d-block">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.STATUS' | translate }}</span>
+          <span [class]="'pill ' + statusPill(review.status)">{{ statusLabel(review.status) | translate }}</span>
+        </div>
+        @if (review.committeeReviewedAt) {
+          <div class="col-md-4">
+            <span class="text-muted d-block">{{ 'INTERVIEW_EVALUATION.REVIEW.SENT_AT' | translate }}</span>
+            <strong><bdi dir="ltr">{{ review.committeeReviewedAt | date: 'dd-MM-yyyy HH:mm' }}</bdi></strong>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+@if (store.review(); as review) {
+  @if (!review.canEdit) {
+    <div class="alert alert-info d-flex align-items-center gap-2 mb-3">
+      <i class="hgi hgi-stroke hgi-information-circle"></i>
+      {{ 'INTERVIEW_EVALUATION.REVIEW.READ_ONLY_APPROVED' | translate }}
+    </div>
+  } @else if (!review.canOverrideSuggestion) {
+    <div class="alert alert-info d-flex align-items-center gap-2 mb-3">
+      <i class="hgi hgi-stroke hgi-information-circle"></i>
+      {{ 'INTERVIEW_EVALUATION.REVIEW.NO_OVERRIDE_PERMISSION' | translate }}
+    </div>
+  }
+
+  @for (candidate of review.candidates; track candidate.id) {
+    <div class="card card-table mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+          <div>
+            <h6 class="fw-bold mb-1">{{ candidateName(candidate) || '—' }}</h6>
+            @if (candidate.candidateQid) {
+              <small class="text-muted">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.CANDIDATE_QID' | translate }}: <bdi dir="ltr">{{ candidate.candidateQid }}</bdi></small>
+            }
+            @if (candidate.isLate || closedAttendanceLabel(candidate)) {
+              <div class="d-flex flex-wrap gap-1 mt-1">
+                @if (closedAttendanceLabel(candidate); as attendanceLabel) {
+                  <span class="pill danger" [pTooltip]="'INTERVIEW_RESULT_REPORT.DETAIL.CLOSED_BY_ATTENDANCE_HINT' | translate" tooltipPosition="top">
+                    {{ attendanceLabel | translate }}
+                  </span>
+                }
+                @if (candidate.isLate) {
+                  <span class="pill warning" [pTooltip]="'INTERVIEW_EVALUATION.ATTENDANCE_STATUS.LATE_HINT' | translate" tooltipPosition="top">
+                    <i class="hgi hgi-stroke hgi-clock-01" aria-hidden="true"></i>
+                    {{ 'INTERVIEW_EVALUATION.ATTENDANCE_STATUS.LATE' | translate }}
+                  </span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="d-flex align-items-center flex-wrap gap-3">
+            <div class="text-center">
+              <span class="text-muted d-block small">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.COLUMN_FINAL_SCORE' | translate }}</span>
+              <strong class="fs-5">{{ candidate.finalScore | number: '1.0-2' }}</strong>
+            </div>
+            <span [class]="'pill ' + (candidate.isQualified ? 'success' : 'danger')">
+              {{ (candidate.isQualified ? 'INTERVIEW_RESULT_REPORT.QUALIFIED' : 'INTERVIEW_RESULT_REPORT.NOT_QUALIFIED') | translate }}
+            </span>
+            @if (candidate.operationalIssues.length) {
+              <div class="action-buttons d-flex">
+                <button type="button" class="btn position-relative" (click)="viewNotes(candidate)"
+                  [pTooltip]="'INTERVIEW_RESULT_REPORT.NOTES_DIALOG.TITLE' | translate" tooltipPosition="top"
+                  [attr.aria-label]="'INTERVIEW_RESULT_REPORT.NOTES_DIALOG.TITLE' | translate">
+                  <i class="hgi hgi-stroke hgi-alert-02"></i>
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                    [class.bg-danger]="openIssuesCount(candidate) > 0" [class.bg-secondary]="openIssuesCount(candidate) === 0">
+                    {{ candidate.operationalIssues.length }}
+                  </span>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label d-block">{{ 'INTERVIEW_EVALUATION.REVIEW.SYSTEM_SUGGESTION' | translate }}</label>
+            <span [class]="'pill ' + decisionPill(candidate.suggestedDecision)">{{ decisionLabel(candidate.suggestedDecision) | translate }}</span>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'INTERVIEW_EVALUATION.REVIEW.CHAIR_RECOMMENDATION' | translate }}</label>
+            <p-select class="w-100" [options]="decisionOptions(candidate)" optionLabel="label" optionValue="value"
+              optionDisabled="disabled" [appendTo]="'body'" [disabled]="!canOverride()"
+              [ariaLabel]="'INTERVIEW_EVALUATION.REVIEW.CHAIR_RECOMMENDATION' | translate"
+              [ngModel]="store.reviewDecisions()[candidate.id]" (ngModelChange)="service.setReviewDecision(candidate.id, $event)">
+              <ng-template #selectedItem let-selected>
+                <span>{{ selected?.label | translate }}</span>
+              </ng-template>
+              <ng-template #item let-option>
+                <span>{{ option.label | translate }}</span>
+              </ng-template>
+            </p-select>
+            @if (isOverridden(candidate)) {
+              <input type="text" class="form-control form-control-sm mt-2" maxlength="2000" [disabled]="!canOverride()"
+                [placeholder]="'INTERVIEW_EVALUATION.REVIEW.REASON_PLACEHOLDER' | translate"
+                [attr.aria-label]="'INTERVIEW_EVALUATION.REVIEW.REASON_PLACEHOLDER' | translate"
+                [ngModel]="store.reviewReasons()[candidate.id]" (ngModelChange)="service.setReviewReason(candidate.id, $event)" />
+            }
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">{{ 'INTERVIEW_EVALUATION.REVIEW.SCHOOL_STAGE' | translate }}</label>
+            <p-select class="w-100" [options]="schoolStageOptions()" optionLabel="label" optionValue="value"
+              [showClear]="true" [appendTo]="'body'" [disabled]="!store.reviewEditable()"
+              [placeholder]="'INTERVIEW_EVALUATION.REVIEW.SCHOOL_STAGE_PLACEHOLDER' | translate"
+              [ariaLabel]="'INTERVIEW_EVALUATION.REVIEW.SCHOOL_STAGE' | translate"
+              [ngModel]="store.reviewStages()[candidate.id]" (ngModelChange)="service.setReviewStage(candidate.id, $event ?? null)" />
+            <small class="text-muted d-block mt-1">{{ 'INTERVIEW_EVALUATION.REVIEW.SCHOOL_STAGE_HINT' | translate }}</small>
+          </div>
+        </div>
+
+        @if (hasScores(candidate)) {
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>{{ 'INTERVIEW_EVALUATION.REVIEW.COLUMN_CRITERION' | translate }}</th>
+                  <th class="text-center">{{ 'INTERVIEW_EVALUATION.REVIEW.COLUMN_MAX' | translate }}</th>
+                  @for (member of candidate.members; track member.interviewCommitteeMemberId) {
+                    <th class="text-center">
+                      <div>{{ memberName(member) || '—' }}</div>
+                      <small class="text-muted fw-normal">{{ memberRoleLabel(member) | translate }}</small>
+                      @if (member.status) {
+                        <div><span [class]="'pill ' + memberStatusPill(member.status)">{{ memberStatusLabel(member.status) | translate }}</span></div>
+                      }
+                    </th>
+                  }
+                  <th class="text-center">{{ 'INTERVIEW_EVALUATION.REVIEW.COLUMN_AVERAGE' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (axis of review.axes; track axis.axisId) {
+                  @let axisResult = axisScore(candidate, axis.axisId);
+                  <tr class="table-light">
+                    <td class="fw-semibold">{{ axisName(axis) || '—' }}</td>
+                    <td class="text-center fw-semibold">{{ axis.maxScore | number: '1.0-2' }}</td>
+                    <td [attr.colspan]="candidate.members.length" class="text-muted small">
+                      @if (axis.qualificationScore !== null) {
+                        {{ 'INTERVIEW_RESULT_REPORT.DETAIL.AXIS_QUALIFICATION_SCORE' | translate: { score: axis.qualificationScore } }}
+                      }
+                    </td>
+                    <td class="text-center fw-semibold" [class.text-danger]="axisResult?.qualificationMet === false">
+                      {{ axisResult ? (axisResult.score | number: '1.0-2') : '—' }}
+                    </td>
+                  </tr>
+                  @for (criterion of axis.criteria; track criterion.criterionId) {
+                    <tr>
+                      <td class="ps-4">{{ criterionName(criterion) || '—' }}</td>
+                      <td class="text-center">{{ criterion.maxScore | number: '1.0-2' }}</td>
+                      @for (member of candidate.members; track member.interviewCommitteeMemberId) {
+                        @let score = memberScore(member, criterion.criterionId);
+                        <td class="text-center">{{ score !== null ? (score | number: '1.0-2') : '—' }}</td>
+                      }
+                      @let average = criterionAverage(candidate, criterion.criterionId);
+                      <td class="text-center">{{ average !== null ? (average | number: '1.0-2') : '—' }}</td>
+                    </tr>
+                  }
+                }
+              </tbody>
+              <tfoot>
+                <tr class="fw-semibold">
+                  <td colspan="2">{{ 'INTERVIEW_EVALUATION.REVIEW.MEMBER_TOTAL' | translate }}</td>
+                  @for (member of candidate.members; track member.interviewCommitteeMemberId) {
+                    <td class="text-center">{{ member.totalScore !== null ? (member.totalScore | number: '1.0-2') : '—' }}</td>
+                  }
+                  <td class="text-center">{{ candidate.finalScore | number: '1.0-2' }}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        } @else {
+          <p class="text-muted mb-0">{{ 'INTERVIEW_EVALUATION.REVIEW.NO_SCORES' | translate }}</p>
+        }
+      </div>
+    </div>
+  } @empty {
+    <p class="text-muted text-center">{{ 'INTERVIEW_RESULT_REPORT.DETAIL.NO_CANDIDATES' | translate }}</p>
+  }
+} @else if (store.reviewLoading()) {
+  <p class="text-muted text-center">{{ 'INTERVIEW_EVALUATION.REVIEW.LOADING' | translate }}</p>
+}
