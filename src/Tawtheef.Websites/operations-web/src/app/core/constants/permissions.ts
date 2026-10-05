@@ -179,6 +179,7 @@ export const Permissions = {
   QuestionBankRequests: {
     View: 'question-bank-requests.view',
     Create: 'question-bank-requests.create',
+    Maintenance: 'question-bank-requests.maintenance',
     Assign: 'question-bank-requests.assign',
     Review: 'question-bank-requests.review',
   },

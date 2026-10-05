@@ -465,6 +465,10 @@ export class EndpointsService {
   questionBankRequests = {
     list: this.getFullUrl('/questionbankrequests/list-question-bank-requests'),
     create: this.getFullUrl('/questionbankrequests/create-question-bank-request'),
+    maintenanceDetails: (id: string) =>
+      this.getFullUrl(`/questionbankrequests/banks/${id}/maintenance-details`),
+    createMaintenance: (id: string) =>
+      this.getFullUrl(`/questionbankrequests/${id}/maintenance`),
     details: (id: string) => this.getFullUrl(`/questionbankrequests/${id}`),
     eligibleEmployees: (id: string) =>
       this.getFullUrl(`/questionbankrequests/${id}/eligible-employees`),

@@ -20,5 +20,7 @@
   "QUESTION_BANKS.LOADING": "Loading question banks",
   "QUESTION_BANKS.EMPTY": "No question banks found",
   "QUESTION_BANKS.LOAD_ERROR": "Question banks could not be loaded. Please try again.",
-  "QUESTION_BANKS.NEW_REQUEST": "New Request"
+  "QUESTION_BANKS.NEW_REQUEST": "New Request",
+  "QUESTION_BANKS.ACTIONS": "Actions",
+  "QUESTION_BANKS.MAINTENANCE_REQUEST": "Maintenance Request"
 }
