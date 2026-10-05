@@ -4,7 +4,7 @@ using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
-using Tawtheef.Domain.Events.Operation.Interview.Schedule;
+using Tawtheef.Domain.Events.Operation.Employee.Interview.Schedule;
 
 namespace Tawtheef.Domain.Entities.Interview;
 

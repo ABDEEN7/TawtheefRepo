@@ -1,0 +1,22 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewApprovalRequested.InterviewApprovalRequestedModel>
+@{
+    // Plain text (in-app bell, SMS): no HTML encoding, otherwise Arabic values come out as &#x...; entities.
+    DisableEncoding = true;
+    var m = Model.Model;
+    var kind = m.Kind switch
+    {
+        InterviewEntityKind.Template => "evaluation template",
+        InterviewEntityKind.Committee => "interview committee",
+        InterviewEntityKind.Schedule => "interview schedule",
+        InterviewEntityKind.ResultReport => "interview result report",
+        _ => ""
+    };
+}
+The @kind "@m.EntityName"@(string.IsNullOrWhiteSpace(m.JobTitle) ? "" : $" for the job \"{m.JobTitle}\"") has been submitted and is awaiting approval.
+@if (!string.IsNullOrWhiteSpace(m.SubmittedBy))
+{
+<text>Submitted by: @m.SubmittedBy
+</text>
+}
+Portal Link: @(Model.Branding.OperationsUrl + InterviewNotificationLinks.Resolve(m.Kind, m.LinkPath))
