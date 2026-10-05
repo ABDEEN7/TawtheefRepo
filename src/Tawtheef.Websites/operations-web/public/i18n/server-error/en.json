@@ -426,5 +426,6 @@
   "server-error.INTERVIEW_RESULT_REPORT_NOT_IN_COMMITTEE_REVIEW": "The committee review of this result report can no longer be changed.",
   "server-error.INTERVIEW_COMMITTEE_REVIEW_FORBIDDEN": "Only the committee chair can review these results.",
   "server-error.INTERVIEW_COMMITTEE_REVIEW_OVERRIDE_FORBIDDEN": "You don't have permission to change the system suggestion.",
-  "server-error.INTERVIEW_SCHOOL_STAGE_NOT_FOUND": "The selected school stage is not available."
+  "server-error.INTERVIEW_SCHOOL_STAGE_NOT_FOUND": "The selected school stage is not available.",
+  "server-error.TEST_SESSION_SCHEDULED_TIME_EXPIRED": "A test session cannot be submitted or approved for a past date or time. Return it for editing and select a valid time slot."
 }

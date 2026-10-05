@@ -10,6 +10,27 @@ public static class TestSessionCapacityService
     public static bool ReservesCapacity(Guid statusId) =>
         !NonReservingStatusIds.Contains(statusId);
 
+    public static bool HasFutureUsableWindow(
+        DateOnly slotDate,
+        TimeOnly slotStart,
+        TimeOnly slotEnd,
+        int requiredDurationMinutes,
+        DateTime currentDateTime)
+    {
+        if (requiredDurationMinutes <= 0) return false;
+
+        var start = slotDate.ToDateTime(slotStart);
+        var end = slotDate.ToDateTime(slotEnd);
+        var earliestStart = start > currentDateTime ? start : currentDateTime;
+        return earliestStart.AddMinutes(requiredDurationMinutes) <= end;
+    }
+
+    public static bool IsSessionStartCurrentOrFuture(
+        DateOnly slotDate,
+        TimeOnly sessionStart,
+        DateTime currentDateTime) =>
+        slotDate.ToDateTime(sessionStart) >= currentDateTime;
+
     public static int CalculatePeakOccupancy(
         IEnumerable<TestSessionCapacityReservation> reservations,
         TimeOnly start,

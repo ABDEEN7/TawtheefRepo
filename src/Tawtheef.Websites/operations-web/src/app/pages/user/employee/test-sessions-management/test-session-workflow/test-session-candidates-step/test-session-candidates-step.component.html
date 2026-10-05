@@ -4,6 +4,20 @@
 </h5>
 <p class="text-muted mb-4">{{ 'TEST_SESSION_WIZARD.CANDIDATES_DESCRIPTION' | translate }}</p>
 
+@if (conflicts().length > 0) {
+  <div class="alert alert-danger mb-4" role="alert">
+    <p class="mb-2">{{ 'TEST_SESSION_WIZARD.CANDIDATE_CONFLICT_MESSAGE' | translate }}</p>
+    <ul class="mb-0">
+      @for (conflict of conflicts(); track conflict.invitationId) {
+        <li>
+          <div class="fw-semibold">{{ conflict.candidateName }}</div>
+          <small>{{ 'TEST_SESSION_WIZARD.CANDIDATE_CONFLICT_QID' | translate: { qid: conflict.qid || ('TEST_SESSION_WIZARD.NOT_AVAILABLE' | translate) } }}</small>
+        </li>
+      }
+    </ul>
+  </div>
+}
+
 <div class="row g-3 mb-4">
   <div class="col-12 col-md-3">
     <div class="candidate-summary-card">
@@ -35,6 +49,7 @@
   <div class="col-6">
     <p-select
       class="w-100"
+      [class.bg-light]="readOnly()"
       [options]="genderOptions"
       [ngModel]="genderFilter()"
       (ngModelChange)="genderFilterChanged.emit($event)"
@@ -54,6 +69,7 @@
   <div class="col-6">
     <p-select
       class="w-100"
+      [class.bg-light]="readOnly()"
       [options]="nationalityOptions"
       [ngModel]="nationalityFilter()"
       (ngModelChange)="nationalityFilterChanged.emit($event)"
@@ -74,22 +90,21 @@
 
 <div class="row g-3 mb-3">
   <div class="col-12 col-lg-5">
-    <div class="p-input-icon-left w-100">
-      <i class="pi pi-search"></i>
+    <p-iconfield class="search-icon-field w-100">
+      <p-inputicon styleClass="fa-solid fa-magnifying-glass" />
       <input
         pInputText
         class="w-100 form-control"
         type="search"
         [ngModel]="search()"
         (ngModelChange)="onSearchChanged($event)"
-        [disabled]="readOnly()"
         [placeholder]="'TEST_SESSION_WIZARD.CANDIDATE_SEARCH' | translate"
       />
-    </div>
+    </p-iconfield>
   </div>
 
   <div class="col-12 col-lg-3 d-flex align-items-center">
-    <button type="button" class="btn btn-outline-primary light" (click)="clearSearch()" [disabled]="readOnly()">
+    <button type="button" class="btn btn-outline-primary light" (click)="clearSearch()">
       {{ 'TEST_SESSION_WIZARD.CLEAR_FILTERS' | translate }}
     </button>
   </div>
@@ -108,6 +123,7 @@
             <th>
               <p-checkbox
                 [binary]="true"
+                [class.bg-light]="readOnly()"
                 [ngModel]="allCandidatesSelected()"
                 (ngModelChange)="toggleAllCandidates($event)"
                 [disabled]="readOnly()"
@@ -127,6 +143,7 @@
             <td>
               <p-checkbox
                 [binary]="true"
+                [class.bg-light]="readOnly()"
                 [ngModel]="selectedCandidateIds().includes(candidate.invitationId)"
                 (ngModelChange)="toggleCandidate(candidate.invitationId, $event)"
                 [disabled]="readOnly()"

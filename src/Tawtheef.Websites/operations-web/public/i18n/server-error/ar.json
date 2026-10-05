@@ -426,5 +426,6 @@
   "server-error.INTERVIEW_RESULT_REPORT_NOT_IN_COMMITTEE_REVIEW": "لم يعد بالإمكان تعديل مراجعة اللجنة لتقرير النتائج هذا.",
   "server-error.INTERVIEW_COMMITTEE_REVIEW_FORBIDDEN": "مراجعة هذه النتائج متاحة لرئيس اللجنة فقط.",
   "server-error.INTERVIEW_COMMITTEE_REVIEW_OVERRIDE_FORBIDDEN": "ليست لديك صلاحية تعديل مقترح النظام.",
-  "server-error.INTERVIEW_SCHOOL_STAGE_NOT_FOUND": "المرحلة الدراسية المختارة غير متاحة."
+  "server-error.INTERVIEW_SCHOOL_STAGE_NOT_FOUND": "المرحلة الدراسية المختارة غير متاحة.",
+  "server-error.TEST_SESSION_SCHEDULED_TIME_EXPIRED": "لا يمكن إرسال جلسة اختبار للاعتماد أو اعتمادها بتاريخ أو وقت سابق. يرجى إعادتها للتعديل واختيار فترة صالحة."
 }

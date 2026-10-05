@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,7 +10,12 @@ import { finalize } from 'rxjs';
 import { AuthService } from '../../../../../core/auth/auth.service';
 import { Permissions } from '../../../../../core/constants/permissions';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
-import { TestSessionCandidateSummaryDto } from '../models/test-session-candidate.dto';
+import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
+import {
+  TestSessionCandidateConflictDto,
+  TestSessionCandidateListItemDto,
+  TestSessionCandidateSummaryDto,
+} from '../models/test-session-candidate.dto';
 import { TestSessionExamDetailsDto } from '../models/test-session-exam-details.dto';
 import { LocalTestSession } from '../models/ready-test-slot.dto';
 import {
@@ -35,6 +41,7 @@ import { TestSessionExamSelectionStepComponent } from './test-session-exam-selec
 import { TestSessionPeriodsStepComponent } from './test-session-periods-step/test-session-periods-step.component';
 import { TestSessionWorkflowActionComponent } from './test-session-workflow-action/test-session-workflow-action.component';
 import { ConfirmationDialogComponent } from '../../../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
+import { TestSessionDecisionDialogComponent } from './test-session-decision-dialog/test-session-decision-dialog.component';
 
 @Component({
   selector: 'app-test-session-workflow',
@@ -49,6 +56,7 @@ import { ConfirmationDialogComponent } from '../../../../../shared/dialogs/confi
     TestSessionPeriodsStepComponent,
     TestSessionWorkflowActionComponent,
     TableModule,
+    FaDirArrowDirective,
     I18nNamespaceDirective,
   ],
   providers: [DialogService],
@@ -79,6 +87,8 @@ export class TestSessionWorkflowComponent {
   readonly candidateGenderFilter = signal<TestSessionGenderFilter>(null);
   readonly candidateNationalityFilter = signal<TestSessionNationalityFilter>(null);
   readonly selectedCandidateIds = signal<string[]>([]);
+  readonly editCandidates = signal<TestSessionCandidateListItemDto[]>([]);
+  readonly candidateConflicts = signal<TestSessionCandidateConflictDto[]>([]);
   readonly localSession = signal<LocalTestSession | null>(null);
   readonly testSessionId = signal<string | null>(null);
   readonly sessionNo = signal<string | null>(null);
@@ -87,6 +97,10 @@ export class TestSessionWorkflowComponent {
   readonly editMode = signal(false);
   readonly viewMode = signal(false);
   readonly statusId = signal<string | null>(null);
+  readonly decisionNote = signal<string | null>(null);
+  readonly decisionByName = signal<string | null>(null);
+  readonly decisionAt = signal<string | null>(null);
+  readonly statusBackendName = signal<string | null>(null);
   readonly testSlotStaff = signal<TestSlotConfigurationStaffDto[]>([]);
   readonly periodTeamLoading = signal(false);
   readonly periodTeamLoadFailed = signal(false);
@@ -171,10 +185,16 @@ export class TestSessionWorkflowComponent {
     this.testSessionId.set(session.testSessionId);
     this.sessionNo.set(session.sessionNo);
     this.statusId.set(session.statusId.toLowerCase());
+    this.decisionNote.set(session.decisionNote);
+    this.decisionByName.set(session.decisionByName ?? null);
+    this.decisionAt.set(session.decisionAt ?? null);
+    this.statusBackendName.set(session.statusBackendName ?? null);
     this.selectedExamId = session.examId;
     this.candidateGenderFilter.set(session.genderFilter);
     this.candidateNationalityFilter.set(session.nationalityFilter);
     this.selectedCandidateIds.set(session.invitationIds);
+    this.editCandidates.set(session.persistedCandidates ?? []);
+    this.candidateConflicts.set([]);
     this.candidateSelectionInitialized.set(this.viewMode() || session.invitationIds.length > 0);
 
     if (
@@ -214,6 +234,7 @@ export class TestSessionWorkflowComponent {
     this.candidateGenderFilter.set(null);
     this.candidateNationalityFilter.set(null);
     this.selectedCandidateIds.set([]);
+    this.candidateConflicts.set([]);
     this.candidateSelectionInitialized.set(false);
     this.candidateSearch.set('');
     if (examId) {
@@ -237,6 +258,14 @@ export class TestSessionWorkflowComponent {
       this.selectedCandidateIds.set(candidateIds);
       this.candidateSelectionInitialized.set(true);
     }
+  }
+
+  onCandidateSelectionChanged(candidateIds: string[]): void {
+    this.selectedCandidateIds.set(candidateIds);
+    const selectedIds = new Set(candidateIds);
+    this.candidateConflicts.update(conflicts =>
+      conflicts.filter(conflict => selectedIds.has(conflict.invitationId)),
+    );
   }
 
   goTo(target: number): void {
@@ -366,6 +395,59 @@ export class TestSessionWorkflowComponent {
     });
   }
 
+  onReturnClicked(): void {
+    this.openDecisionDialog('return');
+  }
+
+  onRejectClicked(): void {
+    this.openDecisionDialog('reject');
+  }
+
+  navigateToTestSessionsManagement(): void {
+    void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
+  }
+
+  private openDecisionDialog(action: 'return' | 'reject'): void {
+    const testSessionId = this.testSessionId();
+    if (!testSessionId || this.saving() || this.statusId() !== TEST_SESSION_STATUS_IDS.pendingApproval ||
+      !this.auth.hasPermission(Permissions.TestSessions.WorkflowActions)) return;
+
+    const dialogRef = this.dialogs.open(TestSessionDecisionDialogComponent, {
+      header: this.translate.instant(`TEST_SESSION_WIZARD.${action.toUpperCase()}_TITLE`),
+      width: 'min(32rem, 95vw)',
+      closable: true,
+      modal: true,
+      data: { action },
+    });
+    if (!dialogRef) return;
+
+    dialogRef.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((note) => {
+      if (typeof note !== 'string' || !note.trim()) return;
+
+      this.saving.set(true);
+      const decision = action === 'return'
+        ? this.service.returnForEdit(testSessionId, note.trim())
+        : this.service.reject(testSessionId, note.trim());
+      decision
+        .pipe(finalize(() => this.saving.set(false)), takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            if (action === 'return') {
+              this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.RETURN_SUCCESS'));
+              void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
+              return;
+            }
+
+            this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.REJECT_SUCCESS'));
+            void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
+          },
+          error: () => this.notifications.error(this.translate.instant(
+            `TEST_SESSION_WIZARD.${action.toUpperCase()}_FAILED`,
+          )),
+        });
+    });
+  }
+
   private persistSession(sendToApprove: boolean): void {
     const session = this.localSession();
     if (
@@ -387,6 +469,7 @@ export class TestSessionWorkflowComponent {
         nationalityFilter: this.candidateNationalityFilter(),
         invitationIds: this.selectedCandidateIds(),
         sendToApprove,
+        language: this.language.get(),
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -403,6 +486,15 @@ export class TestSessionWorkflowComponent {
         },
         error: error => {
           this.saving.set(false);
+          const conflicts = this.getCandidateConflicts(error);
+          if (conflicts.length > 0) {
+            this.candidateConflicts.set(conflicts);
+            this.step = 2;
+            this.notifications.error(
+              this.translate.instant('TEST_SESSION_WIZARD.CANDIDATE_CONFLICT_MESSAGE'),
+            );
+            return;
+          }
           const capacityError = String(error?.error?.message ?? '').match(
             /^TEST_SESSION_CAPACITY_INSUFFICIENT:(\d+)$/,
           );
@@ -416,6 +508,21 @@ export class TestSessionWorkflowComponent {
           );
         },
       });
+  }
+
+  private getCandidateConflicts(error: unknown): TestSessionCandidateConflictDto[] {
+    const body = error instanceof HttpErrorResponse ? error.error : null;
+    const apiErrors = Array.isArray(body?.error) ? body.error : [];
+    const details = apiErrors.flatMap((apiError: { metadata?: Record<string, unknown> }) => {
+      const metadata = apiError.metadata ?? {};
+      const conflicts = metadata['conflictDetails'] ?? metadata['ConflictDetails'];
+      return Array.isArray(conflicts) ? conflicts : [];
+    });
+
+    return details.filter((conflict: unknown): conflict is TestSessionCandidateConflictDto => {
+      const value = conflict as Partial<TestSessionCandidateConflictDto>;
+      return typeof value?.invitationId === 'string' && typeof value.candidateName === 'string';
+    });
   }
 
   roomHeadStaff(): TestSlotConfigurationStaffDto | null {
