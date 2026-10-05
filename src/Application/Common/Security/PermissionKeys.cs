@@ -237,6 +237,7 @@ public static class PermissionKeys
     {
         public const string View = "question-bank-requests.view";
         public const string Create = "question-bank-requests.create";
+        public const string Maintenance = "question-bank-requests.maintenance";
         public const string Assign = "question-bank-requests.assign";
         public const string Review = "question-bank-requests.review";
     }
