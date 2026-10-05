@@ -12,6 +12,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
+import { SortEvent } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, finalize, forkJoin, Subject } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Permissions } from '../../../../core/constants/permissions';
@@ -29,6 +31,7 @@ import {
 } from './models/question-bank-request.models';
 import { QuestionBankRequestsService } from './services/question-bank-requests.service';
 import { portalRoutes } from '../../../../routes/portal-routes';
+import { questionBankRequestStatusSeverity } from '../../../../shared/utils/question-bank-status.util';
 
 @Component({
   selector: 'app-question-bank-requests',
@@ -50,6 +53,7 @@ import { portalRoutes } from '../../../../routes/portal-routes';
     IconFieldModule,
     InputIconModule,
     InputTextModule,
+    TooltipModule,
   ],
   providers: [DialogService],
 })
@@ -66,8 +70,14 @@ export class QuestionBankRequestsPage implements OnInit {
   private readonly changes$ = new Subject<string>();
   readonly rows = signal<QuestionBankRequestListItem[]>([]);
   readonly loading = signal(false);
+  readonly loadFailed = signal(false);
   readonly total = signal(0);
-  readonly filters = signal<QuestionBankRequestFilters>({ pageNumber: 1, pageSize: 10 });
+  readonly filters = signal<QuestionBankRequestFilters>({
+    pageNumber: 1,
+    pageSize: 10,
+    sortBy: 'submittedAt',
+    sortDirection: 'desc',
+  });
   readonly currentLang = signal<Lang>(this.language.get());
   readonly advanced = signal(false);
   readonly types = signal<dropdownOptionsModel[]>([]);
@@ -148,6 +158,17 @@ export class QuestionBankRequestsPage implements OnInit {
     this.filters.update((f) => ({ ...f, pageNumber: 1, pageSize: n }));
     this.load();
   }
+  onSort(event: SortEvent): void {
+    if (!event.field) return;
+    this.filters.update((f) => ({
+      ...f,
+      pageNumber: 1,
+      sortBy: event.field,
+      sortDirection: event.order === -1 ? 'desc' : 'asc',
+    }));
+    this.load();
+  }
+  readonly statusSeverity = questionBankRequestStatusSeverity;
   name(ar?: string | null, en?: string | null): string {
     return (this.currentLang() === 'ar' ? ar : en) || '-';
   }
@@ -202,6 +223,7 @@ export class QuestionBankRequestsPage implements OnInit {
   }
   private load(): void {
     this.loading.set(true);
+    this.loadFailed.set(false);
     this.service
       .list(this.filters())
       .pipe(
@@ -213,8 +235,10 @@ export class QuestionBankRequestsPage implements OnInit {
           this.rows.set(x.items ?? []);
           this.total.set(x.metadata?.totalCount ?? 0);
         },
-        error: () =>
-          this.notification.error(this.translate.instant('QUESTION_BANK_REQUESTS.LOAD_ERROR')),
+        error: () => {
+          this.loadFailed.set(true);
+          this.notification.error(this.translate.instant('QUESTION_BANK_REQUESTS.LOAD_ERROR'));
+        },
       });
   }
 }

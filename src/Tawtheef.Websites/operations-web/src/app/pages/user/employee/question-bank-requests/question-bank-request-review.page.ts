@@ -21,6 +21,7 @@ import {
   QuestionReviewInput,
 } from './models/question-bank-request.models';
 import { QuestionBankRequestsService } from './services/question-bank-requests.service';
+import { questionBankRequestStatusSeverity } from '../../../../shared/utils/question-bank-status.util';
 
 interface ReviewFormValue {
   decisionId?: string;
@@ -60,6 +61,7 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
   readonly submitted = signal(false);
   readonly currentLang = signal<Lang>(this.language.get());
   readonly decisions = QuestionReviewDecisionIds;
+  readonly requestStatusSeverity = questionBankRequestStatusSeverity;
   readonly values = new Map<string, ReviewFormValue>();
   readonly imageUrls = new Map<string, string>();
 
@@ -96,8 +98,14 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
 
   allApproved(): boolean {
     const review = this.review();
-    return !!review && review.items.length > 0 && !this.reviewIncomplete() &&
-      review.items.every((item) => this.value(item.requestItemId).decisionId === this.decisions.Approved);
+    return (
+      !!review &&
+      review.items.length > 0 &&
+      !this.reviewIncomplete() &&
+      review.items.every(
+        (item) => this.value(item.requestItemId).decisionId === this.decisions.Approved,
+      )
+    );
   }
 
   submitLabel(): string {

@@ -14,7 +14,7 @@
   "QUESTION_ASSIGNMENTS.START": "Start",
   "QUESTION_ASSIGNMENTS.CONTINUE": "Continue",
   "QUESTION_ASSIGNMENTS.VIEW": "View",
-  "QUESTION_ASSIGNMENTS.EMPTY": "No assignments found.",
+  "QUESTION_ASSIGNMENTS.EMPTY": "No question bank assignments found.",
   "QUESTION_ASSIGNMENTS.TYPE": "Type",
   "QUESTION_ASSIGNMENTS.DIFFICULTY": "Difficulty",
   "QUESTION_ASSIGNMENTS.QUESTION": "Question",
@@ -65,5 +65,7 @@
   "QUESTION_ASSIGNMENTS.MANAGER_FEEDBACK": "Manager feedback",
   "QUESTION_ASSIGNMENTS.REVIEW_ROUND": "Review round",
   "QUESTION_ASSIGNMENTS.FINISH_MODIFICATIONS": "Finish Modifications",
-  "QUESTION_ASSIGNMENTS.MODIFICATIONS_SUCCESS": "Question modifications submitted successfully."
+  "QUESTION_ASSIGNMENTS.MODIFICATIONS_SUCCESS": "Question modifications submitted successfully.",
+  "QUESTION_ASSIGNMENTS.DESCRIPTION": "Review and complete your assigned question bank work.",
+  "QUESTION_ASSIGNMENTS.NO_QUESTIONS": "No questions found."
 }

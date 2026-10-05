@@ -14,7 +14,7 @@
   "QUESTION_ASSIGNMENTS.START": "بدء",
   "QUESTION_ASSIGNMENTS.CONTINUE": "متابعة",
   "QUESTION_ASSIGNMENTS.VIEW": "عرض",
-  "QUESTION_ASSIGNMENTS.EMPTY": "لا توجد مهام.",
+  "QUESTION_ASSIGNMENTS.EMPTY": "لا توجد مهام بنوك أسئلة.",
   "QUESTION_ASSIGNMENTS.TYPE": "النوع",
   "QUESTION_ASSIGNMENTS.DIFFICULTY": "الصعوبة",
   "QUESTION_ASSIGNMENTS.QUESTION": "السؤال",
@@ -65,5 +65,7 @@
   "QUESTION_ASSIGNMENTS.MANAGER_FEEDBACK": "ملاحظات المدير",
   "QUESTION_ASSIGNMENTS.REVIEW_ROUND": "جولة المراجعة",
   "QUESTION_ASSIGNMENTS.FINISH_MODIFICATIONS": "إنهاء التعديلات",
-  "QUESTION_ASSIGNMENTS.MODIFICATIONS_SUCCESS": "تم إرسال تعديلات الأسئلة بنجاح."
+  "QUESTION_ASSIGNMENTS.MODIFICATIONS_SUCCESS": "تم إرسال تعديلات الأسئلة بنجاح.",
+  "QUESTION_ASSIGNMENTS.DESCRIPTION": "راجع وأكمل مهام بنوك الأسئلة المسندة إليك.",
+  "QUESTION_ASSIGNMENTS.NO_QUESTIONS": "لا توجد أسئلة."
 }

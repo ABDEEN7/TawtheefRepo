@@ -8,8 +8,10 @@ import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressBar } from 'primeng/progressbar';
 import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { RichContentRendererComponent } from '../../../../shared/rich-content/rich-content-renderer.component';
-import { Observable } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 import { LanguageService } from '../../../../core/services/language.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { routes } from '../../../../routes/routes';
@@ -22,6 +24,10 @@ import {
 } from './models/question-bank-assignment.models';
 import { QuestionDialogComponent } from './question-dialog/question-dialog.component';
 import { QuestionBankAssignmentsService } from './services/question-bank-assignments.service';
+import {
+  questionBankAssignmentStatusSeverity,
+  questionBankRequestItemStatusSeverity,
+} from '../../../../shared/utils/question-bank-status.util';
 
 @Component({
   selector: 'app-question-entry',
@@ -33,6 +39,8 @@ import { QuestionBankAssignmentsService } from './services/question-bank-assignm
     ButtonModule,
     ProgressBar,
     TableModule,
+    TagModule,
+    TooltipModule,
     RichContentRendererComponent,
     DynamicDialogModule,
     ConfirmDialogModule,
@@ -40,8 +48,7 @@ import { QuestionBankAssignmentsService } from './services/question-bank-assignm
   providers: [DialogService, ConfirmationService],
 })
 export class QuestionEntryPage {
-  private readonly assignmentId =
-    inject(ActivatedRoute).snapshot.paramMap.get('assignmentId')!;
+  private readonly assignmentId = inject(ActivatedRoute).snapshot.paramMap.get('assignmentId')!;
   private readonly service = inject(QuestionBankAssignmentsService);
   private readonly dialogs = inject(DialogService);
   private readonly notification = inject(NotificationService);
@@ -51,8 +58,11 @@ export class QuestionEntryPage {
   private readonly confirmation = inject(ConfirmationService);
 
   readonly workspace = signal<AssignmentWorkspace | null>(null);
+  readonly loading = signal(true);
   readonly statuses = AssignmentStatuses;
   readonly itemStatuses = RequestItemStatuses;
+  readonly assignmentStatusSeverity = questionBankAssignmentStatusSeverity;
+  readonly itemStatusSeverity = questionBankRequestItemStatusSeverity;
 
   constructor() {
     this.load();
@@ -143,9 +153,11 @@ export class QuestionEntryPage {
     request.subscribe({
       next: () => {
         this.notification.success(
-          this.translate.instant(this.correctionMode
-            ? 'QUESTION_ASSIGNMENTS.MODIFICATIONS_SUCCESS'
-            : 'QUESTION_ASSIGNMENTS.FINISH_SUCCESS'),
+          this.translate.instant(
+            this.correctionMode
+              ? 'QUESTION_ASSIGNMENTS.MODIFICATIONS_SUCCESS'
+              : 'QUESTION_ASSIGNMENTS.FINISH_SUCCESS',
+          ),
         );
         this.load();
       },
@@ -191,12 +203,16 @@ export class QuestionEntryPage {
   }
 
   private load(): void {
-    this.service.workspace(this.assignmentId).subscribe({
-      next: (workspace) => this.workspace.set(workspace),
-      error: () => {
-        this.notification.error();
-        this.back();
-      },
-    });
+    this.loading.set(true);
+    this.service
+      .workspace(this.assignmentId)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (workspace) => this.workspace.set(workspace),
+        error: () => {
+          this.notification.error();
+          this.back();
+        },
+      });
   }
 }
