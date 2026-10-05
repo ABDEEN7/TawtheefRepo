@@ -37,10 +37,9 @@ export class ExamsService {
     );
   }
 
-  jobSelection(jobId: string, excludeExamId?: string): Observable<ExamJobSelectionDto> {
+  jobSelection(jobId: string): Observable<ExamJobSelectionDto> {
     return this.http.get<ExamJobSelectionDto>(this.endpoints.exams.jobSelection, {
       jobId,
-      excludeExamId,
     });
   }
 

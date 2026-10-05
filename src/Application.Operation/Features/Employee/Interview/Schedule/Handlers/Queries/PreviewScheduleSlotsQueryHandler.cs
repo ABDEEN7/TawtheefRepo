@@ -60,7 +60,7 @@ public sealed class PreviewScheduleSlotsQueryHandler(IUnitOfWork unitOfWork, Use
             pairs = slotsResult.Value
                 .Select(slot =>
                 {
-                    var manual = request.ManualAssignments?.FirstOrDefault(m => m.SlotStartAt == slot.StartAt);
+                    var manual = request.ManualAssignments?.FirstOrDefault(m => m.SlotStartAt.UtcDateTime == slot.StartAt);
                     if (manual is not null)
                         return (Slot: slot, InvitationId: (Guid?)manual.InvitationId);
 

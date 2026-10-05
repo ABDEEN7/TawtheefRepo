@@ -217,4 +217,7 @@ export const portalRoutes = {
   get approveInterview() {
     return this.portal + '/approve-interview';
   },
+  get interviewDashboard() {
+    return this.portal + '/interview-dashboard';
+  },
 };

@@ -274,4 +274,10 @@ public static class PermissionKeys
         public const string View = "interview-result-report.view";
         public const string Manage = "interview-result-report.manage";
     }
+
+    public static class InterviewCommitteeReview
+    {
+        public const string View = "interview-committee-review.view";
+        public const string OverrideSuggestion = "interview-committee-review.override-suggestion";
+    }
 }

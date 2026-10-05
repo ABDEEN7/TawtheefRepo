@@ -94,5 +94,7 @@
   "internal.sidebar.interviews": "Interviews",
   "internal.sidebar.start-interview": "Start Interview",
   "internal.sidebar.approve-interview": "Approve Interview",
-  "internal.sidebar.question-bank-assignments": "My Question Assignments"
+  "internal.sidebar.interview-dashboard": "Interview Dashboard",
+  "internal.sidebar.question-bank-assignments": "My Question Assignments",
+  "internal.sidebar.testSessions": "Test Sessions"
 }

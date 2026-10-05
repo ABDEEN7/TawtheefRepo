@@ -1,6 +1,7 @@
 import { AppointmentModel } from './appointment.model';
 import { AppointmentStatus, InterviewType } from './enums';
 import { RoomOptionModel, SchedulePeriodModel } from './schedule.model';
+import { utcIsoToLocalParts } from './schedule-time';
 
 export type WizardMode = 'create' | 'edit';
 
@@ -21,7 +22,10 @@ export interface WizardJobContext {
   jobNumber: string | null;
 }
 
-/** One row of the Step 2 periods table. Never sent as-is: the facade maps it to PeriodInputDto. */
+/**
+ * One row of the Step 2 periods table, in the user's local day/time. Never sent as-is: the facade maps it to
+ * PeriodInputDto (UTC instants).
+ */
 export interface PeriodDraft {
   localId: string;
   date: string; // yyyy-mm-dd
@@ -45,13 +49,14 @@ export function newPeriodDraft(): PeriodDraft {
 }
 
 // Rebuilds a step-2 row from a saved schedule's period. Only the room's id and name are known here, which is all
-// the payload (id) and the table/dialog (name) use.
+// the payload (id) and the table/dialog (name) use. The period's UTC instants become the viewer's local day/times.
 export function periodDraftFromSchedule(period: SchedulePeriodModel): PeriodDraft {
+  const start = utcIsoToLocalParts(period.startAt);
   return {
     localId: crypto.randomUUID(),
-    date: period.date,
-    startTime: period.startTime.slice(0, 5),
-    endTime: period.endTime.slice(0, 5),
+    date: start.date,
+    startTime: start.time,
+    endTime: utcIsoToLocalParts(period.endAt).time,
     room: period.roomId
       ? {
           id: period.roomId,
@@ -83,6 +88,6 @@ export function manualAssignmentsFromAppointments(appointments: AppointmentModel
  * auto-filled from the remaining eligible pool by the server - mirrors SlotAssignmentDto exactly.
  */
 export interface ManualAssignmentDraft {
-  slotStartAt: string; // ISO, matches a SlotPreviewModel.slot.startAt exactly
+  slotStartAt: string; // UTC ISO instant of a SlotPreviewModel.slot.startAt (the server compares instants, not text)
   invitationId: string;
 }

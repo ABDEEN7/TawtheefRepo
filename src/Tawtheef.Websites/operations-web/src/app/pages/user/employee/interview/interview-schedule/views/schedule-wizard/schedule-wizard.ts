@@ -12,7 +12,10 @@ import { InterviewScheduleStore, WizardStep } from '../../interview-schedule.sto
 import { InterviewScheduleFacade } from '../../interview-schedule.facade';
 import { LazySelectComponent } from '../../components/lazy-select/lazy-select';
 import { PeriodDialogComponent } from '../../components/period-dialog/period-dialog';
-import { ReassignSlotDialogComponent } from '../../components/reassign-slot-dialog/reassign-slot-dialog';
+import {
+  ReassignSlotDialogComponent,
+  ReassignSlotDialogData,
+} from '../../components/reassign-slot-dialog/reassign-slot-dialog';
 import { LazySelectOption } from '../../models/lazy-select-option.model';
 import { SlotPreviewModel } from '../../models/plan-preview.model';
 import { PeriodDraft, WizardJobContext } from '../../models/wizard-draft.model';
@@ -182,15 +185,19 @@ export class ScheduleWizardComponent {
     const preview = this.store.wizardPreview();
     if (!preview) return;
 
+    const data: ReassignSlotDialogData = {
+      candidateInvitationId: slot.invitationId,
+      candidateName: this.candidateLabel(slot),
+      slots: preview.slots,
+      isRtl: this.store.isRtl(),
+      localized: (ar?: string | null, en?: string | null) => this.localized(ar, en),
+    };
+
     const ref = this.dialogService.open(ReassignSlotDialogComponent, {
       header: this.translate.instant('INTERVIEW_SCHEDULE.WIZARD.REASSIGN'),
-      width: '28rem',
-      data: {
-        candidateInvitationId: slot.invitationId,
-        candidateName: this.candidateLabel(slot),
-        slots: preview.slots,
-        localized: (ar?: string | null, en?: string | null) => this.localized(ar, en),
-      },
+      width: '42rem',
+      breakpoints: { '768px': '95vw' },
+      data,
     });
 
     ref?.onClose.subscribe((newStartAt: string | undefined) => {

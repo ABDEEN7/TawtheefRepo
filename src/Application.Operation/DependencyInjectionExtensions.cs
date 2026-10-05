@@ -6,6 +6,7 @@ using Application.Operation.Features.Employee.Dashboard.Services.Read;
 using Application.Operation.Features.Employee.Dashboard.Services.Scopes;
 using Application.Operation.Features.Employee.Exams.Services;
 using Application.Operation.Features.Employee.Interview.Committee.Services;
+using Application.Operation.Features.Employee.Interview.Dashboard.Services;
 using Application.Operation.Features.Employee.Interview.Evaluation.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services;
 using Application.Operation.Features.Employee.JobManagement.JobCandidates.Services.Interfaces;
@@ -122,6 +123,8 @@ namespace Application.Operation
                 services.AddScoped<EvaluationAccessResolver>();
                 services.AddScoped<EvaluationSessionAccessResolver>();
                 services.AddScoped<CommitteeMemberEligibilityService>();
+                services.AddScoped<InterviewDashboardAccessResolver>();
+                services.AddScoped<InterviewDashboardQueryScope>();
             }
 
             private void RegisterValidators()

@@ -14,6 +14,7 @@ import { Permissions } from '../../../../../../../core/constants/permissions';
 import { InterviewScheduleStore } from '../../interview-schedule.store';
 import { InterviewScheduleFacade } from '../../interview-schedule.facade';
 import { ScheduleListItemModel } from '../../models/schedule.model';
+import { SessionSummary, summarizeSessions } from '../../models/schedule-time';
 import {
   INTERVIEW_TYPE_LABELS,
   InterviewType,
@@ -61,11 +62,9 @@ export class SchedulesListComponent {
     return this.store.isRtl() ? ar || en || '' : en || ar || '';
   }
 
-  // The API sends a bare time of day ("HH:mm:ss"); the date pipe needs a Date, so build one on an arbitrary day.
-  timeOf(value?: string | null): Date | null {
-    if (!value) return null;
-    const [hours, minutes] = value.split(':').map(Number);
-    return new Date(2000, 0, 1, hours, minutes);
+  // Session days and daily hours in the viewer's timezone (the API sends UTC instants).
+  sessionSummary(row: ScheduleListItemModel): SessionSummary | null {
+    return summarizeSessions(row.sessions);
   }
 
   jobTitle(schedule: ScheduleListItemModel): string {

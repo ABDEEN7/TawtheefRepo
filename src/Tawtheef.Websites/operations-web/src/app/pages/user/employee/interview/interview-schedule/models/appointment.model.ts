@@ -28,4 +28,6 @@ export interface AppointmentModel {
   invitationSentAt?: string | null;
   lastReminderSentAt?: string | null;
   reminderCount: number;
+  // Arrived late (a Late operational issue): attendance stays Present, the UI shows a "late" hint.
+  isLate?: boolean;
 }

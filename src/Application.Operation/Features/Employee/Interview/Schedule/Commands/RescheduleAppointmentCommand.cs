@@ -3,15 +3,12 @@ using MediatR;
 
 namespace Application.Operation.Features.Employee.Interview.Schedule.Commands;
 
-// Never mutates the old row's time in place - it flips the old appointment to Rescheduled (keeping
-// its RescheduleReason) and inserts a brand-new Scheduled row linked back via
-// RescheduledFromAppointmentId, re-running the exact same conflict checks as initial scheduling
-// Only allowed while the parent InterviewSchedule is Approved or Returned.
+// Moves the candidate into another open slot of the SAME schedule (see
+// GetAvailableSlotsForRescheduleQuery) - never a free date/time, so the schedule's approved
+// capacity/distribution is never bypassed. The old row is flipped to Rescheduled (keeping its
+// RescheduleReason) and the target slot takes over the candidate, linked back via
+// RescheduledFromAppointmentId. Only allowed while the parent InterviewSchedule is Approved or Returned.
 public sealed record RescheduleAppointmentCommand(
     Guid AppointmentId,
-    DateTime NewStartAt,
-    DateTime NewEndAt,
-    Guid? RoomId,
-    string? RemoteMeetingUrl,
-    string? RemoteMeetingInstructions,
+    Guid TargetSlotId,
     string Reason) : IRequest<IResult<Guid>>;

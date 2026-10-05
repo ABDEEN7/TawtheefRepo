@@ -10,6 +10,7 @@
     <p-select
       inputId="test-session-exam"
       class="w-100"
+      [class.bg-light]="disabled"
       [options]="exams"
       [disabled]="disabled"
       optionLabel="name"

@@ -13,6 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
 import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';
@@ -23,6 +24,7 @@ import { InvitationSource } from '../../../../../../core/enums/invitation-source
 import { LanguageService } from '../../../../../../core/services/language.service';
 import {
   TestSessionCandidateFilters,
+  TestSessionCandidateConflictDto,
   TestSessionCandidateListItemDto,
   TestSessionCandidateSummaryDto,
 } from '../../models/test-session-candidate.dto';
@@ -36,6 +38,7 @@ import { PaginationComponent } from '../../../../../../shared/components/paginat
   imports: [
     FormsModule,
     TranslatePipe,
+    IconFieldModule,
     InputIconModule,
     InputTextModule,
     CheckboxModule,
@@ -50,9 +53,11 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
   readonly examId = input.required<string>();
   readonly testSessionId = input<string | null>(null);
   readonly readOnly = input(false);
+  readonly persistedCandidates = input<TestSessionCandidateListItemDto[]>([]);
   readonly genderFilter = input<'Male' | 'Female' | null>(null);
   readonly nationalityFilter = input<'Qatari' | 'NonQatari' | null>(null);
   readonly selectedCandidateIds = input<string[]>([]);
+  readonly conflicts = input<TestSessionCandidateConflictDto[]>([]);
   readonly selectionInitialized = input(false);
   readonly search = input('');
   readonly genderFilterChanged = output<'Male' | 'Female' | null>();
@@ -120,8 +125,16 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
     const backendFiltersChanged =
       (!!changes['genderFilter'] && !changes['genderFilter'].firstChange) ||
       (!!changes['nationalityFilter'] && !changes['nationalityFilter'].firstChange);
-    if (!changes['examId'] && !changes['genderFilter'] && !changes['nationalityFilter'] &&
-      !changes['testSessionId']) return;
+    if (
+      !changes['examId'] &&
+      !changes['genderFilter'] &&
+      !changes['nationalityFilter'] &&
+      !changes['testSessionId'] &&
+      !changes['readOnly'] &&
+      !changes['persistedCandidates']
+    ) {
+      return;
+    }
 
     this.filters.update((filters) => ({
       ...filters,
@@ -174,6 +187,29 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
   }
 
   private loadCandidates(reselectAllOnResult = false): void {
+    if (this.readOnly()) {
+      const persistedCandidates = this.persistedCandidates();
+      this.candidates.set(persistedCandidates);
+      const summary = {
+        total: persistedCandidates.length,
+        eligible: persistedCandidates.filter(
+          candidate => candidate.eligibilityStatus === 'Eligible',
+        ).length,
+        notReady: persistedCandidates.filter(
+          candidate => candidate.eligibilityStatus === 'NotReady',
+        ).length,
+        excluded: persistedCandidates.filter(
+          candidate => candidate.eligibilityStatus === 'Excluded',
+        ).length,
+      };
+      this.summary.set(summary);
+      this.summaryChanged.emit(summary);
+      this.loading.set(false);
+      this.loadFailed.set(false);
+      this.stateChanged.emit(true);
+      return;
+    }
+
     if (!this.filters().examId) return;
 
     const loadSequence = ++this.loadSequence;

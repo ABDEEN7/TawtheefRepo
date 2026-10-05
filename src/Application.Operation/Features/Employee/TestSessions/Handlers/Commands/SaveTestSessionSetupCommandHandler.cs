@@ -3,6 +3,7 @@ using Application.Operation.Features.Employee.TestSessions.DTOs;
 using Application.Operation.Features.Employee.TestSessions.Services;
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
@@ -78,6 +79,11 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
             (setup.EndTime.Value - setup.StartTime.Value).TotalMinutes < exam.Duration))
             return ValidationFailure();
 
+        if (setup.SendToApprove && slot is not null &&
+            !TestSessionCapacityService.IsSessionStartCurrentOrFuture(
+                slot.SlotDate, setup.StartTime!.Value, DateTime.UtcNow))
+            return SchedulingTimeFailure();
+
         if (setup.SendToApprove && slot is not null)
         {
             await unitOfWork.Context.Database.ExecuteSqlRawAsync(
@@ -105,7 +111,7 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
                 "@Resource = {0}, @LockMode = N'Exclusive', " +
                 "@LockOwner = N'Transaction', @LockTimeout = 15000; " +
                 "IF @result < 0 THROW 51000, 'Test session candidate lock unavailable', 1;",
-                [$"Tawtheef.TestSession.Candidate.{setup.ExamId}.{invitationId}"], ct);
+                [$"Tawtheef.TestSession.Candidate.{exam.JobId}.{invitationId}"], ct);
         }
 
         var validCandidateCount = await ValidCandidateQuery(setup, exam.JobId, candidateIdsToPersist)
@@ -113,14 +119,18 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
         if (validCandidateCount != candidateIdsToPersist.Length)
             return ValidationFailure();
 
-        var duplicateCandidates = await unitOfWork.Context.Set<TestSessionCandidate>().AsNoTracking()
-            .Where(candidate => candidateIdsToPersist.Contains(candidate.InvitationId) &&
-                candidate.TestSession!.ExamId == setup.ExamId &&
-                candidate.TestSessionId != (session == null ? Guid.Empty : session.Id) &&
-                candidate.TestSession.StatusId != TestSessionStatusIds.Cancelled &&
-                candidate.TestSession.StatusId != TestSessionStatusIds.Rejected)
-            .AnyAsync(ct);
-        if (duplicateCandidates) return ValidationFailure();
+        if (setup.SendToApprove)
+        {
+            var conflicts = await TestSessionCandidateConflictService.GetConflictsAsync(
+                unitOfWork.Context,
+                exam.JobId,
+                session?.Id ?? Guid.Empty,
+                candidateIdsToPersist,
+                string.Equals(setup.Language, "ar", StringComparison.OrdinalIgnoreCase),
+                ct);
+            if (conflicts.Count != 0)
+                return CandidateConflictFailure(conflicts);
+        }
 
         if (slot is not null)
         {
@@ -197,13 +207,7 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
                 (invitation.InvitationStatusId == InvitationStatusIds.ExamEligible &&
                  invitation.Applicant!.Profile != null &&
                  invitation.Applicant.Profile.Status == UserProfileStatus.Approved &&
-                 invitation.Applicant.Profile.AvailableForRecruitment))
-            .Where(invitation => !unitOfWork.Context.Set<TestSessionCandidate>().Any(candidate =>
-                candidate.InvitationId == invitation.Id &&
-                candidate.TestSession!.ExamId == setup.ExamId &&
-                candidate.TestSessionId != (setup.TestSessionId ?? Guid.Empty) &&
-                candidate.TestSession.StatusId != TestSessionStatusIds.Cancelled &&
-                candidate.TestSession.StatusId != TestSessionStatusIds.Rejected));
+                 invitation.Applicant.Profile.AvailableForRecruitment));
 
         if (setup.GenderFilter.HasValue)
             query = query.Where(invitation => invitation.Applicant!.Profile!.GenderId ==
@@ -232,6 +236,10 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
         => Result.Fail<SavedTestSessionSetupDto>(new Error("VALIDATION")
             .WithMetadata("Code", "Validation"));
 
+    private static IResult<SavedTestSessionSetupDto> SchedulingTimeFailure()
+        => Result.Fail<SavedTestSessionSetupDto>(new Error(ErrorsCodes.TestSessionScheduledTimeExpired)
+            .WithMetadata("Code", "Validation"));
+
     private static bool IsEditable(Guid statusId) =>
         statusId == TestSessionStatusIds.Draft || statusId == TestSessionStatusIds.Returned;
 
@@ -239,4 +247,12 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
         => Result.Fail<SavedTestSessionSetupDto>(new Error(ErrorsCodes.TestSessionInsufficientCapacity)
             .WithMetadata("Code", "Validation")
             .WithMetadata("UserMessage", $"TEST_SESSION_CAPACITY_INSUFFICIENT:{count}"));
+
+    private static IResult<SavedTestSessionSetupDto> CandidateConflictFailure(
+        IReadOnlyList<TestSessionCandidateConflictDto> conflicts)
+        => Result.Fail<SavedTestSessionSetupDto>(new Error(ErrorsCodes.TestSessionCandidatesAlreadyAssigned)
+            .WithMetadata("Code", ErrorsCodes.TestSessionCandidatesAlreadyAssigned)
+            .WithMetadata("UserMessage", ErrorsCodes.TestSessionCandidatesAlreadyAssigned)
+            .WithMetadata("StatusCode", StatusCodes.Status409Conflict)
+            .WithMetadata("ConflictDetails", conflicts));
 }

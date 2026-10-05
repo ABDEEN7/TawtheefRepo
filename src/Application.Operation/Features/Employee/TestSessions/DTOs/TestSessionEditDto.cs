@@ -20,4 +20,9 @@ public sealed record TestSessionEditDto(
     int? RoomCapacity,
     TimeOnly? StartTime,
     TimeOnly? EndTime,
-    int AvailableCapacity);
+    int AvailableCapacity,
+    string? DecisionNote,
+    string? DecisionByName,
+    DateTime? DecisionAt,
+    string? StatusBackendName,
+    IReadOnlyList<TestSessionCandidateListItemDto> PersistedCandidates);

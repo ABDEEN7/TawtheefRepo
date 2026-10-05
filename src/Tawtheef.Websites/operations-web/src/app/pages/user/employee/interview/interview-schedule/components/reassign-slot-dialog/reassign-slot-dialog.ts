@@ -1,30 +1,25 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
-import { Select } from 'primeng/select';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { NotificationService } from '../../../../../../../core/services/notification.service';
-import { SlotPreviewModel } from '../../models/plan-preview.model';
+import { GeneratedSlotModel, SlotPreviewModel } from '../../models/plan-preview.model';
+import { PickerCurrentSlot, PickerSlot, SlotPickerComponent } from '../slot-picker/slot-picker';
 
 export interface ReassignSlotDialogData {
   candidateInvitationId: string;
   candidateName: string;
   slots: SlotPreviewModel[];
+  isRtl: boolean;
   localized: (ar?: string | null, en?: string | null) => string;
-}
-
-interface SlotOption {
-  value: string; // startAt
-  label: string;
 }
 
 @Component({
   selector: 'app-reassign-slot-dialog',
   templateUrl: './reassign-slot-dialog.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, TranslatePipe, Select],
+  imports: [TranslatePipe, SlotPickerComponent],
 })
 export class ReassignSlotDialogComponent implements OnInit {
   private dialogRef = inject(DynamicDialogRef);
@@ -33,51 +28,53 @@ export class ReassignSlotDialogComponent implements OnInit {
   private translate = inject(TranslateService);
 
   candidateName = '';
-  options: SlotOption[] = [];
-  selectedSlotStartAt: string | null = null;
+  isRtl = false;
+  current!: PickerCurrentSlot;
+  // Slots are identified by their start instant here - the draft preview has no persisted ids, and the
+  // wizard's reassign pins the candidate by startAt.
+  openSlots: PickerSlot[] = [];
+  selectedSlotStartAt = signal<string | null>(null);
 
   ngOnInit(): void {
     const data = this.dialogConfig.data!;
     this.candidateName = data.candidateName;
+    this.isRtl = data.isRtl;
 
-    // Only the candidate's own current slot and empty ("Held") slots are offered - slots already taken by
-    // someone else are not swappable from here.
-    this.options = data.slots
-      .filter((s: SlotPreviewModel) => !s.invitationId || s.invitationId === data.candidateInvitationId)
+    const own = data.slots.find((s: SlotPreviewModel) => s.invitationId === data.candidateInvitationId)!;
+    this.current = {
+      startAt: own.slot.startAt,
+      endAt: own.slot.endAt,
+      location: this.location(own.slot, data.localized),
+    };
+
+    // Only empty ("Held") slots are offered - the candidate's own slot is the "before" card, and slots taken
+    // by someone else are not swappable from here.
+    this.openSlots = data.slots
+      .filter((s: SlotPreviewModel) => !s.invitationId)
       .map((s: SlotPreviewModel) => ({
-        value: s.slot.startAt,
-        label: this.slotLabel(s, data.localized),
+        id: s.slot.startAt,
+        startAt: s.slot.startAt,
+        endAt: s.slot.endAt,
+        location: this.location(s.slot, data.localized),
       }));
-
-    this.selectedSlotStartAt =
-      data.slots.find((s: SlotPreviewModel) => s.invitationId === data.candidateInvitationId)?.slot.startAt ?? null;
-  }
-
-  private slotLabel(slot: SlotPreviewModel, localized: (ar?: string | null, en?: string | null) => string): string {
-    // Same shapes the tables use: dd-MM-yyyy and a 12-hour start - end range.
-    const start = new Date(slot.slot.startAt);
-    const end = new Date(slot.slot.endAt);
-    const time = (d: Date) => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-    const day = [
-      String(start.getDate()).padStart(2, '0'),
-      String(start.getMonth() + 1).padStart(2, '0'),
-      start.getFullYear(),
-    ].join('-');
-    const location = slot.slot.roomId
-      ? localized(slot.slot.roomNameAr, slot.slot.roomNameEn)
-      : this.translate.instant('INTERVIEW_SCHEDULE.INTERVIEW_TYPE.ONLINE');
-    return `${day}  ${time(start)} - ${time(end)}  ${location}`;
   }
 
   save() {
-    if (!this.selectedSlotStartAt) {
+    const startAt = this.selectedSlotStartAt();
+    if (!startAt) {
       this.notify.error(this.translate.instant('INTERVIEW_SCHEDULE.VALIDATION.SLOT_REQUIRED'));
       return;
     }
-    this.dialogRef.close(this.selectedSlotStartAt);
+    this.dialogRef.close(startAt);
   }
 
   cancel() {
     this.dialogRef.close();
+  }
+
+  private location(slot: GeneratedSlotModel, localized: ReassignSlotDialogData['localized']): string {
+    return slot.roomId
+      ? localized(slot.roomNameAr, slot.roomNameEn)
+      : this.translate.instant('INTERVIEW_SCHEDULE.INTERVIEW_TYPE.ONLINE');
   }
 }

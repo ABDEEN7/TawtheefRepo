@@ -11,4 +11,5 @@ public sealed record SaveTestSessionSetupDto(
     TestSessionGenderFilter? GenderFilter,
     TestSessionNationalityFilter? NationalityFilter,
     IReadOnlyCollection<Guid>? InvitationIds,
-    bool SendToApprove);
+    bool SendToApprove,
+    string Language = "en");

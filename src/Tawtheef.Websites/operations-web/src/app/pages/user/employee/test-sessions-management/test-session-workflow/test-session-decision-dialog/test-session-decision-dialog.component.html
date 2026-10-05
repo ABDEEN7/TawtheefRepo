@@ -1,0 +1,27 @@
+<section i18nNamespace="pages/employee/test-sessions-management">
+  <label class="form-label fw-semibold" for="test-session-decision-note">
+    {{ 'TEST_SESSION_WIZARD.DECISION_NOTE' | translate }} <span class="text-danger">*</span>
+  </label>
+  <textarea
+    pTextarea
+    id="test-session-decision-note"
+    class="form-control w-100"
+    rows="5"
+    [formControl]="note"
+    [attr.aria-invalid]="note.invalid && note.touched"
+    [placeholder]="'TEST_SESSION_WIZARD.DECISION_NOTE_PLACEHOLDER' | translate"
+  ></textarea>
+  @if (note.invalid && note.touched) {
+    <small class="text-danger d-block mt-1" role="alert">
+      {{ 'TEST_SESSION_WIZARD.DECISION_NOTE_REQUIRED' | translate }}
+    </small>
+  }
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      {{ 'common.cancel' | translate }}
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="note.invalid" (click)="confirm()">
+      {{ (action === 'reject' ? 'TEST_SESSION_WIZARD.CONFIRM_REJECT' : 'TEST_SESSION_WIZARD.CONFIRM_RETURN') | translate }}
+    </button>
+  </div>
+</section>

@@ -25,6 +25,7 @@ public sealed class GetReadyTestSlotsQueryHandler(IUnitOfWork unitOfWork)
 
         if (examDuration == 0) return Result.Fail<ReadyTestSlotsDto>(ErrorsCodes.InvalidRequest);
 
+        var currentDateTime = DateTime.UtcNow;
         var slots = await unitOfWork.Context.Set<TestSlot>().AsNoTracking()
             .Where(slot => slot.StatusId == TestSlotStatusIds.Ready && slot.Room!.StatusId == RoomStatusIds.Active)
             .Where(slot => EF.Functions.DateDiffSecond(slot.StartTime, slot.EndTime)
@@ -39,6 +40,9 @@ public sealed class GetReadyTestSlotsQueryHandler(IUnitOfWork unitOfWork)
                 isArabic ? slot.Room!.NameAr : slot.Room!.NameEn ?? slot.Room!.NameAr, slot.Room!.Capacity,
                 isArabic ? slot.Status!.NameAr : slot.Status!.NameEn))
             .ToListAsync(ct);
+
+        slots = slots.Where(slot => TestSessionCapacityService.HasFutureUsableWindow(
+            slot.Date, slot.StartTime, slot.EndTime, examDuration, currentDateTime)).ToList();
 
         var roomIds = slots.Select(slot => slot.RoomId).Distinct().ToList();
         var dates = slots.Select(slot => slot.Date).Distinct().ToList();
@@ -68,8 +72,7 @@ public sealed class GetReadyTestSlotsQueryHandler(IUnitOfWork unitOfWork)
                 ExistingSessionCount = slotSessions.Count, ExistingExamSessionCount = slotSessions.Count(s => s.ExamId == request.ExamId),
                 RemainingCapacity = availableSeats, Status = slot.Status
             };
-        }).Where(slot => slot.RemainingCapacity >= request.SelectedCandidateCount).OrderBy(slot => slot.SlotDate)
-            .ThenBy(slot => slot.StartTime).ToList();
+        }).OrderBy(slot => slot.SlotDate).ThenBy(slot => slot.StartTime).ToList();
 
         var pageNumber = Math.Max(1, request.PageNumber);
         var pageSize = Math.Clamp(request.PageSize, 1, 50);
