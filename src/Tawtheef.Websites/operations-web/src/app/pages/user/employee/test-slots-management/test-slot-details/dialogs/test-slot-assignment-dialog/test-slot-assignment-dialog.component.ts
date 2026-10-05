@@ -3,20 +3,20 @@ import { finalize } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ButtonModule } from 'primeng/button';
-import { NotificationService } from '../../../../../../core/services/notification.service';
-import { LanguageService } from '../../../../../../core/services/language.service';
-import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
-import { UserDto } from '../../../users-management/models/user.dto';
+import { NotificationService } from '../../../../../../../core/services/notification.service';
+import { LanguageService } from '../../../../../../../core/services/language.service';
+import { I18nNamespaceDirective } from '../../../../../../../shared/directives/i18n-namespace.directive';
+import { UserDto } from '../../../../users-management/models/user.dto';
 import {
   TestSlotConfigurationDto,
   TestSlotStaffRoleIds,
   UpdateTestSlotAssignmentsDto,
-} from '../../models/create-test-slot.dto';
-import { TestSlotsService } from '../../services/test-slots.service';
+} from '../../../models/create-test-slot.dto';
+import { TestSlotsService } from '../../../services/test-slots.service';
 import {
   TestSlotTeamAssignmentSelection,
   TestSlotTeamAssignmentSelectorComponent,
-} from '../../test-slot-create/steps/test-slot-team-assignment-selector/test-slot-team-assignment-selector.component';
+} from '../../../test-slot-create/steps/test-slot-team-assignment-selector/test-slot-team-assignment-selector.component';
 
 interface TestSlotAssignmentDialogData {
   testSlotId?: string;

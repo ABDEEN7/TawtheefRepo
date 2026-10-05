@@ -122,6 +122,7 @@
                 canEnterExam(assignment) ||
                 canContinueExam(assignment) ||
                 canRecoverStart(assignment) ||
+                canRecoverResume(assignment) ||
                 canResumeExam(assignment)
               ) {
                 <div class="exam-card__actions">
@@ -151,6 +152,15 @@
                     >
                       <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
                       {{ 'candidate_exams.actions.continue' | translate }}
+                    </button>
+                  } @else if (canRecoverResume(assignment)) {
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      (click)="openResumeDialog(assignment)"
+                    >
+                      <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                      {{ 'candidate_exams.actions.resumeExam' | translate }}
                     </button>
                   } @else if (canResumeExam(assignment)) {
                     <button

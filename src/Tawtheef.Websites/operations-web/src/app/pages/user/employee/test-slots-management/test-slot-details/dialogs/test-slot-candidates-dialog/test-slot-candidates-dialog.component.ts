@@ -10,22 +10,23 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { finalize } from 'rxjs';
-import { AuthService } from '../../../../../../core/auth/auth.service';
-import { Permissions } from '../../../../../../core/constants/permissions';
-import { NotificationService } from '../../../../../../core/services/notification.service';
-import { PaginationComponent } from '../../../../../../shared/components/pagination/pagination.component';
-import { ConfirmationDialogComponent } from '../../../../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
-import { LanguageService } from '../../../../../../core/services/language.service';
+import { AuthService } from '../../../../../../../core/auth/auth.service';
+import { Permissions } from '../../../../../../../core/constants/permissions';
+import { NotificationService } from '../../../../../../../core/services/notification.service';
+import { PaginationComponent } from '../../../../../../../shared/components/pagination/pagination.component';
+import { ConfirmationDialogComponent } from '../../../../../../../shared/dialogs/confirmation-dialog/confirmation-dialog.component';
+import { LanguageService } from '../../../../../../../core/services/language.service';
 import {
   TestSlotCandidateFilters,
   TestSlotCandidateListItemDto,
   TestSlotSessionDto,
   VerifyTestSlotCandidateIdentityRequest,
-} from '../../models/test-slot-details.dto';
-import { TestSlotsService } from '../../services/test-slots.service';
+} from '../../../models/test-slot-details.dto';
+import { TestSlotsService } from '../../../services/test-slots.service';
 import { VerifyIdentityDialogComponent } from './verify-identity-dialog.component';
 import { ReportOperationalIssueDialogComponent } from '../report-operational-issue-dialog/report-operational-issue-dialog.component';
-import { StatusSeverity } from '../../../../../../shared/types/status-severity.type';
+import { StatusSeverity } from '../../../../../../../shared/types/status-severity.type';
+import { RescheduleInterruptedCandidateDialogComponent } from '../reschedule-interrupted-candidate-dialog/reschedule-interrupted-candidate-dialog.component';
 
 interface TestSlotCandidatesDialogData {
   testSlotId: string;
@@ -121,16 +122,14 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   }
 
   private canAct(candidate: TestSlotCandidateListItemDto): boolean {
-  return (
-    this.data.isCurrentUserRoomHead &&
-    this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
-    ['Approved', 'Ready', 'InProgress'].includes(
-      candidate.sessionStatusBackendName,
-    ) &&
-    candidate.candidateStatusBackendName === 'Assigned' &&
-    this.actingCandidateId() === null
-  );
-}
+    return (
+      this.data.isCurrentUserRoomHead &&
+      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
+      ['Approved', 'Ready', 'InProgress'].includes(candidate.sessionStatusBackendName) &&
+      candidate.candidateStatusBackendName === 'Assigned' &&
+      this.actingCandidateId() === null
+    );
+  }
 
   canMarkPresent(candidate: TestSlotCandidateListItemDto): boolean {
     return this.canAct(candidate) && candidate.attendanceStatusBackendName === 'Pending';
@@ -275,6 +274,7 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
     return (
       candidate.testAttemptId !== null &&
       candidate.attemptStatusBackendName === 'Interrupted' &&
+      candidate.resumeAllowed &&
       !candidate.resumeAuthorized &&
       this.data.isCurrentUserRoomHead &&
       this.auth.hasPermission(Permissions.TestSlots.ManagePeriod)
@@ -336,6 +336,48 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
             ),
         });
     });
+  }
+
+  canReschedule(candidate: TestSlotCandidateListItemDto): boolean {
+    return (
+      candidate.testAttemptId !== null &&
+      candidate.attemptStatusBackendName === 'Interrupted' &&
+      candidate.rescheduleAllowed &&
+      !candidate.resumeAuthorized &&
+      this.data.isCurrentUserRoomHead &&
+      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod)
+    );
+  }
+
+  reschedule(candidate: TestSlotCandidateListItemDto): void {
+    const testAttemptId = candidate.testAttemptId;
+
+    if (!testAttemptId || !this.canReschedule(candidate)) {
+      return;
+    }
+
+    const dialogRef = this.dialogs.open(RescheduleInterruptedCandidateDialogComponent, {
+      header: this.translate.instant('TEST_SLOT_DETAILS.RESCHEDULE_TITLE'),
+
+      width: 'min(42rem, 95vw)',
+      modal: true,
+
+      data: {
+        testAttemptId,
+      },
+    });
+
+    dialogRef?.onClose
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((completed: boolean | undefined) => {
+        if (completed !== true) {
+          return;
+        }
+
+        this.notifications.success(this.translate.instant('TEST_SLOT_DETAILS.RESCHEDULE_SUCCESS'));
+
+        this.loadCandidates();
+      });
   }
 
   private loadCandidates(): void {

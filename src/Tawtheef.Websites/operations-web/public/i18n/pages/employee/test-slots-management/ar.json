@@ -131,7 +131,7 @@
   "TEST_SLOT_DETAILS.AUTHORIZING_RESUME": "جارٍ السماح بالاستئناف...",
   "TEST_SLOT_DETAILS.AUTHORIZE_RESUME_SUCCESS": "تم السماح باستئناف الاختبار بنجاح.",
   "TEST_SLOT_DETAILS.AUTHORIZE_RESUME_FAILED": "تعذر السماح باستئناف الاختبار. يرجى المحاولة مرة أخرى.",
-  "TEST_SLOT_DETAILS.RESUME_AUTHORIZED": "تم السماح",
+  "TEST_SLOT_DETAILS.RESUME_AUTHORIZED": "تم السماح",
   "TEST_SLOT_DETAILS.MARK_PRESENT": "تسجيل الحضور",
   "TEST_SLOT_DETAILS.VERIFY_IDENTITY": "التحقق من الهوية",
   "TEST_SLOT_DETAILS.SELECT_IDENTITY_RESULT": "اختر نتيجة التحقق",
@@ -148,5 +148,20 @@
   "TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_REASON": "سبب المشكلة التشغيلية",
   "TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_REASON_REQUIRED": "سبب المشكلة التشغيلية مطلوب",
   "TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_RECORDED": "تم تسجيل مشكلة تشغيلية",
-  "TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_SUCCESS": "تم تسجيل المشكلة التشغيلية بنجاح"
+  "TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_SUCCESS": "تم تسجيل المشكلة التشغيلية بنجاح",
+  "TEST_SLOT_DETAILS.RESCHEDULE": "إعادة جدولة الاختبار",
+  "TEST_SLOT_DETAILS.RESCHEDULE_TITLE": "إعادة جدولة اختبار المرشح",
+  "TEST_SLOT_DETAILS.RESCHEDULING": "جارٍ إعادة الجدولة...",
+  "TEST_SLOT_DETAILS.RESCHEDULE_SUCCESS": "تمت إعادة جدولة اختبار المرشح بنجاح.",
+  "TEST_SLOT_DETAILS.RESCHEDULE_FAILED": "تعذر إعادة جدولة الاختبار. يرجى المحاولة مرة أخرى.",
+  "TEST_SLOT_DETAILS.RESCHEDULE_OPTIONS_LOADING": "جارٍ تحميل الجلسات المتاحة...",
+  "TEST_SLOT_DETAILS.RESCHEDULE_OPTIONS_ERROR": "تعذر تحميل الجلسات المتاحة لإعادة الجدولة.",
+  "TEST_SLOT_DETAILS.NO_AVAILABLE_RESCHEDULE_SESSIONS": "لا توجد جلسات مستقبلية متاحة لإعادة جدولة هذا الاختبار.",
+  "TEST_SLOT_DETAILS.RESCHEDULE_SELECT_SESSION": "اختر الجلسة الجديدة للمرشح.",
+  "TEST_SLOT_DETAILS.RESCHEDULE_SESSION_REQUIRED": "يجب اختيار جلسة جديدة.",
+  "TEST_SLOT_DETAILS.RESCHEDULE_REASON": "سبب إعادة الجدولة",
+  "TEST_SLOT_DETAILS.RESCHEDULE_REASON_REQUIRED": "سبب إعادة الجدولة مطلوب.",
+  "TEST_SLOT_DETAILS.RETRY": "إعادة المحاولة",
+  "TEST_SLOT_DETAILS.SESSION_NO": "رقم الجلسة",
+  "TEST_SLOT_DETAILS.AVAILABLE_CAPACITY": "المقاعد المتاحة"
 }

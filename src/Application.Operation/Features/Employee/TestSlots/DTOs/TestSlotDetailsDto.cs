@@ -38,6 +38,8 @@ public sealed record TestSlotCandidateListItemDto(
     Guid? TestAttemptId,
     string? AttemptStatusBackendName,
     bool ResumeAuthorized,
+    bool ResumeAllowed,
+    bool RescheduleAllowed,
     string? NotificationStatus,
     string AttendanceStatusBackendName,
     string IdentityVerificationStatus,

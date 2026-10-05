@@ -53,6 +53,7 @@ public class ErrorsCodes
     public const string QuestionBankAssignmentQuestionNotFound = "QUESTION_BANK_ASSIGNMENT_QUESTION_NOT_FOUND";
     public const string QuestionBankMinimumQuestionCountNotMet = "QUESTION_BANK_MINIMUM_QUESTION_COUNT_NOT_MET";
     public const string InvalidQuestionEntry = "INVALID_QUESTION_ENTRY";
+
     #endregion
 
     // =========================================================
@@ -421,6 +422,7 @@ public class ErrorsCodes
     public const string TestSlotCandidateIdentityNotesRequired = "TEST_SLOT_CANDIDATE_IDENTITY_NOTES_REQUIRED";
     public const string TestSlotCandidateHallStateInvalid = "TEST_SLOT_CANDIDATE_HALL_STATE_INVALID";
     public const string TestSessionInsufficientCapacity = "TEST_SESSION_INSUFFICIENT_CAPACITY";
+
     #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
@@ -720,6 +722,7 @@ public class ErrorsCodes
     #endregion
 
     #region Candidate Exam
+
     public const string CandidateExamAssignmentNotFound = "CANDIDATE_EXAM_ASSIGNMENT_NOT_FOUND";
     public const string CandidateExamInvitationNotEligible = "CANDIDATE_EXAM_INVITATION_NOT_ELIGIBLE";
     public const string CandidateExamNotApproved = "CANDIDATE_EXAM_NOT_APPROVED";
@@ -770,81 +773,70 @@ public class ErrorsCodes
     public const string CandidateExamPartAlreadyCompleted = "CANDIDATE_EXAM_PART_ALREADY_COMPLETED";
     public const string CandidateExamActiveSessionInvalid = "CANDIDATE_EXAM_ACTIVE_SESSION_INVALID";
     public const string CandidateExamResumeAuthorizationUnavailable = "CANDIDATE_EXAM_RESUME_AUTHORIZATION_UNAVAILABLE";
+    public const string CandidateExamRescheduleUnavailable = "CANDIDATE_EXAM_RESCHEDULE_UNAVAILABLE";
+    public const string CandidateExamAlreadyRescheduled = "CANDIDATE_EXAM_ALREADY_RESCHEDULED";
+    public const string CandidateExamRescheduleTargetSessionInvalid = "CANDIDATE_EXAM_RESCHEDULE_TARGET_SESSION_INVALID";
+    public const string CandidateExamRescheduleTargetSlotNotFuture = "CANDIDATE_EXAM_RESCHEDULE_TARGET_SLOT_NOT_FUTURE";
+    public const string CandidateExamRescheduleTargetSlotFull = "CANDIDATE_EXAM_RESCHEDULE_TARGET_SLOT_FULL";
     public const string CandidateExamOperationalIssueReasonRequired = "CANDIDATE_EXAM_OPERATIONAL_ISSUE_REASON_REQUIRED";
     public const string CandidateExamOperationalIssueStateInvalid = "CANDIDATE_EXAM_OPERATIONAL_ISSUE_STATE_INVALID";
     public const string CandidateExamOperationalIssueAlreadyOpen = "CANDIDATE_EXAM_OPERATIONAL_ISSUE_ALREADY_OPEN";
 
     #endregion
-    
+
     #region Exam Result Report
 
-    public const string ExamResultReportNotFound =
-        "EXAM_RESULT_REPORT_NOT_FOUND";
+    public const string ExamResultReportNotFound = "EXAM_RESULT_REPORT_NOT_FOUND";
 
-    public const string ExamResultReportNotCreating =
-        "EXAM_RESULT_REPORT_NOT_CREATING";
+    public const string ExamResultReportNotCreating = "EXAM_RESULT_REPORT_NOT_CREATING";
 
-    public const string ExamResultReportNotUnderReview =
-        "EXAM_RESULT_REPORT_NOT_UNDER_REVIEW";
+    public const string ExamResultReportNotUnderReview = "EXAM_RESULT_REPORT_NOT_UNDER_REVIEW";
 
-    public const string ExamResultReportNotReturned =
-        "EXAM_RESULT_REPORT_NOT_RETURNED";
+    public const string ExamResultReportNotReturned = "EXAM_RESULT_REPORT_NOT_RETURNED";
 
-    public const string ExamResultCandidateNotFound =
-        "EXAM_RESULT_CANDIDATE_NOT_FOUND";
+    public const string ExamResultCandidateNotFound = "EXAM_RESULT_CANDIDATE_NOT_FOUND";
 
-    public const string ExamResultCandidateNotRequiresAction =
-        "EXAM_RESULT_CANDIDATE_NOT_REQUIRES_ACTION";
+    public const string ExamResultCandidateNotRequiresAction = "EXAM_RESULT_CANDIDATE_NOT_REQUIRES_ACTION";
 
-    public const string ExamResultCandidateResolutionStateInvalid =
-        "EXAM_RESULT_CANDIDATE_RESOLUTION_STATE_INVALID";
+    public const string ExamResultCandidateResolutionStateInvalid = "EXAM_RESULT_CANDIDATE_RESOLUTION_STATE_INVALID";
 
-    public const string TestSessionCandidateCannotBeRescheduled =
-        "TEST_SESSION_CANDIDATE_CANNOT_BE_RESCHEDULED";
+    public const string TestSessionCandidateCannotBeRescheduled = "TEST_SESSION_CANDIDATE_CANNOT_BE_RESCHEDULED";
+
     public const string TestSessionCandidateRescheduleReasonRequired =
         "TEST_SESSION_CANDIDATE_RESCHEDULE_REASON_REQUIRED";
-    public const string ExamResultCandidateRescheduleStateInvalid =
-        "EXAM_RESULT_CANDIDATE_RESCHEDULE_STATE_INVALID";
-    public const string ExamResultCandidateAlreadyRescheduled =
-        "EXAM_RESULT_CANDIDATE_ALREADY_RESCHEDULED";
-    public const string ExamResultCandidateActiveAssignmentExists =
-        "EXAM_RESULT_CANDIDATE_ACTIVE_ASSIGNMENT_EXISTS";
-    public const string ExamResultCandidateTargetSessionInvalid =
-        "EXAM_RESULT_CANDIDATE_TARGET_SESSION_INVALID";
-    public const string ExamResultCandidateTargetSlotNotFuture =
-        "EXAM_RESULT_CANDIDATE_TARGET_SLOT_NOT_FUTURE";
-    public const string ExamResultCandidateTargetSlotFull =
-        "EXAM_RESULT_CANDIDATE_TARGET_SLOT_FULL";
+
+    public const string ExamResultCandidateRescheduleStateInvalid = "EXAM_RESULT_CANDIDATE_RESCHEDULE_STATE_INVALID";
+    public const string ExamResultCandidateAlreadyRescheduled = "EXAM_RESULT_CANDIDATE_ALREADY_RESCHEDULED";
+    public const string ExamResultCandidateActiveAssignmentExists = "EXAM_RESULT_CANDIDATE_ACTIVE_ASSIGNMENT_EXISTS";
+    public const string ExamResultCandidateTargetSessionInvalid = "EXAM_RESULT_CANDIDATE_TARGET_SESSION_INVALID";
+    public const string ExamResultCandidateTargetSlotNotFuture = "EXAM_RESULT_CANDIDATE_TARGET_SLOT_NOT_FUTURE";
+    public const string ExamResultCandidateTargetSlotFull = "EXAM_RESULT_CANDIDATE_TARGET_SLOT_FULL";
+
     public const string ExamResultCandidateInterruptionStateInvalid =
         "EXAM_RESULT_CANDIDATE_INTERRUPTION_STATE_INVALID";
-    public const string ExamResultCandidateAcceptScoreStateInvalid =
-        "EXAM_RESULT_CANDIDATE_ACCEPT_SCORE_STATE_INVALID";
+
+    public const string ExamResultCandidateAcceptScoreStateInvalid = "EXAM_RESULT_CANDIDATE_ACCEPT_SCORE_STATE_INVALID";
+
     public const string ExamResultCandidateOpenInterruptionNotFound =
         "EXAM_RESULT_CANDIDATE_OPEN_INTERRUPTION_NOT_FOUND";
+
     public const string ExamResultCandidateMultipleOpenInterruptions =
         "EXAM_RESULT_CANDIDATE_MULTIPLE_OPEN_INTERRUPTIONS";
-    public const string ExamResultReportHasPendingActions =
-        "EXAM_RESULT_REPORT_HAS_PENDING_ACTIONS";
 
-    public const string ExamResultReportReturnReasonRequired =
-        "EXAM_RESULT_REPORT_RETURN_REASON_REQUIRED";
+    public const string ExamResultReportHasPendingActions = "EXAM_RESULT_REPORT_HAS_PENDING_ACTIONS";
 
-    public const string ExamResultReportNotApproved =
-        "EXAM_RESULT_REPORT_NOT_APPROVED";
-    
-    public const string ExamResultReportHasNoCandidates =
-        "EXAM_RESULT_REPORT_HAS_NO_CANDIDATES";
+    public const string ExamResultReportReturnReasonRequired = "EXAM_RESULT_REPORT_RETURN_REASON_REQUIRED";
 
-    public const string ExamResultReportSessionsNotClosed =
-        "EXAM_RESULT_REPORT_SESSIONS_NOT_CLOSED";
+    public const string ExamResultReportNotApproved = "EXAM_RESULT_REPORT_NOT_APPROVED";
 
-    public const string ExamResultReportInvitationStateInvalid =
-        "EXAM_RESULT_REPORT_INVITATION_STATE_INVALID";
+    public const string ExamResultReportHasNoCandidates = "EXAM_RESULT_REPORT_HAS_NO_CANDIDATES";
+
+    public const string ExamResultReportSessionsNotClosed = "EXAM_RESULT_REPORT_SESSIONS_NOT_CLOSED";
+
+    public const string ExamResultReportInvitationStateInvalid = "EXAM_RESULT_REPORT_INVITATION_STATE_INVALID";
 
     #endregion
 }
-
-
 
 public static class CandidateEligibilityConditionCodes
 {

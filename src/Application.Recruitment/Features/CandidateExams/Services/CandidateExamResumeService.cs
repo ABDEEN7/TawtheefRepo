@@ -18,7 +18,7 @@ public sealed class CandidateExamResumeService(
             var testSlotId = await unitOfWork.Context.Set<TestAttempt>()
                 .AsNoTracking()
                 .Where(x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId)
-                .Select(x => (Guid?)x.TestSessionCandidate!.TestSession!.TestSlotId)
+                .Select(x => x.TestSessionCandidate!.TestSession!.TestSlotId)
                 .SingleOrDefaultAsync(token);
 
             if (testSlotId is null)

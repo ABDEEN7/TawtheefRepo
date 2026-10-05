@@ -7,7 +7,7 @@ import { AuthService } from '../../../../../../core/auth/auth.service';
 import { HasPermissionDirective } from '../../../../../../shared/directives/has-permission.directive';
 import { TestSlotStaffDetailsDto } from '../../models/test-slot-details.dto';
 import { TestSlotStatusIds } from '../../models/test-slot-status.ids';
-import { TestSlotAssignmentDialogComponent } from '../test-slot-assignment-dialog/test-slot-assignment-dialog.component';
+import { TestSlotAssignmentDialogComponent } from '../dialogs/test-slot-assignment-dialog/test-slot-assignment-dialog.component';
 @Component({
   selector: 'app-test-slot-assignments',
   standalone: true,

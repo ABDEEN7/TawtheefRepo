@@ -49,6 +49,8 @@ export interface TestSlotCandidateListItemDto {
   testAttemptId: string | null;
   attemptStatusBackendName?: string | null;
   resumeAuthorized: boolean;
+  resumeAllowed: boolean;
+  rescheduleAllowed: boolean;
   notificationStatus?: string;
   attendanceStatusBackendName: string;
   identityVerificationStatus: string;
@@ -70,4 +72,31 @@ export interface TestSlotCandidateFilters {
   search?: string | null;
   sessionId?: string | null;
   attendanceStatusId?: string | null;
+}
+
+
+export interface CandidateExamRescheduleOptionDto {
+  testSessionId: string;
+  sessionNo: string;
+
+  testSlotId: string;
+  slotTitleAr: string;
+  slotTitleEn: string | null;
+  slotDate: string;
+
+  startTime: string;
+  endTime: string;
+
+  roomId: string;
+  roomNameAr: string;
+  roomNameEn: string | null;
+
+  capacity: number;
+  assignedCount: number;
+  availableCapacity: number;
+}
+
+export interface RescheduleInterruptedCandidateExamRequest {
+  targetTestSessionId: string;
+  reason: string;
 }

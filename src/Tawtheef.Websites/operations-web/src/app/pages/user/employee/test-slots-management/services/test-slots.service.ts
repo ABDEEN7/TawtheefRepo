@@ -13,7 +13,16 @@ import {
   TestSlotConfigurationDto,
   UpdateTestSlotAssignmentsDto,
 } from '../models/create-test-slot.dto';
-import { TestSlotAccessCodeDto, TestSlotCandidateFilters, TestSlotCandidateListItemDto, TestSlotDetailsDto, TestSlotSessionDto, VerifyTestSlotCandidateIdentityRequest } from '../models/test-slot-details.dto';
+import {
+  CandidateExamRescheduleOptionDto,
+  RescheduleInterruptedCandidateExamRequest,
+  TestSlotAccessCodeDto,
+  TestSlotCandidateFilters,
+  TestSlotCandidateListItemDto,
+  TestSlotDetailsDto,
+  TestSlotSessionDto,
+  VerifyTestSlotCandidateIdentityRequest,
+} from '../models/test-slot-details.dto';
 
 @Injectable({ providedIn: 'root' })
 export class TestSlotsService {
@@ -21,7 +30,10 @@ export class TestSlotsService {
   private readonly endpoints = inject(EndpointsService);
 
   list(filters: TestSlotFilters): Observable<PaginatedResult<TestSlotListItemDto>> {
-    return this.http.get<PaginatedResult<TestSlotListItemDto>>(this.endpoints.testSlots.list, filters);
+    return this.http.get<PaginatedResult<TestSlotListItemDto>>(
+      this.endpoints.testSlots.list,
+      filters,
+    );
   }
 
   getAvailableRoomsForTestSlot(language: string): Observable<RoomListItemDto[]> {
@@ -29,11 +41,16 @@ export class TestSlotsService {
   }
 
   getStaffMembers(filters: UserFilters): Observable<PaginatedResult<TestSlotStaffMemberDto>> {
-    return this.http.get<PaginatedResult<TestSlotStaffMemberDto>>(this.endpoints.testSlots.wizardStaffMembers, filters);
+    return this.http.get<PaginatedResult<TestSlotStaffMemberDto>>(
+      this.endpoints.testSlots.wizardStaffMembers,
+      filters,
+    );
   }
 
   configuration(id: string, language: string): Observable<TestSlotConfigurationDto> {
-    return this.http.get<TestSlotConfigurationDto>(this.endpoints.testSlots.configuration(id), { language });
+    return this.http.get<TestSlotConfigurationDto>(this.endpoints.testSlots.configuration(id), {
+      language,
+    });
   }
 
   details(id: string, language: string): Observable<TestSlotDetailsDto> {
@@ -44,15 +61,25 @@ export class TestSlotsService {
     return this.http.get<TestSlotSessionDto[]>(this.endpoints.testSlots.sessions(id), { language });
   }
 
-  candidates(id: string, filters: TestSlotCandidateFilters): Observable<PaginatedResult<TestSlotCandidateListItemDto>> {
-    return this.http.get<PaginatedResult<TestSlotCandidateListItemDto>>(this.endpoints.testSlots.candidates(id), filters);
+  candidates(
+    id: string,
+    filters: TestSlotCandidateFilters,
+  ): Observable<PaginatedResult<TestSlotCandidateListItemDto>> {
+    return this.http.get<PaginatedResult<TestSlotCandidateListItemDto>>(
+      this.endpoints.testSlots.candidates(id),
+      filters,
+    );
   }
 
   markPresent(id: string, candidateId: string): Observable<void> {
     return this.http.post<void>(this.endpoints.testSlots.markPresent(id, candidateId), {});
   }
 
-  verifyIdentity(id: string, candidateId: string, request: VerifyTestSlotCandidateIdentityRequest): Observable<void> {
+  verifyIdentity(
+    id: string,
+    candidateId: string,
+    request: VerifyTestSlotCandidateIdentityRequest,
+  ): Observable<void> {
     return this.http.post<void>(this.endpoints.testSlots.verifyIdentity(id, candidateId), request);
   }
 
@@ -61,13 +88,49 @@ export class TestSlotsService {
   }
 
   authorizeResume(testAttemptId: string): Observable<void> {
-    return this.http.post<void>(this.endpoints.candidateExamAttempts.authorizeResume(testAttemptId), {
-      resolutionNotes: null,
-    });
+    return this.http.post<void>(
+      this.endpoints.candidateExamAttempts.authorizeResume(testAttemptId),
+      {
+        resolutionNotes: null,
+      },
+    );
   }
 
+  rescheduleOptions(
+  testAttemptId: string,
+): Observable<CandidateExamRescheduleOptionDto[]> {
+  return this.http.get<CandidateExamRescheduleOptionDto[]>(
+    this.endpoints.candidateExamAttempts.rescheduleOptions(testAttemptId),
+    undefined,
+    {
+      headers: {
+        [HDR.SkipError]: 'true',
+      },
+    },
+  );
+}
+
+rescheduleInterruptedAttempt(
+  testAttemptId: string,
+  request: RescheduleInterruptedCandidateExamRequest,
+): Observable<string> {
+  return this.http.post<string>(
+    this.endpoints.candidateExamAttempts.reschedule(testAttemptId),
+    request,
+    undefined,
+    {
+      headers: {
+        [HDR.SkipError]: 'true',
+      },
+    },
+  );
+}
+
   reportOperationalIssue(testAttemptId: string, reason: string): Observable<void> {
-    return this.http.post<void>(this.endpoints.candidateExamAttempts.reportOperationalIssue(testAttemptId), { reason });
+    return this.http.post<void>(
+      this.endpoints.candidateExamAttempts.reportOperationalIssue(testAttemptId),
+      { reason },
+    );
   }
 
   accessCode(id: string): Observable<TestSlotAccessCodeDto> {

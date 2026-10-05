@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { SelectModule } from 'primeng/select';
-import { VerifyTestSlotCandidateIdentityRequest } from '../../models/test-slot-details.dto';
+import { VerifyTestSlotCandidateIdentityRequest } from '../../../models/test-slot-details.dto';
 
 @Component({
   selector: 'app-verify-identity-dialog',

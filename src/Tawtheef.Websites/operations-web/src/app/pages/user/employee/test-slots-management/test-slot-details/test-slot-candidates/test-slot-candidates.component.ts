@@ -1,7 +1,7 @@
 import { Component, inject, Input } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
-import { TestSlotCandidatesDialogComponent } from '../test-slot-candidates-dialog/test-slot-candidates-dialog.component';
+import { TestSlotCandidatesDialogComponent } from '../dialogs/test-slot-candidates-dialog/test-slot-candidates-dialog.component';
 
 @Component({
   selector: 'app-test-slot-candidates',

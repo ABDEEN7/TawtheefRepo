@@ -131,7 +131,7 @@
   "TEST_SLOT_DETAILS.AUTHORIZING_RESUME": "Authorizing...",
   "TEST_SLOT_DETAILS.AUTHORIZE_RESUME_SUCCESS": "Resume authorization completed successfully.",
   "TEST_SLOT_DETAILS.AUTHORIZE_RESUME_FAILED": "Resume authorization failed. Please try again.",
-  "TEST_SLOT_DETAILS.RESUME_AUTHORIZED": "Authorized",
+  "TEST_SLOT_DETAILS.RESUME_AUTHORIZED": "Authorized",
   "TEST_SLOT_DETAILS.MARK_PRESENT": "Mark Present",
   "TEST_SLOT_DETAILS.VERIFY_IDENTITY": "Verify Identity",
   "TEST_SLOT_DETAILS.SELECT_IDENTITY_RESULT": "Select identity result",
@@ -148,5 +148,20 @@
   "TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_REASON": "Operational Issue Reason",
   "TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_REASON_REQUIRED": "Operational issue reason is required",
   "TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_RECORDED": "Operational Issue Recorded",
-  "TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_SUCCESS": "Operational issue was recorded successfully"
+  "TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_SUCCESS": "Operational issue was recorded successfully",
+  "TEST_SLOT_DETAILS.RESCHEDULE": "Reschedule Exam",
+  "TEST_SLOT_DETAILS.RESCHEDULE_TITLE": "Reschedule Candidate Exam",
+  "TEST_SLOT_DETAILS.RESCHEDULING": "Rescheduling...",
+  "TEST_SLOT_DETAILS.RESCHEDULE_SUCCESS": "Candidate exam was rescheduled successfully.",
+  "TEST_SLOT_DETAILS.RESCHEDULE_FAILED": "Unable to reschedule the exam. Please try again.",
+  "TEST_SLOT_DETAILS.RESCHEDULE_OPTIONS_LOADING": "Loading available sessions...",
+  "TEST_SLOT_DETAILS.RESCHEDULE_OPTIONS_ERROR": "Unable to load available sessions for rescheduling.",
+  "TEST_SLOT_DETAILS.NO_AVAILABLE_RESCHEDULE_SESSIONS": "There are no future sessions available for this exam.",
+  "TEST_SLOT_DETAILS.RESCHEDULE_SELECT_SESSION": "Select the candidate's new session.",
+  "TEST_SLOT_DETAILS.RESCHEDULE_SESSION_REQUIRED": "A new session must be selected.",
+  "TEST_SLOT_DETAILS.RESCHEDULE_REASON": "Reschedule reason",
+  "TEST_SLOT_DETAILS.RESCHEDULE_REASON_REQUIRED": "Reschedule reason is required.",
+  "TEST_SLOT_DETAILS.RETRY": "Retry",
+  "TEST_SLOT_DETAILS.SESSION_NO": "Session No.",
+  "TEST_SLOT_DETAILS.AVAILABLE_CAPACITY": "Available capacity"
 }
