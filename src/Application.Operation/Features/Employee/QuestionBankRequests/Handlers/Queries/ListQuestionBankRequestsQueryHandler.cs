@@ -40,8 +40,19 @@ public sealed class ListQuestionBankRequestsQueryHandler(IUnitOfWork unitOfWork,
             .WhereIf(request.ManagementId.HasValue, x => x.QuestionBank.ManagementId == request.ManagementId)
             .WhereIf(request.JobTitleId.HasValue, x => x.QuestionBank.JobTitleId == request.JobTitleId);
 
-        var descending = string.Equals(request.SortDirection, "desc", StringComparison.OrdinalIgnoreCase);
-        var sorted = request.SortBy?.Trim().ToLowerInvariant() switch
+        var sorted = ApplySorting(query, request.SortBy, request.SortDirection);
+
+        return Result.Ok(await sorted.ToPaginatedListAsync<QuestionBankRequest, QuestionBankRequestListItemDto>(
+            mapper, request with { SortBy = null, SortDirection = null }, cancellationToken));
+    }
+
+    private static IOrderedQueryable<QuestionBankRequest> ApplySorting(
+        IQueryable<QuestionBankRequest> query,
+        string? sortBy,
+        string? sortDirection)
+    {
+        var descending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+        return sortBy?.Trim().ToLowerInvariant() switch
         {
             "requesttype" => Order(query, x => x.RequestType.NameEn, descending),
             "questionbanktype" => Order(query, x => x.QuestionBank.QuestionBankType.NameEn, descending),
@@ -52,9 +63,6 @@ public sealed class ListQuestionBankRequestsQueryHandler(IUnitOfWork unitOfWork,
             "submittedat" => Order(query, x => x.SubmittedAt, descending),
             _ => query.OrderByDescending(x => x.SubmittedAt).ThenBy(x => x.Id)
         };
-
-        return Result.Ok(await sorted.ToPaginatedListAsync<QuestionBankRequest, QuestionBankRequestListItemDto>(
-            mapper, request with { SortBy = null }, cancellationToken));
     }
 
     private static IOrderedQueryable<QuestionBankRequest> Order<TKey>(

@@ -23,18 +23,7 @@ public sealed class ListMyQuestionBankAssignmentsQueryHandler(IUnitOfWork uow, I
         if (employeeId is null) return Result.Fail<PaginatedResult<MyQuestionBankAssignmentDto>>(ErrorsCodes.InvalidUserIdentifier);
         var query = uow.GetEntityRepository<QuestionBankAssignment>().DbSet.AsNoTracking()
             .Where(x => x.EmployeeId == employeeId && !x.IsDeleted);
-        var descending = string.Equals(r.SortDirection, "desc", StringComparison.OrdinalIgnoreCase);
-        var sorted = r.SortBy?.Trim().ToLowerInvariant() switch
-        {
-            "questionbanktype" => Order(query, x => x.QuestionBankRequest.QuestionBank.QuestionBankType.NameEn, descending),
-            "management" => Order(query, x => x.QuestionBankRequest.QuestionBank.Management == null ? string.Empty : x.QuestionBankRequest.QuestionBank.Management.NameEn, descending),
-            "jobtitle" => Order(query, x => x.QuestionBankRequest.QuestionBank.JobTitle == null ? string.Empty : x.QuestionBankRequest.QuestionBank.JobTitle.JobNameEn, descending),
-            "minimumquestioncount" => Order(query, x => x.MinimumQuestionCount, descending),
-            "currentquestioncount" => Order(query, x => x.RequestItems.Count(i => !i.IsDeleted && i.RequestId == x.QuestionBankRequestId && i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST && i.StatusId != QuestionBankRequestItemStatusIds.REJECTED), descending),
-            "status" => Order(query, x => x.Status.DisplayOrder, descending),
-            "assignedat" => Order(query, x => x.AssignedAt, descending),
-            _ => query.OrderByDescending(x => x.AssignedAt).ThenBy(x => x.Id)
-        };
+        var sorted = ApplySorting(query, r.SortBy, r.SortDirection);
         var projected = sorted
             .Select(x => new MyQuestionBankAssignmentDto(x.Id, x.QuestionBankRequestId,
                 x.QuestionBankRequest.QuestionBank.QuestionBankTypeId, x.QuestionBankRequest.QuestionBank.QuestionBankType.NameAr,
@@ -50,6 +39,25 @@ public sealed class ListMyQuestionBankAssignmentsQueryHandler(IUnitOfWork uow, I
         var count = await projected.CountAsync(ct);
         var items = await projected.Skip((r.PageNumber - 1) * r.PageSize).Take(r.PageSize).ToListAsync(ct);
         return Result.Ok(new PaginatedResult<MyQuestionBankAssignmentDto>(items, count, r.PageNumber, r.PageSize));
+    }
+
+    private static IOrderedQueryable<QuestionBankAssignment> ApplySorting(
+        IQueryable<QuestionBankAssignment> query,
+        string? sortBy,
+        string? sortDirection)
+    {
+        var descending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+        return sortBy?.Trim().ToLowerInvariant() switch
+        {
+            "questionbanktype" => Order(query, x => x.QuestionBankRequest.QuestionBank.QuestionBankType.NameEn, descending),
+            "management" => Order(query, x => x.QuestionBankRequest.QuestionBank.Management == null ? string.Empty : x.QuestionBankRequest.QuestionBank.Management.NameEn, descending),
+            "jobtitle" => Order(query, x => x.QuestionBankRequest.QuestionBank.JobTitle == null ? string.Empty : x.QuestionBankRequest.QuestionBank.JobTitle.JobNameEn, descending),
+            "minimumquestioncount" => Order(query, x => x.MinimumQuestionCount, descending),
+            "currentquestioncount" => Order(query, x => x.RequestItems.Count(i => !i.IsDeleted && i.RequestId == x.QuestionBankRequestId && i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST && i.StatusId != QuestionBankRequestItemStatusIds.REJECTED), descending),
+            "status" => Order(query, x => x.Status.DisplayOrder, descending),
+            "assignedat" => Order(query, x => x.AssignedAt, descending),
+            _ => query.OrderByDescending(x => x.AssignedAt).ThenBy(x => x.Id)
+        };
     }
 
     private static IOrderedQueryable<QuestionBankAssignment> Order<TKey>(
