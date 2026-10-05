@@ -9,15 +9,6 @@ namespace Application.Operation.Features.Employee.Exams.Services;
 
 public sealed class ExamService(IUnitOfWork unitOfWork)
 {
-    public Task<bool> HasPendingApprovalExamForJobAsync(
-        Guid jobId,
-        Guid? excludeExamId,
-        CancellationToken ct)
-        => unitOfWork.Context.Set<Exam>().AsNoTracking()
-            .AnyAsync(x => x.JobId == jobId &&
-                x.StatusId == ExamStatusIds.PendingApproval &&
-                (!excludeExamId.HasValue || x.Id != excludeExamId.Value), ct);
-
     public async Task<ExamConfigurationDto?> GetApprovedForJobAsync(Guid jobId, CancellationToken ct)
     {
         var exam = await unitOfWork.Context.Set<Exam>().AsNoTracking()

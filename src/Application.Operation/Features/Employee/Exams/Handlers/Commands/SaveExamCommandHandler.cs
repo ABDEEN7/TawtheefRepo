@@ -1,7 +1,6 @@
 using Application.Operation.Features.Employee.Exams.Commands;
 using Application.Operation.Features.Employee.Exams.DTOs;
 using Application.Operation.Features.Employee.Exams.Handlers.Queries;
-using Application.Operation.Features.Employee.Exams.Services;
 using FluentResults;
 using Mapster;
 using MediatR;
@@ -15,21 +14,12 @@ using Tawtheef.Domain.Events.Operation.Employee.Exams;
 
 namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 
-public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork, ExamService examService)
+public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<SaveExamCommand, IResult<SavedExamDto>>
 {
     public Task<IResult<SavedExamDto>> Handle(SaveExamCommand request, CancellationToken ct)
         => unitOfWork.ExecuteInTransactionAsync<IResult<SavedExamDto>>(async token =>
         {
-            // Serialize only exams for this job so the pending-approval rule is safe across instances.
-            // The lock is transaction-owned and released on commit/rollback.
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', " +
-                "@LockOwner = N'Transaction', @LockTimeout = 15000; " +
-                "IF @result < 0 THROW 51000, 'Exam job lock unavailable', 1;",
-                [$"Tawtheef.Exam.Job.{request.Exam.JobId}"], token);
-
             var jobScope = await unitOfWork.Context.Set<Job>().AsNoTracking()
                 .Where(x => x.Id == request.Exam.JobId)
                 .Select(x => new
@@ -43,10 +33,6 @@ public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork, ExamService e
             if (jobScope == null || !await unitOfWork.Context.Set<ExamInterruptionPolicy>()
                     .AnyAsync(x => x.Id == request.Exam.InterruptionPolicyId, token))
                 return Result.Fail<SavedExamDto>(ErrorsCodes.InvalidRequest);
-
-            if (await examService.HasPendingApprovalExamForJobAsync(
-                    request.Exam.JobId, request.DraftId, token))
-                return Result.Fail<SavedExamDto>(ErrorsCodes.ExamPendingApprovalAlreadyExistsForJob);
 
             var categoryTypeIds = await unitOfWork.Context.Set<QuestionBankType>().AsNoTracking()
                 .Select(x => x.Id).ToListAsync(token);

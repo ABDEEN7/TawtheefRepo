@@ -11,12 +11,7 @@ public sealed class GetExamJobSelectionQueryHandler(ExamService examService)
 {
     public async Task<IResult<ExamJobSelectionDto>> Handle(GetExamJobSelectionQuery request, CancellationToken ct)
     {
-        var hasPendingApprovalExam = await examService.HasPendingApprovalExamForJobAsync(
-            request.JobId, request.ExcludeExamId, ct);
-        if (hasPendingApprovalExam)
-            return Result.Ok(new ExamJobSelectionDto(true, null));
-
         var approvedExam = await examService.GetApprovedForJobAsync(request.JobId, ct);
-        return Result.Ok(new ExamJobSelectionDto(false, approvedExam));
+        return Result.Ok(new ExamJobSelectionDto(approvedExam));
     }
 }
