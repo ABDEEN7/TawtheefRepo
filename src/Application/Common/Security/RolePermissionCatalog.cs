@@ -121,6 +121,9 @@ public static class RolePermissionCatalog
 
                 Permissions.InterviewResultReport.View.Key,
                 Permissions.InterviewResultReport.Manage.Key,
+
+                Permissions.InterviewCommitteeReview.View.Key,
+                Permissions.InterviewCommitteeReview.OverrideSuggestion.Key,
             ],
             [SystemRoleIds.DepartmentManager] = [
                 Permissions.Dashboard.View.Key,
@@ -234,6 +237,9 @@ public static class RolePermissionCatalog
 
                 Permissions.InterviewResultReport.View.Key,
                 Permissions.InterviewResultReport.Manage.Key,
+
+                Permissions.InterviewCommitteeReview.View.Key,
+                Permissions.InterviewCommitteeReview.OverrideSuggestion.Key,
 
             ]
         };

@@ -187,6 +187,11 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
     return this.selectedCandidateIds().length;
   }
 
+  canSetup(slot: ReadyTestSlotListItemDto): boolean {
+    const selectedCandidateCount = this.selectedCandidateIds().length;
+    return selectedCandidateCount > 0 && slot.remainingCapacity >= selectedCandidateCount;
+  }
+
   isSessionCapacitySufficient(): boolean {
     const session = this.localSession();
     return (

@@ -1,17 +1,27 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { firstValueFrom } from 'rxjs';
+import { distinctUntilChanged, firstValueFrom, map } from 'rxjs';
 
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { LanguageService } from '../../../../../core/services/language.service';
+import { LoadingService } from '../../../../../core/services/loading.service';
 
 import { InterviewTemplatesStore, WizardStep } from './interview-templates.store';
 import { InterviewTemplatesService } from './services/interview-templates.service';
 import { TemplateModel } from './models/template.model';
 import { TemplateVersionModel } from './models/template-version.model';
 import { CalculationMethod } from './models/enums';
-import { WizardAxisDraft, WizardCriterionDraft, WizardInfoDraft } from './models/wizard-draft.model';
+import {
+  WizardAxisDraft,
+  WizardCriterionDraft,
+  WizardInfoDraft,
+} from './models/wizard-draft.model';
+
+// Which template's detail view is open lives in the URL (?template=<id>) rather than only in memory: switching the language
+// reloads the whole app, and without it the page would come back on the list instead of the same template.
+const TEMPLATE_QUERY_PARAM = 'template';
 
 @Injectable()
 export class InterviewTemplatesFacade {
@@ -21,6 +31,9 @@ export class InterviewTemplatesFacade {
   private notify = inject(NotificationService);
   private translate = inject(TranslateService);
   private language = inject(LanguageService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private loader = inject(LoadingService);
 
   init() {
     this.store.setCurrentLang(this.language.get());
@@ -28,9 +41,43 @@ export class InterviewTemplatesFacade {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((lang) => this.store.setCurrentLang(lang));
 
+    // Emits the current value right away, so a page loaded on ?template=<id> opens that detail before its first render.
+    this.route.queryParamMap
+      .pipe(
+        map((params) => params.get(TEMPLATE_QUERY_PARAM)),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((id) => this.syncViewWithUrl(id));
+
     this.loadTemplates();
     this.loadLookups();
     this.loadAxisBankOptions();
+  }
+
+  // The URL decides between list and detail; the wizard is not URL-driven, so it is left alone here.
+  private syncViewWithUrl(id: string | null) {
+    if (id) {
+      if (this.store.view() === 'detail' && this.store.detailTemplate()?.id === id) return;
+      this.store.setView('detail');
+      // Opened from a list row, the template is already in the store; only a fresh page load has to look it up.
+      if (this.store.detailTemplate()?.id === id) this.loadVersions(id);
+      else this.loadDetail(id);
+      return;
+    }
+
+    if (this.store.view() === 'detail') {
+      this.store.setView('list');
+      this.loadTemplates();
+    }
+  }
+
+  private setUrlTemplate(id: string | null) {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { [TEMPLATE_QUERY_PARAM]: id },
+      queryParamsHandling: 'merge',
+    });
   }
 
   // ======== List ========
@@ -91,6 +138,9 @@ export class InterviewTemplatesFacade {
   openCreateVersionWizard(template: TemplateModel) {
     this.store.resetWizard('new-version', template);
     this.store.setView('wizard');
+    // Opened from the detail view, which leaves ?template=<id> behind; clear it now that the wizard is showing (clearing it
+    // earlier would make the URL sync send the user back to the list).
+    this.setUrlTemplate(null);
   }
 
   openEditVersionWizard(template: TemplateModel, version: TemplateVersionModel) {
@@ -98,6 +148,7 @@ export class InterviewTemplatesFacade {
       next: (details) => {
         this.store.resetWizard('edit-version', template, details);
         this.store.setView('wizard');
+        this.setUrlTemplate(null); // same as openCreateVersionWizard
         for (const axis of details.axes) {
           this.loadCriterionBankOptions(axis.interviewEvaluationAxisId);
         }
@@ -180,7 +231,11 @@ export class InterviewTemplatesFacade {
     this.store.removeWizardCriterion(axisLocalId, criterionLocalId);
   }
 
-  updateCriterionRow(axisLocalId: string, criterionLocalId: string, patch: Partial<WizardCriterionDraft>) {
+  updateCriterionRow(
+    axisLocalId: string,
+    criterionLocalId: string,
+    patch: Partial<WizardCriterionDraft>,
+  ) {
     this.store.updateWizardCriterion(axisLocalId, criterionLocalId, patch);
   }
 
@@ -195,7 +250,8 @@ export class InterviewTemplatesFacade {
   private validateStep1(): boolean {
     const info = this.store.wizardInfo();
     if (!info.titleAr?.trim()) return this.fail('INTERVIEW_TEMPLATES.VALIDATION.TITLE_REQUIRED');
-    if (!info.finalScore || info.finalScore < 1) return this.fail('INTERVIEW_TEMPLATES.VALIDATION.FINAL_SCORE_POSITIVE');
+    if (!info.finalScore || info.finalScore < 1)
+      return this.fail('INTERVIEW_TEMPLATES.VALIDATION.FINAL_SCORE_POSITIVE');
     if (
       info.qualificationScore !== null &&
       (info.qualificationScore < 0 || info.qualificationScore > info.finalScore)
@@ -207,7 +263,8 @@ export class InterviewTemplatesFacade {
   private validateStep2(): boolean {
     const axes = this.store.wizardAxes();
     if (!axes.length) return this.fail('INTERVIEW_TEMPLATES.VALIDATION.AT_LEAST_ONE_AXIS');
-    if (axes.some((a) => !a.axisId)) return this.fail('INTERVIEW_TEMPLATES.VALIDATION.AXIS_REQUIRED');
+    if (axes.some((a) => !a.axisId))
+      return this.fail('INTERVIEW_TEMPLATES.VALIDATION.AXIS_REQUIRED');
     if (new Set(axes.map((a) => a.axisId)).size !== axes.length)
       return this.fail('INTERVIEW_TEMPLATES.VALIDATION.AXIS_DUPLICATE');
     if (axes.some((a) => !a.maxScore || a.maxScore < 1))
@@ -224,7 +281,8 @@ export class InterviewTemplatesFacade {
   private validateStep3(): boolean {
     const axes = this.store.wizardAxes();
     for (const axis of axes) {
-      if (!axis.criteria.length) return this.fail('INTERVIEW_TEMPLATES.VALIDATION.AXIS_NEEDS_CRITERION');
+      if (!axis.criteria.length)
+        return this.fail('INTERVIEW_TEMPLATES.VALIDATION.AXIS_NEEDS_CRITERION');
       for (const criterion of axis.criteria) {
         if (criterion.mode === 'bank' && !criterion.criterionId)
           return this.fail('INTERVIEW_TEMPLATES.VALIDATION.CRITERION_BANK_REQUIRED');
@@ -253,6 +311,9 @@ export class InterviewTemplatesFacade {
     if (!this.validateStep1() || !this.validateStep2() || !this.validateStep3()) return;
 
     this.store.setWizardSaving(true);
+    // Saving is a chain of one-at-a-time requests (template, version, every axis and criterion, submit). The loading
+    // interceptor alone would hide and re-show the page overlay between each of them, so hold it for the whole save.
+    this.loader.start();
     try {
       const info = this.store.wizardInfo();
       const mode = this.store.wizardMode();
@@ -267,7 +328,7 @@ export class InterviewTemplatesFacade {
             jobTitleId: info.jobTitleId || null,
             departmentId: info.departmentId || null,
             isActive: true,
-          })
+          }),
         );
         this.store.setWizardTemplateId(templateId!);
       } else if (mode === 'edit-version') {
@@ -281,7 +342,7 @@ export class InterviewTemplatesFacade {
             jobTitleId: info.jobTitleId || null,
             departmentId: info.departmentId || null,
             isActive: this.store.wizardTemplateIsActive(),
-          })
+          }),
         );
       }
       if (!templateId) throw new Error('Missing template id');
@@ -295,7 +356,7 @@ export class InterviewTemplatesFacade {
             finalScore: info.finalScore,
             qualificationScore: info.qualificationScore,
             calculationMethod: info.calculationMethod as CalculationMethod,
-          })
+          }),
         );
       } else {
         versionId = (await firstValueFrom(
@@ -304,7 +365,7 @@ export class InterviewTemplatesFacade {
             finalScore: info.finalScore,
             qualificationScore: info.qualificationScore,
             calculationMethod: info.calculationMethod as CalculationMethod,
-          })
+          }),
         ))!;
       }
 
@@ -312,7 +373,9 @@ export class InterviewTemplatesFacade {
       await firstValueFrom(this.api.submitTemplateVersion(versionId));
 
       this.toast(
-        mode === 'edit-version' ? 'INTERVIEW_TEMPLATES.RESUBMIT_SUCCESS' : 'INTERVIEW_TEMPLATES.SUBMIT_SUCCESS'
+        mode === 'edit-version'
+          ? 'INTERVIEW_TEMPLATES.RESUBMIT_SUCCESS'
+          : 'INTERVIEW_TEMPLATES.SUBMIT_SUCCESS',
       );
       this.store.setView('list');
       this.loadTemplates();
@@ -320,6 +383,7 @@ export class InterviewTemplatesFacade {
       // error toast already shown by the global HTTP error interceptor
     } finally {
       this.store.setWizardSaving(false);
+      this.loader.stop();
     }
   }
 
@@ -343,7 +407,7 @@ export class InterviewTemplatesFacade {
             maxScore: axis.maxScore,
             qualificationScore: axis.qualificationScore,
             orderNo: axis.orderNo,
-          })
+          }),
         );
         axisId = axis.id;
       } else {
@@ -354,7 +418,7 @@ export class InterviewTemplatesFacade {
             maxScore: axis.maxScore,
             qualificationScore: axis.qualificationScore,
             orderNo: axis.orderNo,
-          })
+          }),
         ))!;
       }
 
@@ -363,8 +427,10 @@ export class InterviewTemplatesFacade {
           interviewEvaluationCriterionId: criterion.mode === 'bank' ? criterion.criterionId : null,
           nameAr: criterion.mode === 'custom' ? criterion.nameAr.trim() : null,
           nameEn: criterion.mode === 'custom' ? criterion.nameEn?.trim() || null : null,
-          descriptionAr: criterion.mode === 'custom' ? criterion.descriptionAr?.trim() || null : null,
-          descriptionEn: criterion.mode === 'custom' ? criterion.descriptionEn?.trim() || null : null,
+          descriptionAr:
+            criterion.mode === 'custom' ? criterion.descriptionAr?.trim() || null : null,
+          descriptionEn:
+            criterion.mode === 'custom' ? criterion.descriptionEn?.trim() || null : null,
           maxScore: criterion.maxScore,
           isRequired: criterion.isRequired,
           orderNo: criterion.orderNo,
@@ -372,10 +438,15 @@ export class InterviewTemplatesFacade {
         };
 
         if (criterion.id) {
-          await firstValueFrom(this.api.updateTemplateVersionCriterion({ id: criterion.id, ...payload }));
+          await firstValueFrom(
+            this.api.updateTemplateVersionCriterion({ id: criterion.id, ...payload }),
+          );
         } else {
           await firstValueFrom(
-            this.api.addTemplateVersionCriterion({ interviewTemplateEvaluationAxisId: axisId, ...payload })
+            this.api.addTemplateVersionCriterion({
+              interviewTemplateEvaluationAxisId: axisId,
+              ...payload,
+            }),
           );
         }
       }
@@ -384,14 +455,37 @@ export class InterviewTemplatesFacade {
 
   // ======== Detail ========
   openDetail(template: TemplateModel) {
+    // Show what the list row already knows straight away; the URL change is what actually opens the view and loads
+    // the versions (see syncViewWithUrl).
     this.store.setDetailTemplate(template);
-    this.store.setView('detail');
-    this.loadVersions(template.id);
+    this.setUrlTemplate(template.id);
   }
 
   backToList() {
-    this.store.setView('list');
-    this.loadTemplates();
+    this.setUrlTemplate(null);
+  }
+
+  // There is no get-by-id endpoint, so the template is looked up in the (unpaged) list, which also refreshes the list behind it.
+  loadDetail(id: string) {
+    this.store.setDetailLoading(true);
+    this.api.listTemplates().subscribe({
+      next: (items) => {
+        this.store.setTemplatesResult(items);
+        const template = items.find((t) => t.id === id);
+        // A template that isn't there (deleted, or a stale/bad ?template= link) leaves nothing to show - back to the list.
+        if (!template) {
+          this.store.setDetailLoading(false);
+          this.backToList();
+          return;
+        }
+        this.store.setDetailTemplate(template);
+        this.loadVersions(id);
+      },
+      error: () => {
+        this.store.setDetailLoading(false);
+        this.backToList();
+      },
+    });
   }
 
   loadVersions(templateId: string) {

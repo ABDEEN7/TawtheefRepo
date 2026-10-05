@@ -2,23 +2,43 @@ using Tawtheef.Domain.Entities.Interview;
 
 namespace Application.Operation.Features.Employee.Interview.ResultReport.Services;
 
+public sealed record SuggestionCandidate(Guid CandidateId, bool IsQualified, bool IsQatari, decimal FinalScore);
+
 // Pure, dynamic calculation - never persisted (scheduleResult.md: "the system suggestion is not
-// itself a persisted business state"). Confirmed formula: not qualified -> Rejected; qualified +
-// Qatari -> CandidateForHiringProcess unconditionally; qualified + not Qatari -> depends on whether
-// this job still has an open vacancy slot (counting candidates already decided CandidateForHiringProcess
-// for the same job) -> CandidateForHiringProcess or WaitingList.
+// itself a persisted business state"). Ranks the whole report against the job's open vacancies:
+//  - not qualified -> Rejected;
+//  - qualified candidates fill the open vacancies (NumberOfVacancies minus candidates already decided
+//    CandidateForHiringProcess in the job's other reports) Qatari first by FinalScore desc, then the
+//    others by FinalScore desc -> CandidateForHiringProcess;
+//  - qualified candidates left over once the vacancies are filled -> WaitingList (Qatari included).
+// Equal scores fall back to the candidate id so the suggestion is stable between reads.
 public static class ResultCandidateSuggestionService
 {
-    public static FinalDecision Suggest(bool isQualified, bool isQatari, int numberOfVacancies, int alreadyHiringCountForJob)
+    public static IReadOnlyDictionary<Guid, FinalDecision> Suggest(
+        IEnumerable<SuggestionCandidate> candidates, int numberOfVacancies, int alreadyHiringCountForJob)
     {
-        if (!isQualified)
-            return FinalDecision.Rejected;
+        var openVacancies = Math.Max(0, numberOfVacancies - alreadyHiringCountForJob);
+        var list = candidates.ToList();
 
-        if (isQatari)
-            return FinalDecision.CandidateForHiringProcess;
+        var result = list
+            .Where(c => !c.IsQualified)
+            .ToDictionary(c => c.CandidateId, _ => FinalDecision.Rejected);
 
-        return alreadyHiringCountForJob < numberOfVacancies
-            ? FinalDecision.CandidateForHiringProcess
-            : FinalDecision.WaitingList;
+        var ranked = list
+            .Where(c => c.IsQualified)
+            .OrderByDescending(c => c.IsQatari)
+            .ThenByDescending(c => c.FinalScore)
+            .ThenBy(c => c.CandidateId);
+
+        foreach (var candidate in ranked)
+        {
+            result[candidate.CandidateId] = openVacancies > 0
+                ? FinalDecision.CandidateForHiringProcess
+                : FinalDecision.WaitingList;
+            if (openVacancies > 0)
+                openVacancies--;
+        }
+
+        return result;
     }
 }

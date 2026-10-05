@@ -1,0 +1,301 @@
+// Same visual language as the main Dashboard: reuse its stylesheet (cards, KPI grid, doughnut cards,
+// quick actions, skeletons) exactly like the Dashboard's own dialogs do, and add only what's new here.
+@use '../../dashboard/dashboard';
+
+.interview-dashboard-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.title-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.dashboard-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kpi-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kpi-help {
+  font-size: 0.8rem;
+  color: var(--muted);
+  cursor: help;
+}
+
+.section-hint {
+  color: var(--muted);
+  cursor: help;
+}
+
+.is-refreshing {
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.empty-inline {
+  grid-column: 1 / -1;
+}
+
+// Smaller counters for the preparation/pipeline strip.
+.pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.compact-kpi-card {
+  grid-column: auto;
+  padding: 14px 16px;
+  min-height: 0;
+
+  .kpi-value {
+    font-size: calc(1.6rem * var(--dashboard-font-scale, 1));
+  }
+
+  .kpi-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.analytics-wide-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+
+  .operation-card-title small {
+    display: block;
+    font-weight: 500;
+  }
+}
+
+.wide-chart-wrapper {
+  position: relative;
+  height: 280px;
+  margin-top: 8px;
+}
+
+.chart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 220px;
+  color: var(--muted);
+
+  i {
+    font-size: 2rem;
+    opacity: 0.35;
+  }
+}
+
+.legend-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+.legend-footer-chip {
+  background: var(--gray-soft);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  > i {
+    font-size: 2rem;
+    color: var(--red);
+  }
+
+  > div {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  h4 {
+    margin: 0 0 4px;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 0;
+    color: var(--muted);
+  }
+}
+
+.reports-anchor {
+  scroll-margin-top: 90px;
+}
+
+.print-header {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .analytics-wide-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pipeline-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .title-actions {
+    width: 100%;
+
+    .btn {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+
+  .pipeline-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+// ---------- PDF export (browser print) ----------
+// The app chrome (nav/sidebar/footer) is hidden by the global rule tied to body.interview-dashboard-printing.
+@media print {
+  .no-print,
+  .kpi-help,
+  .section-hint {
+    display: none !important;
+  }
+
+  .print-header {
+    display: block;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--qatar-maroon);
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--qatar-maroon);
+    }
+
+    p {
+      margin: 2px 0 0;
+      color: var(--muted);
+    }
+  }
+
+  .print-header-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .print-meta {
+    display: flex;
+    flex-direction: column;
+    text-align: end;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .print-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+
+  .print-filter-chip {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 1px 10px;
+  }
+
+  .interview-dashboard-title {
+    display: none;
+  }
+
+  .ref-dashboard-wrap,
+  .ref-dashboard-wrap .main {
+    background: #fff !important;
+    min-height: 0;
+  }
+
+  .dashboard-section {
+    padding: 14px;
+    margin-bottom: 14px;
+    break-inside: avoid;
+    border-radius: 12px;
+  }
+
+  .figma-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .figma-kpi-card {
+    grid-column: span 1;
+  }
+
+  .pipeline-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .kpi-card {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .operational-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .operation-card {
+    break-inside: avoid;
+  }
+
+  .analytics-wide-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  // Chart.js canvases keep their on-screen pixel size; scale the bitmap into the printable width.
+  canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .wide-chart-wrapper {
+    height: auto;
+  }
+}

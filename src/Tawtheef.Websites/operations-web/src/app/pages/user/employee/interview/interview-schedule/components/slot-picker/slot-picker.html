@@ -1,0 +1,112 @@
+<div class="d-flex flex-column gap-3">
+  <!-- Before / after: what the candidate has now and what they'll get -->
+  <div class="move-summary">
+    <div class="move-card">
+      <span class="move-label">{{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.CURRENT' | translate }}</span>
+      <ng-container *ngTemplateOutlet="summaryTpl; context: { $implicit: currentSummary() }" />
+    </div>
+    <i class="hgi hgi-stroke hgi-arrow-right-01 move-arrow" aria-hidden="true"></i>
+    <div class="move-card next" [class.pending]="!selectedSummary()">
+      <span class="move-label">{{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.NEW' | translate }}</span>
+      @if (selectedSummary(); as summary) {
+        <ng-container *ngTemplateOutlet="summaryTpl; context: { $implicit: summary }" />
+      } @else {
+        <span class="move-value">{{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.NOT_SELECTED' | translate }}</span>
+      }
+    </div>
+  </div>
+
+  @switch (status()) {
+    @case ('loading') {
+      <div class="state-box">
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+        <span>{{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.LOADING' | translate }}</span>
+      </div>
+    }
+    @case ('error') {
+      <div class="state-box">
+        <i class="hgi hgi-stroke hgi-alert-circle state-icon" aria-hidden="true"></i>
+        <span>{{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.LOAD_FAILED' | translate }}</span>
+        <button type="button" class="btn btn-outline-primary btn-sm" (click)="retry.emit()">
+          <i class="hgi hgi-stroke hgi-refresh me-1" aria-hidden="true"></i>
+          {{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.RETRY' | translate }}
+        </button>
+      </div>
+    }
+    @default {
+      @if (days().length === 0) {
+        <div class="state-box">
+          <i class="hgi hgi-stroke hgi-calendar-03 state-icon" aria-hidden="true"></i>
+          <strong>{{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.EMPTY_TITLE' | translate }}</strong>
+          <span class="text-muted small">{{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.EMPTY_DESCRIPTION' | translate }}</span>
+        </div>
+      } @else {
+        <div>
+          <span class="section-label">{{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.PICK_DAY' | translate }}</span>
+          <div class="day-strip" role="group" [attr.aria-label]="'INTERVIEW_SCHEDULE.SLOT_PICKER.PICK_DAY' | translate">
+            @for (day of days(); track day.key) {
+              <button
+                type="button"
+                class="day-chip"
+                [class.active]="day.key === selectedDayKey()"
+                [attr.aria-pressed]="day.key === selectedDayKey()"
+                [attr.aria-label]="day.fullLabel"
+                (click)="selectDay(day.key)"
+              >
+                <span class="day-weekday">{{ day.weekday }}</span>
+                <span class="day-number">{{ day.dayOfMonth }}</span>
+                <span class="day-month">{{ day.month }}</span>
+                <span class="day-count">
+                  {{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.AVAILABLE_COUNT' | translate: { count: day.slots.length } }}
+                </span>
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (selectedDay(); as day) {
+          <div>
+            <span class="section-label">
+              {{ 'INTERVIEW_SCHEDULE.SLOT_PICKER.PICK_TIME' | translate }}
+              <span class="text-muted fw-normal">· {{ day.fullLabel }}</span>
+            </span>
+            <div class="slot-grid" role="group" [attr.aria-label]="day.fullLabel">
+              @for (slot of day.slots; track slot.id) {
+                <button
+                  type="button"
+                  class="slot-chip"
+                  [class.active]="slot.id === selectedId()"
+                  [attr.aria-pressed]="slot.id === selectedId()"
+                  (click)="selectSlot(slot.id)"
+                >
+                  <i
+                    class="hgi hgi-stroke slot-icon"
+                    [class.hgi-clock-01]="slot.id !== selectedId()"
+                    [class.hgi-tick-01]="slot.id === selectedId()"
+                    aria-hidden="true"
+                  ></i>
+                  <span class="slot-text">
+                    <bdi dir="ltr" class="slot-time">{{ slot.timeRange }}</bdi>
+                    @if (slot.location) {
+                      <span class="slot-location">{{ slot.location }}</span>
+                    }
+                  </span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+      }
+    }
+  }
+</div>
+
+<!-- "Thursday, October 2, 2026 · 10:00 AM - 10:30 AM · Room 3" -->
+<ng-template #summaryTpl let-summary>
+  <span class="move-value">
+    {{ summary.day }} · <bdi dir="ltr">{{ summary.time }}</bdi>
+    @if (summary.location) {
+      · {{ summary.location }}
+    }
+  </span>
+</ng-template>

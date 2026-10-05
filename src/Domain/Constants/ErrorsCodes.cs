@@ -398,7 +398,6 @@ public class ErrorsCodes
     #region Exam
 
     public const string ExamCreatedDateRangeInvalid = "EXAM_CREATED_DATE_RANGE_INVALID";
-    public const string ExamPendingApprovalAlreadyExistsForJob = "EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB";
     public const string ExamResultReportHasNoPendingActions = "EXAM_RESULT_REPORT_HAS_NO_PENDING_ACTIONS";
 
     #endregion
@@ -423,6 +422,8 @@ public class ErrorsCodes
     public const string TestSlotCandidateHallStateInvalid = "TEST_SLOT_CANDIDATE_HALL_STATE_INVALID";
     public const string TestSessionInsufficientCapacity = "TEST_SESSION_INSUFFICIENT_CAPACITY";
 
+    public const string TestSessionScheduledTimeExpired = "TEST_SESSION_SCHEDULED_TIME_EXPIRED";
+    public const string TestSessionCandidatesAlreadyAssigned = "TEST_SESSION_CANDIDATES_ALREADY_ASSIGNED";
     #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";
@@ -668,6 +669,15 @@ public class ErrorsCodes
     public const string InterviewAppointmentNotEvaluable = "INTERVIEW_APPOINTMENT_NOT_EVALUABLE";
     public const string InterviewAppointmentAttendanceForbidden = "INTERVIEW_APPOINTMENT_ATTENDANCE_FORBIDDEN";
 
+    public const string InterviewAppointmentRescheduleSlotNotFound = "INTERVIEW_APPOINTMENT_RESCHEDULE_SLOT_NOT_FOUND";
+    public const string InterviewAppointmentRescheduleSlotTaken = "INTERVIEW_APPOINTMENT_RESCHEDULE_SLOT_TAKEN";
+    public const string InterviewAppointmentRescheduleSlotInPast = "INTERVIEW_APPOINTMENT_RESCHEDULE_SLOT_IN_PAST";
+    public const string InterviewAppointmentRescheduleSameSlot = "INTERVIEW_APPOINTMENT_RESCHEDULE_SAME_SLOT";
+    public const string InterviewAppointmentConcurrentUpdate = "INTERVIEW_APPOINTMENT_CONCURRENT_UPDATE";
+    public const string InterviewAppointmentAttendanceStatusNotAllowed = "INTERVIEW_APPOINTMENT_ATTENDANCE_STATUS_NOT_ALLOWED";
+    public const string InterviewAppointmentAttendanceFinal = "INTERVIEW_APPOINTMENT_ATTENDANCE_FINAL";
+    public const string InterviewAppointmentAbsentAfterStart = "INTERVIEW_APPOINTMENT_ABSENT_AFTER_START";
+    public const string InterviewAppointmentWithdrawalNotAllowed = "INTERVIEW_APPOINTMENT_WITHDRAWAL_NOT_ALLOWED";
     #endregion
 
     #region Interview - Member Evaluation
@@ -835,6 +845,15 @@ public class ErrorsCodes
 
     public const string ExamResultReportInvitationStateInvalid = "EXAM_RESULT_REPORT_INVITATION_STATE_INVALID";
 
+    public const string InterviewResultReportFinalizedNoReschedule = "INTERVIEW_RESULT_REPORT_FINALIZED_NO_RESCHEDULE";
+    public const string InterviewResultReportNotInCommitteeReview = "INTERVIEW_RESULT_REPORT_NOT_IN_COMMITTEE_REVIEW";
+    public const string InterviewCommitteeReviewForbidden = "INTERVIEW_COMMITTEE_REVIEW_FORBIDDEN";
+    public const string InterviewCommitteeReviewOverrideForbidden = "INTERVIEW_COMMITTEE_REVIEW_OVERRIDE_FORBIDDEN";
+    public const string InterviewSchoolStageNotFound = "INTERVIEW_SCHOOL_STAGE_NOT_FOUND";
+    #endregion
+
+    #region Interview - Dashboard
+    public const string InterviewDashboardSectionForbidden = "INTERVIEW_DASHBOARD_SECTION_FORBIDDEN";
     #endregion
 }
 

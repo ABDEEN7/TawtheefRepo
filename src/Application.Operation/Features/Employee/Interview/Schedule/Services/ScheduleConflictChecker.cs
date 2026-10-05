@@ -21,7 +21,7 @@ public static class ScheduleConflictChecker
 
     public static async Task<Result> ValidateNoConflictsAsync(
         IUnitOfWork unitOfWork, Guid interviewCommitteeId, IReadOnlyList<GeneratedSlotDto> slots,
-        CancellationToken cancellationToken, Guid? excludeAppointmentId = null, Guid? excludeScheduleId = null)
+        CancellationToken cancellationToken, IReadOnlyCollection<Guid>? excludeAppointmentIds = null, Guid? excludeScheduleId = null)
     {
         if (slots.Count == 0)
             return Result.Ok();
@@ -29,10 +29,11 @@ public static class ScheduleConflictChecker
         var minStart = slots.Min(s => s.StartAt);
         var maxEnd = slots.Max(s => s.EndAt);
         var roomIds = slots.Where(s => s.RoomId is not null).Select(s => s.RoomId!.Value).Distinct().ToList();
+        var excludedIds = excludeAppointmentIds ?? [];
 
         var existing = await unitOfWork.GetEntityRepository<InterviewAppointment>().DbSet
             .Where(a => ActiveStatuses.Contains(a.Status) && a.StartAt < maxEnd && a.EndAt > minStart)
-            .Where(a => excludeAppointmentId == null || a.Id != excludeAppointmentId)
+            .Where(a => !excludedIds.Contains(a.Id))
             .Where(a => excludeScheduleId == null || a.InterviewScheduleId != excludeScheduleId)
             .Where(a => a.InterviewCommitteeId == interviewCommitteeId || (a.RoomId != null && roomIds.Contains(a.RoomId.Value)))
             .Select(a => new { a.InterviewCommitteeId, a.RoomId, a.StartAt, a.EndAt })

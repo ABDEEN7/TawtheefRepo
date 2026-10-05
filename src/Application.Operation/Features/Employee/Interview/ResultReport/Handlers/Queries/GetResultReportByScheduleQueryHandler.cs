@@ -24,55 +24,57 @@ public sealed class GetResultReportByScheduleQueryHandler(IUnitOfWork unitOfWork
             .Include(r => r.InterviewSchedule).ThenInclude(s => s!.Job).ThenInclude(j => j!.JobTitle)
             .Include(r => r.Candidates).ThenInclude(c => c.Axes).ThenInclude(a => a.InterviewTemplateEvaluationAxis).ThenInclude(ax => ax!.InterviewEvaluationAxis)
             .Include(r => r.Candidates).ThenInclude(c => c.InterviewAppointment).ThenInclude(a => a!.Invitation).ThenInclude(i => i!.Applicant).ThenInclude(a => a!.Profile)
+            .Include(r => r.Candidates).ThenInclude(c => c.RecommendedSchoolStage)
             .FirstOrDefaultAsync(r => r.InterviewScheduleId == request.ScheduleId, cancellationToken);
 
         if (report is null)
             return Result.Fail<ResultReportDto>(new Error(ErrorsCodes.InterviewResultReportNotFound));
 
-        var jobId = report.InterviewSchedule!.JobId;
-        var numberOfVacancies = report.InterviewSchedule.Job!.NumberOfVacancies;
-
-        // Scoped to the whole job (across every schedule/report for it), not just this report - a
-        // vacancy is filled once, regardless of which interview round the candidate came through.
-        var alreadyHiringCountForJob = await unitOfWork.GetEntityRepository<InterviewResultCandidate>().DbSet
-            .Where(c => c.FinalDecision == FinalDecision.CandidateForHiringProcess
-                && c.InterviewResultReport!.InterviewSchedule!.JobId == jobId)
-            .CountAsync(cancellationToken);
-
-        var appointmentIds = report.Candidates.Select(c => c.InterviewAppointmentId).ToList();
+        var numberOfVacancies = report.InterviewSchedule!.Job!.NumberOfVacancies;
+        var alreadyHiringCountForJob = await ResultReportReadService.CountAlreadyHiringForJobAsync(
+            unitOfWork, report.InterviewSchedule.JobId, report.Id, cancellationToken);
+        var suggestions = ResultCandidateSuggestionService.Suggest(
+            report.Candidates.Select(c => new SuggestionCandidate(
+                c.Id,
+                c.IsQualified,
+                c.InterviewAppointment?.Invitation?.Applicant?.Profile?.NationalityId == CountryIds.Qatar,
+                c.FinalScore)),
+            numberOfVacancies,
+            alreadyHiringCountForJob);
 
         // So the Final Reviewer sees which candidates have operational issues without a second call
         // (scheduleResult.md: "must see which candidates have operational issues and review them individually").
-        var issuesByAppointment = (await unitOfWork.GetEntityRepository<InterviewOperationalIssue>().DbSet
-            .AsNoTracking()
-            .Where(i => appointmentIds.Contains(i.InterviewAppointmentId))
-            .OrderByDescending(i => i.CreatedDate)
-            .Select(i => new OperationalIssueDto(
-                i.Id, i.InterviewAppointmentId, i.IssueType, i.Description, i.IsBlocking, i.Status,
-                i.ResolvedById, i.ResolvedAt.AsUtcOffset(), i.ResolutionNotes, i.CreatedDate.AsUtcOffset()))
-            .ToListAsync(cancellationToken))
-            .GroupBy(i => i.InterviewAppointmentId)
-            .ToDictionary(g => g.Key, g => g.ToList());
+        var issuesByAppointment = await ResultReportReadService.LoadIssuesByAppointmentAsync(
+            unitOfWork, report.Candidates.Select(c => c.InterviewAppointmentId).ToList(), cancellationToken);
 
         var candidates = report.Candidates
             .Select(c =>
             {
-                var isQatari = c.InterviewAppointment?.Invitation?.Applicant?.Profile?.NationalityId == CountryIds.Qatar;
-                var suggestedDecision = ResultCandidateSuggestionService.Suggest(
-                    c.IsQualified, isQatari, numberOfVacancies, alreadyHiringCountForJob);
+                var suggestedDecision = suggestions[c.Id];
+                var issues = issuesByAppointment.GetValueOrDefault(c.InterviewAppointmentId, []);
+                var attendanceStatus = c.InterviewAppointment?.AttendanceStatus;
 
                 return new ResultCandidateDto(
                     c.Id,
                     c.InterviewAppointmentId,
                     c.InterviewAppointment?.Invitation?.Applicant?.FullNameAr ?? string.Empty,
                     c.InterviewAppointment?.Invitation?.Applicant?.FullNameEn,
+                    c.InterviewAppointment?.Invitation?.Applicant?.Profile?.NationalNumber,
                     c.FinalScore,
                     c.QualificationScore,
                     c.IsQualified,
+                    attendanceStatus,
+                    InterviewAppointment.IsLateCandidate(attendanceStatus, issues.Select(i => i.IssueType)),
                     c.FinalDecision,
+                    c.DecisionReason,
                     suggestedDecision,
-                    c.SnapshotAt,
-                    issuesByAppointment.GetValueOrDefault(c.InterviewAppointmentId, []),
+                    c.ChairRecommendedDecision,
+                    c.ChairRecommendationReason,
+                    c.RecommendedSchoolStageId,
+                    c.RecommendedSchoolStage?.NameAr,
+                    c.RecommendedSchoolStage?.NameEn,
+                    c.SnapshotAt.AsUtcOffset(),
+                    issues,
                     c.Axes
                         .Select(a => new ResultCandidateAxisDto(
                             a.InterviewTemplateEvaluationAxisId,
@@ -87,6 +89,7 @@ public sealed class GetResultReportByScheduleQueryHandler(IUnitOfWork unitOfWork
 
         var dto = new ResultReportDto(
             report.Id,
+            report.Code,
             report.InterviewScheduleId,
             report.InterviewSchedule.TitleAr,
             report.InterviewSchedule.TitleEn,
@@ -95,7 +98,7 @@ public sealed class GetResultReportByScheduleQueryHandler(IUnitOfWork unitOfWork
             report.AppliedQualificationScore,
             report.Status,
             report.ApprovedById,
-            report.ApprovedAt,
+            report.ApprovedAt.AsUtcOffset(),
             report.DecisionNotes,
             candidates);
 

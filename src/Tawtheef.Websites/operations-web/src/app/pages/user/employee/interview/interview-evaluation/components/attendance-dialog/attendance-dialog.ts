@@ -6,7 +6,7 @@ import { Select } from 'primeng/select';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { NotificationService } from '../../../../../../../core/services/notification.service';
-import { ATTENDANCE_STATUS_LABELS, AttendanceStatus } from '../../models/enums';
+import { ATTENDANCE_SELECTABLE_STATUSES, ATTENDANCE_STATUS_LABELS, AttendanceStatus } from '../../models/enums';
 
 export interface AttendanceDialogData {
   candidateName: string;
@@ -27,9 +27,10 @@ export class AttendanceDialogComponent implements OnInit {
   private notify = inject(NotificationService);
   private translate = inject(TranslateService);
 
-  readonly statusOptions = [AttendanceStatus.Present, AttendanceStatus.NoShow, AttendanceStatus.Withdrew, AttendanceStatus.Late].map(
-    (status) => ({ value: status, label: ATTENDANCE_STATUS_LABELS[status] }),
-  );
+  readonly statusOptions = ATTENDANCE_SELECTABLE_STATUSES.map((status) => ({
+    value: status,
+    label: ATTENDANCE_STATUS_LABELS[status],
+  }));
 
   candidateName = '';
   candidateQid: string | null = null;

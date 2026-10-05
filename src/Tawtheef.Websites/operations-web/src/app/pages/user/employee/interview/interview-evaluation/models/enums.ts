@@ -9,6 +9,9 @@ export enum MemberEvaluationStatus {
 
 // Mirrors Tawtheef.Domain.Entities.Interview.AttendanceStatus. Not previously modeled in Angular -
 // interview-schedule/models/appointment.model.ts only carries it as a raw number.
+// NoShow is shown as "Absent". The chair only records Present/Absent (ATTENDANCE_SELECTABLE_STATUSES);
+// Withdrew comes from a Candidate Withdrawal operational issue, and Late is a flag (AppointmentModel.isLate)
+// set by a Late issue - the value itself only appears on rows recorded before that rule.
 export enum AttendanceStatus {
   Present = 1,
   NoShow = 2,
@@ -25,7 +28,10 @@ export enum OperationalIssueType {
   TechnicalProblem = 4,
   CouldNotBeConducted = 5,
   RescheduleRequest = 6,
+  Late = 7,
 }
+
+export const ATTENDANCE_SELECTABLE_STATUSES = [AttendanceStatus.Present, AttendanceStatus.NoShow] as const;
 
 // Mirrors Tawtheef.Domain.Entities.Interview.OperationalIssueStatus.
 export enum OperationalIssueStatus {
@@ -67,6 +73,7 @@ export const OPERATIONAL_ISSUE_TYPE_LABELS: Record<OperationalIssueType, string>
   [OperationalIssueType.TechnicalProblem]: 'INTERVIEW_EVALUATION.ISSUE_TYPE.TECHNICAL_PROBLEM',
   [OperationalIssueType.CouldNotBeConducted]: 'INTERVIEW_EVALUATION.ISSUE_TYPE.COULD_NOT_BE_CONDUCTED',
   [OperationalIssueType.RescheduleRequest]: 'INTERVIEW_EVALUATION.ISSUE_TYPE.RESCHEDULE_REQUEST',
+  [OperationalIssueType.Late]: 'INTERVIEW_EVALUATION.ISSUE_TYPE.LATE',
 };
 
 export const OPERATIONAL_ISSUE_STATUS_LABELS: Record<OperationalIssueStatus, string> = {

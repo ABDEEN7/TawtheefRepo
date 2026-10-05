@@ -25,9 +25,16 @@ public sealed class InterviewResultCandidateConfiguration : BaseEntityConfigurat
             .HasForeignKey(x => x.DecidedById)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // One result per conducted appointment.
+        builder.HasOne(x => x.RecommendedSchoolStage)
+            .WithMany()
+            .HasForeignKey(x => x.RecommendedSchoolStageId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // One live result per conducted appointment. A discarded report's candidates are soft-deleted with
+        // it, so the regenerated report can hold a new result for the same (unchanged) appointments.
         builder.HasIndex(x => x.InterviewAppointmentId)
             .IsUnique()
+            .HasFilter("[IsDeleted] = 0")
             .HasDatabaseName("UQ_ResultCandidate");
     }
 }

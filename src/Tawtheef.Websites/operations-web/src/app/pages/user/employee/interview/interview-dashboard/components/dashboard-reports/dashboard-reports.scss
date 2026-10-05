@@ -1,0 +1,125 @@
+// Same card/table styling as the Dashboard's own detail dialogs.
+@use '../../../../dashboard/dashboard';
+
+:host {
+  display: block;
+}
+
+.report-body {
+  padding-top: 16px;
+}
+
+.report-intro {
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.report-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.quick-filter {
+  min-width: 220px;
+}
+
+.title-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+
+  small {
+    color: var(--muted);
+  }
+}
+
+th.num,
+td.num {
+  text-align: center;
+}
+
+.range-sep {
+  margin-inline: 4px;
+  color: var(--muted);
+}
+
+.progress-cell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 56px;
+}
+
+.mini-progress {
+  inline-size: 56px;
+  block-size: 5px;
+  border-radius: 999px;
+  background: #eceef2;
+  overflow: hidden;
+
+  span {
+    display: block;
+    block-size: 100%;
+    background: var(--green);
+    border-radius: inherit;
+  }
+}
+
+.description-cell {
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.decision-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.decision-chip {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-weight: 600;
+  color: #4b4b55;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: var(--qatar-maroon-border);
+  }
+
+  &.active {
+    background: var(--qatar-maroon);
+    border-color: var(--qatar-maroon);
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--qatar-maroon);
+    outline-offset: 2px;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .dashboard-table-scroll {
+    overflow: visible !important;
+  }
+
+  .description-cell {
+    white-space: normal;
+  }
+}

@@ -14,6 +14,8 @@ public sealed class ListScheduleAppointmentsQueryHandler(IUnitOfWork unitOfWork)
 {
     public async Task<IResult<List<AppointmentDto>>> Handle(ListScheduleAppointmentsQuery request, CancellationToken cancellationToken)
     {
+        var issues = unitOfWork.GetEntityRepository<InterviewOperationalIssue>().DbSet;
+
         var appointments = await unitOfWork.GetEntityRepository<InterviewAppointment>().DbSet
             .AsNoTracking()
             .Where(a => a.InterviewScheduleId == request.InterviewScheduleId)
@@ -31,8 +33,8 @@ public sealed class ListScheduleAppointmentsQueryHandler(IUnitOfWork unitOfWork)
                 a.Room != null ? a.Room.NameEn : null,
                 a.RemoteMeetingUrl,
                 a.RemoteMeetingInstructions,
-                a.StartAt,
-                a.EndAt,
+                a.StartAt.AsUtcOffset(),
+                a.EndAt.AsUtcOffset(),
                 a.Status,
                 a.AttendanceStatus,
                 a.ActualStartAt.AsUtcOffset(),
@@ -43,7 +45,10 @@ public sealed class ListScheduleAppointmentsQueryHandler(IUnitOfWork unitOfWork)
                 a.CancellationReason,
                 a.InvitationSentAt.AsUtcOffset(),
                 a.LastReminderSentAt.AsUtcOffset(),
-                a.ReminderCount))
+                a.ReminderCount,
+                // InterviewAppointment.IsLateCandidate, spelled out so it translates to SQL.
+                a.AttendanceStatus == AttendanceStatus.Late
+                    || issues.Any(i => i.InterviewAppointmentId == a.Id && i.IssueType == OperationalIssueType.Late)))
             .ToListAsync(cancellationToken);
 
         return Result.Ok(appointments);

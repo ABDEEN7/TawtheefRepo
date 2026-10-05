@@ -7,7 +7,7 @@ public sealed class PeriodInputDtoValidator : AbstractValidator<PeriodInputDto>
 {
     public PeriodInputDtoValidator()
     {
-        RuleFor(x => x.EndTime).GreaterThan(x => x.StartTime);
+        RuleFor(x => x.EndAt).GreaterThan(x => x.StartAt);
         RuleFor(x => x.RemoteMeetingUrl).MaximumLength(1000);
         RuleFor(x => x.RemoteMeetingInstructions).MaximumLength(1000);
     }

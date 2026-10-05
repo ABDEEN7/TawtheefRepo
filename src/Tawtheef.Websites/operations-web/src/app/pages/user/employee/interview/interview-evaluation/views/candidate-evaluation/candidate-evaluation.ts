@@ -66,6 +66,14 @@ export class CandidateEvaluationComponent {
 
   // Chair/HR see the whole committee's submission progress; anyone else falls back to their own
   // form status (candidateSummary is null for them - see loadCandidate/getContext in the facade).
+  // Absent / withdrawn: the server closed the appointment and the candidate is scored 0.
+  closedByAttendance = computed(() => {
+    const status = this.store.selectedAppointment()?.attendanceStatus;
+    return status === AttendanceStatus.NoShow || status === AttendanceStatus.Withdrew
+      ? ATTENDANCE_STATUS_LABELS[status as AttendanceStatus]
+      : null;
+  });
+
   overallProgress = computed(() => {
     const summary = this.store.candidateSummary();
     if (!summary) return null;
@@ -140,8 +148,25 @@ export class CandidateEvaluationComponent {
 
     ref?.onClose.subscribe((status: AttendanceStatus | undefined) => {
       if (status === undefined) return;
-      this.service.registerAttendance(appointment.id, status);
+      if (status === AttendanceStatus.NoShow) this.confirmAbsent(appointment.id);
+      else this.service.registerAttendance(appointment.id, status);
     });
+  }
+
+  // Absent is final: the server closes the appointment and scores the candidate 0, and a closed
+  // appointment can't be rescheduled - so warn first and point to rescheduling instead.
+  private confirmAbsent(appointmentId: string) {
+    this.dialogHelper
+      .openConfirmDialog({
+        type: 'warning',
+        title: 'INTERVIEW_EVALUATION.ATTENDANCE_DIALOG.CONFIRM_ABSENT_TITLE',
+        description: 'INTERVIEW_EVALUATION.ATTENDANCE_DIALOG.CONFIRM_ABSENT_DESCRIPTION',
+        confirmText: 'INTERVIEW_EVALUATION.ATTENDANCE_DIALOG.CONFIRM_ABSENT',
+        cancelText: 'INTERVIEW_EVALUATION.CANCEL',
+      })
+      ?.onClose.subscribe((confirmed: boolean | undefined) => {
+        if (confirmed) this.service.registerAttendance(appointmentId, AttendanceStatus.NoShow);
+      });
   }
 
   // ======== Scoring ========
@@ -189,6 +214,10 @@ export class CandidateEvaluationComponent {
       width: '40rem',
       data: { appointmentId: appointment.id, candidateLabel: this.candidateName(appointment) },
     });
-    ref?.onClose.subscribe(() => this.service.refreshAppointmentIssues(appointment.id));
+    // A withdrawal closes the appointment and a Late issue flags it - reload the candidate, not just the issues.
+    ref?.onClose.subscribe(() => {
+      this.service.refreshAppointmentIssues(appointment.id);
+      this.service.reloadCandidate();
+    });
   }
 }

@@ -1,4 +1,6 @@
-<div i18nNamespace="pages/employee/interview-evaluation" [attr.dir]="store.isRtl() ? 'rtl' : 'ltr'">
+<!-- interview-result-report is loaded too for the report status/decision labels the Committee Review reuses. -->
+<div [i18nNamespace]="['pages/employee/interview-evaluation', 'pages/employee/interview-result-report']"
+  [attr.dir]="store.isRtl() ? 'rtl' : 'ltr'">
   @if (store.view() === 'list') {
     <app-sessions-list />
   }
@@ -7,5 +9,8 @@
   }
   @if (store.view() === 'candidate') {
     <app-candidate-evaluation />
+  }
+  @if (store.view() === 'review') {
+    <app-committee-review />
   }
 </div>

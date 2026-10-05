@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { DatePickerModule } from 'primeng/datepicker';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
 import { TestSessionsService } from '../../services/test-sessions.service';
@@ -12,7 +13,7 @@ import { TestSessionExamDetailsDto } from '../../models/test-session-exam-detail
   standalone: true,
   templateUrl: './test-session-setup-dialog.component.html',
   styleUrl: './test-session-setup-dialog.component.scss',
-  imports: [FormsModule, TranslatePipe, TableModule],
+  imports: [DatePickerModule, FormsModule, TranslatePipe, TableModule],
 })
 export class TestSessionSetupDialogComponent implements OnInit {
   private readonly ref = inject(DynamicDialogRef);
@@ -33,6 +34,8 @@ export class TestSessionSetupDialogComponent implements OnInit {
   to =
     this.initialSession?.endTime ??
     this.addMinutes(this.from, this.exam.durationMinutes + this.exam.minimumEntryWindowMinutes);
+  fromPickerValue = this.dateFromTime(this.from);
+  toPickerValue = this.dateFromTime(this.to);
   added = signal(!!this.initialSession);
   readonly sessions = computed(() => (this.added() ? [true] : []));
   availableSeats = signal(this.initialSession?.availableCapacity ?? 0);
@@ -61,6 +64,19 @@ export class TestSessionSetupDialogComponent implements OnInit {
       this.from,
       this.exam.durationMinutes + this.exam.minimumEntryWindowMinutes,
     );
+    this.toPickerValue = this.dateFromTime(this.to);
+    this.validate();
+  }
+  onFromPickerChanged(value: Date | null): void {
+    if (!value) return;
+    this.from = this.timeFromDate(value);
+    this.fromPickerValue = value;
+    this.onFromChanged();
+  }
+  onToPickerChanged(value: Date | null): void {
+    if (!value) return;
+    this.to = this.timeFromDate(value);
+    this.toPickerValue = value;
     this.validate();
   }
   validate(): void {
@@ -132,5 +148,14 @@ export class TestSessionSetupDialogComponent implements OnInit {
   private timeValue(time: string): number {
     const [hour = '0', minute = '0'] = time.split(':');
     return Number(hour) * 60 + Number(minute.slice(0, 2));
+  }
+  private dateFromTime(time: string): Date {
+    const [hour = '0', minute = '0'] = time.split(':');
+    const date = new Date();
+    date.setHours(Number(hour), Number(minute.slice(0, 2)), 0, 0);
+    return date;
+  }
+  private timeFromDate(date: Date): string {
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
   }
 }

@@ -13,6 +13,7 @@ import { JobQueryFilter } from '../../../job-management/models/job-query-filter.
 import { AppointmentModel } from '../models/appointment.model';
 import { InterviewType, ScheduleStatus } from '../models/enums';
 import { SchedulePlanPreviewModel } from '../models/plan-preview.model';
+import { RescheduleSlotModel } from '../models/reschedule-slot.model';
 import {
   CreationContextModel,
   RoomOptionModel,
@@ -27,10 +28,10 @@ const SKIP_LOADING = { headers: { 'X-Skip-Loading': 'true' } };
 // Job search fetches one over-sized page; jobs are narrowed further by typing. Server caps PageSize at 50.
 const JOB_SEARCH_PAGE_SIZE = 50;
 
+// startAt/endAt are UTC ISO instants (see schedule-time.ts).
 export interface PeriodInputPayload {
-  date: string;
-  startTime: string;
-  endTime: string;
+  startAt: string;
+  endAt: string;
   roomId?: string | null;
   remoteMeetingUrl?: string | null;
   remoteMeetingInstructions?: string | null;
@@ -73,13 +74,10 @@ export interface PreviewSchedulePayload {
   excludeScheduleId: string | null;
 }
 
+// The candidate moves into an open slot of the same schedule - never a free date/time.
 export interface RescheduleAppointmentPayload {
   appointmentId: string;
-  newStartAt: string;
-  newEndAt: string;
-  roomId?: string | null;
-  remoteMeetingUrl?: string | null;
-  remoteMeetingInstructions?: string | null;
+  targetSlotId: string;
   reason: string;
 }
 
@@ -173,6 +171,15 @@ export class InterviewScheduleService {
   }
 
   // ---- Appointments ----
+  // The reschedule dialog shows its own loading state, so the global overlay stays off.
+  getRescheduleSlots(scheduleId: string, appointmentId: string): Observable<RescheduleSlotModel[]> {
+    return this.http.get<RescheduleSlotModel[]>(
+      this.endpoints.interviewSchedule.appointmentRescheduleSlots,
+      { interviewScheduleId: scheduleId, appointmentId },
+      SKIP_LOADING,
+    );
+  }
+
   rescheduleAppointment(payload: RescheduleAppointmentPayload): Observable<string> {
     return this.http.put<string>(this.endpoints.interviewSchedule.appointmentReschedule, payload);
   }

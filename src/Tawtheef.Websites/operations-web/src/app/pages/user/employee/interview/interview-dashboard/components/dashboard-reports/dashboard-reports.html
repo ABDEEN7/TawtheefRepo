@@ -1,0 +1,553 @@
+<section class="dashboard-section reports-section">
+  <div class="dashboard-section-header">
+    <h3>{{ 'INTERVIEW_DASHBOARD.SECTIONS.REPORTS' | translate }}</h3>
+  </div>
+
+  <p-tabs [value]="store.activeTab()" (valueChange)="onTabChange($event)" scrollable>
+    <p-tablist class="no-print">
+      @for (tab of tabs(); track tab.value) {
+        <p-tab [value]="tab.value">{{ tab.labelKey | translate }}</p-tab>
+      }
+    </p-tablist>
+  </p-tabs>
+
+  <div class="report-body">
+    @switch (store.activeTab()) {
+      <!-- ============ Schedules (execution per schedule) ============ -->
+      @case ('schedules') {
+        <p class="report-intro">{{ 'INTERVIEW_DASHBOARD.REPORTS.INTRO.SCHEDULES' | translate }}</p>
+        @let state = store.schedules();
+        <div class="dashboard-table-scroll">
+          <p-table
+            class="custom-table"
+            [value]="state.page?.items ?? []"
+            [loading]="state.loading"
+            [rowHover]="true"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.SCHEDULE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.COMMITTEE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.STATUS' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.PERIOD' | translate }}</th>
+                <th class="num">{{ 'INTERVIEW_DASHBOARD.COL.CANDIDATES' | translate }}</th>
+                <th class="num">{{ 'INTERVIEW_DASHBOARD.COL.PRESENT' | translate }}</th>
+                <th class="num">{{ 'INTERVIEW_DASHBOARD.COL.NO_SHOW' | translate }}</th>
+                <th class="num">{{ 'INTERVIEW_DASHBOARD.COL.EVALUATED' | translate }}</th>
+                <th class="num">{{ 'INTERVIEW_DASHBOARD.COL.OPEN_ISSUES' | translate }}</th>
+                @if (store.canSeeResults()) {
+                  <th>{{ 'INTERVIEW_DASHBOARD.COL.REPORT' | translate }}</th>
+                }
+                <th class="no-print">{{ 'INTERVIEW_DASHBOARD.COL.ACTIONS' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+              <tr>
+                <td>
+                  <div class="title-cell">
+                    <strong>{{ name(row.titleAr, row.titleEn) }}</strong>
+                    <small>{{ name(row.jobNameAr, row.jobNameEn) }}</small>
+                  </div>
+                </td>
+                <td>{{ name(row.committeeNameAr, row.committeeNameEn) }}</td>
+                <td>
+                  <span [class]="'pill ' + SCHEDULE_STATUS_PILL[row.status]">{{
+                    SCHEDULE_STATUS_LABELS[row.status] | translate
+                  }}</span>
+                </td>
+                <td class="text-nowrap">
+                  @if (row.firstAppointmentAt) {
+                    <bdi dir="ltr">{{ row.firstAppointmentAt | date: 'dd-MM-yyyy' }}</bdi>
+                    @if (
+                      (row.lastAppointmentAt | date: 'yyyyMMdd') !==
+                      (row.firstAppointmentAt | date: 'yyyyMMdd')
+                    ) {
+                      <span class="range-sep">–</span
+                      ><bdi dir="ltr">{{ row.lastAppointmentAt | date: 'dd-MM-yyyy' }}</bdi>
+                    }
+                  } @else {
+                    —
+                  }
+                </td>
+                <td class="num">
+                  <span class="count-badge">{{ row.candidates }}</span>
+                </td>
+                <td class="num">{{ row.present }}</td>
+                <td class="num">{{ row.noShow }}</td>
+                <td class="num">
+                  <div
+                    class="progress-cell"
+                    [pTooltip]="
+                      'INTERVIEW_DASHBOARD.REPORTS.EVALUATED_OF'
+                        | translate: { done: row.evaluationsCompleted, total: row.candidates }
+                    "
+                  >
+                    <span>{{ row.evaluationsCompleted }}/{{ row.candidates }}</span>
+                    <div class="mini-progress">
+                      <span
+                        [style.inline-size.%]="
+                          row.candidates ? (row.evaluationsCompleted / row.candidates) * 100 : 0
+                        "
+                      ></span>
+                    </div>
+                  </div>
+                </td>
+                <td class="num">
+                  @if (row.openIssues > 0) {
+                    <span class="pill warning">{{ row.openIssues }}</span>
+                  } @else {
+                    0
+                  }
+                </td>
+                @if (store.canSeeResults()) {
+                  <td>
+                    @if (row.reportCode) {
+                      <div class="title-cell">
+                        <bdi dir="ltr" class="fw-semibold">{{ row.reportCode }}</bdi>
+                        <span [class]="'pill ' + RESULT_REPORT_STATUS_PILL[row.reportStatus]">{{
+                          RESULT_REPORT_STATUS_LABELS[row.reportStatus] | translate
+                        }}</span>
+                      </div>
+                    } @else {
+                      <span class="text-muted">{{
+                        'INTERVIEW_DASHBOARD.REPORTS.NO_REPORT' | translate
+                      }}</span>
+                    }
+                  </td>
+                }
+                <td class="no-print">
+                  <div class="action-buttons d-flex">
+                    @if (canOpenExecution()) {
+                      <button
+                        type="button"
+                        class="btn"
+                        (click)="openSchedule(row.scheduleId)"
+                        [pTooltip]="'INTERVIEW_DASHBOARD.ACTIONS.OPEN_SCHEDULE' | translate"
+                        tooltipPosition="top"
+                        [attr.aria-label]="'INTERVIEW_DASHBOARD.ACTIONS.OPEN_SCHEDULE' | translate"
+                      >
+                        <i class="hgi hgi-stroke hgi-view"></i>
+                      </button>
+                    }
+                    @if (row.reportCode && canOpenResults()) {
+                      <button
+                        type="button"
+                        class="btn"
+                        (click)="openReport(row.scheduleId)"
+                        [pTooltip]="'INTERVIEW_DASHBOARD.ACTIONS.OPEN_REPORT' | translate"
+                        tooltipPosition="top"
+                        [attr.aria-label]="'INTERVIEW_DASHBOARD.ACTIONS.OPEN_REPORT' | translate"
+                      >
+                        <i class="hgi hgi-stroke hgi-task-done-01"></i>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <ng-container
+                *ngTemplateOutlet="emptyRow; context: { colspan: 11, error: state.error }"
+              />
+            </ng-template>
+          </p-table>
+        </div>
+        <ng-container *ngTemplateOutlet="pager; context: { state: state, key: 'schedules' }" />
+      }
+
+      <!-- ============ Candidates (attendance / execution / evaluation progress) ============ -->
+      @case ('candidates') {
+        @let state = store.candidates();
+        <div class="report-toolbar">
+          <p class="report-intro m-0">
+            {{ 'INTERVIEW_DASHBOARD.REPORTS.INTRO.CANDIDATES' | translate }}
+          </p>
+          <p-select
+            class="quick-filter no-print"
+            [options]="attendanceOptions"
+            optionLabel="label"
+            optionValue="value"
+            [showClear]="true"
+            appendTo="body"
+            [placeholder]="'INTERVIEW_DASHBOARD.REPORTS.ALL_ATTENDANCE' | translate"
+            [ariaLabel]="'INTERVIEW_DASHBOARD.COL.ATTENDANCE' | translate"
+            [ngModel]="store.attendanceView()"
+            (ngModelChange)="facade.setAttendanceView($event)"
+          >
+            <ng-template #selectedItem let-selected
+              ><span>{{ selected?.label | translate }}</span></ng-template
+            >
+            <ng-template #item let-option
+              ><span>{{ option.label | translate }}</span></ng-template
+            >
+          </p-select>
+        </div>
+        <div class="dashboard-table-scroll">
+          <p-table
+            class="custom-table"
+            [value]="state.page?.items ?? []"
+            [loading]="state.loading"
+            [rowHover]="true"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.CANDIDATE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.SCHEDULE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.DATE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.TYPE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.APPOINTMENT_STATUS' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.ATTENDANCE' | translate }}</th>
+                <th class="num">{{ 'INTERVIEW_DASHBOARD.COL.EVALUATIONS' | translate }}</th>
+                <th class="no-print">{{ 'INTERVIEW_DASHBOARD.COL.ACTIONS' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+              <tr>
+                <td>
+                  <strong>{{ name(row.candidateNameAr, row.candidateNameEn) }}</strong>
+                </td>
+                <td>
+                  <div class="title-cell">
+                    <span>{{ name(row.scheduleTitleAr, row.scheduleTitleEn) }}</span>
+                    <small>{{ name(row.jobNameAr, row.jobNameEn) }}</small>
+                  </div>
+                </td>
+                <td class="text-nowrap">
+                  <bdi dir="ltr">{{ row.startAt | date: 'dd-MM-yyyy HH:mm' }}</bdi>
+                </td>
+                <td>{{ INTERVIEW_TYPE_LABELS[row.interviewType] | translate }}</td>
+                <td>
+                  <span [class]="'pill ' + APPOINTMENT_STATUS_PILL[row.status]">{{
+                    APPOINTMENT_STATUS_LABELS[row.status] | translate
+                  }}</span>
+                </td>
+                <td>
+                  @if (row.attendanceStatus) {
+                    <span [class]="'pill ' + ATTENDANCE_STATUS_PILL[row.attendanceStatus]">{{
+                      ATTENDANCE_STATUS_LABELS[row.attendanceStatus] | translate
+                    }}</span>
+                  } @else if (!row.isLate) {
+                    <span class="text-muted">{{
+                      'INTERVIEW_DASHBOARD.LEGEND.NOT_RECORDED' | translate
+                    }}</span>
+                  }
+                  <!-- Lateness is a Late issue on top of Present; legacy Late attendance already shows its own pill. -->
+                  @if (row.isLate && row.attendanceStatus !== AttendanceStatus.Late) {
+                    <span [class]="'pill ms-1 ' + ATTENDANCE_STATUS_PILL[AttendanceStatus.Late]">{{
+                      ATTENDANCE_STATUS_LABELS[AttendanceStatus.Late] | translate
+                    }}</span>
+                  }
+                </td>
+                <td class="num">
+                  <div
+                    class="progress-cell"
+                    [pTooltip]="
+                      'INTERVIEW_DASHBOARD.REPORTS.SUBMITTED_OF'
+                        | translate
+                          : { done: row.submittedEvaluations, total: row.requiredEvaluations }
+                    "
+                  >
+                    <span>{{ row.submittedEvaluations }}/{{ row.requiredEvaluations }}</span>
+                    <div class="mini-progress">
+                      <span
+                        [style.inline-size.%]="
+                          row.requiredEvaluations
+                            ? (row.submittedEvaluations / row.requiredEvaluations) * 100
+                            : 0
+                        "
+                      ></span>
+                    </div>
+                  </div>
+                </td>
+                <td class="no-print">
+                  @if (canOpenExecution()) {
+                    <div class="action-buttons d-flex">
+                      <button
+                        type="button"
+                        class="btn"
+                        (click)="openAppointment(row.scheduleId, row.appointmentId)"
+                        [pTooltip]="'INTERVIEW_DASHBOARD.ACTIONS.OPEN_APPOINTMENT' | translate"
+                        tooltipPosition="top"
+                        [attr.aria-label]="
+                          'INTERVIEW_DASHBOARD.ACTIONS.OPEN_APPOINTMENT' | translate
+                        "
+                      >
+                        <i class="hgi hgi-stroke hgi-view"></i>
+                      </button>
+                    </div>
+                  }
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <ng-container
+                *ngTemplateOutlet="emptyRow; context: { colspan: 8, error: state.error }"
+              />
+            </ng-template>
+          </p-table>
+        </div>
+        <ng-container *ngTemplateOutlet="pager; context: { state: state, key: 'candidates' }" />
+      }
+
+      <!-- ============ Results (hiring / waiting list / rejected) ============ -->
+      @case ('results') {
+        @let state = store.results();
+        <p class="report-intro">{{ 'INTERVIEW_DASHBOARD.REPORTS.INTRO.RESULTS' | translate }}</p>
+        <div
+          class="decision-chips no-print"
+          role="group"
+          [attr.aria-label]="'INTERVIEW_DASHBOARD.COL.DECISION' | translate"
+        >
+          @for (chip of decisionChips; track chip.value) {
+            <button
+              type="button"
+              class="decision-chip"
+              [class.active]="store.decisionView() === chip.value"
+              [attr.aria-pressed]="store.decisionView() === chip.value"
+              (click)="facade.setDecisionView(chip.value)"
+            >
+              {{ chip.labelKey | translate }}
+            </button>
+          }
+        </div>
+        <div class="dashboard-table-scroll">
+          <p-table
+            class="custom-table"
+            [value]="state.page?.items ?? []"
+            [loading]="state.loading"
+            [rowHover]="true"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.CANDIDATE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.SCHEDULE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.REPORT' | translate }}</th>
+                <th class="num">{{ 'INTERVIEW_DASHBOARD.COL.SCORE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.QUALIFICATION' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.DECISION' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.DECIDED_AT' | translate }}</th>
+                <th class="no-print">{{ 'INTERVIEW_DASHBOARD.COL.ACTIONS' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+              <tr>
+                <td>
+                  <strong>{{ name(row.candidateNameAr, row.candidateNameEn) }}</strong>
+                </td>
+                <td>
+                  <div class="title-cell">
+                    <span>{{ name(row.scheduleTitleAr, row.scheduleTitleEn) }}</span>
+                    <small>{{ name(row.jobNameAr, row.jobNameEn) }}</small>
+                  </div>
+                </td>
+                <td>
+                  <div class="title-cell">
+                    <bdi dir="ltr" class="fw-semibold">{{ row.reportCode }}</bdi>
+                    <span [class]="'pill ' + RESULT_REPORT_STATUS_PILL[row.reportStatus]">{{
+                      RESULT_REPORT_STATUS_LABELS[row.reportStatus] | translate
+                    }}</span>
+                  </div>
+                </td>
+                <td class="num">
+                  <strong>{{ row.finalScore | number: '1.0-2' }}</strong>
+                  @if (row.qualificationScore !== null) {
+                    <small class="text-muted">
+                      / {{ row.qualificationScore | number: '1.0-2' }}</small
+                    >
+                  }
+                </td>
+                <td>
+                  <span [class]="'pill ' + (row.isQualified ? 'success' : 'danger')">
+                    {{
+                      (row.isQualified
+                        ? 'INTERVIEW_RESULT_REPORT.QUALIFIED'
+                        : 'INTERVIEW_RESULT_REPORT.NOT_QUALIFIED'
+                      ) | translate
+                    }}
+                  </span>
+                </td>
+                <td>
+                  @if (row.finalDecision) {
+                    <span [class]="'pill ' + FINAL_DECISION_PILL[row.finalDecision]">{{
+                      FINAL_DECISION_LABELS[row.finalDecision] | translate
+                    }}</span>
+                  } @else {
+                    <span class="pill neutral">{{
+                      'INTERVIEW_DASHBOARD.LEGEND.PENDING_DECISION' | translate
+                    }}</span>
+                  }
+                </td>
+                <td class="text-nowrap">
+                  @if (row.decidedAt) {
+                    <bdi dir="ltr">{{ row.decidedAt | date: 'dd-MM-yyyy HH:mm' }}</bdi>
+                  } @else {
+                    —
+                  }
+                </td>
+                <td class="no-print">
+                  <div class="action-buttons d-flex">
+                    <button
+                      type="button"
+                      class="btn"
+                      (click)="openReport(row.scheduleId)"
+                      [pTooltip]="'INTERVIEW_DASHBOARD.ACTIONS.OPEN_REPORT' | translate"
+                      tooltipPosition="top"
+                      [attr.aria-label]="'INTERVIEW_DASHBOARD.ACTIONS.OPEN_REPORT' | translate"
+                    >
+                      <i class="hgi hgi-stroke hgi-view"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <ng-container
+                *ngTemplateOutlet="emptyRow; context: { colspan: 8, error: state.error }"
+              />
+            </ng-template>
+          </p-table>
+        </div>
+        <ng-container *ngTemplateOutlet="pager; context: { state: state, key: 'results' }" />
+      }
+
+      <!-- ============ Operational issues ============ -->
+      @case ('issues') {
+        @let state = store.issues();
+        <div class="report-toolbar">
+          <p class="report-intro m-0">
+            {{ 'INTERVIEW_DASHBOARD.REPORTS.INTRO.ISSUES' | translate }}
+          </p>
+          <p-select
+            class="quick-filter no-print"
+            [options]="issueStatusOptions"
+            optionLabel="label"
+            optionValue="value"
+            [showClear]="true"
+            appendTo="body"
+            [placeholder]="'INTERVIEW_DASHBOARD.REPORTS.ALL_STATUSES' | translate"
+            [ariaLabel]="'INTERVIEW_DASHBOARD.COL.STATUS' | translate"
+            [ngModel]="store.issueStatusView()"
+            (ngModelChange)="facade.setIssueStatusView($event)"
+          >
+            <ng-template #selectedItem let-selected
+              ><span>{{ selected?.label | translate }}</span></ng-template
+            >
+            <ng-template #item let-option
+              ><span>{{ option.label | translate }}</span></ng-template
+            >
+          </p-select>
+        </div>
+        <div class="dashboard-table-scroll">
+          <p-table
+            class="custom-table"
+            [value]="state.page?.items ?? []"
+            [loading]="state.loading"
+            [rowHover]="true"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.ISSUE_TYPE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.CANDIDATE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.SCHEDULE' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.STATUS' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.BLOCKING' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.DESCRIPTION' | translate }}</th>
+                <th>{{ 'INTERVIEW_DASHBOARD.COL.CREATED_AT' | translate }}</th>
+                <th class="no-print">{{ 'INTERVIEW_DASHBOARD.COL.ACTIONS' | translate }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+              <tr>
+                <td>
+                  <strong>{{ OPERATIONAL_ISSUE_TYPE_LABELS[row.issueType] | translate }}</strong>
+                </td>
+                <td>{{ name(row.candidateNameAr, row.candidateNameEn) }}</td>
+                <td>{{ name(row.scheduleTitleAr, row.scheduleTitleEn) }}</td>
+                <td>
+                  <span [class]="'pill ' + OPERATIONAL_ISSUE_STATUS_PILL[row.status]">{{
+                    OPERATIONAL_ISSUE_STATUS_LABELS[row.status] | translate
+                  }}</span>
+                </td>
+                <td>
+                  @if (row.isBlocking) {
+                    <span class="pill danger">{{
+                      'INTERVIEW_DASHBOARD.REPORTS.BLOCKING' | translate
+                    }}</span>
+                  } @else {
+                    <span class="text-muted">{{
+                      'INTERVIEW_DASHBOARD.REPORTS.NOT_BLOCKING' | translate
+                    }}</span>
+                  }
+                </td>
+                <td class="description-cell" [title]="row.description ?? ''">
+                  {{ row.description || '—' }}
+                </td>
+                <td class="text-nowrap">
+                  <bdi dir="ltr">{{ row.createdDate | date: 'dd-MM-yyyy HH:mm' }}</bdi>
+                </td>
+                <td class="no-print">
+                  @if (canOpenExecution()) {
+                    <div class="action-buttons d-flex">
+                      <button
+                        type="button"
+                        class="btn"
+                        (click)="openAppointment(row.scheduleId, row.appointmentId)"
+                        [pTooltip]="'INTERVIEW_DASHBOARD.ACTIONS.OPEN_APPOINTMENT' | translate"
+                        tooltipPosition="top"
+                        [attr.aria-label]="
+                          'INTERVIEW_DASHBOARD.ACTIONS.OPEN_APPOINTMENT' | translate
+                        "
+                      >
+                        <i class="hgi hgi-stroke hgi-view"></i>
+                      </button>
+                    </div>
+                  }
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <ng-container
+                *ngTemplateOutlet="emptyRow; context: { colspan: 8, error: state.error }"
+              />
+            </ng-template>
+          </p-table>
+        </div>
+        <ng-container *ngTemplateOutlet="pager; context: { state: state, key: 'issues' }" />
+      }
+    }
+  </div>
+</section>
+
+<ng-template #emptyRow let-colspan="colspan" let-error="error">
+  <tr>
+    <td [attr.colspan]="colspan" class="text-muted no-data">
+      <div class="p-4 d-flex flex-column align-items-center justify-content-center">
+        @if (error) {
+          <i class="hgi-stroke hgi-alert-02 fs-32 opacity-50 mb-2"></i>
+          <span>{{ 'INTERVIEW_DASHBOARD.ERROR.TABLE' | translate }}</span>
+          <button type="button" class="btn btn-link" (click)="facade.refresh()">
+            {{ 'INTERVIEW_DASHBOARD.ERROR.RETRY' | translate }}
+          </button>
+        } @else {
+          <i class="hgi-stroke hgi-folder-open fs-32 opacity-25 mb-2"></i>
+          <span>{{ 'INTERVIEW_DASHBOARD.EMPTY.NO_RECORDS' | translate }}</span>
+        }
+      </div>
+    </td>
+  </tr>
+</ng-template>
+
+<ng-template #pager let-state="state" let-key="key">
+  @if ((state.page?.metadata?.totalCount ?? 0) > 0) {
+    <div class="mt-3 no-print">
+      <app-pagination
+        class="w-100"
+        [currentPage]="state.pageNumber"
+        [totalItems]="state.page.metadata.totalCount"
+        [itemsPerPage]="state.pageSize"
+        (pageChanged)="facade.onPageChange(key, $event)"
+        (pageSizeChanged)="facade.onPageSizeChange(key, $event)"
+      />
+    </div>
+  }
+</ng-template>

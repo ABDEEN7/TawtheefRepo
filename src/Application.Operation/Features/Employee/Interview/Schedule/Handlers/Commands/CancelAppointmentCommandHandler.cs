@@ -1,3 +1,4 @@
+using Application.Operation.Features.Employee.Interview.ResultReport.Services;
 using Application.Operation.Features.Employee.Interview.Schedule.Commands;
 using FluentResults;
 using MediatR;
@@ -14,7 +15,7 @@ public sealed class CancelAppointmentCommandHandler(IUnitOfWork unitOfWork)
     public async Task<IResult<Unit>> Handle(CancelAppointmentCommand request, CancellationToken cancellationToken)
     {
         var appointment = await unitOfWork.GetEntityRepository<InterviewAppointment>().DbSet
-            .FirstOrDefaultAsync(a => a.Id == request.AppointmentId, cancellationToken);
+    .FirstOrDefaultAsync(a => a.Id == request.AppointmentId, cancellationToken);
         if (appointment is null)
             return Result.Fail<Unit>(new Error(ErrorsCodes.InterviewAppointmentNotFound));
 
@@ -29,6 +30,12 @@ public sealed class CancelAppointmentCommandHandler(IUnitOfWork unitOfWork)
             Action = InterviewAppointmentAuditActions.Cancelled,
             Reason = request.Reason
         }, cancellationToken);
+
+        // Cancelling the last outstanding candidate leaves only finished ones - that finishes the schedule.
+        var generateResult = await InterviewResultCalculationService.TryGenerateReportIfScheduleDoneAsync(
+            unitOfWork, appointment.InterviewScheduleId, cancellationToken);
+        if (generateResult.IsFailed)
+            return Result.Fail<Unit>(generateResult.Errors);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);

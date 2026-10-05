@@ -1,0 +1,241 @@
+// Brand maroon palette (same values as the dashboard's --qatar-maroon tokens).
+:host {
+  --slot-brand: #8a1538;
+  --slot-brand-soft: #f8e9ef;
+  --slot-brand-border: #ead0da;
+  --slot-border: #e8e8ee;
+  --slot-muted: #6f7178;
+  display: block;
+}
+
+.section-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+// ---- Before / after ----
+.move-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0.5rem;
+
+  @media (max-width: 576px) {
+    grid-template-columns: minmax(0, 1fr);
+
+    .move-arrow {
+      transform: rotate(90deg);
+      justify-self: center;
+    }
+  }
+}
+
+.move-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--slot-border);
+  border-radius: 12px;
+  background: #fafafb;
+
+  &.next {
+    border-color: var(--slot-brand-border);
+    background: var(--slot-brand-soft);
+  }
+
+  &.pending {
+    border-style: dashed;
+    background: #fff;
+
+    .move-value {
+      color: var(--slot-muted);
+      font-weight: 400;
+    }
+  }
+}
+
+.move-label {
+  font-size: 0.75rem;
+  color: var(--slot-muted);
+}
+
+.move-value {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.move-arrow {
+  align-self: center;
+  color: var(--slot-brand);
+  font-size: 1.25rem;
+}
+
+:host-context([dir='rtl']) .move-arrow {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 576px) {
+  :host-context([dir='rtl']) .move-arrow {
+    transform: rotate(90deg);
+  }
+}
+
+// ---- Loading / error / empty ----
+.state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  border: 1px dashed var(--slot-border);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.state-icon {
+  font-size: 1.75rem;
+  color: var(--slot-muted);
+}
+
+// ---- Day strip ----
+.day-strip {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scroll-snap-type: x proximity;
+}
+
+.day-chip {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 5.25rem;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--slot-border);
+  border-radius: 12px;
+  background: #fff;
+  color: inherit;
+  line-height: 1.2;
+  scroll-snap-align: start;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+
+  &:hover {
+    border-color: var(--slot-brand-border);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--slot-brand);
+    outline-offset: 2px;
+  }
+
+  &.active {
+    border-color: var(--slot-brand);
+    background: var(--slot-brand);
+    color: #fff;
+
+    .day-weekday,
+    .day-month {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .day-count {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+  }
+}
+
+.day-weekday,
+.day-month {
+  font-size: 0.75rem;
+  color: var(--slot-muted);
+}
+
+.day-number {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.day-count {
+  margin-top: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: var(--slot-brand-soft);
+  color: var(--slot-brand);
+  font-size: 0.6875rem;
+  white-space: nowrap;
+}
+
+// ---- Time slots ----
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  gap: 0.5rem;
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+.slot-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--slot-border);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  text-align: start;
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+
+  &:hover {
+    border-color: var(--slot-brand-border);
+    background: #fdf7f9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--slot-brand);
+    outline-offset: 2px;
+  }
+
+  &.active {
+    border-color: var(--slot-brand);
+    background: var(--slot-brand-soft);
+
+    .slot-icon {
+      color: var(--slot-brand);
+    }
+  }
+}
+
+.slot-icon {
+  color: var(--slot-muted);
+  font-size: 1rem;
+}
+
+.slot-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.slot-time {
+  font-weight: 600;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.slot-location {
+  font-size: 0.75rem;
+  color: var(--slot-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,0 +1,155 @@
+<section class="filters-card" [attr.aria-label]="'INTERVIEW_DASHBOARD.FILTERS.TITLE' | translate">
+  <div class="filters-header">
+    <button
+      type="button"
+      class="filters-toggle"
+      (click)="expanded.set(!expanded())"
+      [attr.aria-expanded]="expanded()"
+      aria-controls="interview-dashboard-filters-body"
+    >
+      <i class="pi pi-filter" aria-hidden="true"></i>
+      <span>{{ 'INTERVIEW_DASHBOARD.FILTERS.TITLE' | translate }}</span>
+      @if (store.activeFilterCount() > 0) {
+        <span class="filters-count">{{ store.activeFilterCount() }}</span>
+      }
+      <i class="pi" [class.pi-chevron-up]="expanded()" [class.pi-chevron-down]="!expanded()" aria-hidden="true"></i>
+    </button>
+
+    <div class="preset-group" role="group" [attr.aria-label]="'INTERVIEW_DASHBOARD.FILTERS.DATE_RANGE' | translate">
+      @for (preset of presets; track preset.value) {
+        <button
+          type="button"
+          class="preset-btn"
+          [class.active]="store.datePreset() === preset.value"
+          [attr.aria-pressed]="store.datePreset() === preset.value"
+          (click)="facade.setDatePreset(preset.value)"
+        >
+          {{ preset.labelKey | translate }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (expanded()) {
+    <div id="interview-dashboard-filters-body" class="row g-3 filters-body">
+      @if (store.datePreset() === 'custom') {
+        <div class="col-xl-3 col-lg-4 col-md-6">
+          <label class="form-label">{{ 'INTERVIEW_DASHBOARD.FILTERS.CUSTOM_RANGE' | translate }}</label>
+          <p-datepicker
+            class="date-range-picker"
+            selectionMode="range"
+            dateFormat="dd/mm/yy"
+            appendTo="body"
+            [readonlyInput]="true"
+            [showIcon]="true"
+            [ngModel]="customRange()"
+            (ngModelChange)="onRangeChange($event)"
+            (onClose)="onRangeClose()"
+            [placeholder]="'INTERVIEW_DASHBOARD.FILTERS.CUSTOM_RANGE' | translate"
+            [ariaLabel]="'INTERVIEW_DASHBOARD.FILTERS.CUSTOM_RANGE' | translate"
+          />
+        </div>
+      }
+
+      <div class="col-xl-3 col-lg-4 col-md-6">
+        <label class="form-label">{{ 'INTERVIEW_DASHBOARD.FILTERS.JOB' | translate }}</label>
+        <app-lazy-select
+          [search]="facade.searchJobs"
+          [selected]="store.jobOption()"
+          [showClear]="true"
+          [placeholder]="'INTERVIEW_DASHBOARD.FILTERS.ALL' | translate"
+          [ariaLabel]="'INTERVIEW_DASHBOARD.FILTERS.JOB' | translate"
+          (selectedChange)="facade.setJob($event)"
+        />
+      </div>
+
+      <div class="col-xl-3 col-lg-4 col-md-6">
+        <label class="form-label">{{ 'INTERVIEW_DASHBOARD.FILTERS.COMMITTEE' | translate }}</label>
+        <app-lazy-select
+          [search]="facade.searchCommittees"
+          [selected]="store.committeeOption()"
+          [showClear]="true"
+          [placeholder]="'INTERVIEW_DASHBOARD.FILTERS.ALL' | translate"
+          [ariaLabel]="'INTERVIEW_DASHBOARD.FILTERS.COMMITTEE' | translate"
+          (selectedChange)="facade.setCommittee($event)"
+        />
+      </div>
+
+      <div class="col-xl-3 col-lg-4 col-md-6">
+        <label class="form-label">{{ 'INTERVIEW_DASHBOARD.FILTERS.SCHEDULE' | translate }}</label>
+        <app-lazy-select
+          [search]="facade.searchSchedules"
+          [selected]="store.scheduleOption()"
+          [showClear]="true"
+          [placeholder]="'INTERVIEW_DASHBOARD.FILTERS.ALL' | translate"
+          [ariaLabel]="'INTERVIEW_DASHBOARD.FILTERS.SCHEDULE' | translate"
+          (selectedChange)="facade.setSchedule($event)"
+        />
+      </div>
+
+      <div class="col-xl-3 col-lg-4 col-md-6">
+        <label class="form-label">{{ 'INTERVIEW_DASHBOARD.FILTERS.INTERVIEW_TYPE' | translate }}</label>
+        <ng-container
+          *ngTemplateOutlet="enumSelect; context: { options: interviewTypeOptions, value: store.filters().interviewType, key: 'type', labelKey: 'INTERVIEW_DASHBOARD.FILTERS.INTERVIEW_TYPE' }"
+        />
+      </div>
+
+      <div class="col-xl-3 col-lg-4 col-md-6">
+        <label class="form-label">{{ 'INTERVIEW_DASHBOARD.FILTERS.SCHEDULE_STATUS' | translate }}</label>
+        <ng-container
+          *ngTemplateOutlet="enumSelect; context: { options: scheduleStatusOptions, value: store.filters().scheduleStatus, key: 'scheduleStatus', labelKey: 'INTERVIEW_DASHBOARD.FILTERS.SCHEDULE_STATUS' }"
+        />
+      </div>
+
+      @if (store.canSeeResults()) {
+        <div class="col-xl-3 col-lg-4 col-md-6">
+          <label class="form-label">{{ 'INTERVIEW_DASHBOARD.FILTERS.REPORT_STATUS' | translate }}</label>
+          <ng-container
+            *ngTemplateOutlet="enumSelect; context: { options: reportStatusOptions, value: store.filters().resultReportStatus, key: 'reportStatus', labelKey: 'INTERVIEW_DASHBOARD.FILTERS.REPORT_STATUS' }"
+          />
+        </div>
+
+        <div class="col-xl-3 col-lg-4 col-md-6">
+          <label class="form-label">{{ 'INTERVIEW_DASHBOARD.FILTERS.FINAL_DECISION' | translate }}</label>
+          <ng-container
+            *ngTemplateOutlet="enumSelect; context: { options: decisionOptions, value: store.filters().finalDecision, key: 'decision', labelKey: 'INTERVIEW_DASHBOARD.FILTERS.FINAL_DECISION' }"
+          />
+        </div>
+      }
+
+      <div class="col-12 d-flex justify-content-end">
+        <button
+          type="button"
+          class="btn btn-link reset-btn"
+          (click)="facade.resetFilters()"
+          [disabled]="store.activeFilterCount() === 0"
+        >
+          <i class="hgi-stroke hgi-filter-remove" aria-hidden="true"></i>
+          {{ 'INTERVIEW_DASHBOARD.ACTIONS.RESET_FILTERS' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+</section>
+
+<ng-template #enumSelect let-options="options" let-value="value" let-key="key" let-labelKey="labelKey">
+  <p-select
+    class="w-100"
+    [options]="options"
+    optionLabel="label"
+    optionValue="value"
+    [showClear]="true"
+    appendTo="body"
+    [placeholder]="'INTERVIEW_DASHBOARD.FILTERS.ALL' | translate"
+    [ariaLabel]="labelKey | translate"
+    [ngModel]="value ?? null"
+    (ngModelChange)="facade.setEnumFilter(key, $event)"
+  >
+    <ng-template #selectedItem let-selected>
+      <span>{{ selected?.label | translate }}</span>
+    </ng-template>
+    <ng-template #item let-option>
+      <span>{{ option.label | translate }}</span>
+    </ng-template>
+  </p-select>
+</ng-template>

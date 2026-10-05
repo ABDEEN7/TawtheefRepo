@@ -50,12 +50,12 @@ export class OperationalIssuesDialogComponent implements OnInit {
   private dialogHelper = inject(DialogHelperService);
 
   readonly typeOptions = [
-    OperationalIssueType.NoShow,
     OperationalIssueType.CandidateWithdrawal,
     OperationalIssueType.IncompleteEvaluation,
     OperationalIssueType.TechnicalProblem,
     OperationalIssueType.CouldNotBeConducted,
     OperationalIssueType.RescheduleRequest,
+    OperationalIssueType.Late,
   ].map((type) => ({ value: type, label: OPERATIONAL_ISSUE_TYPE_LABELS[type] }));
 
   appointmentId = '';
@@ -105,10 +105,31 @@ export class OperationalIssuesDialogComponent implements OnInit {
       return;
     }
 
+    // A withdrawal closes the appointment with a 0 score (server: InterviewAppointment.ApplyAttendanceOutcome),
+    // same finality as marking the candidate absent - confirm first.
+    if (this.newType === OperationalIssueType.CandidateWithdrawal) {
+      this.dialogHelper
+        .openConfirmDialog({
+          type: 'warning',
+          title: 'INTERVIEW_EVALUATION.ISSUES.CONFIRM_WITHDRAWAL_TITLE',
+          description: 'INTERVIEW_EVALUATION.ISSUES.CONFIRM_WITHDRAWAL_DESCRIPTION',
+          confirmText: 'INTERVIEW_EVALUATION.ISSUES.SAVE',
+          cancelText: 'INTERVIEW_EVALUATION.CANCEL',
+        })
+        ?.onClose.subscribe((confirmed: boolean | undefined) => {
+          if (confirmed) this.saveIssue(this.newType!);
+        });
+      return;
+    }
+
+    this.saveIssue(this.newType);
+  }
+
+  private saveIssue(issueType: OperationalIssueType) {
     this.api
       .createOperationalIssue({
         appointmentId: this.appointmentId,
-        issueType: this.newType,
+        issueType,
         description: this.newDescription.trim() || null,
         isBlocking: this.newIsBlocking,
       })

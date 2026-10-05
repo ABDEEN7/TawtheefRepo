@@ -13,6 +13,7 @@
   "INTERVIEW_SCHEDULE.COLUMN_JOB": "الوظيفة",
   "INTERVIEW_SCHEDULE.COLUMN_DATE": "التاريخ",
   "INTERVIEW_SCHEDULE.COLUMN_TIME": "الوقت",
+  "INTERVIEW_SCHEDULE.COLUMN_DATE_TIME": "التاريخ والوقت",
   "INTERVIEW_SCHEDULE.COLUMN_TYPE": "نوع المقابلة",
   "INTERVIEW_SCHEDULE.COLUMN_COMMITTEE": "اللجنة",
   "INTERVIEW_SCHEDULE.COLUMN_CANDIDATES": "المرشحون",
@@ -138,7 +139,9 @@
   "INTERVIEW_SCHEDULE.VALIDATION.UNASSIGNED_CANDIDATES": "لا يزال هناك {{count}} مرشح بحاجة إلى موعد. أضف المزيد من السعة أو عدّل الفترات.",
   "INTERVIEW_SCHEDULE.VALIDATION.PERIOD_DATE_TIME_REQUIRED": "يرجى تحديد التاريخ والوقت.",
   "INTERVIEW_SCHEDULE.VALIDATION.PERIOD_END_AFTER_START": "يجب أن يكون وقت الانتهاء بعد وقت البدء.",
+
   "INTERVIEW_SCHEDULE.VALIDATION.PERIOD_DATE_PAST": "لا يمكن اختيار تاريخ في الماضي.",
+  "INTERVIEW_SCHEDULE.VALIDATION.START_TIME_NOT_IN_PAST": "لا يمكن اختيار وقت في الماضي.",
   "INTERVIEW_SCHEDULE.VALIDATION.PERIOD_ROOM_REQUIRED": "يرجى اختيار قاعة.",
   "INTERVIEW_SCHEDULE.VALIDATION.PERIOD_URL_REQUIRED": "يرجى إدخال رابط الاجتماع عن بعد.",
   "INTERVIEW_SCHEDULE.VALIDATION.RESCHEDULE_REASON_REQUIRED": "يرجى ذكر سبب إعادة الجدولة.",
@@ -174,5 +177,16 @@
   "INTERVIEW_SCHEDULE.DETAIL.NOT_NOTIFIED": "لم يتم الإشعار",
   "INTERVIEW_SCHEDULE.DETAIL.NOTIFIED_AT": "تم الإشعار",
   "INTERVIEW_SCHEDULE.DETAIL.REMINDER_SENT_AT": "تم التذكير",
-  "INTERVIEW_SCHEDULE.DETAIL.NO_APPOINTMENTS": "لا توجد مواعيد بعد"
+  "INTERVIEW_SCHEDULE.DETAIL.NO_APPOINTMENTS": "لا توجد مواعيد بعد",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.CURRENT": "الموعد الحالي",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.NEW": "الموعد الجديد",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.NOT_SELECTED": "اختر موعدًا من الأسفل",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.PICK_DAY": "اختر اليوم",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.PICK_TIME": "اختر الوقت",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.AVAILABLE_COUNT": "{{count}} متاح",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.LOADING": "جارٍ تحميل المواعيد المتاحة...",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.LOAD_FAILED": "تعذّر تحميل المواعيد المتاحة.",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.RETRY": "إعادة المحاولة",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.EMPTY_TITLE": "لا توجد مواعيد متاحة",
+  "INTERVIEW_SCHEDULE.SLOT_PICKER.EMPTY_DESCRIPTION": "جميع المواعيد في هذا الجدول محجوزة، لذا لا يمكن نقل هذا المرشح حاليًا."
 }

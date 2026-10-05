@@ -57,8 +57,40 @@ export class PeriodDialogComponent implements OnInit {
 
   // Shown inline (and blocks Save) the moment the chosen end is not after the start.
   get endBeforeStart(): boolean {
-    return !!this.startTime && !!this.endTime && minutesOfDay(this.endTime) <= minutesOfDay(this.startTime);
+    return (
+      !!this.startTime &&
+      !!this.endTime &&
+      minutesOfDay(this.endTime) <= minutesOfDay(this.startTime)
+    );
   }
+  // if selected time in past (prevent save)
+  get timeIsInPast(): boolean {
+  if (!this.date || !this.startTime) {
+    return false;
+  }
+
+  const now = new Date();
+
+  const selectedDate = new Date(this.date);
+
+  const isToday =
+    selectedDate.getFullYear() === now.getFullYear() &&
+    selectedDate.getMonth() === now.getMonth() &&
+    selectedDate.getDate() === now.getDate();
+
+  // Future date → time cannot be in the past
+  if (!isToday) {
+    return false;
+  }
+
+  const currentMinutes =
+    now.getHours() * 60 + now.getMinutes();
+
+  const selectedMinutes =
+    minutesOfDay(this.startTime);
+
+  return selectedMinutes < currentMinutes;
+}
 
   ngOnInit(): void {
     const data = this.dialogConfig.data!;
@@ -110,10 +142,12 @@ export class PeriodDialogComponent implements OnInit {
       startTime: this.formatTime(this.startTime),
       endTime: this.formatTime(this.endTime),
       room: this.interviewType === InterviewType.InPerson ? (this.room?.data ?? null) : null,
-      remoteMeetingUrl: this.interviewType === InterviewType.Remote ? this.remoteMeetingUrl.trim() : null,
-      remoteMeetingInstructions: this.interviewType === InterviewType.Remote
-        ? this.remoteMeetingInstructions.trim() || null
-        : null,
+      remoteMeetingUrl:
+        this.interviewType === InterviewType.Remote ? this.remoteMeetingUrl.trim() : null,
+      remoteMeetingInstructions:
+        this.interviewType === InterviewType.Remote
+          ? this.remoteMeetingInstructions.trim() || null
+          : null,
     };
 
     this.dialogRef.close(draft);

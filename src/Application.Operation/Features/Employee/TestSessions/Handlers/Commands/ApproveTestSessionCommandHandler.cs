@@ -81,6 +81,10 @@ public sealed class ApproveTestSessionCommandHandler(
             < exam.Duration + options.Value.MinimumSessionEntryWindowMinutes)
             return ValidationFailure();
 
+        if (!TestSessionCapacityService.IsSessionStartCurrentOrFuture(
+                schedule.SlotDate, session.StartTime.Value, DateTime.UtcNow))
+            return SchedulingTimeFailure();
+
         var staff = await unitOfWork.Context.Set<TestSlotStaff>()
             .AsNoTracking()
             .Where(x => x.TestSlotId == schedule.Id && x.IsActive)
@@ -109,26 +113,23 @@ public sealed class ApproveTestSessionCommandHandler(
                 + "@LockMode = N'Exclusive', @LockOwner = N'Transaction', @LockTimeout = 15000; "
                 + "IF @result < 0 THROW 51000, 'Test session candidate lock unavailable', 1;",
                 [$"Tawtheef.TestSession.Candidate.{session.ExamId}.{invitationId}"], ct);
+                "DECLARE @result int; EXEC @result = sys.sp_getapplock @Resource = {0}, " +
+                "@LockMode = N'Exclusive', @LockOwner = N'Transaction', @LockTimeout = 15000; " +
+                "IF @result < 0 THROW 51000, 'Test session candidate lock unavailable', 1;",
+                [$"Tawtheef.TestSession.Candidate.{exam.JobId}.{invitationId}"], ct);
         }
 
         var validCandidateCount = await unitOfWork.Context.Set<Invitation>()
             .AsNoTracking()
             .Where(x => candidates.Contains(x.Id) && x.JobId == exam.JobId)
-            .Where(x => x.IsAccepted && x.AcceptedAt != null && x.InvitationStatusId == InvitationStatusIds.ExamEligible
-                        && x.Applicant!.Profile != null && x.Applicant.Profile.Status == UserProfileStatus.Approved
-                        && x.Applicant.Profile.AvailableForRecruitment)
-            .Where(x => !unitOfWork.Context.Set<ExamExemptionDecision>()
-                .Any(decision => decision.InvitationId == x.Id
-                                 && (decision.StatusId == ExamExemptionDecisionStatusIds.Proposed
-                                     || decision.StatusId == ExamExemptionDecisionStatusIds.Approved)))
-            .Where(x => !unitOfWork.Context.Set<TestSessionCandidate>()
-                .Any(candidate => candidate.InvitationId == x.Id && candidate.TestSession!.ExamId == session.ExamId
-                                                                 && candidate.TestSessionId != session.Id
-                                                                 && candidate.TestSession.StatusId
-                                                                 != TestSessionStatusIds.Cancelled
-                                                                 && candidate.TestSession.StatusId
-                                                                 != TestSessionStatusIds.Rejected))
-            .CountAsync(ct);
+            .Where(x => x.Source == InvitationSource.Exceptional ||
+                x.InvitationStatusId == InvitationStatusIds.NewInvitation ||
+                x.InvitationStatusId == InvitationStatusIds.Read ||
+                (x.InvitationStatusId == InvitationStatusIds.ExamEligible && x.Applicant!.Profile != null &&
+                 x.Applicant.Profile.Status == UserProfileStatus.Approved && x.Applicant.Profile.AvailableForRecruitment))
+            .Where(x => !TestSessionCandidateConflictService
+                .BlockingAssignments(unitOfWork.Context, exam.JobId, session.Id)
+                .Any(candidate => candidate.InvitationId == x.Id)).CountAsync(ct);
         if (validCandidateCount != candidates.Count)
             return ValidationFailure();
 
@@ -160,8 +161,11 @@ public sealed class ApproveTestSessionCommandHandler(
         return Result.Ok(Unit.Value);
     }
 
-    private static IResult<Unit> ValidationFailure() =>
-        Result.Fail<Unit>(new Error("VALIDATION").WithMetadata("Code", "Validation"));
+    private static IResult<Unit> ValidationFailure() => Result.Fail<Unit>(new Error("VALIDATION")
+        .WithMetadata("Code", "Validation"));
+
+    private static IResult<Unit> SchedulingTimeFailure() => Result.Fail<Unit>(
+        new Error(ErrorsCodes.TestSessionScheduledTimeExpired).WithMetadata("Code", "Validation"));
 
     private static IResult<Unit> CapacityFailure(int count) => Result.Fail<Unit>(
         new Error(ErrorsCodes.TestSessionInsufficientCapacity).WithMetadata("Code", "Validation")

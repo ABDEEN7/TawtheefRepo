@@ -189,9 +189,8 @@ export class ExamWorkflowComponent implements OnInit {
 
           this.jobLoading = true;
           this.jobFailed = false;
-          return this.service.jobSelection(jobId, this.draftId ?? undefined).pipe(
+          return this.service.jobSelection(jobId).pipe(
             switchMap((selection) => {
-              if (selection.hasPendingApprovalExam) return of({ selection, banks: null });
               return this.service
                 .banks(jobId, this.isViewMode)
                 .pipe(map((banks) => ({ selection, banks })));
@@ -207,14 +206,6 @@ export class ExamWorkflowComponent implements OnInit {
       )
       .subscribe((result) => {
         if (!result) return;
-        if (result.selection.hasPendingApprovalExam) {
-          this.notifications.warn(
-            this.translate.instant('server-error.EXAM_PENDING_APPROVAL_ALREADY_EXISTS_FOR_JOB'),
-          );
-          this.form.controls.jobId.setValue(this.selectedJob?.id ?? '', { emitEvent: false });
-          return;
-        }
-
         this.selectedJob = this.jobs.find((job) => job.id === this.form.controls.jobId.value) ?? null;
         this.banks = result.banks ?? [];
         this.parts.controls.forEach((part) =>

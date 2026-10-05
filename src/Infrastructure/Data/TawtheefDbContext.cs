@@ -73,6 +73,7 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
     public DbSet<UserType> UserType { get; set; }
     public DbSet<WorkType> WorkType { get; set; }
     public DbSet<SponsorType> SponsorType { get; set; }
+    public DbSet<SchoolStage> SchoolStage { get; set; }
 
     //removed cuz we get the category from the job category(acadimic , adminstrative , labor) and we don't need to have a separate table for it
     //public DbSet<InterviewCommitteeType> InterviewCommitteeType { get; set; } 
@@ -251,6 +252,8 @@ public class TawtheefDbContext(DbContextOptions<TawtheefDbContext> options,
 
         // Feeds InterviewCommittee.Number (and through it the COM-<year>-<number> Code).
         builder.HasSequence<int>(InterviewCommitteeConfiguration.CommitteeNumberSequence, Schemas.Interview);
+        // Feeds InterviewResultReport.Number (REP-INT-<year>-<number>)
+        builder.HasSequence<int>(InterviewResultReportConfiguration.ReportNumberSequence, Schemas.Interview);
 
         // Notification table specific indexes
         builder.Entity<Notification>()

@@ -165,6 +165,28 @@ public class InterviewSchedule : EventEntity
         return Result.Ok();
     }
 
+    // System close once the schedule's result report is approved. An approved report proves the
+    // interviews ran, so Approved/ReadyForExecution are accepted too - "start execution" is a manual
+    // step nobody is forced to press. Closes every live candidate appointment still open; Held slots
+    // and Cancelled/Rescheduled rows are left as they are. Already Closed is a no-op for the schedule.
+    public Result CloseOnResultApproved()
+    {
+        if (Status is not (ScheduleStatus.Approved or ScheduleStatus.ReadyForExecution
+            or ScheduleStatus.InProgress or ScheduleStatus.Closed))
+            return Result.Fail(new Error(ErrorsCodes.InterviewScheduleNotInProgress));
+
+        foreach (var appointment in Appointments.Where(InterviewAppointment.IsLiveCandidateCompiled)
+                     .Where(a => a.Status != AppointmentStatus.Closed))
+        {
+            var closeResult = appointment.Close();
+            if (closeResult.IsFailed)
+                return closeResult;
+        }
+
+        Status = ScheduleStatus.Closed;
+        return Result.Ok();
+    }
+
     // Builds and attaches one child appointment for a slot the Application-layer planner
     // (ScheduleAppointmentPlanner) already validated for conflicts/eligibility - this entity
     // trusts that work is done; it just builds the row and wires the back-reference immediately

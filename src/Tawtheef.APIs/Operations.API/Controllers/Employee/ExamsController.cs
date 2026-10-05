@@ -75,9 +75,8 @@ public sealed class ExamsController(IMediator mediator) : ControllerBase
 
     [HttpGet("wizard/job-selection")]
     [AuthorizePermission(PermissionKeys.Exams.Create)]
-    public async Task<IActionResult> JobSelection([FromQuery] Guid jobId, [FromQuery] Guid? excludeExamId,
-        CancellationToken ct)
-        => (await mediator.Send(new GetExamJobSelectionQuery(jobId, excludeExamId), ct)).ToActionResult();
+    public async Task<IActionResult> JobSelection([FromQuery] Guid jobId, CancellationToken ct)
+        => (await mediator.Send(new GetExamJobSelectionQuery(jobId), ct)).ToActionResult();
 
     [HttpGet("{id:guid}/configuration")]
     [AuthorizePermission(PermissionKeys.Exams.Create)]

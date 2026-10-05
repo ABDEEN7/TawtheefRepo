@@ -19,6 +19,9 @@ public sealed class GetTestSessionCapacityQueryHandler(IUnitOfWork unitOfWork)
             .Select(x => new { x.RoomId, x.SlotDate, Capacity = x.Room!.Capacity }).FirstOrDefaultAsync(ct);
         if (slot is null || request.StartTime < TimeOnly.MinValue || request.EndTime <= request.StartTime)
             return Result.Fail<TestSessionCapacityDto>(ErrorsCodes.InvalidRequest);
+        if (!TestSessionCapacityService.IsSessionStartCurrentOrFuture(
+                slot.SlotDate, request.StartTime, DateTime.UtcNow))
+            return Result.Fail<TestSessionCapacityDto>(ErrorsCodes.TestSessionScheduledTimeExpired);
         var sessions = await unitOfWork.Context.Set<TestSession>().AsNoTracking()
             .Where(x => x.TestSlot!.RoomId == slot.RoomId && x.TestSlot.SlotDate == slot.SlotDate)
             .Where(x => x.StartTime.HasValue && x.EndTime.HasValue)
