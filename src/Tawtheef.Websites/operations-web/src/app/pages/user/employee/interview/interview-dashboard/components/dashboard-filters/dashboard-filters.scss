@@ -1,0 +1,126 @@
+:host {
+  display: block;
+}
+
+.filters-card {
+  background: #fff;
+  border: 1px solid #e4e4e7;
+  border-radius: 20px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+}
+
+.filters-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filters-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  padding: 4px 0;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #1f1f24;
+}
+
+.filters-count {
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #8a1538;
+  color: #fff;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+.preset-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #f4f4f6;
+}
+
+.preset-btn {
+  border: 0;
+  background: transparent;
+  border-radius: 9px;
+  padding: 6px 14px;
+  font-weight: 600;
+  color: #4b4b55;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: #fff;
+  }
+
+  &.active {
+    background: #8a1538;
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #8a1538;
+    outline-offset: 2px;
+  }
+}
+
+.filters-body {
+  margin-top: 4px;
+  padding-top: 12px;
+}
+
+.reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #8a1538;
+  text-decoration: none;
+  font-weight: 600;
+
+  &:disabled {
+    color: #9ca3af;
+  }
+}
+
+@media (max-width: 576px) {
+  .filters-card {
+    padding: 14px;
+  }
+
+  .preset-group {
+    width: 100%;
+
+    .preset-btn {
+      flex: 1;
+      padding: 6px 8px;
+    }
+  }
+}
+
+// PrimeNG's datepicker sizes to its input by default; stretch it to the grid column like the selects.
+:host ::ng-deep .date-range-picker {
+  display: block;
+  width: 100%;
+
+  .p-datepicker {
+    display: flex;
+    width: 100%;
+  }
+
+  .p-datepicker-input {
+    flex: 1;
+    min-width: 0;
+  }
+}

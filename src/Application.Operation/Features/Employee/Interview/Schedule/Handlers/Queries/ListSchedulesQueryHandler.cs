@@ -1,5 +1,6 @@
 using Application.Operation.Features.Employee.Interview.Schedule.DTOs;
 using Application.Operation.Features.Employee.Interview.Schedule.Queries;
+using Application.Operation.Features.Employee.Interview.Schedule.Services;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,9 @@ public sealed class ListSchedulesQueryHandler(IUnitOfWork unitOfWork)
                     .Where(a => a.Status != AppointmentStatus.Rescheduled && a.Status != AppointmentStatus.Cancelled)
                     .Select(a => new { a.StartAt, a.EndAt })
                     .ToList(),
+                // The committee that runs this schedule lives on its appointments (all share it).
+                CommitteeId = s.Appointments.Select(a => (Guid?)a.InterviewCommitteeId).FirstOrDefault(),
+                s.DefaultBufferMinutes,
                 s.DefaultInterviewType,
                 CandidatesCount = s.Appointments.Count(a =>
                     a.InvitationId != null && a.Status != AppointmentStatus.Rescheduled && a.Status != AppointmentStatus.Cancelled),
@@ -39,20 +43,31 @@ public sealed class ListSchedulesQueryHandler(IUnitOfWork unitOfWork)
             })
             .ToListAsync(cancellationToken);
 
-        // One active committee per job (unique index), so a single lookup by job id resolves every row's committee.
-        var jobIds = raw.Select(s => s.JobId).Distinct().ToList();
-        var committeeByJob = (await unitOfWork.GetEntityRepository<InterviewCommittee>().DbSet
-                .AsNoTracking()
-                .Where(c => jobIds.Contains(c.JobId) && c.IsActive)
-                .Select(c => new { c.JobId, c.NameAr, c.NameEn })
-                .ToListAsync(cancellationToken))
+        // A job can outlive its committee (closed/cancelled -> a new one takes the job), so each row shows the
+        // committee on its own appointments. Only a schedule with no appointments falls back to the job's
+        // current (active) committee - the one it would be created with.
+        var committeeIds = raw.Where(s => s.CommitteeId.HasValue).Select(s => s.CommitteeId!.Value).Distinct().ToList();
+        var fallbackJobIds = raw.Where(s => !s.CommitteeId.HasValue).Select(s => s.JobId).Distinct().ToList();
+        var committees = await unitOfWork.GetEntityRepository<InterviewCommittee>().DbSet
+            .AsNoTracking()
+            .Where(c => committeeIds.Contains(c.Id) || (fallbackJobIds.Contains(c.JobId) && c.IsActive))
+            .Select(c => new { c.Id, c.JobId, c.IsActive, c.NameAr, c.NameEn })
+            .ToListAsync(cancellationToken);
+        var committeeById = committees.ToDictionary(c => c.Id);
+        var activeCommitteeByJob = committees
+            .Where(c => c.IsActive)
             .GroupBy(c => c.JobId)
             .ToDictionary(g => g.Key, g => g.First());
 
         var result = raw.Select(s =>
         {
-            var hasSlots = s.Slots.Count > 0;
-            committeeByJob.TryGetValue(s.JobId, out var committee);
+            var sessions = ScheduleAppointmentPlanner
+                .ReconstructPeriods(s.Slots.Select(x => new GeneratedSlotDto(x.StartAt, x.EndAt, null, null, null)), s.DefaultBufferMinutes)
+                .Select(p => new ScheduleSessionDto(p.StartAt, p.EndAt))
+                .ToList();
+            var committee = s.CommitteeId.HasValue
+                ? committeeById.GetValueOrDefault(s.CommitteeId.Value)
+                : activeCommitteeByJob.GetValueOrDefault(s.JobId);
 
             return new ScheduleListItemDto(
                 s.Id,
@@ -62,10 +77,7 @@ public sealed class ListSchedulesQueryHandler(IUnitOfWork unitOfWork)
                 s.JobTitleNameEn,
                 committee?.NameAr,
                 committee?.NameEn,
-                hasSlots ? DateOnly.FromDateTime(s.Slots.Min(x => x.StartAt)) : null,
-                hasSlots ? DateOnly.FromDateTime(s.Slots.Max(x => x.StartAt)) : null,
-                hasSlots ? s.Slots.Min(x => TimeOnly.FromDateTime(x.StartAt)) : null,
-                hasSlots ? s.Slots.Max(x => TimeOnly.FromDateTime(x.EndAt)) : null,
+                sessions,
                 s.DefaultInterviewType,
                 s.CandidatesCount,
                 s.Status);

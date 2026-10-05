@@ -26,9 +26,22 @@ public sealed class GetScheduleByIdQueryHandler(IUnitOfWork unitOfWork)
         if (schedule is null)
             return Result.Fail<ScheduleDto>(new Error(ErrorsCodes.InterviewScheduleNotFound));
 
+        // The schedule's own committee (on its appointments), not the job's current one - a closed/cancelled
+        // committee is replaced on the job by a new one. No appointments yet -> the job's active committee.
+        var committeeId = schedule.Appointments.Select(a => (Guid?)a.InterviewCommitteeId).FirstOrDefault();
         var committee = await unitOfWork.GetEntityRepository<InterviewCommittee>().DbSet
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.JobId == schedule.JobId && c.IsActive, cancellationToken);
+            .FirstOrDefaultAsync(c => committeeId.HasValue
+                ? c.Id == committeeId.Value
+                : c.JobId == schedule.JobId && c.IsActive, cancellationToken);
+
+        var appointmentIds = schedule.Appointments.Select(a => a.Id).ToList();
+        var issueTypesByAppointment = (await unitOfWork.GetEntityRepository<InterviewOperationalIssue>().DbSet
+            .AsNoTracking()
+            .Where(i => appointmentIds.Contains(i.InterviewAppointmentId))
+            .Select(i => new { i.InterviewAppointmentId, i.IssueType })
+            .ToListAsync(cancellationToken))
+            .ToLookup(i => i.InterviewAppointmentId, i => i.IssueType);
 
         var appointments = schedule.Appointments
             .OrderBy(a => a.StartAt)
@@ -45,8 +58,8 @@ public sealed class GetScheduleByIdQueryHandler(IUnitOfWork unitOfWork)
                 a.Room?.NameEn,
                 a.RemoteMeetingUrl,
                 a.RemoteMeetingInstructions,
-                a.StartAt,
-                a.EndAt,
+                a.StartAt.AsUtcOffset(),
+                a.EndAt.AsUtcOffset(),
                 a.Status,
                 a.AttendanceStatus,
                 a.ActualStartAt.AsUtcOffset(),
@@ -57,7 +70,8 @@ public sealed class GetScheduleByIdQueryHandler(IUnitOfWork unitOfWork)
                 a.CancellationReason,
                 a.InvitationSentAt.AsUtcOffset(),
                 a.LastReminderSentAt.AsUtcOffset(),
-                a.ReminderCount))
+                a.ReminderCount,
+                InterviewAppointment.IsLateCandidate(a.AttendanceStatus, issueTypesByAppointment[a.Id])))
             .ToList();
 
         // Superseded (rescheduled) and cancelled rows are not part of the live slot set the edit wizard restores.
@@ -71,11 +85,11 @@ public sealed class GetScheduleByIdQueryHandler(IUnitOfWork unitOfWork)
         var periods = ScheduleAppointmentPlanner
             .ReconstructPeriods(
                 liveAppointments.Select(a => new GeneratedSlotDto(
-                    DateOnly.FromDateTime(a.StartAt), a.StartAt, a.EndAt,
+                    a.StartAt, a.EndAt,
                     a.RoomId, a.RemoteMeetingUrl, a.RemoteMeetingInstructions)),
                 schedule.DefaultBufferMinutes)
             .Select(p => new SchedulePeriodDto(
-                p.Date, p.StartTime, p.EndTime,
+                p.StartAt, p.EndAt,
                 p.RoomId,
                 p.RoomId is not null && roomNames.TryGetValue(p.RoomId.Value, out var room) ? room.NameAr : null,
                 p.RoomId is not null && roomNames.TryGetValue(p.RoomId.Value, out room) ? room.NameEn : null,

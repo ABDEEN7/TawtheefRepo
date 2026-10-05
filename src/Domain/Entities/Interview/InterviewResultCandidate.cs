@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using FluentResults;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Users;
 
 namespace Tawtheef.Domain.Entities.Interview;
@@ -32,6 +33,14 @@ public class InterviewResultCandidate : EventEntity
 
     public DateTime SnapshotAt { get; set; }
 
+    // Committee Head Review. ChairRecommendedDecision overrides the system suggestion and pre-fills
+    // the approver's dropdown; null means "go with the suggestion". RecommendedSchoolStageId is
+    // informational only - it never feeds any score, qualification or suggestion.
+    public FinalDecision? ChairRecommendedDecision { get; set; }
+    public string? ChairRecommendationReason { get; set; }
+    public Guid? RecommendedSchoolStageId { get; set; }
+    public SchoolStage? RecommendedSchoolStage { get; set; }
+
     public ICollection<InterviewResultCandidateAxis> Axes { get; set; } = [];
 
     // Built only by the calculation engine (InterviewResultCalculationService), never via a command -
@@ -54,7 +63,7 @@ public class InterviewResultCandidate : EventEntity
     // Guarded by the parent report's status rather than its own - a candidate row has no independent
     // lifecycle, it can only be decided while the report as a whole is still under review.
     // Unqualified candidates can only be Rejected - CandidateForHiringProcess/WaitingList require
-    // IsQualified, matching the (previously dead, frontend-only) validation described in scheduleResult.md.
+    // IsQualified, matching the (previously dead, frontend-only).
     public Result Decide(Guid decidedById, FinalDecision decision, string? reason)
     {
         if (InterviewResultReport!.Status != ResultReportStatus.UnderReview)
@@ -68,6 +77,30 @@ public class InterviewResultCandidate : EventEntity
         DecidedById = decidedById;
         DecidedAt = DateTime.UtcNow;
         SnapshotAt = DecidedAt.Value;
+        return Result.Ok();
+    }
+
+    // Same qualification rule as Decide(): the chair can't recommend hiring/waiting list for an
+    // unqualified candidate. Passing null clears the override back to the system suggestion.
+    public Result SetChairRecommendation(FinalDecision? decision, string? reason)
+    {
+        if (!InterviewResultReport!.IsCommitteeReviewEditable)
+            return Result.Fail(new Error(ErrorsCodes.InterviewResultReportNotInCommitteeReview));
+
+        if (!IsQualified && decision is Interview.FinalDecision.CandidateForHiringProcess or Interview.FinalDecision.WaitingList)
+            return Result.Fail(new Error(ErrorsCodes.InterviewResultCandidateNotQualifiedForDecision));
+
+        ChairRecommendedDecision = decision;
+        ChairRecommendationReason = decision is null ? null : reason;
+        return Result.Ok();
+    }
+
+    public Result SetRecommendedSchoolStage(Guid? schoolStageId)
+    {
+        if (!InterviewResultReport!.IsCommitteeReviewEditable)
+            return Result.Fail(new Error(ErrorsCodes.InterviewResultReportNotInCommitteeReview));
+
+        RecommendedSchoolStageId = schoolStageId;
         return Result.Ok();
     }
 }

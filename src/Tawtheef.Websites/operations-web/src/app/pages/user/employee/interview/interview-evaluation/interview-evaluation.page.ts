@@ -8,12 +8,19 @@ import { InterviewEvaluationFacade } from './interview-evaluation.facade';
 import { SessionsListComponent } from './views/sessions-list/sessions-list';
 import { SessionDetailComponent } from './views/session-detail/session-detail';
 import { CandidateEvaluationComponent } from './views/candidate-evaluation/candidate-evaluation';
+import { CommitteeReviewComponent } from './views/committee-review/committee-review';
 
 @Component({
   selector: 'app-interview-evaluation',
   templateUrl: './interview-evaluation.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [I18nNamespaceDirective, SessionsListComponent, SessionDetailComponent, CandidateEvaluationComponent],
+  imports: [
+    I18nNamespaceDirective,
+    SessionsListComponent,
+    SessionDetailComponent,
+    CandidateEvaluationComponent,
+    CommitteeReviewComponent,
+  ],
   providers: [InterviewEvaluationStore, InterviewEvaluationFacade, DialogService],
 })
 export class InterviewEvaluationPage implements OnInit {

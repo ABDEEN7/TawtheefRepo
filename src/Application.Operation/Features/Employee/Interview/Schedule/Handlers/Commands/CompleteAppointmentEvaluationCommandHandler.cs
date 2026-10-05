@@ -1,3 +1,4 @@
+using Application.Operation.Features.Employee.Interview.ResultReport.Services;
 using Application.Operation.Features.Employee.Interview.Schedule.Commands;
 using FluentResults;
 using MediatR;
@@ -28,6 +29,12 @@ public sealed class CompleteAppointmentEvaluationCommandHandler(IUnitOfWork unit
             EntityId = appointment.Id,
             Action = InterviewAppointmentAuditActions.EvaluationCompleted
         }, cancellationToken);
+
+        // Manual override of the quorum auto-complete - same "was this the last one?" check as Submit.
+        var generateResult = await InterviewResultCalculationService.TryGenerateReportIfScheduleDoneAsync(
+            unitOfWork, appointment.InterviewScheduleId, cancellationToken);
+        if (generateResult.IsFailed)
+            return Result.Fail<Unit>(generateResult.Errors);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Ok(Unit.Value);

@@ -461,7 +461,8 @@ export class EndpointsService {
     list: this.getFullUrl('/questionbankrequests/list-question-bank-requests'),
     create: this.getFullUrl('/questionbankrequests/create-question-bank-request'),
     details: (id: string) => this.getFullUrl(`/questionbankrequests/${id}`),
-    eligibleEmployees: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/eligible-employees`),
+    eligibleEmployees: (id: string) =>
+      this.getFullUrl(`/questionbankrequests/${id}/eligible-employees`),
     assignments: (id: string) => this.getFullUrl(`/questionbankrequests/${id}/assignments`),
     lookups: {
       questionBankTypes: this.getFullUrl('/questionbankrequests/lookups/question-bank-types'),
@@ -562,6 +563,7 @@ export class EndpointsService {
     return: this.getFullUrl('/InterviewSchedule/return'),
     cancel: this.getFullUrl('/InterviewSchedule/cancel'),
     appointmentReschedule: this.getFullUrl('/InterviewSchedule/appointments/reschedule'),
+    appointmentRescheduleSlots: this.getFullUrl('/InterviewSchedule/appointments/reschedule-slots'),
     appointmentSendNotification: this.getFullUrl(
       '/InterviewSchedule/appointments/send-notification',
     ),
@@ -593,5 +595,26 @@ export class EndpointsService {
     resolve: this.getFullUrl('/InterviewOperationalIssue/resolve'),
     waive: this.getFullUrl('/InterviewOperationalIssue/waive'),
     blocking: this.getFullUrl('/InterviewOperationalIssue/blocking'),
+  };
+  interviewResultReport = {
+    list: this.getFullUrl('/InterviewResultReport'),
+    bySchedule: (scheduleId: string) =>
+      this.getFullUrl(`/InterviewResultReport/schedule/${scheduleId}`),
+    approve: this.getFullUrl('/InterviewResultReport/approve'),
+  };
+  interviewCommitteeReview = {
+    list: this.getFullUrl('/InterviewCommitteeReview'),
+    bySchedule: (scheduleId: string) =>
+      this.getFullUrl(`/InterviewCommitteeReview/schedule/${scheduleId}`),
+    save: this.getFullUrl('/InterviewCommitteeReview'),
+    schoolStages: this.getFullUrl('/InterviewCommitteeReview/lookups/school-stages'),
+  };
+  interviewDashboard = {
+    overview: this.getFullUrl('/InterviewDashboard/overview'),
+    schedules: this.getFullUrl('/InterviewDashboard/schedules'),
+    candidates: this.getFullUrl('/InterviewDashboard/candidates'),
+    results: this.getFullUrl('/InterviewDashboard/results'),
+    issues: this.getFullUrl('/InterviewDashboard/issues'),
+    lookups: this.getFullUrl('/InterviewDashboard/lookups'),
   };
 }
