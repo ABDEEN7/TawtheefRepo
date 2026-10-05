@@ -1,19 +1,21 @@
-import {CommonModule} from '@angular/common';
-import {Component, inject, signal} from '@angular/core';
-import {Router} from '@angular/router';
-import {TranslatePipe} from '@ngx-translate/core';
-import {ButtonModule} from 'primeng/button';
-import {TableModule} from 'primeng/table';
-import {TagModule} from 'primeng/tag';
-import {TooltipModule} from 'primeng/tooltip';
-import {SortEvent} from 'primeng/api';
-import {LanguageService} from '../../../../core/services/language.service';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {routes} from '../../../../routes/routes';
-import {AssignmentStatuses, MyAssignment} from './models/question-bank-assignment.models';
-import {QuestionBankAssignmentsService} from './services/question-bank-assignments.service';
-import {PaginatedRequest} from '../../../../core/models/paginated-request.model';
-import {questionBankAssignmentStatusSeverity} from '../../../../shared/utils/question-bank-status.util';
+import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
+import { SortEvent } from 'primeng/api';
+import { LanguageService } from '../../../../core/services/language.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { routes } from '../../../../routes/routes';
+import { AssignmentStatuses, MyAssignment } from './models/question-bank-assignment.models';
+import { QuestionBankAssignmentsService } from './services/question-bank-assignments.service';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { PaginatedRequest } from '../../../../core/models/paginated-request.model';
+import { questionBankAssignmentStatusSeverity } from '../../../../shared/utils/question-bank-status.util';
 
 @Component({
   selector: 'app-question-bank-assignments',
@@ -26,7 +28,8 @@ import {questionBankAssignmentStatusSeverity} from '../../../../shared/utils/que
     TableModule,
     TagModule,
     TooltipModule,
-
+    I18nNamespaceDirective,
+    PaginationComponent,
   ],
 })
 export class QuestionBankAssignmentsPage {

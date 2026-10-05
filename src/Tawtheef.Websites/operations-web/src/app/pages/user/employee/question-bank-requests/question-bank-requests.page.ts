@@ -1,32 +1,37 @@
-import {CommonModule} from '@angular/common';
-import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {FormsModule} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ButtonModule} from 'primeng/button';
-import {DialogService} from 'primeng/dynamicdialog';
-import {IconFieldModule} from 'primeng/iconfield';
-import {InputIconModule} from 'primeng/inputicon';
-import {InputTextModule} from 'primeng/inputtext';
-import {Select} from 'primeng/select';
-import {TableModule} from 'primeng/table';
-import {TagModule} from 'primeng/tag';
-import {TooltipModule} from 'primeng/tooltip';
-import {SortEvent} from 'primeng/api';
-import {debounceTime, distinctUntilChanged, finalize, forkJoin, Subject} from 'rxjs';
-import {AuthService} from '../../../../core/auth/auth.service';
-import {Permissions} from '../../../../core/constants/permissions';
-import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
+import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { ButtonModule } from 'primeng/button';
+import { DialogService } from 'primeng/dynamicdialog';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
+import { SortEvent } from 'primeng/api';
+import { debounceTime, distinctUntilChanged, finalize, forkJoin, Subject } from 'rxjs';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { Permissions } from '../../../../core/constants/permissions';
+import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { PageFiltersComponent } from '../../../../shared/components/page-filters/page-filters.component';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
+import { dropdownOptionsModel } from '../../../../shared/models/dropdown-options.model';
+import { CreateQuestionBankRequestDialogComponent } from './dialogs/create-question-bank-request/create-question-bank-request.dialog.component';
 import {
-  CreateQuestionBankRequestDialogComponent
-} from './dialogs/create-question-bank-request/create-question-bank-request.dialog.component';
-import {QuestionBankRequestFilters, QuestionBankRequestListItem,} from './models/question-bank-request.models';
-import {QuestionBankRequestsService} from './services/question-bank-requests.service';
-import {portalRoutes} from '../../../../routes/portal-routes';
-import {questionBankRequestStatusSeverity} from '../../../../shared/utils/question-bank-status.util';
+  QuestionBankRequestFilters,
+  QuestionBankRequestListItem,
+} from './models/question-bank-request.models';
+import { QuestionBankRequestsService } from './services/question-bank-requests.service';
+import { portalRoutes } from '../../../../routes/portal-routes';
+import { questionBankRequestStatusSeverity } from '../../../../shared/utils/question-bank-status.util';
 
 @Component({
   selector: 'app-question-bank-requests',
@@ -37,6 +42,10 @@ import {questionBankRequestStatusSeverity} from '../../../../shared/utils/questi
     CommonModule,
     FormsModule,
     TranslatePipe,
+    I18nNamespaceDirective,
+    HasPermissionDirective,
+    PageFiltersComponent,
+    PaginationComponent,
     ButtonModule,
     Select,
     TableModule,

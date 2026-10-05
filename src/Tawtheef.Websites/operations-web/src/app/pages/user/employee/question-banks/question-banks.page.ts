@@ -1,26 +1,29 @@
-import {CommonModule} from '@angular/common';
-import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {FormsModule} from '@angular/forms';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {IconFieldModule} from 'primeng/iconfield';
-import {InputIconModule} from 'primeng/inputicon';
-import {InputTextModule} from 'primeng/inputtext';
-import {Select} from 'primeng/select';
-import {TableModule} from 'primeng/table';
-import {TagModule} from 'primeng/tag';
-import {SortEvent} from 'primeng/api';
-import {debounceTime, distinctUntilChanged, finalize, forkJoin, Subject} from 'rxjs';
-import {NotificationService} from '../../../../core/services/notification.service';
-import {Lang, LanguageService} from '../../../../core/services/language.service';
-import {dropdownOptionsModel} from '../../../../shared/models/dropdown-options.model';
-import {QuestionBankFilters} from './models/question-bank-filters.dto';
-import {QuestionBankListItemDto} from './models/question-bank-list-item.dto';
-import {QuestionBanksService} from './services/question-banks.service';
-import {Router} from '@angular/router';
-import {AuthService} from '../../../../core/auth/auth.service';
-import {Permissions} from '../../../../core/constants/permissions';
-import {routes} from '../../../../routes/routes';
+import { CommonModule } from '@angular/common';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { Select } from 'primeng/select';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { SortEvent } from 'primeng/api';
+import { debounceTime, distinctUntilChanged, finalize, forkJoin, Subject } from 'rxjs';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { Lang, LanguageService } from '../../../../core/services/language.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { PageFiltersComponent } from '../../../../shared/components/page-filters/page-filters.component';
+import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-namespace.directive';
+import { dropdownOptionsModel } from '../../../../shared/models/dropdown-options.model';
+import { QuestionBankFilters } from './models/question-bank-filters.dto';
+import { QuestionBankListItemDto } from './models/question-bank-list-item.dto';
+import { QuestionBanksService } from './services/question-banks.service';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { Permissions } from '../../../../core/constants/permissions';
+import { routes } from '../../../../routes/routes';
 
 @Component({
   selector: 'app-question-banks',
@@ -31,6 +34,9 @@ import {routes} from '../../../../routes/routes';
     CommonModule,
     FormsModule,
     TranslatePipe,
+    I18nNamespaceDirective,
+    PaginationComponent,
+    PageFiltersComponent,
     Select,
     TableModule,
     IconFieldModule,
