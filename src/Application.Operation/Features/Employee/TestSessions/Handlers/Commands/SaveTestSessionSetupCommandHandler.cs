@@ -6,6 +6,8 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
@@ -17,7 +19,10 @@ using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.TestSessions.Handlers.Commands;
 
-public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork, IOptions<TestSlotSettings> options)
+public sealed class SaveTestSessionSetupCommandHandler(
+    IUnitOfWork unitOfWork,
+    IOptions<TestSlotSettings> options,
+    IApplicationLockService applicationLockService)
     : IRequestHandler<SaveTestSessionSetupCommand, IResult<SavedTestSessionSetupDto>>
 {
     public Task<IResult<SavedTestSessionSetupDto>> Handle(SaveTestSessionSetupCommand request, CancellationToken ct) =>
@@ -93,30 +98,20 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork, I
 
         if (setup.SendToApprove && slot is not null)
         {
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " + "@Resource = {0}, @LockMode = N'Exclusive', "
-                                                                         + "@LockOwner = N'Transaction', @LockTimeout = 15000; "
-                                                                         + "IF @result < 0 THROW 51000, 'Test session room lock unavailable', 1;",
-                [$"Tawtheef.TestSession.Room.{slot.RoomId}.{slot.SlotDate:yyyyMMdd}"], ct);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.TestSessionRoomDate(slot.RoomId, slot.SlotDate), ct);
         }
 
         if (session is null)
         {
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " + "@Resource = {0}, @LockMode = N'Exclusive', "
-                                                                         + "@LockOwner = N'Transaction', @LockTimeout = 15000; "
-                                                                         + "IF @result < 0 THROW 51000, 'Test session numbering lock unavailable', 1;",
-                [$"Tawtheef.TestSession.Numbering.{(slot?.SlotDate.Year ?? DateTime.UtcNow.Year)}"], ct);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.TestSessionNumbering(slot?.SlotDate.Year ?? DateTime.UtcNow.Year), ct);
         }
 
         foreach (var invitationId in candidateIdsToPersist.OrderBy(id => id))
         {
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', " +
-                "@LockOwner = N'Transaction', @LockTimeout = 15000; " +
-                "IF @result < 0 THROW 51000, 'Test session candidate lock unavailable', 1;",
-                [$"Tawtheef.TestSession.Candidate.{exam.JobId}.{invitationId}"], ct);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.TestSessionCandidate(exam.JobId, invitationId), ct);
         }
 
         var validCandidateCount = await ValidCandidateQuery(setup, exam.JobId, candidateIdsToPersist).CountAsync(ct);

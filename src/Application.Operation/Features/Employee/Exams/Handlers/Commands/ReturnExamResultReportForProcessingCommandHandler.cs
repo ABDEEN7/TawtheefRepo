@@ -3,6 +3,8 @@ using Application.Operation.Features.Employee.Exams.Commands;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
@@ -14,7 +16,8 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 
 public sealed class ReturnExamResultReportForProcessingCommandHandler(
     IUnitOfWork unitOfWork,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    IApplicationLockService applicationLockService)
     : IRequestHandler<ReturnExamResultReportForProcessingCommand, IResult<Unit>>
 {
     public Task<IResult<Unit>> Handle(
@@ -28,17 +31,8 @@ public sealed class ReturnExamResultReportForProcessingCommandHandler(
                     return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
                 // Share the approval lock so both report decisions observe the latest state.
-                await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                    "DECLARE @result int; " +
-                    "EXEC @result = sys.sp_getapplock " +
-                    "@Resource = {0}, " +
-                    "@LockMode = N'Exclusive', " +
-                    "@LockOwner = N'Transaction', " +
-                    "@LockTimeout = 15000; " +
-                    "IF @result < 0 " +
-                    "THROW 51000, 'Exam result report workflow lock unavailable', 1;",
-                    [$"Tawtheef.ExamResultReport.Approve.{request.ReportId}"],
-                    token);
+                await applicationLockService.AcquireExclusiveAsync(
+                    ApplicationLockResources.ExamResultReportWorkflow(request.ReportId), token);
 
                 var report = await unitOfWork.Context.Set<ExamResultReport>()
                     .Include(x => x.Candidates)
@@ -62,8 +56,8 @@ public sealed class ReturnExamResultReportForProcessingCommandHandler(
                     {
                         UserId = returnedBy,
                         LogType = ActionLogType.Employee,
-                        ActionType = "ExamResultReportReturnedForProcessing",
-                        Section = "ExamResultReport",
+                        ActionType = ExamResultReportAudit.ReturnedForProcessing,
+                        Section = ExamResultReportAudit.Section,
                         EntityId = report.Id,
                         Notes = JsonSerializer.Serialize(new
                         {

@@ -1,5 +1,7 @@
 using Application.Recruitment.Features.CandidateExams.Models;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
@@ -9,7 +11,8 @@ namespace Application.Recruitment.Features.CandidateExams.Services;
 public sealed class CandidateExamResultGenerationService(
     IUnitOfWork unitOfWork,
     CandidateExamResultCalculationService resultCalculationService,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    IApplicationLockService applicationLockService)
 {
     public async Task<IReadOnlyList<Guid>> GetReadyExamIdsAsync(
         int take,
@@ -62,15 +65,18 @@ public sealed class CandidateExamResultGenerationService(
         {
             await unitOfWork.ExecuteInTransactionAsync(async token =>
             {
-                await AcquireGenerationLockAsync(examId, token);
-                await AcquireReportLockAsync(reportId, token);
+                await applicationLockService.AcquireExclusiveAsync(
+                    ApplicationLockResources.CandidateExamResult(examId), token);
+                await applicationLockService.AcquireExclusiveAsync(
+                    ApplicationLockResources.ExamResultReportWorkflow(reportId), token);
                 return await ReprocessReturnedReportAsync(reportId, token);
             }, cancellationToken);
         }
 
         await unitOfWork.ExecuteInTransactionAsync(async token =>
         {
-            await AcquireGenerationLockAsync(examId, token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.CandidateExamResult(examId), token);
             return await GenerateInternalAsync(examId, token);
         }, cancellationToken);
     }
@@ -517,32 +523,6 @@ public sealed class CandidateExamResultGenerationService(
 
             rank++;
         }
-    }
-
-    private Task AcquireReportLockAsync(Guid reportId, CancellationToken cancellationToken) =>
-        unitOfWork.Context.Database.ExecuteSqlRawAsync(
-            "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-            "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-            "@LockTimeout = 15000; IF @result < 0 " +
-            "THROW 51000, 'Exam result report processing lock unavailable', 1;",
-            [$"Tawtheef.ExamResultReport.Approve.{reportId}"], cancellationToken);
-
-    private Task AcquireGenerationLockAsync(
-        Guid examId,
-        CancellationToken cancellationToken)
-    {
-        return unitOfWork.Context.Database.ExecuteSqlRawAsync(
-            "DECLARE @result int; " +
-            "EXEC @result = sys.sp_getapplock " +
-            "@Resource = {0}, " +
-            "@LockMode = N'Exclusive', " +
-            "@LockOwner = N'Transaction', " +
-            "@LockTimeout = 15000; " +
-            "IF @result < 0 " +
-            "THROW 51000, " +
-            "'Candidate exam result generation lock unavailable', 1;",
-            [$"Tawtheef.CandidateExam.Result.{examId}"],
-            cancellationToken);
     }
 
 }

@@ -17,28 +17,26 @@ public sealed class RejectTestSessionCommandHandler(IUnitOfWork unitOfWork, ICur
 {
     public async Task<IResult<Unit>> Handle(RejectTestSessionCommand request, CancellationToken ct)
     {
-        if (request.TestSessionId == Guid.Empty || string.IsNullOrWhiteSpace(request.DecisionNote) ||
-            !Guid.TryParse(currentUser.UserId, out var reviewerId))
+        if (request.TestSessionId == Guid.Empty || string.IsNullOrWhiteSpace(request.DecisionNote)
+                                                || !Guid.TryParse(currentUser.UserId, out var reviewerId))
             return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-        var session = await unitOfWork.Context.Set<TestSession>().FirstOrDefaultAsync(
-            x => x.Id == request.TestSessionId && x.StatusId == TestSessionStatusIds.PendingApproval, ct);
+        var session = await unitOfWork.Context.Set<TestSession>()
+            .FirstOrDefaultAsync(
+                x => x.Id == request.TestSessionId && x.StatusId == TestSessionStatusIds.PendingApproval, ct);
         if (session is null)
             return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
         var note = request.DecisionNote.Trim();
-        var metadata = new TestSessionWorkflowMetadata(
-            reviewerId,
-            DateTime.UtcNow,
-            nameof(TestSessionStatusIds.PendingApproval),
-            nameof(TestSessionStatusIds.Rejected));
+        var metadata = new TestSessionWorkflowMetadata(reviewerId, DateTime.UtcNow,
+            nameof(TestSessionStatusIds.PendingApproval), nameof(TestSessionStatusIds.Rejected));
         metadata.ApplyDecision(session, TestSessionStatusIds.Rejected);
-        await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(
-            metadata.CreateActionLog(session, "TestSessionRejected", note), ct);
+        await unitOfWork.GetEntityRepository<ActionLog>()
+            .AddAsync(metadata.CreateActionLog(session, TestSessionWorkflowAudit.Rejected, note), ct);
 
         if (session.CreatedById.HasValue)
-            session.AddDomainEvent(new TestSessionRejectedDomainEvent(
-                session.CreatedById.Value, session.Id, session.SessionNo, note));
+            session.AddDomainEvent(new TestSessionRejectedDomainEvent(session.CreatedById.Value, session.Id,
+                session.SessionNo, note));
 
         await unitOfWork.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

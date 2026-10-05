@@ -4,6 +4,8 @@ using Application.Operation.Features.Employee.TestSessions.Services;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
@@ -18,21 +20,20 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 public sealed class RescheduleExamResultCandidateCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    IApplicationLockService applicationLockService)
     : IRequestHandler<RescheduleExamResultCandidateCommand, IResult<Guid>>
 {
-    public Task<IResult<Guid>> Handle(
-        RescheduleExamResultCandidateCommand request,
+    public Task<IResult<Guid>> Handle(RescheduleExamResultCandidateCommand request,
         CancellationToken cancellationToken) =>
         unitOfWork.ExecuteInTransactionAsync<IResult<Guid>>(async token =>
         {
-            if (!Guid.TryParse(currentUser.UserId, out var employeeId) ||
-                string.IsNullOrWhiteSpace(request.Reason))
+            if (!Guid.TryParse(currentUser.UserId, out var employeeId) || string.IsNullOrWhiteSpace(request.Reason))
                 return Result.Fail<Guid>(ErrorsCodes.InvalidRequest);
 
             var reason = request.Reason.Trim();
-            await AcquireLockAsync(
-                $"Tawtheef.ExamResultReport.Approve.{request.ReportId}", token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.ExamResultReportWorkflow(request.ReportId), token);
 
             var report = await unitOfWork.Context.Set<ExamResultReport>()
                 .Include(x => x.Candidates)
@@ -55,9 +56,9 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 .ThenInclude(x => x!.TestSlot)
                 .Include(x => x.TestAttempt)
                 .SingleOrDefaultAsync(x => x.Id == currentAssignmentId, token);
-            if (currentAssignment is null || currentAssignment.InvitationId != candidate.InvitationId ||
-                currentAssignment.TestSession?.ExamId != report.ExamId ||
-                currentAssignment.TestAttempt?.Id != candidate.TestAttemptId)
+            if (currentAssignment is null || currentAssignment.InvitationId != candidate.InvitationId
+                                          || currentAssignment.TestSession?.ExamId != report.ExamId
+                                          || currentAssignment.TestAttempt?.Id != candidate.TestAttemptId)
                 return Failure(ErrorsCodes.ExamResultCandidateRescheduleStateInvalid);
 
             if (await unitOfWork.Context.Set<TestSessionCandidate>()
@@ -71,26 +72,21 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 .ThenInclude(x => x!.Room)
                 .ThenInclude(x => x!.Location)
                 .SingleOrDefaultAsync(x => x.Id == request.TargetTestSessionId, token);
-            if (targetSession is null ||
-                targetSession.Id == currentAssignment.TestSessionId ||
-                targetSession.ExamId != report.ExamId ||
-                targetSession.StartTime is null ||
-                targetSession.EndTime is null ||
-                targetSession.StartTime >= targetSession.EndTime ||
-                (targetSession.StatusId != TestSessionStatusIds.Approved &&
-                 targetSession.StatusId != TestSessionStatusIds.Ready) ||
-                targetSession.TestSlot is not
-                {
-                    StatusId: var slotStatus,
-                    Room: { } room
-                } ||
-                (slotStatus != TestSlotStatusIds.Ready &&
-                 slotStatus != TestSlotStatusIds.Started) ||
-                room.StatusId != RoomStatusIds.Active ||
-                room.Capacity <= 0)
+            if (targetSession is null || targetSession.Id == currentAssignment.TestSessionId
+                                      || targetSession.ExamId != report.ExamId || targetSession.StartTime is null
+                                      || targetSession.EndTime is null
+                                      || targetSession.StartTime >= targetSession.EndTime
+                                      || (targetSession.StatusId != TestSessionStatusIds.Approved
+                                          && targetSession.StatusId != TestSessionStatusIds.Ready)
+                                      || targetSession.TestSlot is not
+                                      {
+                                          StatusId: var slotStatus,
+                                          Room: { } room
+                                      } || (slotStatus != TestSlotStatusIds.Ready
+                                            && slotStatus != TestSlotStatusIds.Started)
+                                      || room.StatusId != RoomStatusIds.Active || room.Capacity <= 0)
             {
-                return Failure(
-                    ErrorsCodes.ExamResultCandidateTargetSessionInvalid);
+                return Failure(ErrorsCodes.ExamResultCandidateTargetSessionInvalid);
             }
 
 
@@ -113,62 +109,44 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
             }
 
             // Capacity is shared by all sessions in the same physical room-time slot.
-            await AcquireLockAsync(
-                $"Tawtheef.TestSession.Room." +
-                $"{targetSlot.RoomId}." +
-                $"{targetSlot.SlotDate:yyyyMMdd}",
-                token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.TestSessionRoomDate(targetSlot.RoomId, targetSlot.SlotDate), token);
 
-            await AcquireLockAsync(
-                $"Tawtheef.CandidateExam.TestSlot.{targetSlot.Id}",
-                token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.CandidateExamTestSlot(targetSlot.Id), token);
 
-            var reservations = await unitOfWork.Context
-                .Set<TestSession>()
+            var reservations = await unitOfWork.Context.Set<TestSession>()
                 .AsNoTracking()
-                .Where(existing =>
-                    existing.TestSlot != null &&
-                    existing.TestSlot.RoomId == targetSlot.RoomId &&
-                    existing.TestSlot.SlotDate == targetSlot.SlotDate &&
-                    existing.StartTime.HasValue &&
-                    existing.EndTime.HasValue &&
-                    !TestSessionCapacityService
-                        .NonReservingStatusIds
-                        .Contains(existing.StatusId))
-                .Select(existing =>
-                    new TestSessionCapacityReservation(
-                        existing.StartTime!.Value,
-                        existing.EndTime!.Value,
-                        unitOfWork.Context
-                            .Set<TestSessionCandidate>()
-                            .Count(assignment =>
-                                assignment.TestSessionId == existing.Id &&
-                                assignment.Id != currentAssignmentId &&
-                                assignment.StatusId !=
-                                TestSessionCandidateStatusIds.Cancelled &&
-                                assignment.StatusId !=
-                                TestSessionCandidateStatusIds.Rescheduled)))
+                .Where(existing => existing.TestSlot != null && existing.TestSlot.RoomId == targetSlot.RoomId
+                                                             && existing.TestSlot.SlotDate == targetSlot.SlotDate
+                                                             && existing.StartTime.HasValue && existing.EndTime.HasValue
+                                                             && !TestSessionCapacityService.NonReservingStatusIds
+                                                                 .Contains(existing.StatusId))
+                .Select(existing => new TestSessionCapacityReservation(existing.StartTime!.Value,
+                    existing.EndTime!.Value,
+                    unitOfWork.Context.Set<TestSessionCandidate>()
+                        .Count(assignment => assignment.TestSessionId == existing.Id
+                                             && assignment.Id != currentAssignmentId
+                                             && assignment.StatusId != TestSessionCandidateStatusIds.Cancelled
+                                             && assignment.StatusId != TestSessionCandidateStatusIds.Rescheduled)))
                 .ToListAsync(token);
 
             var occupiedSeats =
-                TestSessionCapacityService.CalculatePeakOccupancy(
-                    reservations,
-                    targetStartTime,
-                    targetEndTime);
+                TestSessionCapacityService.CalculatePeakOccupancy(reservations, targetStartTime, targetEndTime);
 
             if (occupiedSeats >= room.Capacity)
             {
-                return Failure(
-                    ErrorsCodes.ExamResultCandidateTargetSlotFull);
+                return Failure(ErrorsCodes.ExamResultCandidateTargetSlotFull);
             }
 
             if (await unitOfWork.Context.Set<TestSessionCandidate>()
                     .AsNoTracking()
-                    .AnyAsync(x => x.Id != currentAssignmentId &&
-                                   x.InvitationId == candidate.InvitationId &&
-                                   x.TestSession!.ExamId == report.ExamId &&
-                                   x.StatusId != TestSessionCandidateStatusIds.Cancelled &&
-                                   x.StatusId != TestSessionCandidateStatusIds.Rescheduled, token))
+                    .AnyAsync(
+                        x => x.Id != currentAssignmentId && x.InvitationId == candidate.InvitationId
+                                                         && x.TestSession!.ExamId == report.ExamId
+                                                         && x.StatusId != TestSessionCandidateStatusIds.Cancelled
+                                                         && x.StatusId != TestSessionCandidateStatusIds.Rescheduled,
+                        token))
                 return Failure(ErrorsCodes.ExamResultCandidateActiveAssignmentExists);
 
             var rescheduledAt = timeProvider.GetUtcNow().UtcDateTime;
@@ -178,17 +156,17 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
 
             if (candidate.TestAttemptId is { } attemptId)
             {
-                await AcquireLockAsync($"Tawtheef.CandidateExam.Attempt.{attemptId}", token);
+                await applicationLockService.AcquireExclusiveAsync(
+                    ApplicationLockResources.CandidateExamAttempt(attemptId), token);
                 var attempt = await unitOfWork.Context.Set<TestAttempt>()
-                    .SingleOrDefaultAsync(x => x.Id == attemptId &&
-                                               x.TestSessionCandidateId == currentAssignmentId, token);
+                    .SingleOrDefaultAsync(x => x.Id == attemptId && x.TestSessionCandidateId == currentAssignmentId,
+                        token);
                 if (attempt is null)
                     return Failure(ErrorsCodes.ExamResultCandidateRescheduleStateInvalid);
 
                 previousAttemptStatus = attempt.StatusId;
                 var openInterruptions = await unitOfWork.Context.Set<TestAttemptInterruption>()
-                    .Where(x => x.TestAttemptId == attemptId &&
-                                x.StatusId == TestAttemptInterruptionStatusIds.Open)
+                    .Where(x => x.TestAttemptId == attemptId && x.StatusId == TestAttemptInterruptionStatusIds.Open)
                     .Take(2)
                     .ToListAsync(token);
                 if (openInterruptions.Count != 1 || openInterruptions[0].ResolvedAt is not null)
@@ -196,18 +174,19 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
 
                 if (attempt.StatusId == TestAttemptStatusIds.Interrupted)
                 {
-                    if (attempt.ActiveSessionId is not null ||
-                        openInterruptions[0].TestAttemptPartId is not { } interruptedPartId ||
-                        !await unitOfWork.Context.Set<TestAttemptPart>().AnyAsync(x =>
-                            x.Id == interruptedPartId && x.TestAttemptId == attemptId &&
-                            x.StatusId == TestAttemptPartStatusIds.Interrupted, token))
+                    if (attempt.ActiveSessionId is not null
+                        || openInterruptions[0].TestAttemptPartId is not { } interruptedPartId || !await unitOfWork
+                            .Context.Set<TestAttemptPart>()
+                            .AnyAsync(
+                                x => x.Id == interruptedPartId && x.TestAttemptId == attemptId
+                                                               && x.StatusId == TestAttemptPartStatusIds.Interrupted,
+                                token))
                         return Failure(ErrorsCodes.ExamResultCandidateInterruptionStateInvalid);
 
-                    attempt.StatusId = TestAttemptStatusIds.Cancelled;
-                    attempt.ActiveSessionId = null;
+                    attempt.CancelInterrupted();
                 }
-                else if (attempt.StatusId != TestAttemptStatusIds.Completed &&
-                         attempt.StatusId != TestAttemptStatusIds.TimedOut)
+                else if (attempt.StatusId != TestAttemptStatusIds.Completed
+                         && attempt.StatusId != TestAttemptStatusIds.TimedOut)
                 {
                     return Failure(ErrorsCodes.ExamResultCandidateRescheduleStateInvalid);
                 }
@@ -250,11 +229,9 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 .Where(x => x.Id == report.ExamId)
                 .Select(x => new { x.TitleAr, x.TitleEn })
                 .SingleAsync(token);
-            replacement.AddDomainEvent(new CandidateExamRescheduledDomainEvent(
-                replacement.Id, applicantId, examDetails.TitleAr, examDetails.TitleEn,
-                targetSlot.SlotDate, targetStartTime,
-                room.Location!.NameAr, room.Location.NameEn,
-                room.NameAr, room.NameEn, targetSession.SessionNo));
+            replacement.AddDomainEvent(new CandidateExamRescheduledDomainEvent(replacement.Id, applicantId,
+                examDetails.TitleAr, examDetails.TitleEn, targetSlot.SlotDate, targetStartTime, room.Location!.NameAr,
+                room.Location.NameEn, room.NameAr, room.NameEn, targetSession.SessionNo));
 
             candidate.TestSessionCandidateId = replacement.Id;
             candidate.TestSessionCandidate = replacement;
@@ -267,51 +244,46 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
             candidate.Rank = null;
             candidate.SnapshotAt = rescheduledAt;
 
-            await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(new ActionLog
-            {
-                UserId = employeeId,
-                LogType = ActionLogType.Employee,
-                ActionType = "ExamResultCandidateRescheduled",
-                Section = "ExamResultReport",
-                EntityId = report.Id,
-                Notes = JsonSerializer.Serialize(new
-                {
-                    reportId = report.Id,
-                    examId = report.ExamId,
-                    candidateResultId = candidate.Id,
-                    invitationId = candidate.InvitationId,
-                    oldTestSessionCandidateId = currentAssignmentId,
-                    newTestSessionCandidateId = replacement.Id,
-                    oldTestSessionId = currentAssignment.TestSessionId,
-                    newTestSessionId = targetSession.Id,
-                    newSessionDate = targetSlot.SlotDate,
-                    newSessionStartTime = targetStartTime,
-                    newSessionEndTime = targetEndTime,
-                    oldTestAttemptId = previousAttemptId,
-                    oldAttemptStatus = previousAttemptStatus,
-                    interruptionId,
-                    interruptionResolutionAction = interruptionId.HasValue
-                        ? TestAttemptInterruptionResolutionActionIds.Reschedule
-                        : (Guid?)null,
-                    employeeId,
-                    reason,
-                    rescheduledAt,
-                    reportStatus = report.StatusId,
-                    resultStatus = candidate.ResultStatusId
-                })
-            }, token);
+            await unitOfWork.GetEntityRepository<ActionLog>()
+                .AddAsync(
+                    new ActionLog
+                    {
+                        UserId = employeeId,
+                        LogType = ActionLogType.Employee,
+                        ActionType = ExamResultReportAudit.CandidateRescheduled,
+                        Section = ExamResultReportAudit.Section,
+                        EntityId = report.Id,
+                        Notes = JsonSerializer.Serialize(new
+                        {
+                            reportId = report.Id,
+                            examId = report.ExamId,
+                            candidateResultId = candidate.Id,
+                            invitationId = candidate.InvitationId,
+                            oldTestSessionCandidateId = currentAssignmentId,
+                            newTestSessionCandidateId = replacement.Id,
+                            oldTestSessionId = currentAssignment.TestSessionId,
+                            newTestSessionId = targetSession.Id,
+                            newSessionDate = targetSlot.SlotDate,
+                            newSessionStartTime = targetStartTime,
+                            newSessionEndTime = targetEndTime,
+                            oldTestAttemptId = previousAttemptId,
+                            oldAttemptStatus = previousAttemptStatus,
+                            interruptionId,
+                            interruptionResolutionAction =
+                                interruptionId.HasValue
+                                    ? TestAttemptInterruptionResolutionActionIds.Reschedule
+                                    : (Guid?)null,
+                            employeeId,
+                            reason,
+                            rescheduledAt,
+                            reportStatus = report.StatusId,
+                            resultStatus = candidate.ResultStatusId
+                        })
+                    }, token);
 
             await unitOfWork.SaveChangesAsync(token);
             return Result.Ok(replacement.Id);
         }, cancellationToken);
-
-    private Task AcquireLockAsync(string resource, CancellationToken cancellationToken) =>
-        unitOfWork.Context.Database.ExecuteSqlRawAsync(
-            "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-            "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-            "@LockTimeout = 15000; IF @result < 0 " +
-            "THROW 51000, 'Candidate exam reschedule lock unavailable', 1;",
-            [resource], cancellationToken);
 
     private static IResult<Guid> Failure(string code) => Result.Fail<Guid>(new Error(code));
 }

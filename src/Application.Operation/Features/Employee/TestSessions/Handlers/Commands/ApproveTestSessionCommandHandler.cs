@@ -6,6 +6,8 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Configurations.Settings;
@@ -22,7 +24,8 @@ namespace Application.Operation.Features.Employee.TestSessions.Handlers.Commands
 public sealed class ApproveTestSessionCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
-    IOptions<TestSlotSettings> options) : IRequestHandler<ApproveTestSessionCommand, IResult<Unit>>
+    IOptions<TestSlotSettings> options,
+    IApplicationLockService applicationLockService) : IRequestHandler<ApproveTestSessionCommand, IResult<Unit>>
 {
     public Task<IResult<Unit>> Handle(ApproveTestSessionCommand request, CancellationToken ct) =>
         unitOfWork.ExecuteInTransactionAsync<IResult<Unit>>(token => ApproveAsync(request, token), ct);
@@ -58,11 +61,8 @@ public sealed class ApproveTestSessionCommandHandler(
             || schedule.RoomStatusId != RoomStatusIds.Active)
             return ValidationFailure();
 
-        await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-            "DECLARE @result int; EXEC @result = sys.sp_getapplock @Resource = {0}, "
-            + "@LockMode = N'Exclusive', @LockOwner = N'Transaction', @LockTimeout = 15000; "
-            + "IF @result < 0 THROW 51000, 'Test session room lock unavailable', 1;",
-            [$"Tawtheef.TestSession.Room.{schedule.RoomId}.{schedule.SlotDate:yyyyMMdd}"], ct);
+        await applicationLockService.AcquireExclusiveAsync(
+            ApplicationLockResources.TestSessionRoomDate(schedule.RoomId, schedule.SlotDate), ct);
 
         var exam = await unitOfWork.Context.Set<Exam>()
             .AsNoTracking()
@@ -81,8 +81,8 @@ public sealed class ApproveTestSessionCommandHandler(
             < exam.Duration + options.Value.MinimumSessionEntryWindowMinutes)
             return ValidationFailure();
 
-        if (!TestSessionCapacityService.IsSessionStartCurrentOrFuture(
-                schedule.SlotDate, session.StartTime.Value, DateTime.UtcNow))
+        if (!TestSessionCapacityService.IsSessionStartCurrentOrFuture(schedule.SlotDate, session.StartTime.Value,
+                DateTime.UtcNow))
             return SchedulingTimeFailure();
 
         var staff = await unitOfWork.Context.Set<TestSlotStaff>()
@@ -108,28 +108,23 @@ public sealed class ApproveTestSessionCommandHandler(
 
         foreach (var invitationId in candidates.OrderBy(id => id))
         {
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock @Resource = {0}, "
-                + "@LockMode = N'Exclusive', @LockOwner = N'Transaction', @LockTimeout = 15000; "
-                + "IF @result < 0 THROW 51000, 'Test session candidate lock unavailable', 1;",
-                [$"Tawtheef.TestSession.Candidate.{session.ExamId}.{invitationId}"], ct);
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock @Resource = {0}, " +
-                "@LockMode = N'Exclusive', @LockOwner = N'Transaction', @LockTimeout = 15000; " +
-                "IF @result < 0 THROW 51000, 'Test session candidate lock unavailable', 1;",
-                [$"Tawtheef.TestSession.Candidate.{exam.JobId}.{invitationId}"], ct);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.TestSessionCandidate(exam.JobId, invitationId), ct);
         }
 
         var validCandidateCount = await unitOfWork.Context.Set<Invitation>()
             .AsNoTracking()
             .Where(x => candidates.Contains(x.Id) && x.JobId == exam.JobId)
-            .Where(x => x.Source == InvitationSource.Exceptional ||
-                x.InvitationStatusId == InvitationStatusIds.NewInvitation ||
-                x.InvitationStatusId == InvitationStatusIds.Read ||
-                (x.InvitationStatusId == InvitationStatusIds.ExamEligible && x.Applicant!.Profile != null &&
-                 x.Applicant.Profile.Status == UserProfileStatus.Approved && x.Applicant.Profile.AvailableForRecruitment))
+            .Where(x => x.Source == InvitationSource.Exceptional
+                        || x.InvitationStatusId == InvitationStatusIds.NewInvitation
+                        || x.InvitationStatusId == InvitationStatusIds.Read
+                        || (x.InvitationStatusId == InvitationStatusIds.ExamEligible && x.Applicant!.Profile != null
+                            && x.Applicant.Profile.Status == UserProfileStatus.Approved
+                            && x.Applicant.Profile.AvailableForRecruitment))
             .Where(x => !TestSessionCandidateConflictService
                 .BlockingAssignments(unitOfWork.Context, exam.JobId, session.Id)
-                .Any(candidate => candidate.InvitationId == x.Id)).CountAsync(ct);
+                .Any(candidate => candidate.InvitationId == x.Id))
+            .CountAsync(ct);
         if (validCandidateCount != candidates.Count)
             return ValidationFailure();
 
@@ -153,7 +148,7 @@ public sealed class ApproveTestSessionCommandHandler(
             nameof(TestSessionStatusIds.PendingApproval), nameof(TestSessionStatusIds.Approved));
         metadata.ApplyDecision(session, TestSessionStatusIds.Approved);
         await unitOfWork.GetEntityRepository<ActionLog>()
-            .AddAsync(metadata.CreateActionLog(session, "TestSessionApproved"), ct);
+            .AddAsync(metadata.CreateActionLog(session, TestSessionWorkflowAudit.Approved), ct);
         if (session.CreatedById.HasValue)
             session.AddDomainEvent(
                 new TestSessionApprovedDomainEvent(session.CreatedById.Value, session.Id, session.SessionNo));
@@ -161,8 +156,8 @@ public sealed class ApproveTestSessionCommandHandler(
         return Result.Ok(Unit.Value);
     }
 
-    private static IResult<Unit> ValidationFailure() => Result.Fail<Unit>(new Error("VALIDATION")
-        .WithMetadata("Code", "Validation"));
+    private static IResult<Unit> ValidationFailure() =>
+        Result.Fail<Unit>(new Error("VALIDATION").WithMetadata("Code", "Validation"));
 
     private static IResult<Unit> SchedulingTimeFailure() => Result.Fail<Unit>(
         new Error(ErrorsCodes.TestSessionScheduledTimeExpired).WithMetadata("Code", "Validation"));

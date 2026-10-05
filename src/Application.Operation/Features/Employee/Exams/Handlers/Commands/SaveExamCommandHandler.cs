@@ -5,6 +5,8 @@ using FluentResults;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
@@ -14,7 +16,9 @@ using Tawtheef.Domain.Events.Operation.Employee.Exams;
 
 namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 
-public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork)
+public sealed class SaveExamCommandHandler(
+    IUnitOfWork unitOfWork,
+    IApplicationLockService applicationLockService)
     : IRequestHandler<SaveExamCommand, IResult<SavedExamDto>>
 {
     public Task<IResult<SavedExamDto>> Handle(SaveExamCommand request, CancellationToken ct)
@@ -78,11 +82,8 @@ public sealed class SaveExamCommandHandler(IUnitOfWork unitOfWork)
             {
                 exam = request.Exam.Adapt<Exam>();
                 // Number allocation remains globally serialized without blocking edits/submissions for other jobs.
-                await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                    "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                    "@Resource = N'Tawtheef.Exam.Numbering', @LockMode = N'Exclusive', " +
-                    "@LockOwner = N'Transaction', @LockTimeout = 15000; " +
-                    "IF @result < 0 THROW 51000, 'Exam numbering lock unavailable', 1;", token);
+                await applicationLockService.AcquireExclusiveAsync(
+                    ApplicationLockResources.ExamNumbering(), token);
                 var prefix = $"EX-{DateTime.UtcNow.Year}-";
                 var numbers = await repository.DbSet.IgnoreQueryFilters().AsNoTracking()
                     .Where(x => x.ExamNo.StartsWith(prefix)).Select(x => x.ExamNo).ToListAsync(token);

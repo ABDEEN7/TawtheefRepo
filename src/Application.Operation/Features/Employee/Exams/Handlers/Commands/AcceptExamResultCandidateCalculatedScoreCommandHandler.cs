@@ -3,6 +3,8 @@ using Application.Operation.Features.Employee.Exams.Commands;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
@@ -15,11 +17,11 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 public sealed class AcceptExamResultCandidateCalculatedScoreCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    IApplicationLockService applicationLockService)
     : IRequestHandler<AcceptExamResultCandidateCalculatedScoreCommand, IResult<Unit>>
 {
-    public Task<IResult<Unit>> Handle(
-        AcceptExamResultCandidateCalculatedScoreCommand request,
+    public Task<IResult<Unit>> Handle(AcceptExamResultCandidateCalculatedScoreCommand request,
         CancellationToken cancellationToken) =>
         unitOfWork.ExecuteInTransactionAsync<IResult<Unit>>(async token =>
         {
@@ -30,12 +32,8 @@ public sealed class AcceptExamResultCandidateCalculatedScoreCommandHandler(
             if (string.IsNullOrWhiteSpace(notes) || notes.Length > 2000)
                 return Failure(ErrorsCodes.InvalidRequest);
 
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-                "@LockTimeout = 15000; IF @result < 0 " +
-                "THROW 51000, 'Exam result report workflow lock unavailable', 1;",
-                [$"Tawtheef.ExamResultReport.Approve.{request.ReportId}"], token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.ExamResultReportWorkflow(request.ReportId), token);
 
             var report = await unitOfWork.Context.Set<ExamResultReport>()
                 .SingleOrDefaultAsync(x => x.Id == request.ReportId, token);
@@ -45,22 +43,18 @@ public sealed class AcceptExamResultCandidateCalculatedScoreCommandHandler(
                 return Failure(ErrorsCodes.ExamResultReportNotReturned);
 
             var candidate = await unitOfWork.Context.Set<ExamResultCandidate>()
-                .SingleOrDefaultAsync(x => x.Id == request.CandidateResultId &&
-                    x.ExamResultReportId == report.Id, token);
+                .SingleOrDefaultAsync(x => x.Id == request.CandidateResultId && x.ExamResultReportId == report.Id,
+                    token);
             if (candidate is null)
                 return Failure(ErrorsCodes.ExamResultCandidateNotFound);
             if (candidate.ResultStatusId != ExamResultCandidateResultStatusIds.RequiresAction)
                 return Failure(ErrorsCodes.ExamResultCandidateNotRequiresAction);
-            if (candidate.TestSessionCandidateId is not Guid assignmentId ||
-                candidate.TestAttemptId is not Guid attemptId)
+            if (candidate.TestSessionCandidateId is not { } assignmentId
+                || candidate.TestAttemptId is not { } attemptId)
                 return Failure(ErrorsCodes.ExamResultCandidateAcceptScoreStateInvalid);
 
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-                "@LockTimeout = 15000; IF @result < 0 " +
-                "THROW 51000, 'Candidate exam attempt resolution lock unavailable', 1;",
-                [$"Tawtheef.CandidateExam.Attempt.{attemptId}"], token);
+            await applicationLockService.AcquireExclusiveAsync(ApplicationLockResources.CandidateExamAttempt(attemptId),
+                token);
 
             var assignment = await unitOfWork.Context.Set<TestSessionCandidate>()
                 .AsNoTracking()
@@ -69,24 +63,23 @@ public sealed class AcceptExamResultCandidateCalculatedScoreCommandHandler(
                 {
                     x.Id,
                     x.InvitationId,
-                    ExamId = x.TestSession!.ExamId,
+                    x.TestSession!.ExamId,
                     TestSessionStatusId = x.TestSession.StatusId
                 })
                 .SingleOrDefaultAsync(token);
             var attempt = await unitOfWork.Context.Set<TestAttempt>()
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == attemptId, token);
-            if (assignment is null || assignment.InvitationId != candidate.InvitationId ||
-                assignment.ExamId != report.ExamId ||
-                assignment.TestSessionStatusId != TestSessionStatusIds.Closed ||
-                attempt is null || attempt.TestSessionCandidateId != assignment.Id ||
-                (attempt.StatusId != TestAttemptStatusIds.Completed &&
-                 attempt.StatusId != TestAttemptStatusIds.TimedOut))
+            if (assignment is null || assignment.InvitationId != candidate.InvitationId
+                                   || assignment.ExamId != report.ExamId
+                                   || assignment.TestSessionStatusId != TestSessionStatusIds.Closed || attempt is null
+                                   || attempt.TestSessionCandidateId != assignment.Id
+                                   || (attempt.StatusId != TestAttemptStatusIds.Completed
+                                       && attempt.StatusId != TestAttemptStatusIds.TimedOut))
                 return Failure(ErrorsCodes.ExamResultCandidateAcceptScoreStateInvalid);
 
             var openInterruptions = await unitOfWork.Context.Set<TestAttemptInterruption>()
-                .Where(x => x.TestAttemptId == attemptId &&
-                    x.StatusId == TestAttemptInterruptionStatusIds.Open)
+                .Where(x => x.TestAttemptId == attemptId && x.StatusId == TestAttemptInterruptionStatusIds.Open)
                 .Take(2)
                 .ToListAsync(token);
             if (openInterruptions.Count == 0)
@@ -106,33 +99,35 @@ public sealed class AcceptExamResultCandidateCalculatedScoreCommandHandler(
             interruption.ResolvedById = employeeId;
             interruption.ResolvedAt = resolvedAt;
 
-            await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(new ActionLog
-            {
-                UserId = employeeId,
-                LogType = ActionLogType.Employee,
-                ActionType = "ExamResultCandidateCalculatedScoreAccepted",
-                Section = "ExamResultReport",
-                EntityId = report.Id,
-                Notes = JsonSerializer.Serialize(new
-                {
-                    reportId = report.Id,
-                    examId = report.ExamId,
-                    candidateResultId = candidate.Id,
-                    invitationId = candidate.InvitationId,
-                    testSessionCandidateId = assignment.Id,
-                    testAttemptId = attempt.Id,
-                    attemptStatus = attempt.StatusId,
-                    interruptionId = interruption.Id,
-                    previousInterruptionStatus,
-                    newInterruptionStatus = interruption.StatusId,
-                    resolutionAction = interruption.ResolutionActionId,
-                    resolvedBy = employeeId,
-                    resolvedAt,
-                    resolutionNotes = notes,
-                    reportStatus = report.StatusId,
-                    resultStatus = candidate.ResultStatusId
-                })
-            }, token);
+            await unitOfWork.GetEntityRepository<ActionLog>()
+                .AddAsync(
+                    new ActionLog
+                    {
+                        UserId = employeeId,
+                        LogType = ActionLogType.Employee,
+                        ActionType = ExamResultReportAudit.CandidateCalculatedScoreAccepted,
+                        Section = ExamResultReportAudit.Section,
+                        EntityId = report.Id,
+                        Notes = JsonSerializer.Serialize(new
+                        {
+                            reportId = report.Id,
+                            examId = report.ExamId,
+                            candidateResultId = candidate.Id,
+                            invitationId = candidate.InvitationId,
+                            testSessionCandidateId = assignment.Id,
+                            testAttemptId = attempt.Id,
+                            attemptStatus = attempt.StatusId,
+                            interruptionId = interruption.Id,
+                            previousInterruptionStatus,
+                            newInterruptionStatus = interruption.StatusId,
+                            resolutionAction = interruption.ResolutionActionId,
+                            resolvedBy = employeeId,
+                            resolvedAt,
+                            resolutionNotes = notes,
+                            reportStatus = report.StatusId,
+                            resultStatus = candidate.ResultStatusId
+                        })
+                    }, token);
 
             await unitOfWork.SaveChangesAsync(token);
             return Result.Ok(Unit.Value);

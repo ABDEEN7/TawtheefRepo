@@ -2,6 +2,8 @@ using Application.Operation.Features.Employee.Exams.Commands;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
@@ -14,7 +16,8 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 
 public sealed class ReturnExamCommandHandler(
     IUnitOfWork unitOfWork,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    IApplicationLockService applicationLockService)
     : IRequestHandler<ReturnExamCommand, IResult<Unit>>
 {
     public Task<IResult<Unit>> Handle(ReturnExamCommand request, CancellationToken ct)
@@ -24,14 +27,8 @@ public sealed class ReturnExamCommandHandler(
                 !Guid.TryParse(currentUser.UserId, out var reviewerId))
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, " +
-                "@LockMode = N'Exclusive', " +
-                "@LockOwner = N'Transaction', " +
-                "@LockTimeout = 15000; " +
-                "IF @result < 0 THROW 51000, 'Exam workflow lock unavailable', 1;",
-                [$"Tawtheef.Exam.Workflow.{request.ExamId}"], token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.ExamWorkflow(request.ExamId), token);
 
             var exam = await unitOfWork.GetEntityRepository<Exam>().DbSet
                 .FirstOrDefaultAsync(x => x.Id == request.ExamId &&
@@ -49,7 +46,7 @@ public sealed class ReturnExamCommandHandler(
             exam.DecisionNotes = note;
 
             await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(
-                metadata.CreateActionLog(exam, "ExamReturnedForEdit", note), token);
+                metadata.CreateActionLog(exam, ExamWorkflowAudit.ReturnedForEdit, note), token);
 
             if (exam.CreatedById.HasValue)
                 exam.AddDomainEvent(new ExamReturnedForEditDomainEvent(

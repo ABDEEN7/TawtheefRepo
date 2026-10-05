@@ -3,6 +3,8 @@ using Application.Operation.Features.Employee.Exams.Commands;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
@@ -14,7 +16,8 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 
 public sealed class ApproveExamResultReportCommandHandler(
     IUnitOfWork unitOfWork,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    IApplicationLockService applicationLockService)
     : IRequestHandler<
         ApproveExamResultReportCommand,
         IResult<Unit>>
@@ -34,21 +37,8 @@ public sealed class ApproveExamResultReportCommandHandler(
                         ErrorsCodes.InvalidRequest);
                 }
 
-                await unitOfWork.Context.Database
-                    .ExecuteSqlRawAsync(
-                        "DECLARE @result int; " +
-                        "EXEC @result = sys.sp_getapplock " +
-                        "@Resource = {0}, " +
-                        "@LockMode = N'Exclusive', " +
-                        "@LockOwner = N'Transaction', " +
-                        "@LockTimeout = 15000; " +
-                        "IF @result < 0 " +
-                        "THROW 51000, " +
-                        "'Exam result report approval lock unavailable', 1;",
-                        [
-                            $"Tawtheef.ExamResultReport.Approve.{request.ReportId}"
-                        ],
-                        token);
+                await applicationLockService.AcquireExclusiveAsync(
+                    ApplicationLockResources.ExamResultReportWorkflow(request.ReportId), token);
 
                 var report = await unitOfWork.Context
                     .Set<ExamResultReport>()
@@ -157,8 +147,8 @@ public sealed class ApproveExamResultReportCommandHandler(
                         {
                             UserId = approverId,
                             LogType = ActionLogType.Employee,
-                            ActionType = "ExamResultReportApproved",
-                            Section = "ExamResultReport",
+                            ActionType = ExamResultReportAudit.Approved,
+                            Section = ExamResultReportAudit.Section,
                             EntityId = report.Id,
                             Notes = JsonSerializer.Serialize(
                                 new

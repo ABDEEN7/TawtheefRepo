@@ -3,6 +3,8 @@ using Application.Operation.Features.Employee.Exams.Commands;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
@@ -15,23 +17,19 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    IApplicationLockService applicationLockService)
     : IRequestHandler<ResolveExamResultCandidateAsNotCompletedCommand, IResult<Unit>>
 {
-    public Task<IResult<Unit>> Handle(
-        ResolveExamResultCandidateAsNotCompletedCommand request,
+    public Task<IResult<Unit>> Handle(ResolveExamResultCandidateAsNotCompletedCommand request,
         CancellationToken cancellationToken) =>
         unitOfWork.ExecuteInTransactionAsync<IResult<Unit>>(async token =>
         {
             if (!Guid.TryParse(currentUser.UserId, out var employeeId))
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-                "@LockTimeout = 15000; IF @result < 0 " +
-                "THROW 51000, 'Exam result report workflow lock unavailable', 1;",
-                [$"Tawtheef.ExamResultReport.Approve.{request.ReportId}"], token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.ExamResultReportWorkflow(request.ReportId), token);
 
             var report = await unitOfWork.Context.Set<ExamResultReport>()
                 .Include(x => x.Candidates)
@@ -57,14 +55,10 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
             Guid? previousAttemptStatus = null;
             Guid? newAttemptStatus = null;
 
-            if (candidate.TestAttemptId is Guid attemptId)
+            if (candidate.TestAttemptId is { } attemptId)
             {
-                await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                    "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                    "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-                    "@LockTimeout = 15000; IF @result < 0 " +
-                    "THROW 51000, 'Candidate exam attempt resolution lock unavailable', 1;",
-                    [$"Tawtheef.CandidateExam.Attempt.{attemptId}"], token);
+                await applicationLockService.AcquireExclusiveAsync(
+                    ApplicationLockResources.CandidateExamAttempt(attemptId), token);
 
                 var attempt = await unitOfWork.Context.Set<TestAttempt>()
                     .SingleOrDefaultAsync(x => x.Id == attemptId, token);
@@ -73,21 +67,23 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
 
                 previousAttemptStatus = attempt.StatusId;
                 var openInterruptions = await unitOfWork.Context.Set<TestAttemptInterruption>()
-                    .Where(x => x.TestAttemptId == attemptId &&
-                        x.StatusId == TestAttemptInterruptionStatusIds.Open)
+                    .Where(x => x.TestAttemptId == attemptId && x.StatusId == TestAttemptInterruptionStatusIds.Open)
                     .Take(2)
                     .ToListAsync(token);
 
                 if (attempt.StatusId == TestAttemptStatusIds.Interrupted)
                 {
-                    if (attempt.ActiveSessionId is not null || openInterruptions.Count != 1 ||
-                        openInterruptions[0].ResolvedAt is not null ||
-                        openInterruptions[0].TestAttemptPartId is not Guid interruptedPartId)
+                    if (attempt.ActiveSessionId is not null || openInterruptions.Count != 1
+                                                            || openInterruptions[0].ResolvedAt is not null
+                                                            || openInterruptions[0].TestAttemptPartId is not
+                                                                { } interruptedPartId)
                         return InvalidState();
 
                     var hasInterruptedPart = await unitOfWork.Context.Set<TestAttemptPart>()
-                        .AnyAsync(x => x.Id == interruptedPartId && x.TestAttemptId == attemptId &&
-                            x.StatusId == TestAttemptPartStatusIds.Interrupted, token);
+                        .AnyAsync(
+                            x => x.Id == interruptedPartId && x.TestAttemptId == attemptId
+                                                           && x.StatusId == TestAttemptPartStatusIds.Interrupted,
+                            token);
                     if (!hasInterruptedPart)
                         return InvalidState();
 
@@ -97,14 +93,13 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
                     interruption.ResolvedById = employeeId;
                     interruption.ResolvedAt = resolvedAt;
                     interruption.StatusId = TestAttemptInterruptionStatusIds.Resolved;
-                    attempt.StatusId = TestAttemptStatusIds.Cancelled;
-                    attempt.ActiveSessionId = null;
+                    attempt.CancelInterrupted();
                 }
-                else if (attempt.StatusId == TestAttemptStatusIds.Completed ||
-                         attempt.StatusId == TestAttemptStatusIds.TimedOut)
+                else if (attempt.StatusId == TestAttemptStatusIds.Completed
+                         || attempt.StatusId == TestAttemptStatusIds.TimedOut)
                 {
-                    if (openInterruptions.Count != 1 || openInterruptions[0].ResolvedAt is not null ||
-                        openInterruptions[0].ResolutionActionId is not null)
+                    if (openInterruptions.Count != 1 || openInterruptions[0].ResolvedAt is not null
+                                                     || openInterruptions[0].ResolutionActionId is not null)
                         return InvalidState();
 
                     var interruption = openInterruptions[0];
@@ -114,9 +109,9 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
                     interruption.ResolvedAt = resolvedAt;
                     interruption.StatusId = TestAttemptInterruptionStatusIds.Resolved;
                 }
-                else if ((attempt.StatusId != TestAttemptStatusIds.Cancelled &&
-                          attempt.StatusId != TestAttemptStatusIds.NotStarted) ||
-                         attempt.ActiveSessionId is not null || openInterruptions.Count != 0)
+                else if ((attempt.StatusId != TestAttemptStatusIds.Cancelled
+                          && attempt.StatusId != TestAttemptStatusIds.NotStarted) || attempt.ActiveSessionId is not null
+                         || openInterruptions.Count != 0)
                 {
                     return InvalidState();
                 }
@@ -137,32 +132,34 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
                     return Result.Fail<Unit>(transition.Errors);
             }
 
-            await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(new ActionLog
-            {
-                UserId = employeeId,
-                LogType = ActionLogType.Employee,
-                ActionType = "ExamResultCandidateResolvedNotCompleted",
-                Section = "ExamResultReport",
-                EntityId = report.Id,
-                Notes = JsonSerializer.Serialize(new
-                {
-                    reportId = report.Id,
-                    examId = report.ExamId,
-                    candidateResultId = candidate.Id,
-                    invitationId = candidate.InvitationId,
-                    testSessionCandidateId = candidate.TestSessionCandidateId,
-                    testAttemptId = candidate.TestAttemptId,
-                    resolvedBy = employeeId,
-                    resolvedAt,
-                    resolutionNotes = notes,
-                    previousResultStatus,
-                    newResultStatus = candidate.ResultStatusId,
-                    previousAttemptStatus,
-                    newAttemptStatus,
-                    remainingRequiresActionCount,
-                    resultingReportStatus = report.StatusId
-                })
-            }, token);
+            await unitOfWork.GetEntityRepository<ActionLog>()
+                .AddAsync(
+                    new ActionLog
+                    {
+                        UserId = employeeId,
+                        LogType = ActionLogType.Employee,
+                        ActionType = ExamResultReportAudit.CandidateResolvedNotCompleted,
+                        Section = ExamResultReportAudit.Section,
+                        EntityId = report.Id,
+                        Notes = JsonSerializer.Serialize(new
+                        {
+                            reportId = report.Id,
+                            examId = report.ExamId,
+                            candidateResultId = candidate.Id,
+                            invitationId = candidate.InvitationId,
+                            testSessionCandidateId = candidate.TestSessionCandidateId,
+                            testAttemptId = candidate.TestAttemptId,
+                            resolvedBy = employeeId,
+                            resolvedAt,
+                            resolutionNotes = notes,
+                            previousResultStatus,
+                            newResultStatus = candidate.ResultStatusId,
+                            previousAttemptStatus,
+                            newAttemptStatus,
+                            remainingRequiresActionCount,
+                            resultingReportStatus = report.StatusId
+                        })
+                    }, token);
 
             await unitOfWork.SaveChangesAsync(token);
             return Result.Ok(Unit.Value);

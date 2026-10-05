@@ -78,6 +78,20 @@ public class TestAttempt : EventEntity
         ActiveSessionId = null;
     }
 
+    public void CancelInterrupted()
+    {
+        if (StatusId != TestAttemptStatusIds.Interrupted ||
+            StartedAt is null ||
+            CompletedAt is not null ||
+            ActiveSessionId is not null)
+        {
+            throw new InvalidOperationException(
+                "Only a valid interrupted attempt can be cancelled.");
+        }
+
+        StatusId = TestAttemptStatusIds.Cancelled;
+    }
+
     private void EnsureCanEnd()
     {
         if (StatusId != TestAttemptStatusIds.InProgress || StartedAt is null || CompletedAt is not null)
