@@ -10,139 +10,182 @@ public sealed class CandidateExamResultCalculationService(
     IUnitOfWork unitOfWork,
     CandidateExamScoringService scoringService)
 {
-    public async Task<CandidateExamCalculatedScores?> CalculateAsync(
-        Guid testAttemptId,
+    private const int QueryBatchSize = 500;
+
+    public async Task<CandidateExamCalculatedScores?> CalculateAsync(Guid testAttemptId,
         CancellationToken cancellationToken)
     {
-        var attempt = await unitOfWork.Context
-            .Set<TestAttempt>()
-            .AsNoTracking()
-            .Where(x => x.Id == testAttemptId)
-            .Select(x => new { x.StatusId, x.CompletedAt })
-            .SingleOrDefaultAsync(cancellationToken);
+        var results = await CalculateManyAsync([testAttemptId], cancellationToken);
 
-        if (attempt?.CompletedAt is null ||
-            (attempt.StatusId != TestAttemptStatusIds.Completed &&
-             attempt.StatusId != TestAttemptStatusIds.TimedOut))
+        return results.TryGetValue(testAttemptId, out var calculated) ? calculated : null;
+    }
+
+    internal async Task<IReadOnlyDictionary<Guid, CandidateExamCalculatedScores>> CalculateManyAsync(
+        IReadOnlyCollection<Guid> testAttemptIds, CancellationToken cancellationToken)
+    {
+        var attemptIds = testAttemptIds.Where(id => id != Guid.Empty).Distinct().ToArray();
+
+        if (attemptIds.Length == 0)
         {
-            return null;
+            return new Dictionary<Guid, CandidateExamCalculatedScores>();
         }
 
-        var parts = await unitOfWork.Context
-            .Set<TestAttemptPart>()
-            .AsNoTracking()
-            .Where(x => x.TestAttemptId == testAttemptId)
-            .OrderBy(x => x.ExamPart!.PartNo)
-            .Select(x => new
+        var attempts = new List<ResultAttemptState>();
+
+        var parts = new List<ResultPartState>();
+
+        foreach (var attemptIdBatch in attemptIds.Chunk(QueryBatchSize))
+        {
+            var batchIds = attemptIdBatch.ToArray();
+
+            attempts.AddRange(await unitOfWork.Context.Set<TestAttempt>()
+                .AsNoTracking()
+                .Where(attempt => batchIds.Contains(attempt.Id))
+                .Select(attempt => new ResultAttemptState(attempt.Id, attempt.StatusId, attempt.CompletedAt))
+                .ToListAsync(cancellationToken));
+
+            parts.AddRange(await unitOfWork.Context.Set<TestAttemptPart>()
+                .AsNoTracking()
+                .Where(part => batchIds.Contains(part.TestAttemptId))
+                .Select(part => new ResultPartState(part.Id, part.TestAttemptId, part.ExamPartId, part.StatusId,
+                    part.CompletedAt, part.ExamPart!.PartNo, part.ExamPart.QualificationScore))
+                .ToListAsync(cancellationToken));
+        }
+
+        var attemptsById = attempts.ToDictionary(attempt => attempt.Id);
+
+        var partsByAttempt = parts.GroupBy(part => part.TestAttemptId)
+            .ToDictionary(group => group.Key, group => group.OrderBy(part => part.PartNo).ToArray());
+
+        var validStructures = new Dictionary<Guid, ResultPartState[]>();
+
+        var scoringRequests = new List<CandidateExamPartScoringRequest>();
+
+        foreach (var attemptId in attemptIds)
+        {
+            if (!attemptsById.TryGetValue(attemptId, out var attempt) || attempt.CompletedAt is null
+                                                                      || (attempt.StatusId
+                                                                          != TestAttemptStatusIds.Completed
+                                                                          && attempt.StatusId
+                                                                          != TestAttemptStatusIds.TimedOut))
             {
-                x.Id,
-                x.StatusId,
-                x.CompletedAt,
-                x.ExamPart!.PartNo,
-                x.ExamPart.QualificationScore
-            })
-            .ToListAsync(cancellationToken);
-
-        if (parts.Count != 2 ||
-            parts[0].PartNo != 1 ||
-            parts[1].PartNo != 2 ||
-            parts[0].QualificationScore is null ||
-            parts[0].QualificationScore is < 0 or > 100 ||
-            !IsFinished(parts[0].StatusId) ||
-            parts[0].CompletedAt is null)
-        {
-            return null;
-        }
-
-        var specializedScores =
-            await scoringService.CalculatePartCategoryScoresAsync(
-                testAttemptId,
-                parts[0].Id,
-                cancellationToken);
-
-        if (specializedScores is not { Count: 1 } || specializedScores[0].QuestionBankTypeId != QuestionBankTypeIds.Specialized)
-        {
-            return null;
-        }
-
-        var specialized = specializedScores[0];
-        var specializedQualificationThreshold = parts[0].QualificationScore!.Value;
-        var isSpecializedQualified = specialized.Score >= specializedQualificationThreshold;
-
-        if (!isSpecializedQualified)
-        {
-            if (parts[1].StatusId != TestAttemptPartStatusIds.NotStarted || parts[1].CompletedAt is not null)
-            {
-                return null;
+                continue;
             }
 
-            return new CandidateExamCalculatedScores(
-                SpecializedScore: specialized.Score,
-                SpecializedQualificationThreshold:
-                specializedQualificationThreshold,
-                IsSpecializedQualified: false,
-                EducationalScore: null,
-                SkillsScore: null,
-                FinalScore: null);
+            if (!partsByAttempt.TryGetValue(attemptId, out var attemptParts) || attemptParts.Length != 2
+                                                                             || attemptParts[0].PartNo != 1
+                                                                             || attemptParts[1].PartNo != 2
+                                                                             || attemptParts[0]
+                                                                                 .QualificationScore is null
+                                                                             || attemptParts[0].QualificationScore is
+                                                                                 < 0 or > 100
+                                                                             || !IsFinished(attemptParts[0].StatusId)
+                                                                             || attemptParts[0].CompletedAt is null)
+            {
+                continue;
+            }
+
+            validStructures[attemptId] = attemptParts;
+
+            scoringRequests.Add(
+                new CandidateExamPartScoringRequest(attemptId, attemptParts[0].Id, attemptParts[0].ExamPartId));
+
+            if (IsFinished(attemptParts[1].StatusId) && attemptParts[1].CompletedAt is not null)
+            {
+                scoringRequests.Add(new CandidateExamPartScoringRequest(attemptId, attemptParts[1].Id,
+                    attemptParts[1].ExamPartId));
+            }
         }
 
-        if (!IsFinished(parts[1].StatusId) || parts[1].CompletedAt is null)
+        var partScores = await scoringService.CalculatePartCategoryScoresManyAsync(scoringRequests, cancellationToken);
+
+        var results = new Dictionary<Guid, CandidateExamCalculatedScores>();
+
+        foreach (var pair in validStructures)
         {
-            return null;
+            var attemptId = pair.Key;
+            var attemptParts = pair.Value;
+
+            var specializedPart = attemptParts[0];
+
+            var remainingPart = attemptParts[1];
+
+            if (!partScores.TryGetValue(specializedPart.Id, out var specializedScores)
+                || specializedScores is not { Count: 1 }
+                || specializedScores[0].QuestionBankTypeId != QuestionBankTypeIds.Specialized)
+            {
+                continue;
+            }
+
+            var specialized = specializedScores[0];
+
+            var specializedThreshold = specializedPart.QualificationScore!.Value;
+
+            var isSpecializedQualified = specialized.Score >= specializedThreshold;
+
+            if (!isSpecializedQualified)
+            {
+                if (remainingPart.StatusId != TestAttemptPartStatusIds.NotStarted
+                    || remainingPart.CompletedAt is not null)
+                {
+                    continue;
+                }
+
+                results[attemptId] =
+                    new CandidateExamCalculatedScores(specialized.Score, specializedThreshold, false, null, null, null);
+
+                continue;
+            }
+
+            if (!IsFinished(remainingPart.StatusId) || remainingPart.CompletedAt is null
+                                                    || !partScores.TryGetValue(remainingPart.Id,
+                                                        out var remainingScores) || remainingScores is not { Count: 2 })
+            {
+                continue;
+            }
+
+            var educational =
+                remainingScores.SingleOrDefault(score => score.QuestionBankTypeId == QuestionBankTypeIds.Educational);
+
+            var skills =
+                remainingScores.SingleOrDefault(score => score.QuestionBankTypeId == QuestionBankTypeIds.Skills);
+
+            if (educational is null || skills is null)
+            {
+                continue;
+            }
+
+            var totalWeight = specialized.WeightPercent + educational.WeightPercent + skills.WeightPercent;
+
+            if (totalWeight != 100m)
+            {
+                continue;
+            }
+
+            var finalScore =
+                decimal.Round(
+                    (specialized.Score * specialized.WeightPercent + educational.Score * educational.WeightPercent
+                                                                   + skills.Score * skills.WeightPercent) / 100m, 2,
+                    MidpointRounding.AwayFromZero);
+
+            results[attemptId] = new CandidateExamCalculatedScores(specialized.Score, specializedThreshold, true,
+                educational.Score, skills.Score, finalScore);
         }
 
-        var remainingScores =
-            await scoringService.CalculatePartCategoryScoresAsync(
-                testAttemptId,
-                parts[1].Id,
-                cancellationToken);
-
-        if (remainingScores is not { Count: 2 })
-        {
-            return null;
-        }
-
-        var educational = remainingScores.SingleOrDefault(x => x.QuestionBankTypeId ==
-                                                               QuestionBankTypeIds.Educational);
-
-        var skills = remainingScores.SingleOrDefault(x => x.QuestionBankTypeId ==
-                                                          QuestionBankTypeIds.Skills);
-
-        if (educational is null || skills is null)
-        {
-            return null;
-        }
-
-        var totalWeight = specialized.WeightPercent + educational.WeightPercent + skills.WeightPercent;
-
-        if (totalWeight != 100m)
-        {
-            return null;
-        }
-
-        var finalScore = decimal.Round(
-            (
-                specialized.Score *
-                specialized.WeightPercent +
-                educational.Score *
-                educational.WeightPercent +
-                skills.Score *
-                skills.WeightPercent
-            ) / 100m,
-            2,
-            MidpointRounding.AwayFromZero);
-
-        return new CandidateExamCalculatedScores(
-            SpecializedScore: specialized.Score,
-            SpecializedQualificationThreshold:
-            specializedQualificationThreshold,
-            IsSpecializedQualified: true,
-            EducationalScore: educational.Score,
-            SkillsScore: skills.Score,
-            FinalScore: finalScore);
+        return results;
     }
 
     private static bool IsFinished(Guid statusId) =>
-        statusId == TestAttemptPartStatusIds.Completed ||
-        statusId == TestAttemptPartStatusIds.TimedOut;
+        statusId == TestAttemptPartStatusIds.Completed || statusId == TestAttemptPartStatusIds.TimedOut;
+
+    private sealed record ResultAttemptState(Guid Id, Guid StatusId, DateTime? CompletedAt);
+
+    private sealed record ResultPartState(
+        Guid Id,
+        Guid TestAttemptId,
+        Guid ExamPartId,
+        Guid StatusId,
+        DateTime? CompletedAt,
+        int PartNo,
+        decimal? QualificationScore);
 }

@@ -31,7 +31,8 @@ public sealed class GetCandidateExamCurrentQuestionQueryHandler(
         var isArabic = localizationService.GetCurrentLanguage() == "ar";
         var attempt = await unitOfWork.Context.Set<TestAttempt>()
             .AsNoTracking()
-            .Where(x => x.Id == query.TestAttemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == query.UserId)
+            .OwnedByApplicant(query.UserId)
+            .Where(x => x.Id == query.TestAttemptId)
             .Select(x => new CandidateExamCurrentQuestionAttemptData(x.Id, x.StatusId, x.TestSessionCandidate!.StatusId,
                 x.TestSessionCandidate.TestSession!.ExamId,
                 x.TestSessionCandidate.TestSession.Exam!.AllowPreviousQuestion,

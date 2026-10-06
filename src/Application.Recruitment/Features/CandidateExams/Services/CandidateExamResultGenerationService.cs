@@ -14,9 +14,7 @@ public sealed class CandidateExamResultGenerationService(
     TimeProvider timeProvider,
     IApplicationLockService applicationLockService)
 {
-    public async Task<IReadOnlyList<Guid>> GetReadyExamIdsAsync(
-        int take,
-        CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Guid>> GetReadyExamIdsAsync(int take, CancellationToken cancellationToken)
     {
         if (take <= 0)
             return [];
@@ -24,33 +22,27 @@ public sealed class CandidateExamResultGenerationService(
         var resultCandidates = unitOfWork.Context.Set<ExamResultCandidate>();
         var unreportedCandidates = unitOfWork.Context.Set<TestSessionCandidate>()
             .AsNoTracking()
-            .Where(x =>
-                x.StatusId != TestSessionCandidateStatusIds.Cancelled &&
-                x.StatusId != TestSessionCandidateStatusIds.Rescheduled &&
-                x.TestSession!.StatusId != TestSessionStatusIds.Cancelled &&
-                !resultCandidates.Any(result => result.TestSessionCandidateId == x.Id));
+            .Where(x => x.StatusId != TestSessionCandidateStatusIds.Cancelled
+                        && x.StatusId != TestSessionCandidateStatusIds.Rescheduled
+                        && x.TestSession!.StatusId != TestSessionStatusIds.Cancelled
+                        && !resultCandidates.Any(result => result.TestSessionCandidateId == x.Id));
 
         var initialReadyExamIds = unreportedCandidates
             .Where(x => x.TestSession!.StatusId == TestSessionStatusIds.Closed)
             .Select(x => x.TestSession!.ExamId)
             .Distinct()
             .Where(examId => !unreportedCandidates.Any(x =>
-                x.TestSession!.ExamId == examId &&
-                x.TestSession.StatusId != TestSessionStatusIds.Closed));
+                x.TestSession!.ExamId == examId && x.TestSession.StatusId != TestSessionStatusIds.Closed));
 
-        var returnedReadyExamIds = GetReadyReturnedReports()
-            .Select(report => report.ExamId);
+        var returnedReadyExamIds = GetReadyReturnedReports().Select(report => report.ExamId);
 
-        return await initialReadyExamIds
-            .Union(returnedReadyExamIds)
+        return await initialReadyExamIds.Union(returnedReadyExamIds)
             .OrderBy(examId => examId)
             .Take(take)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task ProcessReadyResultsAsync(
-        Guid examId,
-        CancellationToken cancellationToken)
+    public async Task ProcessReadyResultsAsync(Guid examId, CancellationToken cancellationToken)
     {
         if (examId == Guid.Empty)
             return;
@@ -65,8 +57,8 @@ public sealed class CandidateExamResultGenerationService(
         {
             await unitOfWork.ExecuteInTransactionAsync(async token =>
             {
-                await applicationLockService.AcquireExclusiveAsync(
-                    ApplicationLockResources.CandidateExamResult(examId), token);
+                await applicationLockService.AcquireExclusiveAsync(ApplicationLockResources.CandidateExamResult(examId),
+                    token);
                 await applicationLockService.AcquireExclusiveAsync(
                     ApplicationLockResources.ExamResultReportWorkflow(reportId), token);
                 return await ReprocessReturnedReportAsync(reportId, token);
@@ -75,8 +67,8 @@ public sealed class CandidateExamResultGenerationService(
 
         await unitOfWork.ExecuteInTransactionAsync(async token =>
         {
-            await applicationLockService.AcquireExclusiveAsync(
-                ApplicationLockResources.CandidateExamResult(examId), token);
+            await applicationLockService.AcquireExclusiveAsync(ApplicationLockResources.CandidateExamResult(examId),
+                token);
             return await GenerateInternalAsync(examId, token);
         }, cancellationToken);
     }
@@ -88,38 +80,34 @@ public sealed class CandidateExamResultGenerationService(
             .Where(interruption => interruption.StatusId == TestAttemptInterruptionStatusIds.Open);
         var acceptedScoreInterruptions = unitOfWork.Context.Set<TestAttemptInterruption>()
             .AsNoTracking()
-            .Where(interruption =>
-                interruption.StatusId == TestAttemptInterruptionStatusIds.Resolved &&
-                interruption.ResolutionActionId ==
-                    TestAttemptInterruptionResolutionActionIds.AcceptCalculatedScore);
+            .Where(interruption => interruption.StatusId == TestAttemptInterruptionStatusIds.Resolved
+                                   && interruption.ResolutionActionId == TestAttemptInterruptionResolutionActionIds
+                                       .AcceptCalculatedScore);
 
         return unitOfWork.Context.Set<ExamResultReport>()
             .AsNoTracking()
-            .Where(report => report.StatusId == ExamResultReportStatusIds.Returned &&
-                report.Candidates.Any(candidate =>
-                    candidate.ResultStatusId == ExamResultCandidateResultStatusIds.RequiresAction &&
-                    candidate.TestSessionCandidate != null &&
-                    candidate.TestSessionCandidate.StatusId != TestSessionCandidateStatusIds.Cancelled &&
-                    candidate.TestSessionCandidate.StatusId != TestSessionCandidateStatusIds.Rescheduled &&
-                    candidate.TestSessionCandidate.TestSession!.StatusId == TestSessionStatusIds.Closed &&
-                    ((candidate.TestSessionCandidate.RescheduledFromTestSessionCandidateId != null &&
-                       candidate.TestSessionCandidate.AttendanceStatusId ==
-                          TestSessionCandidateAttendanceStatusIds.NoShow &&
-                       candidate.TestSessionCandidate.TestAttempt == null) ||
-                     (candidate.TestSessionCandidate.TestAttempt != null &&
-                      (candidate.TestSessionCandidate.TestAttempt.StatusId == TestAttemptStatusIds.Completed ||
-                       candidate.TestSessionCandidate.TestAttempt.StatusId == TestAttemptStatusIds.TimedOut) &&
-                      (candidate.TestSessionCandidate.RescheduledFromTestSessionCandidateId != null ||
-                       (candidate.TestAttemptId == candidate.TestSessionCandidate.TestAttempt.Id &&
-                        acceptedScoreInterruptions.Any(interruption =>
-                           interruption.TestAttemptId == candidate.TestSessionCandidate.TestAttempt.Id))) &&
-                      !openInterruptions.Any(interruption =>
-                          interruption.TestAttemptId == candidate.TestSessionCandidate.TestAttempt.Id)))));
+            .Where(report => report.StatusId == ExamResultReportStatusIds.Returned && report.Candidates.Any(candidate =>
+                candidate.ResultStatusId == ExamResultCandidateResultStatusIds.RequiresAction
+                && candidate.TestSessionCandidate != null
+                && candidate.TestSessionCandidate.StatusId != TestSessionCandidateStatusIds.Cancelled
+                && candidate.TestSessionCandidate.StatusId != TestSessionCandidateStatusIds.Rescheduled
+                && candidate.TestSessionCandidate.TestSession!.StatusId == TestSessionStatusIds.Closed
+                && ((candidate.TestSessionCandidate.RescheduledFromTestSessionCandidateId != null
+                     && candidate.TestSessionCandidate.AttendanceStatusId
+                     == TestSessionCandidateAttendanceStatusIds.NoShow
+                     && candidate.TestSessionCandidate.TestAttempt == null)
+                    || (candidate.TestSessionCandidate.TestAttempt != null
+                        && (candidate.TestSessionCandidate.TestAttempt.StatusId == TestAttemptStatusIds.Completed
+                            || candidate.TestSessionCandidate.TestAttempt.StatusId == TestAttemptStatusIds.TimedOut)
+                        && (candidate.TestSessionCandidate.RescheduledFromTestSessionCandidateId != null
+                            || (candidate.TestAttemptId == candidate.TestSessionCandidate.TestAttempt.Id
+                                && acceptedScoreInterruptions.Any(interruption =>
+                                    interruption.TestAttemptId == candidate.TestSessionCandidate.TestAttempt.Id)))
+                        && !openInterruptions.Any(interruption =>
+                            interruption.TestAttemptId == candidate.TestSessionCandidate.TestAttempt.Id)))));
     }
 
-    private async Task<bool> ReprocessReturnedReportAsync(
-        Guid reportId,
-        CancellationToken cancellationToken)
+    private async Task<bool> ReprocessReturnedReportAsync(Guid reportId, CancellationToken cancellationToken)
     {
         var report = await unitOfWork.Context.Set<ExamResultReport>()
             .Include(x => x.Candidates)
@@ -133,15 +121,15 @@ public sealed class CandidateExamResultGenerationService(
             .Where(x => x.StatusId == TestAttemptInterruptionStatusIds.Open);
         var acceptedScoreInterruptions = unitOfWork.Context.Set<TestAttemptInterruption>()
             .AsNoTracking()
-            .Where(x => x.StatusId == TestAttemptInterruptionStatusIds.Resolved &&
-                x.ResolutionActionId == TestAttemptInterruptionResolutionActionIds.AcceptCalculatedScore);
+            .Where(x => x.StatusId == TestAttemptInterruptionStatusIds.Resolved && x.ResolutionActionId
+                == TestAttemptInterruptionResolutionActionIds.AcceptCalculatedScore);
 
         var assignments = await unitOfWork.Context.Set<TestSessionCandidate>()
             .AsNoTracking()
             .Where(x => resultCandidates.Any(candidate =>
-                candidate.ExamResultReportId == reportId &&
-                candidate.ResultStatusId == ExamResultCandidateResultStatusIds.RequiresAction &&
-                candidate.TestSessionCandidateId == x.Id))
+                candidate.ExamResultReportId == reportId
+                && candidate.ResultStatusId == ExamResultCandidateResultStatusIds.RequiresAction
+                && candidate.TestSessionCandidateId == x.Id))
             .Select(x => new
             {
                 x.Id,
@@ -149,12 +137,13 @@ public sealed class CandidateExamResultGenerationService(
                 x.RescheduledFromTestSessionCandidateId,
                 x.StatusId,
                 x.AttendanceStatusId,
-                ExamId = x.TestSession!.ExamId,
+                x.TestSession!.ExamId,
                 TestSessionStatusId = x.TestSession.StatusId,
                 TestAttemptId = x.TestAttempt == null ? null : (Guid?)x.TestAttempt.Id,
                 TestAttemptStatusId = x.TestAttempt == null ? null : (Guid?)x.TestAttempt.StatusId,
-                HasOpenInterruption = x.TestAttempt != null && openInterruptions.Any(interruption =>
-                    interruption.TestAttemptId == x.TestAttempt.Id),
+                HasOpenInterruption =
+                    x.TestAttempt != null
+                    && openInterruptions.Any(interruption => interruption.TestAttemptId == x.TestAttempt.Id),
                 HasAcceptedCalculatedScore = x.TestAttempt != null && acceptedScoreInterruptions.Any(interruption =>
                     interruption.TestAttemptId == x.TestAttempt.Id)
             })
@@ -162,10 +151,13 @@ public sealed class CandidateExamResultGenerationService(
 
         var snapshotAt = timeProvider.GetUtcNow().UtcDateTime;
         var changed = false;
+
+        var calculationRequests = new List<ReprocessCalculationRequest>();
+
         foreach (var candidate in report.Candidates.Where(x =>
                      x.ResultStatusId == ExamResultCandidateResultStatusIds.RequiresAction))
         {
-            if (candidate.TestSessionCandidateId is not Guid assignmentId)
+            if (candidate.TestSessionCandidateId is not { } assignmentId)
                 continue;
 
             if (!assignments.TryGetValue(assignmentId, out var assignment))
@@ -173,65 +165,68 @@ public sealed class CandidateExamResultGenerationService(
                     $"Current assignment {assignmentId} is missing for exam result candidate {candidate.Id}.");
 
             // Only the assignment currently linked to this result is eligible; earlier links are history.
-            if (assignment.RescheduledFromTestSessionCandidateId is null &&
-                (!assignment.HasAcceptedCalculatedScore ||
-                 candidate.TestAttemptId != assignment.TestAttemptId))
+            if (assignment.RescheduledFromTestSessionCandidateId is null && (!assignment.HasAcceptedCalculatedScore
+                                                                             || candidate.TestAttemptId
+                                                                             != assignment.TestAttemptId))
                 continue;
             if (assignment.InvitationId != candidate.InvitationId || assignment.ExamId != report.ExamId)
                 throw new InvalidOperationException(
                     $"Current assignment {assignmentId} does not match exam result candidate {candidate.Id}.");
-            if (assignment.StatusId == TestSessionCandidateStatusIds.Cancelled ||
-                assignment.StatusId == TestSessionCandidateStatusIds.Rescheduled ||
-                assignment.TestSessionStatusId != TestSessionStatusIds.Closed)
+            if (assignment.StatusId == TestSessionCandidateStatusIds.Cancelled
+                || assignment.StatusId == TestSessionCandidateStatusIds.Rescheduled
+                || assignment.TestSessionStatusId != TestSessionStatusIds.Closed)
                 continue;
 
-            if (assignment.AttendanceStatusId == TestSessionCandidateAttendanceStatusIds.NoShow &&
-                assignment.TestAttemptId is null)
+            if (assignment.AttendanceStatusId == TestSessionCandidateAttendanceStatusIds.NoShow
+                && assignment.TestAttemptId is null)
             {
-                candidate.TestAttemptId = null;
-                candidate.SpecializedScore = null;
-                candidate.EducationalScore = null;
-                candidate.SkillsScore = null;
-                candidate.FinalScore = null;
-                candidate.Rank = null;
-                candidate.ResultStatusId = ExamResultCandidateResultStatusIds.NoShow;
-                candidate.SnapshotAt = snapshotAt;
+                candidate.MarkNoShow(snapshotAt);
                 changed = true;
                 continue;
             }
 
-            if (assignment.TestAttemptId is not Guid attemptId ||
-                (assignment.TestAttemptStatusId != TestAttemptStatusIds.Completed &&
-                 assignment.TestAttemptStatusId != TestAttemptStatusIds.TimedOut) ||
-                assignment.HasOpenInterruption)
+            if (assignment.TestAttemptId is not { } attemptId
+                || (assignment.TestAttemptStatusId != TestAttemptStatusIds.Completed
+                    && assignment.TestAttemptStatusId != TestAttemptStatusIds.TimedOut)
+                || assignment.HasOpenInterruption)
                 continue;
 
-            var calculated = await resultCalculationService.CalculateAsync(
-                attemptId, cancellationToken);
-            if (calculated is null ||
-                calculated.SpecializedQualificationThreshold != report.SpecializedQualificationThreshold)
-                throw new InvalidOperationException(
-                    $"Exam result calculation is inconsistent for report {report.Id}, candidate {candidate.Id}, attempt {attemptId}.");
+            calculationRequests.Add(new ReprocessCalculationRequest(candidate, attemptId));
+        }
 
-            candidate.TestAttemptId = attemptId;
-            candidate.SpecializedScore = calculated.SpecializedScore;
-            candidate.EducationalScore = calculated.EducationalScore;
-            candidate.SkillsScore = calculated.SkillsScore;
-            candidate.FinalScore = calculated.FinalScore;
-            candidate.Rank = null;
-            candidate.ResultStatusId = calculated.IsSpecializedQualified
-                ? ExamResultCandidateResultStatusIds.QualifiedForInterview
-                : ExamResultCandidateResultStatusIds.NotQualifiedForInterview;
-            candidate.SnapshotAt = snapshotAt;
-            changed = true;
+        if (calculationRequests.Count > 0)
+        {
+            var calculatedResults = await resultCalculationService.CalculateManyAsync(
+                calculationRequests.Select(x => x.TestAttemptId).Distinct().ToArray(), cancellationToken);
+
+            foreach (var request in calculationRequests)
+            {
+                if (!calculatedResults.TryGetValue(request.TestAttemptId, out var calculated)
+                    || calculated.SpecializedQualificationThreshold != report.SpecializedQualificationThreshold)
+                {
+                    throw new InvalidOperationException(
+                        $"Exam result calculation is inconsistent for report {report.Id}, "
+                        + $"candidate {request.Candidate.Id}, " + $"attempt {request.TestAttemptId}.");
+                }
+
+                request.Candidate.ApplyCalculatedResult(
+                    request.TestAttemptId,
+                    calculated.SpecializedScore,
+                    calculated.EducationalScore,
+                    calculated.SkillsScore,
+                    calculated.FinalScore,
+                    calculated.IsSpecializedQualified,
+                    snapshotAt);
+
+                changed = true;
+            }
         }
 
         if (!changed)
             return false;
 
-        ApplyRanking(report.Candidates);
-        if (report.Candidates.All(x =>
-                x.ResultStatusId != ExamResultCandidateResultStatusIds.RequiresAction))
+        report.RecalculateRanking();
+        if (report.Candidates.All(x => x.ResultStatusId != ExamResultCandidateResultStatusIds.RequiresAction))
         {
             var transition = report.MarkProcessingCompleted();
             if (transition.IsFailed)
@@ -243,42 +238,24 @@ public sealed class CandidateExamResultGenerationService(
         return true;
     }
 
-    private async Task<ExamResultReport?> GenerateInternalAsync(
-        Guid examId,
-        CancellationToken cancellationToken)
+    private async Task<ExamResultReport?> GenerateInternalAsync(Guid examId, CancellationToken cancellationToken)
     {
-        var resultCandidates =
-            unitOfWork.Context.Set<ExamResultCandidate>();
+        var resultCandidates = unitOfWork.Context.Set<ExamResultCandidate>();
 
         var openInterruptions = unitOfWork.Context.Set<TestAttemptInterruption>()
             .AsNoTracking()
             .Where(x => x.StatusId == TestAttemptInterruptionStatusIds.Open);
 
-        var candidates = await unitOfWork.Context
-            .Set<TestSessionCandidate>()
+        var candidates = await unitOfWork.Context.Set<TestSessionCandidate>()
             .AsNoTracking()
-            .Where(x =>
-                x.TestSession!.ExamId == examId &&
-                x.TestSession.StatusId !=
-                    TestSessionStatusIds.Cancelled &&
-                x.StatusId !=
-                    TestSessionCandidateStatusIds.Cancelled &&
-                x.StatusId !=
-                    TestSessionCandidateStatusIds.Rescheduled &&
-                !resultCandidates.Any(result =>
-                    result.TestSessionCandidateId == x.Id))
-            .Select(x => new CandidateExamResultGenerationCandidateSnapshot(
-                x.Id,
-                x.InvitationId,
-                x.TestSessionId,
-                x.TestSession!.StatusId,
-                x.AttendanceStatusId,
-                x.TestAttempt == null
-                    ? null
-                    : x.TestAttempt.Id,
-                x.TestAttempt == null
-                    ? null
-                    : x.TestAttempt.StatusId,
+            .Where(x => x.TestSession!.ExamId == examId && x.TestSession.StatusId != TestSessionStatusIds.Cancelled
+                                                        && x.StatusId != TestSessionCandidateStatusIds.Cancelled
+                                                        && x.StatusId != TestSessionCandidateStatusIds.Rescheduled
+                                                        && !resultCandidates.Any(result =>
+                                                            result.TestSessionCandidateId == x.Id))
+            .Select(x => new CandidateExamResultGenerationCandidateSnapshot(x.Id, x.InvitationId, x.TestSessionId,
+                x.TestSession!.StatusId, x.AttendanceStatusId, x.TestAttempt == null ? null : x.TestAttempt.Id,
+                x.TestAttempt == null ? null : x.TestAttempt.StatusId,
                 x.TestAttempt != null && openInterruptions.Any(interruption =>
                     interruption.TestAttemptId == x.TestAttempt.Id)))
             .ToListAsync(cancellationToken);
@@ -288,241 +265,154 @@ public sealed class CandidateExamResultGenerationService(
 
         // We must not create the report while any candidate
         // in this unreported wave can still change.
-        if (candidates.Any(x =>
-                x.TestSessionStatusId !=
-                TestSessionStatusIds.Closed))
+        if (candidates.Any(x => x.TestSessionStatusId != TestSessionStatusIds.Closed))
         {
             return null;
         }
 
         // Rescheduling should leave only one active assignment
         // for the invitation.
-        if (candidates
-            .GroupBy(x => x.InvitationId)
-            .Any(x => x.Count() > 1))
+        if (candidates.GroupBy(x => x.InvitationId).Any(x => x.Count() > 1))
         {
             return null;
         }
 
-        var specializedQualificationThreshold =
-            await unitOfWork.Context
-                .Set<ExamPart>()
-                .AsNoTracking()
-                .Where(x =>
-                    x.ExamId == examId &&
-                    x.PartNo == 1)
-                .Select(x => x.QualificationScore)
-                .SingleOrDefaultAsync(cancellationToken);
+        var specializedQualificationThreshold = await unitOfWork.Context.Set<ExamPart>()
+            .AsNoTracking()
+            .Where(x => x.ExamId == examId && x.PartNo == 1)
+            .Select(x => x.QualificationScore)
+            .SingleOrDefaultAsync(cancellationToken);
 
-        if (specializedQualificationThreshold is null ||
-            specializedQualificationThreshold is < 0 or > 100)
+        if (specializedQualificationThreshold is null || specializedQualificationThreshold is < 0 or > 100)
         {
             return null;
         }
 
-        var snapshotAt =
-            timeProvider.GetUtcNow().UtcDateTime;
+        var snapshotAt = timeProvider.GetUtcNow().UtcDateTime;
 
-        var report = ExamResultReport.Create(
-            examId,
-            specializedQualificationThreshold.Value);
+        var calculableAttemptIds = candidates.Where(CanCalculateResult)
+            .Select(candidate => candidate.TestAttemptId!.Value)
+            .Distinct()
+            .ToArray();
+
+        var calculatedResults =
+            await resultCalculationService.CalculateManyAsync(calculableAttemptIds, cancellationToken);
+
+        var report = ExamResultReport.Create(examId, specializedQualificationThreshold.Value);
 
         foreach (var candidate in candidates)
         {
-            var result =
-                await BuildCandidateAsync(
-                    candidate,
-                    specializedQualificationThreshold.Value,
-                    snapshotAt,
-                    cancellationToken);
+            var result = BuildCandidate(candidate, specializedQualificationThreshold.Value, snapshotAt,
+                calculatedResults);
 
             if (result is null)
+            {
                 return null;
+            }
 
             report.Candidates.Add(result);
         }
 
-        ApplyRanking(report.Candidates);
-        
-        var readyResult =
-            report.MarkReadyForReview();
+        report.RecalculateRanking();
+
+        var readyResult = report.MarkReadyForReview();
 
         if (readyResult.IsFailed)
             return null;
 
-        await unitOfWork.Context
-            .Set<ExamResultReport>()
-            .AddAsync(report, cancellationToken);
+        await unitOfWork.Context.Set<ExamResultReport>().AddAsync(report, cancellationToken);
 
-        await unitOfWork.SaveChangesAsync(
-            cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return report;
     }
 
-    private async Task<ExamResultCandidate?> BuildCandidateAsync(
-        CandidateExamResultGenerationCandidateSnapshot candidate,
-        decimal specializedQualificationThreshold,
-        DateTime snapshotAt,
-        CancellationToken cancellationToken)
+    private static bool CanCalculateResult(CandidateExamResultGenerationCandidateSnapshot candidate) =>
+        candidate.AttendanceStatusId != TestSessionCandidateAttendanceStatusIds.NoShow
+        && candidate.TestAttemptId.HasValue
+        && (candidate.TestAttemptStatusId == TestAttemptStatusIds.Completed
+            || candidate.TestAttemptStatusId == TestAttemptStatusIds.TimedOut) && !candidate.HasOpenInterruption;
+
+    private static ExamResultCandidate? BuildCandidate(CandidateExamResultGenerationCandidateSnapshot candidate,
+        decimal specializedQualificationThreshold, DateTime snapshotAt,
+        IReadOnlyDictionary<Guid, CandidateExamCalculatedScores> calculatedResults)
     {
-        if (candidate.AttendanceStatusId ==
-            TestSessionCandidateAttendanceStatusIds.NoShow)
+        if (candidate.AttendanceStatusId == TestSessionCandidateAttendanceStatusIds.NoShow)
         {
             if (candidate.TestAttemptId is not null)
             {
-                return BuildRequiresAction(
-                    candidate,
-                    snapshotAt);
+                return BuildRequiresAction(candidate, snapshotAt);
             }
 
-            return new ExamResultCandidate
+            var noShowResult = new ExamResultCandidate
             {
-                InvitationId =
-                    candidate.InvitationId,
-
+                InvitationId = candidate.InvitationId,
                 TestSessionCandidateId =
-                    candidate.TestSessionCandidateId,
-
-                TestAttemptId = null,
-
-                SpecializedScore = null,
-                EducationalScore = null,
-                SkillsScore = null,
-                FinalScore = null,
-                Rank = null,
-
-                ResultStatusId =
-                    ExamResultCandidateResultStatusIds.NoShow,
-
-                SnapshotAt = snapshotAt
+                    candidate.TestSessionCandidateId
             };
+
+            noShowResult.MarkNoShow(snapshotAt);
+
+            return noShowResult;
         }
 
-        if (candidate.TestAttemptId is null ||
-            candidate.TestAttemptStatusId is null)
+        if (!CanCalculateResult(candidate))
         {
             return BuildRequiresAction(
                 candidate,
                 snapshotAt);
         }
 
-        if (candidate.TestAttemptStatusId !=
-                TestAttemptStatusIds.Completed &&
-            candidate.TestAttemptStatusId !=
-                TestAttemptStatusIds.TimedOut ||
-            candidate.HasOpenInterruption)
-        {
-            return BuildRequiresAction(
-                candidate,
-                snapshotAt);
-        }
-
-        var calculated =
-            await resultCalculationService.CalculateAsync(
-                candidate.TestAttemptId.Value,
-                cancellationToken);
-
-        if (calculated is null)
-            return null;
-
-        if (calculated.SpecializedQualificationThreshold !=
-            specializedQualificationThreshold)
+        var testAttemptId = candidate.TestAttemptId!.Value;
+        
+        if (!calculatedResults.TryGetValue(testAttemptId, out var calculated))
         {
             return null;
         }
 
-        return new ExamResultCandidate
+        if (calculated.SpecializedQualificationThreshold != specializedQualificationThreshold)
         {
-            InvitationId =
-                candidate.InvitationId,
+            return null;
+        }
 
+        var result = new ExamResultCandidate
+        {
+            InvitationId = candidate.InvitationId,
             TestSessionCandidateId =
-                candidate.TestSessionCandidateId,
-
-            TestAttemptId =
-                candidate.TestAttemptId,
-
-            SpecializedScore =
-                calculated.SpecializedScore,
-
-            EducationalScore =
-                calculated.EducationalScore,
-
-            SkillsScore =
-                calculated.SkillsScore,
-
-            FinalScore =
-                calculated.FinalScore,
-
-            Rank = null,
-
-            ResultStatusId =
-                calculated.IsSpecializedQualified
-                    ? ExamResultCandidateResultStatusIds
-                        .QualifiedForInterview
-                    : ExamResultCandidateResultStatusIds
-                        .NotQualifiedForInterview,
-
-            SnapshotAt = snapshotAt
+                candidate.TestSessionCandidateId
         };
+
+        result.ApplyCalculatedResult(
+            testAttemptId,
+            calculated.SpecializedScore,
+            calculated.EducationalScore,
+            calculated.SkillsScore,
+            calculated.FinalScore,
+            calculated.IsSpecializedQualified,
+            snapshotAt);
+
+        return result;
     }
 
-    private static ExamResultCandidate BuildRequiresAction(
-        CandidateExamResultGenerationCandidateSnapshot candidate,
+    private static ExamResultCandidate BuildRequiresAction(CandidateExamResultGenerationCandidateSnapshot candidate,
         DateTime snapshotAt)
     {
         return new ExamResultCandidate
         {
-            InvitationId =
-                candidate.InvitationId,
-
-            TestSessionCandidateId =
-                candidate.TestSessionCandidateId,
-
-            TestAttemptId =
-                candidate.TestAttemptId,
-
+            InvitationId = candidate.InvitationId,
+            TestSessionCandidateId = candidate.TestSessionCandidateId,
+            TestAttemptId = candidate.TestAttemptId,
             SpecializedScore = null,
             EducationalScore = null,
             SkillsScore = null,
             FinalScore = null,
             Rank = null,
-
-            ResultStatusId =
-                ExamResultCandidateResultStatusIds.RequiresAction,
-
+            ResultStatusId = ExamResultCandidateResultStatusIds.RequiresAction,
             SnapshotAt = snapshotAt
         };
     }
 
-    private static void ApplyRanking(
-        ICollection<ExamResultCandidate> candidates)
-    {
-        foreach (var candidate in candidates)
-            candidate.Rank = null;
-
-        var groups = candidates
-            .Where(x =>
-                x.ResultStatusId ==
-                    ExamResultCandidateResultStatusIds
-                        .QualifiedForInterview &&
-                x.FinalScore.HasValue)
-            .GroupBy(x => x.FinalScore!.Value)
-            .OrderByDescending(x => x.Key)
-            .ToList();
-
-        var rank = 1;
-
-        foreach (var group in groups)
-        {
-            foreach (var candidate in group)
-            {
-                candidate.Rank = rank;
-            }
-
-            rank++;
-        }
-    }
-
+    private sealed record ReprocessCalculationRequest(
+        ExamResultCandidate Candidate,
+        Guid TestAttemptId);
 }

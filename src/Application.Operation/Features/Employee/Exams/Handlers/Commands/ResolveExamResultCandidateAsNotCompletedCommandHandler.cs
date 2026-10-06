@@ -88,11 +88,11 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
                         return InvalidState();
 
                     var interruption = openInterruptions[0];
-                    interruption.ResolutionActionId = TestAttemptInterruptionResolutionActionIds.Cancel;
-                    interruption.ResolutionNotes = notes;
-                    interruption.ResolvedById = employeeId;
-                    interruption.ResolvedAt = resolvedAt;
-                    interruption.StatusId = TestAttemptInterruptionStatusIds.Resolved;
+                    interruption.Resolve(
+                        TestAttemptInterruptionResolutionActionIds.Cancel,
+                        notes,
+                        employeeId,
+                        resolvedAt);
                     attempt.CancelInterrupted();
                 }
                 else if (attempt.StatusId == TestAttemptStatusIds.Completed
@@ -103,11 +103,11 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
                         return InvalidState();
 
                     var interruption = openInterruptions[0];
-                    interruption.ResolutionActionId = TestAttemptInterruptionResolutionActionIds.Cancel;
-                    interruption.ResolutionNotes = notes;
-                    interruption.ResolvedById = employeeId;
-                    interruption.ResolvedAt = resolvedAt;
-                    interruption.StatusId = TestAttemptInterruptionStatusIds.Resolved;
+                    interruption.Resolve(
+                        TestAttemptInterruptionResolutionActionIds.Cancel,
+                        notes,
+                        employeeId,
+                        resolvedAt);
                 }
                 else if ((attempt.StatusId != TestAttemptStatusIds.Cancelled
                           && attempt.StatusId != TestAttemptStatusIds.NotStarted) || attempt.ActiveSessionId is not null
@@ -120,8 +120,7 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
             }
 
             var previousResultStatus = candidate.ResultStatusId;
-            candidate.ResultStatusId = ExamResultCandidateResultStatusIds.NotCompleted;
-            candidate.SnapshotAt = resolvedAt;
+            candidate.MarkNotCompleted(resolvedAt);
 
             var remainingRequiresActionCount = report.Candidates.Count(x =>
                 x.ResultStatusId == ExamResultCandidateResultStatusIds.RequiresAction);

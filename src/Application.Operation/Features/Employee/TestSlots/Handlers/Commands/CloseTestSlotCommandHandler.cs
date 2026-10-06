@@ -96,10 +96,10 @@ public sealed class CloseTestSlotCommandHandler(
 
             foreach (var session in sessions.Where(session => session.StatusId != TestSessionStatusIds.Closed))
             {
-                session.StatusId = TestSessionStatusIds.Closed;
+                session.MarkClosed();
             }
 
-            testSlot.StatusId = TestSlotStatusIds.Closed;
+            testSlot.Close();
 
             await unitOfWork.SaveChangesAsync(token);
 

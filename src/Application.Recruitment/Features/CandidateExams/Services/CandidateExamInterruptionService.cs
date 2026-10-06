@@ -1,3 +1,4 @@
+using Application.Recruitment.Features.CandidateExams.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Concurrency;
@@ -26,11 +27,35 @@ public sealed class CandidateExamInterruptionService(
     {
         var isOwned = await unitOfWork.Context.Set<TestAttempt>()
             .AsNoTracking()
-            .AnyAsync(x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId,
-                cancellationToken);
+            .OwnedByApplicant(userId)
+            .AnyAsync(x => x.Id == attemptId, cancellationToken);
 
         return isOwned && await TryInterruptCoreAsync(attemptId, userId, cancellationToken);
     }
+
+    private IQueryable<ConnectionState> QueryConnectionStates() =>
+        unitOfWork.Context.Set<CandidateExamConnection>()
+            .AsNoTracking()
+            .GroupBy(connection => connection.TestAttemptId)
+            .Select(group => new ConnectionState
+            {
+                TestAttemptId = group.Key,
+                LatestLastSeenAt = group.Max(x => x.LastSeenAt),
+                LatestExpiresAt = group.Max(x => x.ExpiresAt)
+            });
+
+    private IQueryable<ResolvedResumeState> QueryResolvedResumeStates() =>
+        unitOfWork.Context.Set<TestAttemptInterruption>()
+            .AsNoTracking()
+            .Where(interruption => interruption.StatusId == TestAttemptInterruptionStatusIds.Resolved
+                                   && interruption.ResolutionActionId
+                                   == TestAttemptInterruptionResolutionActionIds.Resume
+                                   && interruption.ResolvedAt.HasValue)
+            .GroupBy(interruption => interruption.TestAttemptId)
+            .Select(group => new ResolvedResumeState
+            {
+                TestAttemptId = group.Key, LatestResumeAt = group.Max(x => x.ResolvedAt)
+            });
 
     public async Task<IReadOnlyList<Guid>> GetDueAttemptIdsAsync(int take, CancellationToken cancellationToken)
     {
@@ -38,35 +63,30 @@ public sealed class CandidateExamInterruptionService(
             return [];
 
         var now = timeProvider.GetUtcNow().UtcDateTime;
+
         var cutoff = now.AddSeconds(-_settings.InterruptionGraceSeconds);
 
-        var resolvedResumes = unitOfWork.Context.Set<TestAttemptInterruption>()
-            .AsNoTracking()
-            .Where(x => x.StatusId == TestAttemptInterruptionStatusIds.Resolved
-                        && x.ResolutionActionId == TestAttemptInterruptionResolutionActionIds.Resume
-                        && x.ResolvedAt.HasValue);
+        var connectionStates = QueryConnectionStates();
 
-        return await (from attempt in unitOfWork.Context.Set<TestAttempt>().AsNoTracking()
-                let latestResumeAt =
-                    resolvedResumes.Where(interruption => interruption.TestAttemptId == attempt.Id)
-                        .Max(interruption => interruption.ResolvedAt)
-                where attempt.StatusId == TestAttemptStatusIds.InProgress
-                      && attempt.Parts.Any(part =>
-                          part.StatusId == TestAttemptPartStatusIds.InProgress && part.EffectiveDeadlineAt > now)
-                      && ((attempt.Connections.Any()
-                           && !attempt.Connections.Any(connection => connection.ExpiresAt > now)
-                           && attempt.Connections.Max(connection => connection.ExpiresAt)
-                           <= cutoff) || (!attempt.Connections.Any()
-                                          && ((latestResumeAt.HasValue
-                                               && latestResumeAt.Value <= cutoff)
-                                              || (!latestResumeAt.HasValue
-                                                  && attempt.StartedAt.HasValue
-                                                  && attempt.StartedAt.Value <= cutoff))))
-                orderby attempt.Connections.Any()
-                    ? attempt.Connections.Max(connection => connection.LastSeenAt)
-                    : latestResumeAt ?? attempt.StartedAt
-                select attempt.Id).Take(take)
-            .ToListAsync(cancellationToken);
+        var resumeStates = QueryResolvedResumeStates();
+
+        var query = from attempt in unitOfWork.Context.Set<TestAttempt>().AsNoTracking()
+            join connectionState in connectionStates on attempt.Id equals connectionState.TestAttemptId into
+                connectionJoin
+            from connectionState in connectionJoin.DefaultIfEmpty()
+            join resumeState in resumeStates on attempt.Id equals resumeState.TestAttemptId into resumeJoin
+            from resumeState in resumeJoin.DefaultIfEmpty()
+            let disconnectedSince = resumeState != null ? resumeState.LatestResumeAt : attempt.StartedAt
+            where attempt.StatusId == TestAttemptStatusIds.InProgress
+                  && attempt.Parts.Any(part =>
+                      part.StatusId == TestAttemptPartStatusIds.InProgress && part.EffectiveDeadlineAt > now)
+                  && (connectionState != null
+                      ? connectionState.LatestExpiresAt <= cutoff
+                      : disconnectedSince.HasValue && disconnectedSince.Value <= cutoff)
+            orderby connectionState != null ? connectionState.LatestLastSeenAt : disconnectedSince
+            select attempt.Id;
+
+        return await query.Take(take).ToListAsync(cancellationToken);
     }
 
     private Task<bool> TryInterruptCoreAsync(Guid attemptId, Guid? userId, CancellationToken cancellationToken) =>
@@ -105,29 +125,17 @@ public sealed class CandidateExamInterruptionService(
                 return false;
             }
 
-            var connectionState = await unitOfWork.Context.Set<CandidateExamConnection>()
-                .AsNoTracking()
-                .Where(x => x.TestAttemptId == attemptId)
-                .GroupBy(x => x.TestAttemptId)
-                .Select(group => new
-                {
-                    LatestLastSeenAt = group.Max(x => x.LastSeenAt),
-                    LatestExpiresAt = group.Max(x => x.ExpiresAt),
-                    HasActiveConnection = group.Any(x => x.ExpiresAt > now)
-                })
-                .SingleOrDefaultAsync(token);
+            var connectionState = await QueryConnectionStates()
+                .SingleOrDefaultAsync(x => x.TestAttemptId == attemptId, token);
 
             DateTime interruptedAt;
 
             if (connectionState is null)
             {
-                var latestResumeAt = await unitOfWork.Context.Set<TestAttemptInterruption>()
-                    .AsNoTracking()
-                    .Where(x => x.TestAttemptId == attemptId && x.StatusId == TestAttemptInterruptionStatusIds.Resolved
-                                                             && x.ResolutionActionId
-                                                             == TestAttemptInterruptionResolutionActionIds.Resume
-                                                             && x.ResolvedAt.HasValue)
-                    .MaxAsync(x => x.ResolvedAt, token);
+                var latestResumeAt = await QueryResolvedResumeStates()
+                    .Where(x => x.TestAttemptId == attemptId)
+                    .Select(x => x.LatestResumeAt)
+                    .SingleOrDefaultAsync(token);
 
                 var disconnectedSince = latestResumeAt ?? attempt.StartedAt;
 
@@ -141,8 +149,7 @@ public sealed class CandidateExamInterruptionService(
             }
             else
             {
-                if (connectionState.HasActiveConnection
-                    || now < connectionState.LatestExpiresAt.AddSeconds(_settings.InterruptionGraceSeconds))
+                if (now < connectionState.LatestExpiresAt.AddSeconds(_settings.InterruptionGraceSeconds))
                 {
                     return false;
                 }
@@ -180,4 +187,17 @@ public sealed class CandidateExamInterruptionService(
 
             return true;
         }, cancellationToken);
+
+    private sealed class ConnectionState
+    {
+        public Guid TestAttemptId { get; init; }
+        public DateTime LatestLastSeenAt { get; init; }
+        public DateTime LatestExpiresAt { get; init; }
+    }
+
+    private sealed class ResolvedResumeState
+    {
+        public Guid TestAttemptId { get; init; }
+        public DateTime? LatestResumeAt { get; init; }
+    }
 }

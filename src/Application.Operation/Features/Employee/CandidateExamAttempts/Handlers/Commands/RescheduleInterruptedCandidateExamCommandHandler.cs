@@ -45,8 +45,10 @@ public sealed class RescheduleInterruptedCandidateExamCommandHandler(
                 })
                 .SingleOrDefaultAsync(token);
 
-            if (preliminary is null)
+            if (preliminary?.SourceSlotId is not { } sourceSlotId)
+            {
                 return Unavailable();
+            }
 
             var preliminaryTarget = await unitOfWork.Context.Set<TestSession>()
                 .AsNoTracking()
@@ -54,17 +56,17 @@ public sealed class RescheduleInterruptedCandidateExamCommandHandler(
                 .Select(x => new { x.TestSlotId, x.TestSlot!.RoomId, x.TestSlot.SlotDate })
                 .SingleOrDefaultAsync(token);
 
-            if (preliminaryTarget is null)
+            if (preliminaryTarget?.TestSlotId is not { } targetSlotId)
+            {
                 return TargetInvalid();
+            }
 
 
             await applicationLockService.AcquireExclusiveAsync(
                 ApplicationLockResources.TestSessionRoomDate(preliminaryTarget.RoomId, preliminaryTarget.SlotDate),
                 token);
 
-            var slotIds = new[] { preliminary.SourceSlotId, preliminaryTarget.TestSlotId }.Distinct()
-                .OrderBy(x => x)
-                .ToArray();
+            var slotIds = new[] { sourceSlotId, targetSlotId }.Distinct().OrderBy(x => x).ToArray();
 
             foreach (var slotId in slotIds)
             {
@@ -237,11 +239,8 @@ public sealed class RescheduleInterruptedCandidateExamCommandHandler(
 
 
             attempt.CancelInterrupted();
-            interruption.ResolutionActionId = TestAttemptInterruptionResolutionActionIds.Reschedule;
-            interruption.ResolutionNotes = reason;
-            interruption.ResolvedById = request.OfficerId;
-            interruption.ResolvedAt = rescheduledAt;
-            interruption.StatusId = TestAttemptInterruptionStatusIds.Resolved;
+            interruption.Resolve(TestAttemptInterruptionResolutionActionIds.Reschedule, reason, request.OfficerId,
+                rescheduledAt);
 
             var transition = currentAssignment.MarkRescheduled(reason);
 

@@ -1,3 +1,4 @@
+using Application.Recruitment.Features.CandidateExams.Common;
 using Application.Recruitment.Features.CandidateExams.Models;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Concurrency;
@@ -19,8 +20,8 @@ public sealed class CandidateExamResumeService(
         unitOfWork.ExecuteInTransactionAsync<CandidateExamResumeResult?>(async token =>
         {
             var testSlotId = await unitOfWork.Context.Set<TestAttempt>()
-                .AsNoTracking()
-                .Where(x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId)
+                .OwnedByApplicant(userId)
+                .Where(x => x.Id == attemptId)
                 .Select(x => x.TestSessionCandidate!.TestSession!.TestSlotId)
                 .SingleOrDefaultAsync(token);
 
@@ -36,8 +37,8 @@ public sealed class CandidateExamResumeService(
 
 
             var attempt = await unitOfWork.Context.Set<TestAttempt>()
+                .OwnedByApplicant(userId)
                 .Where(x => x.Id == attemptId && x.TestSessionCandidate!.TestSession!.TestSlotId == testSlotId.Value
-                                              && x.TestSessionCandidate!.Invitation!.ApplicantId == userId
                                               && x.TestSessionCandidate.StatusId
                                               == TestSessionCandidateStatusIds.Started
                                               && x.TestSessionCandidate.TestSession!.StatusId

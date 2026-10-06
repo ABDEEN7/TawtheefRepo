@@ -24,6 +24,13 @@ public class TestAttemptPart : EventEntity
         StatusId == TestAttemptPartStatusIds.InProgress && StartedAt is not null && CompletedAt is null
         && DurationMinutesSnapshot is > 0 && EffectiveDeadlineAt is not null && LastQuestionNo is > 0;
 
+    public bool HasValidExecutionHistory =>
+        (StatusId == TestAttemptPartStatusIds.InProgress || StatusId == TestAttemptPartStatusIds.Completed
+                                                         || StatusId == TestAttemptPartStatusIds.TimedOut)
+        && StartedAt is not null && DurationMinutesSnapshot is > 0 && EffectiveDeadlineAt is not null
+        && EffectiveDeadlineAt.Value >= StartedAt.Value.AddMinutes(DurationMinutesSnapshot.Value)
+        && LastQuestionNo is > 0 && (StatusId == TestAttemptPartStatusIds.InProgress || CompletedAt is not null);
+
     public TestAttempt? TestAttempt { get; set; }
     public ExamPart? ExamPart { get; set; }
     public TestAttemptPartStatus? Status { get; set; }
@@ -47,31 +54,34 @@ public class TestAttemptPart : EventEntity
 
     public void Complete(DateTime completedAt)
     {
+        if (!HasValidRunningState)
+        {
+            throw new InvalidOperationException(
+                "Only a valid in-progress attempt part can be completed.");
+        }
+
         StatusId = TestAttemptPartStatusIds.Completed;
         CompletedAt = completedAt;
     }
 
     public void MarkTimedOut()
     {
-        if (EffectiveDeadlineAt is null)
+        if (!HasValidRunningState)
         {
-            throw new InvalidOperationException("An attempt part cannot time out without an effective deadline.");
+            throw new InvalidOperationException(
+                "Only a valid in-progress attempt part can time out.");
         }
 
         StatusId = TestAttemptPartStatusIds.TimedOut;
-        CompletedAt = EffectiveDeadlineAt.Value;
+        CompletedAt = EffectiveDeadlineAt!.Value;
     }
 
     public void Interrupt()
     {
-        if (StatusId != TestAttemptPartStatusIds.InProgress)
+        if (!HasValidRunningState)
         {
-            throw new InvalidOperationException("Only an in-progress attempt part can be interrupted.");
-        }
-
-        if (StartedAt is null || EffectiveDeadlineAt is null || LastQuestionNo is not > 0)
-        {
-            throw new InvalidOperationException("An in-progress attempt part must have a valid execution state.");
+            throw new InvalidOperationException(
+                "Only a valid in-progress attempt part can be interrupted.");
         }
 
         StatusId = TestAttemptPartStatusIds.Interrupted;

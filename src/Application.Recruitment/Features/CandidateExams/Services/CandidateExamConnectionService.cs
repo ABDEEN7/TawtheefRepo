@@ -1,3 +1,4 @@
+using Application.Recruitment.Features.CandidateExams.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Concurrency;
@@ -126,11 +127,11 @@ public sealed class CandidateExamConnectionService(
         CancellationToken cancellationToken) =>
         unitOfWork.Context.Set<TestAttempt>()
             .AsNoTracking()
+            .OwnedByApplicant(userId)
             .AnyAsync(
-                x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId
-                                       && x.StatusId == TestAttemptStatusIds.InProgress
+                x => x.Id == attemptId && x.StatusId == TestAttemptStatusIds.InProgress
                                        && x.ActiveSessionId == activeSessionId
-                                       && x.TestSessionCandidate.StatusId == TestSessionCandidateStatusIds.Started
+                                       && x.TestSessionCandidate!.StatusId == TestSessionCandidateStatusIds.Started
                                        && x.TestSessionCandidate.TestSession!.StatusId
                                        == TestSessionStatusIds.InProgress
                                        && x.TestSessionCandidate.TestSession.TestSlot!.StatusId

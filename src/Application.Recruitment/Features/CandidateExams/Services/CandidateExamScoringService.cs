@@ -7,65 +7,142 @@ namespace Application.Recruitment.Features.CandidateExams.Services;
 
 public sealed class CandidateExamScoringService(IUnitOfWork unitOfWork)
 {
-    public async Task<decimal?> CalculatePartScoreAsync(
-        Guid attemptId, Guid partId, CancellationToken cancellationToken)
+    private const int QueryBatchSize = 500;
+
+    public async Task<decimal?> CalculatePartScoreAsync(Guid attemptId, Guid partId, Guid examPartId,
+        CancellationToken cancellationToken)
     {
-        var scores = await CalculatePartCategoryScoresAsync(attemptId, partId, cancellationToken);
+        var scores = await CalculatePartCategoryScoresAsync(attemptId, partId, examPartId, cancellationToken);
+
         return scores is { Count: 1 } ? scores[0].Score : null;
     }
 
-    public async Task<IReadOnlyList<CandidateExamCategoryScore>?> CalculatePartCategoryScoresAsync(
-        Guid attemptId, Guid partId, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<CandidateExamCategoryScore>?> CalculatePartCategoryScoresAsync(Guid attemptId,
+        Guid partId, Guid examPartId, CancellationToken cancellationToken)
     {
-        var examPartId = await unitOfWork.Context.Set<TestAttemptPart>()
-            .AsNoTracking()
-            .Where(part => part.Id == partId && part.TestAttemptId == attemptId)
-            .Select(part => (Guid?)part.ExamPartId)
-            .SingleOrDefaultAsync(cancellationToken);
-        if (examPartId is null)
-            return null;
+        var results = await CalculatePartCategoryScoresManyAsync([
+            new CandidateExamPartScoringRequest(attemptId, partId, examPartId)
+        ], cancellationToken);
+
+        return results.TryGetValue(partId, out var scores) ? scores : null;
+    }
+
+    internal async Task<IReadOnlyDictionary<Guid, IReadOnlyList<CandidateExamCategoryScore>>>
+        CalculatePartCategoryScoresManyAsync(IReadOnlyCollection<CandidateExamPartScoringRequest> requests,
+            CancellationToken cancellationToken)
+    {
+        if (requests.Count == 0)
+        {
+            return new Dictionary<Guid, IReadOnlyList<CandidateExamCategoryScore>>();
+        }
+
+        var requestGroups = requests.GroupBy(x => x.TestAttemptPartId).ToList();
+
+        if (requestGroups.Any(group => group.Select(x => new { x.TestAttemptId, x.ExamPartId }).Distinct().Count() > 1))
+        {
+            throw new InvalidOperationException("A test attempt part cannot have conflicting scoring requests.");
+        }
+
+        var distinctRequests = requestGroups.Select(group => group.First()).ToList();
+
+        var examPartIds = distinctRequests.Select(x => x.ExamPartId).Distinct().ToArray();
 
         var categories = await unitOfWork.Context.Set<ExamCategory>()
             .AsNoTracking()
-            .Where(category => category.ExamPartId == examPartId.Value)
+            .Where(category => examPartIds.Contains(category.ExamPartId))
             .Select(category => new
             {
-                category.Id, category.QuestionBankTypeId, category.WeightPercent, category.QuestionCount
-            })
-            .ToListAsync(cancellationToken);
-
-        if (categories.Count == 0 || categories.Any(category => category.QuestionCount <= 0) ||
-            categories.Select(category => category.QuestionBankTypeId).Distinct().Count() != categories.Count)
-            return null;
-
-        var answers = await unitOfWork.Context.Set<TestAttemptQuestion>()
-            .AsNoTracking()
-            .Where(question => question.TestAttemptId == attemptId && question.TestAttemptPartId == partId)
-            .Select(question => new
-            {
-                question.ExamCategoryId,
-                IsCorrect = question.SelectedQuestionRevisionOption != null &&
-                            question.SelectedQuestionRevisionOption.QuestionRevisionId == question.QuestionRevisionId &&
-                            question.SelectedQuestionRevisionOption.IsCorrect
-            })
-            .ToListAsync(cancellationToken);
-
-        if (categories.Any(category =>
-                answers.Count(answer => answer.ExamCategoryId == category.Id) != category.QuestionCount) ||
-            answers.Any(answer => categories.All(category => category.Id != answer.ExamCategoryId)))
-            return null;
-
-        return
-        [
-            .. categories.Select(category => new CandidateExamCategoryScore(
+                category.Id,
+                category.ExamPartId,
                 category.QuestionBankTypeId,
                 category.WeightPercent,
-                decimal.Round(
-                    100m *
-                    answers.Count(answer => answer.ExamCategoryId == category.Id && answer.IsCorrect) /
-                    category.QuestionCount,
-                    2,
-                    MidpointRounding.AwayFromZero)))
-        ];
+                category.QuestionCount
+            })
+            .ToListAsync(cancellationToken);
+
+        var answerAggregates = new List<PartCategoryAnswerAggregate>();
+
+        foreach (var partIdBatch in distinctRequests.Select(x => x.TestAttemptPartId).Chunk(QueryBatchSize))
+        {
+            var partIds = partIdBatch.ToArray();
+
+            var batch = await unitOfWork.Context.Set<TestAttemptQuestion>()
+                .AsNoTracking()
+                .Where(question => partIds.Contains(question.TestAttemptPartId))
+                .GroupBy(question => new
+                {
+                    question.TestAttemptId, question.TestAttemptPartId, question.ExamCategoryId
+                })
+                .Select(group => new PartCategoryAnswerAggregate(group.Key.TestAttemptId, group.Key.TestAttemptPartId,
+                    group.Key.ExamCategoryId, group.Count(),
+                    group.Count(question =>
+                        question.SelectedQuestionRevisionOption != null
+                        && question.SelectedQuestionRevisionOption.QuestionRevisionId == question.QuestionRevisionId
+                        && question.SelectedQuestionRevisionOption.IsCorrect)))
+                .ToListAsync(cancellationToken);
+
+            answerAggregates.AddRange(batch);
+        }
+
+        var categoriesByExamPart = categories.GroupBy(category => category.ExamPartId)
+            .ToDictionary(group => group.Key, group => group.ToList());
+
+        var answersByPart = answerAggregates.GroupBy(answer => answer.TestAttemptPartId)
+            .ToDictionary(group => group.Key, group => group.ToList());
+
+        var results = new Dictionary<Guid, IReadOnlyList<CandidateExamCategoryScore>>();
+
+        foreach (var request in distinctRequests)
+        {
+            if (!categoriesByExamPart.TryGetValue(request.ExamPartId, out var partCategories)
+                || partCategories.Count == 0 || partCategories.Any(category => category.QuestionCount <= 0)
+                || partCategories.Select(category => category.QuestionBankTypeId).Distinct().Count()
+                != partCategories.Count)
+            {
+                continue;
+            }
+
+            answersByPart.TryGetValue(request.TestAttemptPartId, out var partAnswers);
+
+            partAnswers ??= [];
+
+            if (partAnswers.Any(answer => answer.TestAttemptId != request.TestAttemptId))
+            {
+                continue;
+            }
+
+            var answersByCategory = partAnswers.ToDictionary(answer => answer.ExamCategoryId);
+
+            var invalidQuestionDistribution = partCategories.Any(category =>
+                !answersByCategory.TryGetValue(category.Id, out var answer)
+                || answer.TotalCount != category.QuestionCount);
+
+            if (invalidQuestionDistribution || partAnswers.Any(answer =>
+                    partCategories.All(category => category.Id != answer.ExamCategoryId)))
+            {
+                continue;
+            }
+
+            var scores = partCategories.Select(category =>
+                {
+                    var answer = answersByCategory[category.Id];
+
+                    return new CandidateExamCategoryScore(category.QuestionBankTypeId, category.WeightPercent,
+                        decimal.Round(100m * answer.CorrectCount / category.QuestionCount, 2,
+                            MidpointRounding.AwayFromZero));
+                })
+                .ToList();
+
+            results[request.TestAttemptPartId] = scores;
+        }
+
+        return results;
     }
+    
+    private sealed record PartCategoryAnswerAggregate(
+        Guid TestAttemptId,
+        Guid TestAttemptPartId,
+        Guid ExamCategoryId,
+        int TotalCount,
+        int CorrectCount);
 }

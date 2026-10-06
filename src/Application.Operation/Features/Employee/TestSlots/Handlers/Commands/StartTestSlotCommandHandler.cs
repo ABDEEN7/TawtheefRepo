@@ -73,9 +73,12 @@ public sealed class StartTestSlotCommandHandler(
                 return Result.Fail<Unit>(ErrorsCodes.TestSlotSessionStateInvalid);
             }
 
-            testSlot.StatusId = TestSlotStatusIds.Started;
-            testSlot.StartedById = userId;
-            testSlot.StartedAt = timeProvider.GetUtcNow().UtcDateTime;
+            var startedAt =
+                timeProvider.GetUtcNow().UtcDateTime;
+
+            testSlot.Start(
+                userId,
+                startedAt);
 
             await unitOfWork.SaveChangesAsync(token);
             return Result.Ok(Unit.Value);

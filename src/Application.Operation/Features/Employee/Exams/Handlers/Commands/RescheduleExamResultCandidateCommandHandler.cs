@@ -192,11 +192,11 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 }
 
                 var interruption = openInterruptions[0];
-                interruption.ResolutionActionId = TestAttemptInterruptionResolutionActionIds.Reschedule;
-                interruption.ResolutionNotes = reason;
-                interruption.ResolvedById = employeeId;
-                interruption.ResolvedAt = rescheduledAt;
-                interruption.StatusId = TestAttemptInterruptionStatusIds.Resolved;
+                interruption.Resolve(
+                    TestAttemptInterruptionResolutionActionIds.Reschedule,
+                    reason,
+                    employeeId,
+                    rescheduledAt);
                 interruptionId = interruption.Id;
             }
 
@@ -233,16 +233,9 @@ public sealed class RescheduleExamResultCandidateCommandHandler(
                 examDetails.TitleAr, examDetails.TitleEn, targetSlot.SlotDate, targetStartTime, room.Location!.NameAr,
                 room.Location.NameEn, room.NameAr, room.NameEn, targetSession.SessionNo));
 
-            candidate.TestSessionCandidateId = replacement.Id;
-            candidate.TestSessionCandidate = replacement;
-            candidate.TestAttemptId = null;
-            candidate.TestAttempt = null;
-            candidate.SpecializedScore = null;
-            candidate.EducationalScore = null;
-            candidate.SkillsScore = null;
-            candidate.FinalScore = null;
-            candidate.Rank = null;
-            candidate.SnapshotAt = rescheduledAt;
+            candidate.MoveToRescheduledAssignment(
+                replacement,
+                rescheduledAt);
 
             await unitOfWork.GetEntityRepository<ActionLog>()
                 .AddAsync(

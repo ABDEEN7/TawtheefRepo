@@ -159,14 +159,14 @@ public sealed class StartCandidateExamCommandHandler(
 
             if (session.StatusId == TestSessionStatusIds.Approved || session.StatusId == TestSessionStatusIds.Ready)
             {
-                session.StatusId = TestSessionStatusIds.InProgress;
+                session.MarkInProgress();
             }
 
             var startTimeUtc = timeProvider.GetUtcNow().UtcDateTime;
 
             execution.Attempt.Start(command.ActiveSessionId, startTimeUtc);
 
-            candidate.StatusId = TestSessionCandidateStatusIds.Started;
+            candidate.MarkExamStarted();
 
             first.AttemptPart.Start(startTimeUtc, first.DurationMinutes);
             await unitOfWork.SaveChangesAsync(token);

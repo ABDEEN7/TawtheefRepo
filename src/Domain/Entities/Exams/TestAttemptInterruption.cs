@@ -21,4 +21,17 @@ public class TestAttemptInterruption : EventEntity
     public TestAttemptPart? TestAttemptPart { get; set; }
     public TestAttemptInterruptionStatus? Status { get; set; }
     public TestAttemptInterruptionResolutionAction? ResolutionAction { get; set; }
+
+    public void Resolve(
+        Guid resolutionActionId,
+        string? resolutionNotes,
+        Guid resolvedById,
+        DateTime resolvedAt)
+    {
+        ResolutionActionId = resolutionActionId;
+        ResolutionNotes = resolutionNotes;
+        ResolvedById = resolvedById;
+        ResolvedAt = resolvedAt;
+        StatusId = TestAttemptInterruptionStatusIds.Resolved;
+    }
 }

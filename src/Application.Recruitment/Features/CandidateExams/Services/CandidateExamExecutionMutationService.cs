@@ -26,7 +26,7 @@ public sealed class CandidateExamExecutionMutationService(
     public async Task<IResult<SaveCandidateExamAnswerResponse>> SaveAnswerAsync(Guid userId, Guid attemptId,
         Guid activeSessionId, Guid attemptQuestionId, Guid selectedOptionId, CancellationToken cancellationToken)
     {
-        if (!await AttemptIsOwnedAsync(userId, attemptId, activeSessionId, cancellationToken))
+        if (!await AttemptMatchesApplicantSessionAsync(userId, attemptId, activeSessionId, cancellationToken))
             return Failure<SaveCandidateExamAnswerResponse>(ErrorsCodes.CandidateExamAttemptNotFound,
                 StatusCodes.Status404NotFound);
 
@@ -73,7 +73,7 @@ public sealed class CandidateExamExecutionMutationService(
     public async Task<IResult<NavigateCandidateExamResponse>> NavigateAsync(Guid userId, Guid attemptId,
         Guid activeSessionId, int targetQuestionNumber, CancellationToken cancellationToken)
     {
-        if (!await AttemptIsOwnedAsync(userId, attemptId, activeSessionId, cancellationToken))
+        if (!await AttemptMatchesApplicantSessionAsync(userId, attemptId, activeSessionId, cancellationToken))
             return Failure<NavigateCandidateExamResponse>(ErrorsCodes.CandidateExamAttemptNotFound,
                 StatusCodes.Status404NotFound);
 
@@ -200,7 +200,7 @@ public sealed class CandidateExamExecutionMutationService(
                 return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamPartTimeExpired);
             }
 
-            var currentQuestionCount = await ValidatePartQuestionOrderAsync(requested.Part.Id, token);
+            var currentQuestionCount = await GetValidPartQuestionCountAsync(requested.Part.Id, token);
 
             if (!currentQuestionCount.HasValue)
             {
@@ -209,7 +209,8 @@ public sealed class CandidateExamExecutionMutationService(
 
             if (requestedIndex == 0)
             {
-                var score = await scoringService.CalculatePartScoreAsync(attemptId, requested.Part.Id, token);
+                var score = await scoringService.CalculatePartScoreAsync(attemptId, requested.Part.Id,
+                    requested.Part.ExamPartId, token);
 
                 if (!score.HasValue || !requested.QualificationScore.HasValue)
                 {
@@ -240,7 +241,7 @@ public sealed class CandidateExamExecutionMutationService(
                     return Failure<SubmitCandidateExamPartResponse>(ErrorsCodes.CandidateExamNextPartDurationInvalid);
                 }
 
-                var nextQuestionCount = await ValidatePartQuestionOrderAsync(next.Part.Id, token);
+                var nextQuestionCount = await GetValidPartQuestionCountAsync(next.Part.Id, token);
 
                 if (!nextQuestionCount.HasValue)
                 {
@@ -365,7 +366,7 @@ public sealed class CandidateExamExecutionMutationService(
                 return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamTimeoutStateInvalid);
             }
 
-            var currentQuestionCount = await ValidatePartQuestionOrderAsync(requested.Part.Id, token);
+            var currentQuestionCount = await GetValidPartQuestionCountAsync(requested.Part.Id, token);
 
             if (!currentQuestionCount.HasValue || requested.Part.LastQuestionNo > currentQuestionCount.Value)
             {
@@ -382,7 +383,8 @@ public sealed class CandidateExamExecutionMutationService(
             // PART 1
             if (requestedIndex == 0)
             {
-                var score = await scoringService.CalculatePartScoreAsync(attemptId, requested.Part.Id, token);
+                var score = await scoringService.CalculatePartScoreAsync(attemptId, requested.Part.Id,
+                    requested.Part.ExamPartId, token);
 
                 if (!score.HasValue || !requested.QualificationScore.HasValue)
                 {
@@ -416,7 +418,7 @@ public sealed class CandidateExamExecutionMutationService(
                     return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamNextPartDurationInvalid);
                 }
 
-                var nextQuestionCount = await ValidatePartQuestionOrderAsync(next.Part.Id, token);
+                var nextQuestionCount = await GetValidPartQuestionCountAsync(next.Part.Id, token);
 
                 if (!nextQuestionCount.HasValue)
                 {
@@ -459,7 +461,7 @@ public sealed class CandidateExamExecutionMutationService(
     {
         attempt.Complete(completedAt);
 
-        candidate.StatusId = TestSessionCandidateStatusIds.Completed;
+        candidate.MarkExamCompleted();
 
         await DeleteAttemptConnectionsAsync(attempt.Id, cancellationToken);
     }
@@ -469,7 +471,7 @@ public sealed class CandidateExamExecutionMutationService(
     {
         attempt.MarkTimedOut(completedAt);
 
-        candidate.StatusId = TestSessionCandidateStatusIds.Completed;
+        candidate.MarkExamCompleted();
 
         await DeleteAttemptConnectionsAsync(attempt.Id, cancellationToken);
     }
@@ -504,9 +506,9 @@ public sealed class CandidateExamExecutionMutationService(
         }
 
         // Part 1 passed previously, so Part 2 was started.
-        if (HasValidStartedHistory(next.Part))
+        if (next.Part.HasValidExecutionHistory)
         {
-            var count = await ValidatePartQuestionOrderAsync(next.Part.Id, token);
+            var count = await GetValidPartQuestionCountAsync(next.Part.Id, token);
 
             if (!count.HasValue)
             {
@@ -528,55 +530,63 @@ public sealed class CandidateExamExecutionMutationService(
         return Failure<TimeoutCandidateExamPartResponse>(ErrorsCodes.CandidateExamTimeoutStateInvalid);
     }
 
+    private static StartedCandidateExamPartDto? CreateStartedPartDto(CandidateExamPartTransitionData? part,
+        int? totalQuestions)
+    {
+        if (part is null)
+        {
+            return null;
+        }
+
+        if (totalQuestions is not > 0 || part.Part.StartedAt is null || part.Part.DurationMinutesSnapshot is not > 0
+            || part.Part.EffectiveDeadlineAt is null || part.Part.LastQuestionNo is not > 0)
+        {
+            throw new InvalidOperationException("A started attempt part must have a complete execution state.");
+        }
+
+        return new StartedCandidateExamPartDto(part.Part.Id, part.PartNo, part.Part.StartedAt.Value,
+            part.Part.DurationMinutesSnapshot.Value, part.Part.EffectiveDeadlineAt.Value,
+            part.Part.LastQuestionNo.Value, totalQuestions.Value);
+    }
+
     private static IResult<TimeoutCandidateExamPartResponse> TimeoutResult(Guid attemptId,
         CandidateExamPartTransitionData timedOut, string outcome, CandidateExamPartTransitionData? next,
         int? nextQuestionCount, Guid attemptStatusId, bool examEnded, bool changed)
     {
-        StartedCandidateExamPartDto? nextPart = null;
-
-        if (next is not null)
-        {
-            nextPart = new StartedCandidateExamPartDto(next.Part.Id, next.PartNo, next.Part.StartedAt!.Value,
-                next.Part.DurationMinutesSnapshot!.Value, next.Part.EffectiveDeadlineAt!.Value,
-                next.Part.LastQuestionNo!.Value, nextQuestionCount!.Value);
-        }
+        var nextPart = CreateStartedPartDto(next, nextQuestionCount);
 
         return Result.Ok(new TimeoutCandidateExamPartResponse(attemptId,
             new TimedOutCandidateExamPartDto(timedOut.Part.Id, timedOut.PartNo, timedOut.Part.CompletedAt!.Value),
             outcome, next is not null, nextPart, attemptStatusId, examEnded, changed));
     }
 
-    private async Task<int?> ValidatePartQuestionOrderAsync(Guid partId, CancellationToken token)
+    private async Task<int?> GetValidPartQuestionCountAsync(Guid partId, CancellationToken cancellationToken)
     {
-        var order = await unitOfWork.Context.Set<TestAttemptQuestion>()
-            .AsNoTracking()
+        var statistics = await unitOfWork.Context.Set<TestAttemptQuestion>()
             .Where(x => x.TestAttemptPartId == partId)
-            .OrderBy(x => x.OrderNo)
-            .Select(x => x.OrderNo)
-            .ToListAsync(token);
-        return order.Count > 0 && order.SequenceEqual(Enumerable.Range(1, order.Count)) ? order.Count : null;
-    }
+            .GroupBy(x => x.TestAttemptPartId)
+            .Select(group => new
+            {
+                Count = group.Count(),
+                MinOrderNo = group.Min(x => x.OrderNo),
+                MaxOrderNo = group.Max(x => x.OrderNo)
+            })
+            .SingleOrDefaultAsync(cancellationToken);
 
-    private static bool HasValidStartedHistory(TestAttemptPart part) =>
-        (part.StatusId == TestAttemptPartStatusIds.InProgress || part.StatusId == TestAttemptPartStatusIds.Completed
-                                                              || part.StatusId == TestAttemptPartStatusIds.TimedOut)
-        && part.StartedAt is not null && part.DurationMinutesSnapshot is > 0
-        && part.EffectiveDeadlineAt >= part.StartedAt.Value.AddMinutes(part.DurationMinutesSnapshot.Value)
-        && part.LastQuestionNo is > 0
-        && (part.StatusId == TestAttemptPartStatusIds.InProgress || part.CompletedAt is not null);
+        if (statistics is null || statistics.Count == 0 || statistics.MinOrderNo != 1
+            || statistics.MaxOrderNo != statistics.Count)
+        {
+            return null;
+        }
+
+        return statistics.Count;
+    }
 
     private static IResult<SubmitCandidateExamPartResponse> CompleteResult(Guid attemptId,
         CandidateExamPartTransitionData completed, string outcome, CandidateExamPartTransitionData? next,
         int? nextQuestionCount, Guid attemptStatusId, bool examEnded, bool allowPreviousQuestion, bool changed)
     {
-        StartedCandidateExamPartDto? nextPart = null;
-
-        if (next is not null)
-        {
-            nextPart = new StartedCandidateExamPartDto(next.Part.Id, next.PartNo, next.Part.StartedAt!.Value,
-                next.Part.DurationMinutesSnapshot!.Value, next.Part.EffectiveDeadlineAt!.Value,
-                next.Part.LastQuestionNo!.Value, nextQuestionCount!.Value);
-        }
+        var nextPart = CreateStartedPartDto(next, nextQuestionCount);
 
         return Result.Ok(new SubmitCandidateExamPartResponse(attemptId,
             new CompletedCandidateExamPartDto(completed.Part.Id, completed.PartNo, completed.Part.CompletedAt!.Value),
@@ -587,16 +597,15 @@ public sealed class CandidateExamExecutionMutationService(
         Guid userId, Guid attemptId, CancellationToken cancellationToken) =>
         unitOfWork.Context.Set<TestAttempt>()
             .AsNoTracking()
-            .AnyAsync(x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId,
-                cancellationToken);
+            .OwnedByApplicant(userId)
+            .AnyAsync(x => x.Id == attemptId, cancellationToken);
 
-    private Task<bool> AttemptIsOwnedAsync(Guid userId, Guid attemptId, Guid activeSessionId,
+    private Task<bool> AttemptMatchesApplicantSessionAsync(Guid userId, Guid attemptId, Guid activeSessionId,
         CancellationToken cancellationToken) =>
         unitOfWork.Context.Set<TestAttempt>()
             .AsNoTracking()
-            .AnyAsync(
-                x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId
-                                       && x.ActiveSessionId == activeSessionId, cancellationToken);
+            .OwnedByApplicant(userId)
+            .AnyAsync(x => x.Id == attemptId && x.ActiveSessionId == activeSessionId, cancellationToken);
 
     private async Task<IResult<SubmitCandidateExamPartResponse>> ExistingCompleteResult(TestAttempt attempt,
         TestSessionCandidate candidate, CandidateExamPartTransitionData requested,
@@ -621,9 +630,9 @@ public sealed class CandidateExamExecutionMutationService(
         }
 
         // Part 1 passed previously: Part 2 has started.
-        if (HasValidStartedHistory(next.Part))
+        if (next.Part.HasValidExecutionHistory)
         {
-            var nextQuestionCount = await ValidatePartQuestionOrderAsync(next.Part.Id, token);
+            var nextQuestionCount = await GetValidPartQuestionCountAsync(next.Part.Id, token);
 
             if (!nextQuestionCount.HasValue)
             {

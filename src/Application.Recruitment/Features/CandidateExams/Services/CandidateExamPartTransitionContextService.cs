@@ -1,4 +1,5 @@
-﻿using Application.Recruitment.Features.CandidateExams.Models;
+﻿using Application.Recruitment.Features.CandidateExams.Common;
+using Application.Recruitment.Features.CandidateExams.Models;
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,8 @@ public sealed class CandidateExamPartTransitionContextService(IUnitOfWork unitOf
         Guid requestedPartId, CancellationToken cancellationToken)
     {
         var attemptState = await unitOfWork.Context.Set<TestAttempt>()
-            .Where(x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId)
+            .OwnedByApplicant(userId)
+            .Where(x => x.Id == attemptId)
             .Select(x => new
             {
                 Attempt = x,

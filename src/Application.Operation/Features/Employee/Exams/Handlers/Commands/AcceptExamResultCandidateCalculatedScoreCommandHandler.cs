@@ -93,11 +93,11 @@ public sealed class AcceptExamResultCandidateCalculatedScoreCommandHandler(
 
             var previousInterruptionStatus = interruption.StatusId;
             var resolvedAt = timeProvider.GetUtcNow().UtcDateTime;
-            interruption.StatusId = TestAttemptInterruptionStatusIds.Resolved;
-            interruption.ResolutionActionId = TestAttemptInterruptionResolutionActionIds.AcceptCalculatedScore;
-            interruption.ResolutionNotes = notes;
-            interruption.ResolvedById = employeeId;
-            interruption.ResolvedAt = resolvedAt;
+            interruption.Resolve(
+                TestAttemptInterruptionResolutionActionIds.AcceptCalculatedScore,
+                notes,
+                employeeId,
+                resolvedAt);
 
             await unitOfWork.GetEntityRepository<ActionLog>()
                 .AddAsync(

@@ -16,7 +16,8 @@ public sealed class CandidateExamExecutionStateService(IUnitOfWork unitOfWork)
     {
         var attempt = await unitOfWork.Context.Set<TestAttempt>()
             .AsNoTracking()
-            .Where(x => x.Id == attemptId && x.TestSessionCandidate!.Invitation!.ApplicantId == userId)
+            .OwnedByApplicant(userId)
+            .Where(x => x.Id == attemptId)
             .Select(x => new
             {
                 x.Id,
@@ -73,8 +74,7 @@ public sealed class CandidateExamExecutionStateService(IUnitOfWork unitOfWork)
         var runningPart = runningParts[0];
         var part = runningPart.Part;
 
-        if (part.StartedAt is null || part.DurationMinutesSnapshot is not > 0 || part.EffectiveDeadlineAt is null
-            || part.LastQuestionNo is not > 0)
+        if (!part.HasValidRunningState)
         {
             return Failure(ErrorsCodes.CandidateExamCurrentStateInvalid);
         }
@@ -85,8 +85,8 @@ public sealed class CandidateExamExecutionStateService(IUnitOfWork unitOfWork)
         }
 
         var currentQuestions = await unitOfWork.Context.Set<TestAttemptQuestion>()
-            .Where(x => x.TestAttemptId == attemptId && x.TestAttemptPartId == part.Id
-                                                     && x.OrderNo == part.LastQuestionNo.Value)
+            .Where(x => x.TestAttemptId == attemptId && x.TestAttemptPartId == part.Id && part.LastQuestionNo != null
+                        && x.OrderNo == part.LastQuestionNo.Value)
             .Take(2)
             .ToListAsync(cancellationToken);
 

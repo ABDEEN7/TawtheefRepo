@@ -28,6 +28,16 @@ public class TestSessionCandidate : EventEntity
     public TestSessionCandidateStatus? Status { get; set; }
     public TestAttempt? TestAttempt { get; set; }
 
+    public void MarkExamStarted()
+    {
+        StatusId = TestSessionCandidateStatusIds.Started;
+    }
+
+    public void MarkExamCompleted()
+    {
+        StatusId = TestSessionCandidateStatusIds.Completed;
+    }
+
     public Result MarkRescheduled(string reason)
     {
         if (StatusId != TestSessionCandidateStatusIds.Assigned &&

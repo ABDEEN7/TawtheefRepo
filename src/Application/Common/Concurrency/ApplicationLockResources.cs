@@ -7,7 +7,7 @@ public static class ApplicationLockResources
     public static string CandidateExamAttempt(Guid attemptId) =>
         $"{Root}.CandidateExam.Attempt.{attemptId:D}";
 
-    public static string CandidateExamTestSlot(Guid? testSlotId) =>
+    public static string CandidateExamTestSlot(Guid testSlotId) =>
         $"{Root}.CandidateExam.TestSlot.{testSlotId:D}";
 
     public static string CandidateExamTestSessionCandidate(Guid testSessionCandidateId) =>

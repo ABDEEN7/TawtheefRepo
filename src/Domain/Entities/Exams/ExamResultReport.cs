@@ -43,6 +43,33 @@ public class ExamResultReport : EventEntity
         };
     }
 
+    public void RecalculateRanking()
+    {
+        foreach (var candidate in Candidates)
+            candidate.Rank = null;
+
+        var groups = Candidates
+            .Where(x =>
+                x.ResultStatusId ==
+                    ExamResultCandidateResultStatusIds.QualifiedForInterview &&
+                x.FinalScore.HasValue)
+            .GroupBy(x => x.FinalScore!.Value)
+            .OrderByDescending(x => x.Key)
+            .ToList();
+
+        var rank = 1;
+
+        foreach (var group in groups)
+        {
+            foreach (var candidate in group)
+            {
+                candidate.Rank = rank;
+            }
+
+            rank++;
+        }
+    }
+
     public Result MarkReadyForReview()
     {
         if (StatusId != ExamResultReportStatusIds.Creating)

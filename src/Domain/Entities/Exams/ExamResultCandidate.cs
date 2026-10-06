@@ -25,4 +25,75 @@ public class ExamResultCandidate : EventEntity
     public TestSessionCandidate? TestSessionCandidate { get; set; }
     public TestAttempt? TestAttempt { get; set; }
     public ExamResultCandidateResultStatus? ResultStatus { get; set; }
+
+    public void MarkNoShow(DateTime snapshotAt)
+    {
+        TestAttemptId = null;
+
+        SpecializedScore = null;
+        EducationalScore = null;
+        SkillsScore = null;
+        FinalScore = null;
+
+        Rank = null;
+
+        ResultStatusId =
+            ExamResultCandidateResultStatusIds.NoShow;
+
+        SnapshotAt = snapshotAt;
+    }
+
+    public void ApplyCalculatedResult(
+        Guid testAttemptId,
+        decimal specializedScore,
+        decimal? educationalScore,
+        decimal? skillsScore,
+        decimal? finalScore,
+        bool isSpecializedQualified,
+        DateTime snapshotAt)
+    {
+        TestAttemptId = testAttemptId;
+
+        SpecializedScore = specializedScore;
+        EducationalScore = educationalScore;
+        SkillsScore = skillsScore;
+        FinalScore = finalScore;
+
+        Rank = null;
+
+        ResultStatusId =
+            isSpecializedQualified
+                ? ExamResultCandidateResultStatusIds.QualifiedForInterview
+                : ExamResultCandidateResultStatusIds.NotQualifiedForInterview;
+
+        SnapshotAt = snapshotAt;
+    }
+
+    public void MarkNotCompleted(DateTime snapshotAt)
+    {
+        ResultStatusId =
+            ExamResultCandidateResultStatusIds.NotCompleted;
+
+        SnapshotAt = snapshotAt;
+    }
+
+    public void MoveToRescheduledAssignment(
+        TestSessionCandidate replacement,
+        DateTime snapshotAt)
+    {
+        TestSessionCandidateId = replacement.Id;
+        TestSessionCandidate = replacement;
+
+        TestAttemptId = null;
+        TestAttempt = null;
+
+        SpecializedScore = null;
+        EducationalScore = null;
+        SkillsScore = null;
+        FinalScore = null;
+
+        Rank = null;
+
+        SnapshotAt = snapshotAt;
+    }
 }
