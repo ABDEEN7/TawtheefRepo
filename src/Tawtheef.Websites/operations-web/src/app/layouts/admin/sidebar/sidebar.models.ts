@@ -160,7 +160,6 @@ export class Sidebar {
       icon: 'hgi-calendar-03',
       route: routes.portal.testSlotsManagement,
       permission: Permissions.TestSlots.View,
-      permission: Permissions.TestSlots.View,
     },
     {
       key: 'interview-dashboard',
