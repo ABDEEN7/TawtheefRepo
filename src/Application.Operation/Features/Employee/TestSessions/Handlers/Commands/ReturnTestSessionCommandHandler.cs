@@ -17,6 +17,7 @@ namespace Application.Operation.Features.Employee.TestSessions.Handlers.Commands
 public sealed class ReturnTestSessionCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
+    TimeProvider timeProvider,
     IApplicationLockService applicationLockService) : IRequestHandler<ReturnTestSessionCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(ReturnTestSessionCommand request, CancellationToken ct)
@@ -38,7 +39,8 @@ public sealed class ReturnTestSessionCommandHandler(
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
             var note = request.DecisionNote.Trim();
-            var metadata = new TestSessionWorkflowMetadata(reviewerId, DateTime.UtcNow,
+            var reviewedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
+            var metadata = new TestSessionWorkflowMetadata(reviewerId, reviewedAtUtc,
                 nameof(TestSessionStatusIds.PendingApproval), nameof(TestSessionStatusIds.Returned));
             metadata.ApplyDecision(session, TestSessionStatusIds.Returned);
             await unitOfWork.GetEntityRepository<ActionLog>()

@@ -19,6 +19,7 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 public sealed class ApproveExamCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
+    TimeProvider timeProvider,
     IApplicationLockService applicationLockService)
     : IRequestHandler<ApproveExamCommand, IResult<Unit>>
 {
@@ -44,8 +45,9 @@ public sealed class ApproveExamCommandHandler(
             if (jobScope == null)
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
+            var nowUtc = timeProvider.GetUtcNow().UtcDateTime;
             var banks = await ExamBankSelection.Load(
-                unitOfWork, jobScope.ManagementId, jobScope.JobTitleId, token);
+                unitOfWork, jobScope.ManagementId, jobScope.JobTitleId, nowUtc, token);
             var categories = await unitOfWork.Context.Set<ExamCategory>().AsNoTracking()
                 .Where(x => unitOfWork.Context.Set<ExamPart>()
                     .Where(part => part.ExamId == exam.Id)
@@ -61,9 +63,10 @@ public sealed class ApproveExamCommandHandler(
                     return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
             }
 
+            var reviewedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
             var metadata = new ExamWorkflowMetadata(
                 reviewerId,
-                DateTime.UtcNow,
+                reviewedAtUtc,
                 nameof(ExamStatusIds.PendingApproval),
                 nameof(ExamStatusIds.Approved));
             metadata.ApplyDecision(exam, ExamStatusIds.Approved);

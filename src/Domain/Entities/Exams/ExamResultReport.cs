@@ -70,7 +70,8 @@ public class ExamResultReport : EventEntity
         }
     }
 
-    public Result MarkReadyForReview()
+    public Result MarkReadyForReview(
+        DateTime transitionAtUtc)
     {
         if (StatusId != ExamResultReportStatusIds.Creating)
         {
@@ -80,7 +81,7 @@ public class ExamResultReport : EventEntity
         }
 
         StatusId = ExamResultReportStatusIds.UnderReview;
-        AddDomainEvent(new ExamResultReportReadyForReviewDomainEvent(Id, ExamId, Candidates.Count, DateTime.UtcNow));
+        AddDomainEvent(new ExamResultReportReadyForReviewDomainEvent(Id, ExamId, Candidates.Count, transitionAtUtc));
 
         return Result.Ok();
     }
@@ -107,7 +108,8 @@ public class ExamResultReport : EventEntity
         return Result.Ok();
     }
 
-    public Result MarkProcessingCompleted()
+    public Result MarkProcessingCompleted(
+        DateTime transitionAtUtc)
     {
         if (StatusId != ExamResultReportStatusIds.Returned)
         {
@@ -116,13 +118,14 @@ public class ExamResultReport : EventEntity
         }
 
         StatusId = ExamResultReportStatusIds.UnderReview;
-        AddDomainEvent(new ExamResultReportReadyForReviewDomainEvent(Id, ExamId, Candidates.Count, DateTime.UtcNow));
+        AddDomainEvent(new ExamResultReportReadyForReviewDomainEvent(Id, ExamId, Candidates.Count, transitionAtUtc));
         return Result.Ok();
     }
 
     public Result Approve(
         Guid approverId,
-        string? decisionNotes)
+        string? decisionNotes,
+        DateTime approvedAtUtc)
     {
         if (StatusId != ExamResultReportStatusIds.UnderReview)
         {
@@ -145,7 +148,7 @@ public class ExamResultReport : EventEntity
         StatusId = ExamResultReportStatusIds.Approved;
 
         ApprovedById = approverId;
-        ApprovedAt = DateTime.UtcNow;
+        ApprovedAt = approvedAtUtc;
 
         DecisionNotes =
             string.IsNullOrWhiteSpace(decisionNotes)
@@ -155,7 +158,8 @@ public class ExamResultReport : EventEntity
         return Result.Ok();
     }
 
-    public Result Close()
+    public Result Close(
+        DateTime closedAtUtc)
     {
         if (StatusId != ExamResultReportStatusIds.Approved)
         {
@@ -165,7 +169,7 @@ public class ExamResultReport : EventEntity
         }
 
         StatusId = ExamResultReportStatusIds.Closed;
-        ClosedAt = DateTime.UtcNow;
+        ClosedAt = closedAtUtc;
 
         return Result.Ok();
     }

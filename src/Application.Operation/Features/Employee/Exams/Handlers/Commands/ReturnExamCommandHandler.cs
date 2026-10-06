@@ -17,6 +17,7 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 public sealed class ReturnExamCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
+    TimeProvider timeProvider,
     IApplicationLockService applicationLockService)
     : IRequestHandler<ReturnExamCommand, IResult<Unit>>
 {
@@ -37,9 +38,10 @@ public sealed class ReturnExamCommandHandler(
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
             var note = request.Note.Trim();
+            var reviewedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
             var metadata = new ExamWorkflowMetadata(
                 reviewerId,
-                DateTime.UtcNow,
+                reviewedAtUtc,
                 nameof(ExamStatusIds.PendingApproval),
                 nameof(ExamStatusIds.Returned));
             metadata.ApplyDecision(exam, ExamStatusIds.Returned);

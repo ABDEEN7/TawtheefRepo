@@ -228,7 +228,8 @@ public sealed class CandidateExamResultGenerationService(
         report.RecalculateRanking();
         if (report.Candidates.All(x => x.ResultStatusId != ExamResultCandidateResultStatusIds.RequiresAction))
         {
-            var transition = report.MarkProcessingCompleted();
+            var transitionAtUtc = timeProvider.GetUtcNow().UtcDateTime;
+            var transition = report.MarkProcessingCompleted(transitionAtUtc);
             if (transition.IsFailed)
                 throw new InvalidOperationException(
                     $"Exam result report {report.Id} could not return to review after reprocessing.");
@@ -315,7 +316,8 @@ public sealed class CandidateExamResultGenerationService(
 
         report.RecalculateRanking();
 
-        var readyResult = report.MarkReadyForReview();
+        var transitionAtUtc = timeProvider.GetUtcNow().UtcDateTime;
+        var readyResult = report.MarkReadyForReview(transitionAtUtc);
 
         if (readyResult.IsFailed)
             return null;

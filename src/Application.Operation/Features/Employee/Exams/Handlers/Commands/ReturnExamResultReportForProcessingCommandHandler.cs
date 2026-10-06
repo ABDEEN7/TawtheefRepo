@@ -17,6 +17,7 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 public sealed class ReturnExamResultReportForProcessingCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
+    TimeProvider timeProvider,
     IApplicationLockService applicationLockService)
     : IRequestHandler<ReturnExamResultReportForProcessingCommand, IResult<Unit>>
 {
@@ -51,6 +52,7 @@ public sealed class ReturnExamResultReportForProcessingCommandHandler(
                 if (transition.IsFailed)
                     return Result.Fail<Unit>(transition.Errors);
 
+                var returnedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
                 await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(
                     new ActionLog
                     {
@@ -64,7 +66,7 @@ public sealed class ReturnExamResultReportForProcessingCommandHandler(
                             reportId = report.Id,
                             examId = report.ExamId,
                             returnedBy,
-                            returnedAt = DateTime.UtcNow,
+                            returnedAt = returnedAtUtc,
                             reason = report.DecisionNotes,
                             candidateCount = report.Candidates.Count,
                             requiresActionCount = report.Candidates.Count(x =>

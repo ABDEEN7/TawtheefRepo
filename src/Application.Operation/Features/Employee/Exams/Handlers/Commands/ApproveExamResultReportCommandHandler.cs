@@ -17,6 +17,7 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 public sealed class ApproveExamResultReportCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
+    TimeProvider timeProvider,
     IApplicationLockService applicationLockService)
     : IRequestHandler<
         ApproveExamResultReportCommand,
@@ -113,7 +114,8 @@ public sealed class ApproveExamResultReportCommandHandler(
                     }
                 }
 
-                var approveResult = report.Approve(approverId, request.DecisionNotes);
+                var approvedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
+                var approveResult = report.Approve(approverId, request.DecisionNotes, approvedAtUtc);
 
                 if (approveResult.IsFailed)
                 {
@@ -130,7 +132,8 @@ public sealed class ApproveExamResultReportCommandHandler(
                     candidate.Invitation.ChangeInvitationStatus(InvitationStatusIds.InterviewEligible);
                 }
 
-                var closeResult = report.Close();
+                var closedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
+                var closeResult = report.Close(closedAtUtc);
 
                 if (closeResult.IsFailed)
                 {

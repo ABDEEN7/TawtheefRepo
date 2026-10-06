@@ -126,7 +126,8 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
                 x.ResultStatusId == ExamResultCandidateResultStatusIds.RequiresAction);
             if (remainingRequiresActionCount == 0)
             {
-                var transition = report.MarkProcessingCompleted();
+                var transitionAtUtc = timeProvider.GetUtcNow().UtcDateTime;
+                var transition = report.MarkProcessingCompleted(transitionAtUtc);
                 if (transition.IsFailed)
                     return Result.Fail<Unit>(transition.Errors);
             }

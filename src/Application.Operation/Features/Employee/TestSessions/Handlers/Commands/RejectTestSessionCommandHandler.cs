@@ -12,7 +12,10 @@ using Tawtheef.Domain.Events.Operation.Employee.TestSessions;
 
 namespace Application.Operation.Features.Employee.TestSessions.Handlers.Commands;
 
-public sealed class RejectTestSessionCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+public sealed class RejectTestSessionCommandHandler(
+    IUnitOfWork unitOfWork,
+    ICurrentUserService currentUser,
+    TimeProvider timeProvider)
     : IRequestHandler<RejectTestSessionCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RejectTestSessionCommand request, CancellationToken ct)
@@ -28,7 +31,8 @@ public sealed class RejectTestSessionCommandHandler(IUnitOfWork unitOfWork, ICur
             return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
         var note = request.DecisionNote.Trim();
-        var metadata = new TestSessionWorkflowMetadata(reviewerId, DateTime.UtcNow,
+        var reviewedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
+        var metadata = new TestSessionWorkflowMetadata(reviewerId, reviewedAtUtc,
             nameof(TestSessionStatusIds.PendingApproval), nameof(TestSessionStatusIds.Rejected));
         metadata.ApplyDecision(session, TestSessionStatusIds.Rejected);
         await unitOfWork.GetEntityRepository<ActionLog>()

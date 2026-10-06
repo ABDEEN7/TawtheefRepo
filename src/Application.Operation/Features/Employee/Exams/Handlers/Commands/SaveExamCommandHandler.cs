@@ -18,6 +18,7 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 
 public sealed class SaveExamCommandHandler(
     IUnitOfWork unitOfWork,
+    TimeProvider timeProvider,
     IApplicationLockService applicationLockService)
     : IRequestHandler<SaveExamCommand, IResult<SavedExamDto>>
 {
@@ -47,8 +48,9 @@ public sealed class SaveExamCommandHandler(
                 return Result.Fail<SavedExamDto>(ErrorsCodes.InvalidRequest);
 
             var categories = request.Exam.Parts.SelectMany(x => x.Categories).ToList();
+            var nowUtc = timeProvider.GetUtcNow().UtcDateTime;
             var banks = await ExamBankSelection.Load(
-                unitOfWork, jobScope.ManagementId, jobScope.JobTitleId, token);
+                unitOfWork, jobScope.ManagementId, jobScope.JobTitleId, nowUtc, token);
             foreach (var category in categories)
             {
                 var bank = banks.FirstOrDefault(x => x.Id == category.QuestionBankVersionId &&
@@ -84,7 +86,8 @@ public sealed class SaveExamCommandHandler(
                 // Number allocation remains globally serialized without blocking edits/submissions for other jobs.
                 await applicationLockService.AcquireExclusiveAsync(
                     ApplicationLockResources.ExamNumbering(), token);
-                var prefix = $"EX-{DateTime.UtcNow.Year}-";
+                var numberingYear = timeProvider.GetLocalNow().Year;
+                var prefix = $"EX-{numberingYear}-";
                 var numbers = await repository.DbSet.IgnoreQueryFilters().AsNoTracking()
                     .Where(x => x.ExamNo.StartsWith(prefix)).Select(x => x.ExamNo).ToListAsync(token);
                 var sequence = numbers.Select(x => long.TryParse(x[prefix.Length..], out var n) ? n : 0)

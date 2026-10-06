@@ -17,6 +17,7 @@ namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 public sealed class RejectExamCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
+    TimeProvider timeProvider,
     IApplicationLockService applicationLockService)
     : IRequestHandler<RejectExamCommand, IResult<Unit>>
 {
@@ -38,9 +39,10 @@ public sealed class RejectExamCommandHandler(
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
             var note = request.Note.Trim();
+            var reviewedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
             var metadata = new ExamWorkflowMetadata(
                 reviewerId,
-                DateTime.UtcNow,
+                reviewedAtUtc,
                 nameof(ExamStatusIds.PendingApproval),
                 nameof(ExamStatusIds.Rejected));
             metadata.ApplyDecision(exam, ExamStatusIds.Rejected);

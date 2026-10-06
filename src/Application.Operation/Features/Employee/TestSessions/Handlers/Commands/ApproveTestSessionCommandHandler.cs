@@ -25,6 +25,7 @@ public sealed class ApproveTestSessionCommandHandler(
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser,
     IOptions<TestSlotSettings> options,
+    TimeProvider timeProvider,
     IApplicationLockService applicationLockService) : IRequestHandler<ApproveTestSessionCommand, IResult<Unit>>
 {
     public Task<IResult<Unit>> Handle(ApproveTestSessionCommand request, CancellationToken ct) =>
@@ -81,8 +82,9 @@ public sealed class ApproveTestSessionCommandHandler(
             < exam.Duration + options.Value.MinimumSessionEntryWindowMinutes)
             return ValidationFailure();
 
+        var localNow = timeProvider.GetLocalNow().DateTime;
         if (!TestSessionCapacityService.IsSessionStartCurrentOrFuture(schedule.SlotDate, session.StartTime.Value,
-                DateTime.UtcNow))
+                localNow))
             return SchedulingTimeFailure();
 
         var staff = await unitOfWork.Context.Set<TestSlotStaff>()
@@ -144,7 +146,8 @@ public sealed class ApproveTestSessionCommandHandler(
         if (candidates.Count > availableSeats)
             return CapacityFailure(candidates.Count - availableSeats);
 
-        var metadata = new TestSessionWorkflowMetadata(reviewerId, DateTime.UtcNow,
+        var reviewedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
+        var metadata = new TestSessionWorkflowMetadata(reviewerId, reviewedAtUtc,
             nameof(TestSessionStatusIds.PendingApproval), nameof(TestSessionStatusIds.Approved));
         metadata.ApplyDecision(session, TestSessionStatusIds.Approved);
         await unitOfWork.GetEntityRepository<ActionLog>()

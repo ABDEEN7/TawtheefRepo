@@ -22,6 +22,7 @@ namespace Application.Operation.Features.Employee.TestSessions.Handlers.Commands
 public sealed class SaveTestSessionSetupCommandHandler(
     IUnitOfWork unitOfWork,
     IOptions<TestSlotSettings> options,
+    TimeProvider timeProvider,
     IApplicationLockService applicationLockService)
     : IRequestHandler<SaveTestSessionSetupCommand, IResult<SavedTestSessionSetupDto>>
 {
@@ -84,6 +85,9 @@ public sealed class SaveTestSessionSetupCommandHandler(
                 .FirstOrDefaultAsync(ct)
             : null;
 
+        var localNow = timeProvider.GetLocalNow().DateTime;
+        var numberingYear = slot?.SlotDate.Year ?? localNow.Year;
+
         if (hasCompleteSchedule && (exam.Duration <= 0 || slot is null || slot.StatusId != TestSlotStatusIds.Ready
                                     || slot.RoomStatusId != RoomStatusIds.Active
                                     || setup.StartTime!.Value < slot.StartTime || setup.EndTime!.Value > slot.EndTime
@@ -93,7 +97,7 @@ public sealed class SaveTestSessionSetupCommandHandler(
 
         if (setup.SendToApprove && slot is not null &&
             !TestSessionCapacityService.IsSessionStartCurrentOrFuture(
-                slot.SlotDate, setup.StartTime!.Value, DateTime.UtcNow))
+                slot.SlotDate, setup.StartTime!.Value, localNow))
             return SchedulingTimeFailure();
 
         if (setup.SendToApprove && slot is not null)
@@ -105,7 +109,7 @@ public sealed class SaveTestSessionSetupCommandHandler(
         if (session is null)
         {
             await applicationLockService.AcquireExclusiveAsync(
-                ApplicationLockResources.TestSessionNumbering(slot?.SlotDate.Year ?? DateTime.UtcNow.Year), ct);
+                ApplicationLockResources.TestSessionNumbering(numberingYear), ct);
         }
 
         foreach (var invitationId in candidateIdsToPersist.OrderBy(id => id))
@@ -159,7 +163,7 @@ public sealed class SaveTestSessionSetupCommandHandler(
                 Id = Guid.NewGuid(),
                 ExamId = setup.ExamId,
                 TestSlotId = setup.TestSlotId,
-                SessionNo = await GenerateSessionNoAsync(slot?.SlotDate.Year ?? DateTime.UtcNow.Year, ct),
+                SessionNo = await GenerateSessionNoAsync(numberingYear, ct),
                 StatusId = TestSessionStatusIds.Draft,
             };
             await unitOfWork.Context.Set<TestSession>().AddAsync(session, ct);
