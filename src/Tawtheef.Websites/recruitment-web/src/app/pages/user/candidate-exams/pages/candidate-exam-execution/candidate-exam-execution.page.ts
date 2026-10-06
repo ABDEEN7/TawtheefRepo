@@ -22,6 +22,8 @@ import {
   CandidateExamAnswerSaveState,
   CandidateExamExecutionPreparationState,
 } from '../../models/candidate-exam-execution-state.model';
+import { CANDIDATE_EXAM_TIMER_SERVER_SYNC_INTERVAL_MS } from '../../constants/candidate-exam-execution-timer.constants';
+import { CandidateExamExecutionTimerService } from '../../services/candidate-exam-execution-timer.service';
 
 @Component({
   selector: 'app-candidate-exam-execution',
@@ -29,6 +31,7 @@ import {
   imports: [CommonModule, TranslatePipe, I18nNamespaceDirective],
   templateUrl: './candidate-exam-execution.page.html',
   styleUrl: './candidate-exam-execution.page.scss',
+  providers: [CandidateExamExecutionTimerService],
 })
 export class CandidateExamExecutionPage implements OnInit, OnDestroy {
   private readonly candidateExamService = inject(CandidateExamService);
@@ -36,6 +39,7 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
   private readonly realtime = inject(CandidateExamRealtimeService);
   private readonly router = inject(Router);
   private readonly dialogHelper = inject(DialogHelperService);
+  private readonly executionTimer = inject(CandidateExamExecutionTimerService);
 
   readonly preparationState = signal<CandidateExamExecutionPreparationState>('preparing');
   readonly executionOutcome = this.candidateExamSession.outcome;
@@ -48,7 +52,7 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
   readonly reconnectRegistrationPending = signal(false);
   readonly reconnectRegistering = signal(false);
   readonly reconnectRegistrationFailed = signal(false);
-  readonly remainingSeconds = signal(0);
+  readonly remainingSeconds = this.executionTimer.remainingSeconds;
   readonly deadlineReached = signal(false);
   readonly timerSynchronizing = signal(false);
   readonly timeoutProcessing = signal(false);
@@ -60,9 +64,7 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
     CandidateExamSubmissionOutcome,
     'FAILED' | 'COMPLETED'
   > | null>(null);
-  readonly formattedRemainingTime = computed(() =>
-    this.formatRemainingTime(this.remainingSeconds()),
-  );
+  readonly formattedRemainingTime = this.executionTimer.formattedRemainingTime;
   readonly realtimeMutationsBlocked = computed(
     () =>
       this.connectionStatus() !== 'connected' ||
@@ -87,10 +89,6 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
   );
 
   private readonly preparing = signal(false);
-  private serverTimeAtSync = 0;
-  private deadlineAtSync = 0;
-  private performanceAtSync = 0;
-  private displayInterval: ReturnType<typeof setInterval> | null = null;
   private resyncInterval: ReturnType<typeof setInterval> | null = null;
   private syncInFlight = false;
   private operationVersion = 0;
@@ -129,7 +127,7 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.closeSubmissionConfirmation();
-    this.stopTimer();
+    this.stopServerSynchronization();
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     void this.realtime.disconnect();
   }
@@ -405,15 +403,13 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
   }
 
   private anchorTimer(response: CandidateExamCurrentQuestionResponse): void {
-    const serverTime = Date.parse(response.serverTimeUtc);
-    const deadline = Date.parse(response.effectiveDeadlineAt);
-    if (!Number.isFinite(serverTime) || !Number.isFinite(deadline)) return;
+    const deadlineReached = this.executionTimer.synchronize(
+      response.serverTimeUtc,
+      response.effectiveDeadlineAt,
+    );
+    if (deadlineReached === null) return;
 
-    this.serverTimeAtSync = serverTime;
-    this.deadlineAtSync = deadline;
-    this.performanceAtSync = performance.now();
-    this.deadlineReached.set(response.isTimeExpired || deadline <= serverTime);
-    this.updateRemainingTime();
+    this.deadlineReached.set(response.isTimeExpired || deadlineReached);
     this.startTimer();
 
     if (this.deadlineReached()) {
@@ -423,33 +419,17 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
   }
 
   private startTimer(): void {
-    if (!this.displayInterval) {
-      this.displayInterval = setInterval(() => this.updateRemainingTime(), 1000);
-    }
+    this.executionTimer.start(this.handleTimerDeadlineReached);
     if (!this.resyncInterval) {
       this.resyncInterval = setInterval(() => {
         if (!document.hidden) void this.synchronizeCurrentQuestion();
-      }, 30_000);
+      }, CANDIDATE_EXAM_TIMER_SERVER_SYNC_INTERVAL_MS);
     }
   }
 
-  private stopTimer(): void {
-    if (this.displayInterval) clearInterval(this.displayInterval);
+  private stopServerSynchronization(): void {
     if (this.resyncInterval) clearInterval(this.resyncInterval);
-    this.displayInterval = null;
     this.resyncInterval = null;
-  }
-
-  private updateRemainingTime(): void {
-    if (!this.deadlineAtSync || this.terminalOutcome()) return;
-    const estimatedServerNow = this.serverTimeAtSync + (performance.now() - this.performanceAtSync);
-    const seconds = Math.max(0, Math.ceil((this.deadlineAtSync - estimatedServerNow) / 1000));
-    this.remainingSeconds.set(seconds);
-    if (seconds === 0 && !this.deadlineReached()) {
-      this.deadlineReached.set(true);
-      this.closeSubmissionConfirmation();
-      void this.handleDeadlineReached();
-    }
   }
 
   private async handleDeadlineReached(): Promise<void> {
@@ -612,7 +592,7 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
     if (response.outcome === 'PASSED' && response.hasNextPart && response.nextPart) {
       this.currentQuestion.set(null);
       this.deadlineReached.set(false);
-      this.remainingSeconds.set(0);
+      this.executionTimer.resetRemainingTime();
       this.timeoutFailed.set(false);
       this.submissionFailed.set(false);
       await this.loadCurrentQuestion();
@@ -622,7 +602,8 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
     if (response.outcome === 'FAILED' || response.outcome === 'COMPLETED') {
       this.terminalOutcome.set(response.outcome);
       this.currentQuestion.set(null);
-      this.stopTimer();
+      this.executionTimer.stop();
+      this.stopServerSynchronization();
       await this.realtime.disconnect();
     }
   }
@@ -638,13 +619,12 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
     }
   };
 
-  private formatRemainingTime(totalSeconds: number): string {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    const pairs = [minutes, seconds].map((value) => value.toString().padStart(2, '0'));
-    return hours > 0 ? `${hours.toString().padStart(2, '0')}:${pairs.join(':')}` : pairs.join(':');
-  }
+  private readonly handleTimerDeadlineReached = (): void => {
+    if (this.deadlineReached()) return;
+    this.deadlineReached.set(true);
+    this.closeSubmissionConfirmation();
+    void this.handleDeadlineReached();
+  };
 
   private isPartTimeExpired(error: unknown): boolean {
     if (!(error instanceof HttpErrorResponse)) return false;
