@@ -6,7 +6,10 @@ import {
   SubmitCandidateExamPartResponse,
   TimeoutCandidateExamPartResponse,
 } from '../models/candidate-exam-execution.model';
-import { StartCandidateExamResponse } from '../models/candidate-exam.model';
+import {
+  CandidateExamActiveExecutionResponse,
+  StartCandidateExamResponse,
+} from '../models/candidate-exam.model';
 import { CandidateExamResumeResult } from '../models/candidate-exam-realtime.model';
 import {
   CandidateExamSessionState,
@@ -39,6 +42,18 @@ export class CandidateExamSessionService {
   }
 
   initializeFromResume(response: CandidateExamResumeResult): void {
+    this.outcomeState.set(null);
+    this.setAndPersist({
+      testAttemptId: response.testAttemptId,
+      testAttemptPartId: response.testAttemptPartId,
+      activeSessionId: response.activeSessionId,
+      effectiveDeadlineAt: response.effectiveDeadlineAt,
+      allowPreviousQuestion: response.allowPreviousQuestion,
+      currentQuestionNumber: response.currentQuestionNumber,
+    });
+  }
+
+  initializeFromActiveExecution(response: CandidateExamActiveExecutionResponse): void {
     this.outcomeState.set(null);
     this.setAndPersist({
       testAttemptId: response.testAttemptId,

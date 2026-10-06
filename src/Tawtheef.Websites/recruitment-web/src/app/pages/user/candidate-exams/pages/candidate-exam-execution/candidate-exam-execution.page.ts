@@ -471,8 +471,7 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
         version !== this.operationVersion ||
         currentSession?.testAttemptId !== attemptId ||
         currentSession.testAttemptPartId !== partId ||
-        response.testAttemptId !== attemptId ||
-        response.testAttemptPartId !== partId
+        response.testAttemptId !== attemptId
       ) {
         return;
       }

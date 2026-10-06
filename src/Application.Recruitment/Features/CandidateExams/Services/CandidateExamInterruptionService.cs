@@ -66,25 +66,43 @@ public sealed class CandidateExamInterruptionService(
 
         var cutoff = now.AddSeconds(-_settings.InterruptionGraceSeconds);
 
-        var connectionStates = QueryConnectionStates();
-
-        var resumeStates = QueryResolvedResumeStates();
-
-        var query = from attempt in unitOfWork.Context.Set<TestAttempt>().AsNoTracking()
-            join connectionState in connectionStates on attempt.Id equals connectionState.TestAttemptId into
-                connectionJoin
-            from connectionState in connectionJoin.DefaultIfEmpty()
-            join resumeState in resumeStates on attempt.Id equals resumeState.TestAttemptId into resumeJoin
-            from resumeState in resumeJoin.DefaultIfEmpty()
-            let disconnectedSince = resumeState != null ? resumeState.LatestResumeAt : attempt.StartedAt
-            where attempt.StatusId == TestAttemptStatusIds.InProgress
-                  && attempt.Parts.Any(part =>
-                      part.StatusId == TestAttemptPartStatusIds.InProgress && part.EffectiveDeadlineAt > now)
-                  && (connectionState != null
-                      ? connectionState.LatestExpiresAt <= cutoff
-                      : disconnectedSince.HasValue && disconnectedSince.Value <= cutoff)
-            orderby connectionState != null ? connectionState.LatestLastSeenAt : disconnectedSince
-            select attempt.Id;
+        var query = unitOfWork.Context.Set<TestAttempt>()
+            .AsNoTracking()
+            .Where(attempt => attempt.StatusId == TestAttemptStatusIds.InProgress
+                              && attempt.Parts.Any(part =>
+                                  part.StatusId == TestAttemptPartStatusIds.InProgress
+                                  && part.EffectiveDeadlineAt > now))
+            .Select(attempt => new
+            {
+                attempt.Id,
+                attempt.StartedAt,
+                LatestLastSeenAt = unitOfWork.Context.Set<CandidateExamConnection>()
+                    .Where(connection => connection.TestAttemptId == attempt.Id)
+                    .Select(connection => (DateTime?)connection.LastSeenAt)
+                    .Max(),
+                LatestExpiresAt = unitOfWork.Context.Set<CandidateExamConnection>()
+                    .Where(connection => connection.TestAttemptId == attempt.Id)
+                    .Select(connection => (DateTime?)connection.ExpiresAt)
+                    .Max(),
+                LatestResumeAt = unitOfWork.Context.Set<TestAttemptInterruption>()
+                    .Where(interruption => interruption.TestAttemptId == attempt.Id
+                                           && interruption.StatusId
+                                           == TestAttemptInterruptionStatusIds.Resolved
+                                           && interruption.ResolutionActionId
+                                           == TestAttemptInterruptionResolutionActionIds.Resume
+                                           && interruption.ResolvedAt.HasValue)
+                    .Select(interruption => interruption.ResolvedAt)
+                    .Max()
+            })
+            .Where(state => state.LatestExpiresAt.HasValue
+                ? state.LatestExpiresAt.Value <= cutoff
+                : state.LatestResumeAt.HasValue
+                    ? state.LatestResumeAt.Value <= cutoff
+                    : state.StartedAt.HasValue && state.StartedAt.Value <= cutoff)
+            .OrderBy(state => state.LatestExpiresAt.HasValue
+                ? state.LatestLastSeenAt
+                : state.LatestResumeAt ?? state.StartedAt)
+            .Select(state => state.Id);
 
         return await query.Take(take).ToListAsync(cancellationToken);
     }

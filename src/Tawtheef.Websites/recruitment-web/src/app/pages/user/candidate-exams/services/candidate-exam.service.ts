@@ -11,6 +11,7 @@ import {
   TimeoutCandidateExamPartResponse,
 } from '../models/candidate-exam-execution.model';
 import {
+  CandidateExamActiveExecutionResponse,
   CandidateExamAssignment,
   StartCandidateExamResponse,
   ValidateCandidateExamAccessCodeResponse,
@@ -54,6 +55,20 @@ export class CandidateExamService {
       request,
       undefined,
       this.examSessionOptions(activeSessionId),
+    );
+  }
+
+  getActiveExecution(
+    testAttemptId: string,
+  ): Observable<CandidateExamActiveExecutionResponse> {
+    return this.http.get<CandidateExamActiveExecutionResponse>(
+      this.endpoints.candidateExams.attempts.activeExecution(testAttemptId),
+      undefined,
+      {
+        headers: new HttpHeaders({
+          'X-Skip-Loading': 'true',
+        }),
+      },
     );
   }
 

@@ -103,6 +103,21 @@ public sealed class CandidateExamsController(IMediator mediator) : ControllerBas
         return result.ToActionResult();
     }
 
+    [HttpGet("attempts/{testAttemptId:guid}/active-execution")]
+    public async Task<IActionResult> GetCandidateExamActiveExecution(
+        Guid testAttemptId,
+        CancellationToken cancellationToken)
+    {
+        if (UserId.IsFailed)
+            return BadRequest(UserId.Errors);
+
+        var result = await mediator.Send(
+            new GetCandidateExamActiveExecutionQuery(UserId.Value, testAttemptId),
+            cancellationToken);
+
+        return result.ToActionResult();
+    }
+
     [HttpPut("attempts/{testAttemptId:guid}/questions/{testAttemptQuestionId:guid}/answer")]
     public async Task<IActionResult> SaveCandidateExamAnswer(
         Guid testAttemptId,

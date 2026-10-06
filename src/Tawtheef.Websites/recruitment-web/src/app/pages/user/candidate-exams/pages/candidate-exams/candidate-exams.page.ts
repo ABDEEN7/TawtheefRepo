@@ -4,6 +4,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
+import { firstValueFrom } from 'rxjs';
 import { LanguageService } from '../../../../../core/services/language.service';
 import { routes } from '../../../../../routes/routes';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
@@ -20,6 +21,7 @@ import {
 } from '../../constants/candidate-exam-backend-status.constants';
 import { CandidateExamStatusPresentation } from '../../models/candidate-exam-status-presentation.model';
 import { CANDIDATE_EXAM_ENTRY_STATE_PRESENTATION } from '../../constants/candidate-exam-status-presentation.constants';
+import { CandidateExamRealtimeService } from '../../services/candidate-exam-realtime.service';
 
 @Component({
   selector: 'app-candidate-exams',
@@ -37,8 +39,10 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly pendingStart = inject(CandidateExamPendingStartService);
   private readonly pendingResume = inject(CandidateExamPendingResumeService);
+  private readonly realtime = inject(CandidateExamRealtimeService);
 
   private resumeAuthorizationPoll: ReturnType<typeof setInterval> | null = null;
+  private activeExecutionRecoveryAttemptId: string | null = null;
 
   readonly assignmentsResource = rxResource<CandidateExamAssignment[], void>({
     stream: () => this.candidateExamService.getAssignments(),
@@ -116,14 +120,13 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
   }
 
   canContinueExam(assignment: CandidateExamAssignment): boolean {
-    const session = this.candidateExamSession.session();
-
     return (
       assignment.entryState === 'Started' &&
+      assignment.slotStatus.backendName === CandidateExamSlotStatus.Started &&
       assignment.attemptStatus?.backendName === CandidateExamAttemptStatus.InProgress &&
       assignment.testAttemptId !== null &&
-      this.pendingResume.get(assignment.testAttemptId) === null &&
-      session?.testAttemptId === assignment.testAttemptId
+      this.pendingStart.get(assignment.testSessionCandidateId) === null &&
+      this.pendingResume.get(assignment.testAttemptId) === null
     );
   }
 
@@ -173,9 +176,53 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
     });
   }
 
-  continueExam(assignment: CandidateExamAssignment): void {
+  async continueExam(assignment: CandidateExamAssignment): Promise<void> {
     if (!this.canContinueExam(assignment)) return;
-    void this.router.navigateByUrl(routes.user.candidateExamExecution);
+    if (this.activeExecutionRecoveryAttemptId !== null) return;
+
+    const testAttemptId = assignment.testAttemptId;
+    if (!testAttemptId) return;
+
+    if (this.candidateExamSession.session()?.testAttemptId === testAttemptId) {
+      await this.router.navigateByUrl(routes.user.candidateExamExecution);
+      return;
+    }
+
+    this.activeExecutionRecoveryAttemptId = testAttemptId;
+    let recoveredSessionCreated = false;
+    let realtimeConnectedByRecovery = false;
+
+    try {
+      const response = await firstValueFrom(
+        this.candidateExamService.getActiveExecution(testAttemptId),
+      );
+      this.candidateExamSession.initializeFromActiveExecution(response);
+      recoveredSessionCreated = true;
+
+      const realtimeWasDisconnected = this.realtime.connectionStatus() === 'disconnected';
+      await this.realtime.connect();
+      realtimeConnectedByRecovery = realtimeWasDisconnected;
+      await this.realtime.registerAttempt(response.testAttemptId, response.activeSessionId);
+
+      const navigated = await this.router.navigateByUrl(routes.user.candidateExamExecution);
+      if (!navigated) {
+        throw new Error('Candidate Exam execution navigation was not completed.');
+      }
+    } catch {
+      if (recoveredSessionCreated) {
+        this.candidateExamSession.clear();
+      }
+      if (realtimeConnectedByRecovery) {
+        try {
+          await this.realtime.disconnect();
+        } catch {
+          // Assignment state must still refresh when realtime cleanup fails.
+        }
+      }
+      this.assignmentsResource.reload();
+    } finally {
+      this.activeExecutionRecoveryAttemptId = null;
+    }
   }
 
   openResumeDialog(assignment: CandidateExamAssignment): void {

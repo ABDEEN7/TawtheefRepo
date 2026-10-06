@@ -185,6 +185,8 @@ export class EndpointsService {
     start: (testSessionCandidateId: string) =>
       this.getFullUrl(`/candidate-exams/${testSessionCandidateId}/start`),
     attempts: {
+      activeExecution: (testAttemptId: string) =>
+        this.getFullUrl(`/candidate-exams/attempts/${testAttemptId}/active-execution`),
       currentQuestion: (testAttemptId: string) =>
         this.getFullUrl(`/candidate-exams/attempts/${testAttemptId}/current-question`),
       answer: (testAttemptId: string, testAttemptQuestionId: string) =>
