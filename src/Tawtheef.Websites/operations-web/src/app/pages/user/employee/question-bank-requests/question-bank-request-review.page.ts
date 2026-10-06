@@ -17,6 +17,7 @@ import { RichContentRendererComponent } from '../../../../shared/rich-content/ri
 import { QuestionBankAssignmentsService } from '../question-bank-assignments/services/question-bank-assignments.service';
 import {
   QuestionBankRequestReview,
+  QuestionChangeTypeIds,
   QuestionReviewDecisionIds,
   QuestionReviewInput,
 } from './models/question-bank-request.models';
@@ -61,6 +62,21 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
   readonly submitted = signal(false);
   readonly currentLang = signal<Lang>(this.language.get());
   readonly decisions = QuestionReviewDecisionIds;
+  readonly changeTypes = QuestionChangeTypeIds;
+
+  changeTypeLabel(changeTypeId: string): string {
+    if (changeTypeId === this.changeTypes.Update) return 'QUESTION_BANK_REQUESTS.CHANGE_UPDATE';
+    if (changeTypeId === this.changeTypes.Delete) return 'QUESTION_BANK_REQUESTS.CHANGE_DELETE';
+    return 'QUESTION_BANK_REQUESTS.CHANGE_ADD';
+  }
+
+  imageChangeLabel(item: QuestionBankRequestReview['items'][number]): string {
+    if (!item.originalImageUrl && item.imageUrl) return 'QUESTION_BANK_REQUESTS.IMAGE_ADDED';
+    if (item.originalImageUrl && !item.imageUrl) return 'QUESTION_BANK_REQUESTS.IMAGE_REMOVED';
+    if (item.originalImageUrl && item.imageUrl && item.originalImageUrl !== item.imageUrl)
+      return 'QUESTION_BANK_REQUESTS.IMAGE_REPLACED';
+    return 'QUESTION_BANK_REQUESTS.IMAGE_KEPT';
+  }
   readonly requestStatusSeverity = questionBankRequestStatusSeverity;
   readonly values = new Map<string, ReviewFormValue>();
   readonly imageUrls = new Map<string, string>();
@@ -171,6 +187,8 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
           review.items.forEach((item) => {
             this.values.set(item.requestItemId, { reviewNote: '' });
             if (item.imageUrl) this.loadImage(item.requestItemId, item.imageUrl);
+            if (item.originalImageUrl)
+              this.loadImage(`original-${item.requestItemId}`, item.originalImageUrl);
           });
         },
         error: () => {

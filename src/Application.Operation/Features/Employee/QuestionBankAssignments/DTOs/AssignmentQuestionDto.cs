@@ -1,6 +1,6 @@
 namespace Application.Operation.Features.Employee.QuestionBankAssignments.DTOs;
 
-public sealed record AssignmentQuestionDto(Guid ItemId, Guid QuestionId, Guid RevisionId, int RevisionNo,
+public sealed record AssignmentQuestionDto(Guid ItemId, Guid QuestionId, Guid ChangeTypeId, Guid RevisionId, int RevisionNo,
     Guid QuestionTypeId, string QuestionTypeNameAr, string QuestionTypeNameEn, Guid DifficultyLevelId,
     string DifficultyNameAr, string DifficultyNameEn, string? QuestionTextAr, string? QuestionTextEn,
     string? ExplanationAr, string? ExplanationEn, Guid? ResourceId, string? ImageUrl, Guid StatusId, string StatusNameAr, string StatusNameEn,

@@ -29,20 +29,58 @@ public sealed class GetQuestionBankAssignmentWorkspaceQueryHandler(IUnitOfWork u
         var questions = await uow.GetEntityRepository<QuestionBankRequestItem>().DbSet.AsNoTracking()
             .Where(x => x.QuestionBankAssignmentId == a.Id && x.RequestId == a.QuestionBankRequestId && !x.IsDeleted &&
                         x.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST)
-            .OrderBy(x => x.CreatedDate).Select(x => new AssignmentQuestionDto(x.Id, x.QuestionId,
-                x.CurrentProposedRevision!.Id, x.CurrentProposedRevision.RevisionNo, x.CurrentProposedRevision.QuestionTypeId,
-                x.CurrentProposedRevision.QuestionType.NameAr, x.CurrentProposedRevision.QuestionType.NameEn,
-                x.CurrentProposedRevision.DifficultyLevelId, x.CurrentProposedRevision.DifficultyLevel.NameAr,
-                x.CurrentProposedRevision.DifficultyLevel.NameEn, x.CurrentProposedRevision.QuestionTextAr,
-                x.CurrentProposedRevision.QuestionTextEn, x.CurrentProposedRevision.ExplanationAr,
-                x.CurrentProposedRevision.ExplanationEn, x.CurrentProposedRevision.ResourceId,
-                x.CurrentProposedRevision.ResourceId == null ? null : x.CurrentProposedRevision.Resource!.Url,
+            .OrderBy(x => x.CreatedDate).Select(x => new AssignmentQuestionDto(x.Id, x.QuestionId, x.ChangeTypeId,
+                x.CurrentProposedRevisionId ?? x.OriginalRevisionId!.Value,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.RevisionNo : x.OriginalRevision!.RevisionNo,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.QuestionTypeId : x.OriginalRevision!.QuestionTypeId,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.QuestionType.NameAr : x.OriginalRevision!.QuestionType.NameAr,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.QuestionType.NameEn : x.OriginalRevision!.QuestionType.NameEn,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.DifficultyLevelId : x.OriginalRevision!.DifficultyLevelId,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.DifficultyLevel.NameAr : x.OriginalRevision!.DifficultyLevel.NameAr,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.DifficultyLevel.NameEn : x.OriginalRevision!.DifficultyLevel.NameEn,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.QuestionTextAr : x.OriginalRevision!.QuestionTextAr,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.QuestionTextEn : x.OriginalRevision!.QuestionTextEn,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.ExplanationAr : x.OriginalRevision!.ExplanationAr,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.ExplanationEn : x.OriginalRevision!.ExplanationEn,
+                x.CurrentProposedRevision != null ? x.CurrentProposedRevision.ResourceId : x.OriginalRevision!.ResourceId,
+                x.CurrentProposedRevision != null
+                    ? (x.CurrentProposedRevision.ResourceId == null ? null : x.CurrentProposedRevision.Resource!.Url)
+                    : (x.OriginalRevision!.ResourceId == null ? null : x.OriginalRevision.Resource!.Url),
                 x.StatusId, x.Status.NameAr, x.Status.NameEn,
-                x.CurrentProposedRevision.Options.OrderBy(o => o.DisplayOrder)
-                    .Select(o => new QuestionOptionDto(o.Id, o.OptionTextAr, o.OptionTextEn, o.IsCorrect, o.DisplayOrder)).ToList(),
+                x.CurrentProposedRevision != null
+                    ? x.CurrentProposedRevision.Options.OrderBy(o => o.DisplayOrder)
+                        .Select(o => new QuestionOptionDto(o.Id, o.OptionTextAr, o.OptionTextEn, o.IsCorrect, o.DisplayOrder)).ToList()
+                    : x.OriginalRevision!.Options.OrderBy(o => o.DisplayOrder)
+                        .Select(o => new QuestionOptionDto(o.Id, o.OptionTextAr, o.OptionTextEn, o.IsCorrect, o.DisplayOrder)).ToList(),
                 x.Reviews.OrderByDescending(review => review.ReviewRound).Select(review => (Guid?)review.DecisionId).FirstOrDefault(),
                 x.Reviews.OrderByDescending(review => review.ReviewRound).Select(review => review.ReviewNote).FirstOrDefault(),
                 x.Reviews.OrderByDescending(review => review.ReviewRound).Select(review => (int?)review.ReviewRound).FirstOrDefault())).ToListAsync(ct);
+        var baseQuestions = a.QuestionBankRequest.RequestTypeId == QuestionBankRequestTypeIds.MAINTENANCE &&
+                            a.QuestionBankRequest.BaseVersionId.HasValue
+            ? await uow.GetEntityRepository<QuestionBankVersionQuestion>().DbSet.AsNoTracking()
+                .Where(x => x.QuestionBankVersionId == a.QuestionBankRequest.BaseVersionId && !x.IsDeleted)
+                .OrderBy(x => x.CreatedDate)
+                .Select(x => new MaintenanceBaseQuestionDto(x.QuestionId, x.QuestionRevisionId,
+                    x.QuestionRevision.RevisionNo, x.QuestionRevision.QuestionTypeId,
+                    x.QuestionRevision.QuestionType.NameAr, x.QuestionRevision.QuestionType.NameEn,
+                    x.QuestionRevision.DifficultyLevelId, x.QuestionRevision.DifficultyLevel.NameAr,
+                    x.QuestionRevision.DifficultyLevel.NameEn, x.QuestionRevision.QuestionTextAr,
+                    x.QuestionRevision.QuestionTextEn, x.QuestionRevision.ExplanationAr,
+                    x.QuestionRevision.ExplanationEn, x.QuestionRevision.ResourceId,
+                    x.QuestionRevision.ResourceId == null ? null : x.QuestionRevision.Resource!.Url,
+                    x.QuestionRevision.Options.OrderBy(o => o.DisplayOrder)
+                        .Select(o => new QuestionOptionDto(o.Id, o.OptionTextAr, o.OptionTextEn, o.IsCorrect, o.DisplayOrder)).ToList(),
+                    x.Question.RequestItems.Any(i => !i.IsDeleted && i.RequestId == a.QuestionBankRequestId &&
+                                                     i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST)
+                        ? (x.Question.RequestItems.Any(i => !i.IsDeleted && i.RequestId == a.QuestionBankRequestId &&
+                                                           i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST &&
+                                                           i.QuestionBankAssignmentId == a.Id)
+                            ? "AssignedToMe" : "AssignedToAnotherEmployee")
+                        : "Available",
+                    x.Question.RequestItems.Where(i => !i.IsDeleted && i.RequestId == a.QuestionBankRequestId &&
+                                                        i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST)
+                        .Select(i => (Guid?)i.Id).FirstOrDefault())).ToListAsync(ct)
+            : [];
         var current = questions.Count(x => x.StatusId != QuestionBankRequestItemStatusIds.REJECTED); var bank = a.QuestionBankRequest.QuestionBank;
         return Result.Ok(new QuestionBankAssignmentWorkspaceDto(
             new(a.Id, a.StatusId, a.Status.NameAr, a.Status.NameEn, a.MinimumQuestionCount, a.Notes, a.AssignedAt, a.QuestionEntryStartedAt, a.QuestionEntryCompletedAt),
@@ -52,6 +90,6 @@ public sealed class GetQuestionBankAssignmentWorkspaceQueryHandler(IUnitOfWork u
             new(a.MinimumQuestionCount, current, Math.Max(0, a.MinimumQuestionCount-current),
                 current >= a.MinimumQuestionCount && current > 0 &&
                 questions.All(x => x.StatusId != QuestionBankRequestItemStatusIds.NEEDS_MODIFICATION &&
-                                   x.StatusId != QuestionBankRequestItemStatusIds.REJECTED)), questions));
+                                   x.StatusId != QuestionBankRequestItemStatusIds.REJECTED)), questions, baseQuestions));
     }
 }

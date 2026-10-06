@@ -4,6 +4,7 @@
       <label>{{ 'QUESTION_ASSIGNMENTS.TYPE' | translate }}</label>
       <p-select
         formControlName="questionTypeId"
+        [disabled]="questionTypeReadOnly"
         [options]="types"
         [placeholder]="'QUESTION_ASSIGNMENTS.PLEASE_SELECT' | translate"
         [class.ng-dirty]="controlInvalid('questionTypeId')"
@@ -78,7 +79,7 @@
     @if (imageLoading) {
       <div class="mt-2 text-muted">{{ 'QUESTION_ASSIGNMENTS.LOADING_IMAGE' | translate }}</div>
     }
-    @if (imagePreview) {
+    @if (imagePreview || form.controls.resourceId.value) {
       <div class="mt-2">
         <img
           [src]="imagePreview"
