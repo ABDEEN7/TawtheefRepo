@@ -96,20 +96,20 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
   }
 
   statusPresentation(assignment: CandidateExamAssignment): CandidateExamStatusPresentation {
-  if (assignment.slotStatus.backendName === CandidateExamSlotStatus.Closed) {
-    return { labelKey: 'candidate_exams.states.closed', tone: 'secondary' };
-  }
+    if (assignment.slotStatus.backendName === CandidateExamSlotStatus.Closed) {
+      return { labelKey: 'candidate_exams.states.closed', tone: 'secondary' };
+    }
 
-  if (assignment.entryState !== 'Started') {
-    return CANDIDATE_EXAM_ENTRY_STATE_PRESENTATION[assignment.entryState];
-  }
+    if (assignment.entryState !== 'Started') {
+      return CANDIDATE_EXAM_ENTRY_STATE_PRESENTATION[assignment.entryState];
+    }
 
-  if (assignment.attemptStatus?.backendName === CandidateExamAttemptStatus.Interrupted) {
-    return { labelKey: 'candidate_exams.states.interrupted', tone: 'warning' };
-  }
+    if (assignment.attemptStatus?.backendName === CandidateExamAttemptStatus.Interrupted) {
+      return { labelKey: 'candidate_exams.states.interrupted', tone: 'warning' };
+    }
 
-  return CANDIDATE_EXAM_ENTRY_STATE_PRESENTATION.Started;
-}
+    return CANDIDATE_EXAM_ENTRY_STATE_PRESENTATION.Started;
+  }
 
   canEnterExam(assignment: CandidateExamAssignment): boolean {
     return assignment.entryState === 'ReadyToEnter';
@@ -180,12 +180,11 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
 
   openResumeDialog(assignment: CandidateExamAssignment): void {
     if (
-  (!this.canResumeExam(assignment) &&
-    !this.canRecoverResume(assignment)) ||
-  !assignment.testAttemptId
-) {
-  return;
-}
+      (!this.canResumeExam(assignment) && !this.canRecoverResume(assignment)) ||
+      !assignment.testAttemptId
+    ) {
+      return;
+    }
 
     this.dialogService.open(CandidateExamResumeDialogComponent, {
       header: this.translate.instant('candidate_exams.resume.dialogTitle'),

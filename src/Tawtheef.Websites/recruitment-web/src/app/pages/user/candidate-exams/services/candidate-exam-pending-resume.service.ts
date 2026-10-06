@@ -1,27 +1,23 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX } from '../constants/candidate-exam-storage.constants';
+import { CandidateExamPendingOperationStorageService } from './candidate-exam-pending-operation-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class CandidateExamPendingResumeService {
-  get(testAttemptId: string): string | null {
-    const value = sessionStorage.getItem(CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX + testAttemptId);
+  private readonly storage = inject(CandidateExamPendingOperationStorageService);
 
-    return value && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(value) ? value : null;
+  get(testAttemptId: string): string | null {
+    return this.storage.get(CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX, testAttemptId);
   }
 
   getOrCreate(testAttemptId: string): string {
-    const existing = this.get(testAttemptId);
-
-    if (existing) return existing;
-
-    const created = crypto.randomUUID();
-
-    sessionStorage.setItem(CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX + testAttemptId, created);
-
-    return created;
+    return this.storage.getOrCreate(
+      CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX,
+      testAttemptId,
+    );
   }
 
   clear(testAttemptId: string): void {
-    sessionStorage.removeItem(CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX + testAttemptId);
+    this.storage.clear(CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX, testAttemptId);
   }
 }

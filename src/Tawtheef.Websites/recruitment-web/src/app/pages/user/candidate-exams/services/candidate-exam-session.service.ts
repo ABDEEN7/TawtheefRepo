@@ -8,7 +8,10 @@ import {
 } from '../models/candidate-exam-execution.model';
 import { StartCandidateExamResponse } from '../models/candidate-exam.model';
 import { CandidateExamResumeResult } from '../models/candidate-exam-realtime.model';
-import { CandidateExamSessionState, StoredCandidateExamSession } from '../models/candidate-exam-session.model';
+import {
+  CandidateExamSessionState,
+  StoredCandidateExamSession,
+} from '../models/candidate-exam-session.model';
 import {
   CANDIDATE_EXAM_SESSION_STORAGE_KEY,
   CANDIDATE_EXAM_SESSION_STORAGE_VERSION,

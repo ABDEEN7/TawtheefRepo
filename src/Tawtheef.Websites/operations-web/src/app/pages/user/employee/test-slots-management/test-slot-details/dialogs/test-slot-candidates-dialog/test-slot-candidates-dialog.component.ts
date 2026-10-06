@@ -31,10 +31,18 @@ import {
   TestSlotCandidateAttendanceStatus,
   TestSlotCandidateAttemptStatus,
   TestSlotCandidateIdentityStatus,
-  TestSlotCandidateSessionStatus,
   TestSlotCandidateStatus,
 } from '../../../constants/test-slot-candidate-backend-status.constants';
 import { TestSlotCandidatesDialogData } from './models/test-slot-candidates-dialog.model';
+import {
+  canActOnTestSlotCandidate,
+  canAuthorizeTestSlotCandidateEntry,
+  canAuthorizeTestSlotCandidateResume,
+  canMarkTestSlotCandidatePresent,
+  canReportTestSlotCandidateOperationalIssue,
+  canRescheduleTestSlotCandidate,
+  canVerifyTestSlotCandidateIdentity,
+} from './policies/test-slot-candidate-action.policy';
 
 @Component({
   selector: 'app-test-slot-candidates-dialog',
@@ -125,40 +133,24 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   }
 
   private canAct(candidate: TestSlotCandidateListItemDto): boolean {
-    return (
-      this.data.isCurrentUserRoomHead &&
-      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
-      ([
-        TestSlotCandidateSessionStatus.Approved,
-        TestSlotCandidateSessionStatus.Ready,
-        TestSlotCandidateSessionStatus.InProgress,
-      ] as readonly string[]).includes(candidate.sessionStatusBackendName) &&
-      candidate.candidateStatusBackendName === TestSlotCandidateStatus.Assigned &&
-      this.actingCandidateId() === null
+    return canActOnTestSlotCandidate(
+      candidate,
+      this.data.isCurrentUserRoomHead,
+      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod),
+      this.actingCandidateId(),
     );
   }
 
   canMarkPresent(candidate: TestSlotCandidateListItemDto): boolean {
-    return (
-      this.canAct(candidate) &&
-      candidate.attendanceStatusBackendName === TestSlotCandidateAttendanceStatus.Pending
-    );
+    return canMarkTestSlotCandidatePresent(candidate, this.canAct(candidate));
   }
 
   canVerifyIdentity(candidate: TestSlotCandidateListItemDto): boolean {
-    return (
-      this.canAct(candidate) &&
-      candidate.attendanceStatusBackendName === TestSlotCandidateAttendanceStatus.Present &&
-      candidate.identityVerificationStatusBackendName === TestSlotCandidateIdentityStatus.Pending
-    );
+    return canVerifyTestSlotCandidateIdentity(candidate, this.canAct(candidate));
   }
 
   canAuthorizeEntry(candidate: TestSlotCandidateListItemDto): boolean {
-    return (
-      this.canAct(candidate) &&
-      candidate.attendanceStatusBackendName === TestSlotCandidateAttendanceStatus.Present &&
-      candidate.identityVerificationStatusBackendName === TestSlotCandidateIdentityStatus.Matched
-    );
+    return canAuthorizeTestSlotCandidateEntry(candidate, this.canAct(candidate));
   }
 
   markPresent(candidate: TestSlotCandidateListItemDto): void {
@@ -233,17 +225,12 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   }
 
   canReportOperationalIssue(candidate: TestSlotCandidateListItemDto): boolean {
-    return (
-      this.data.isCurrentUserRoomHead &&
-      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
-      candidate.sessionStatusBackendName === TestSlotCandidateSessionStatus.InProgress &&
-      candidate.candidateStatusBackendName === TestSlotCandidateStatus.Completed &&
-      candidate.testAttemptId !== null &&
-      (candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.Completed ||
-        candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.TimedOut) &&
-      !candidate.hasOpenInterruption &&
-      this.actingCandidateId() === null &&
-      this.authorizingAttemptId() === null
+    return canReportTestSlotCandidateOperationalIssue(
+      candidate,
+      this.data.isCurrentUserRoomHead,
+      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod),
+      this.actingCandidateId(),
+      this.authorizingAttemptId(),
     );
   }
 
@@ -281,14 +268,10 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   }
 
   canAuthorizeResume(candidate: TestSlotCandidateListItemDto): boolean {
-    return (
-      candidate.testAttemptId !== null &&
-      candidate.sessionStatusBackendName === TestSlotCandidateSessionStatus.InProgress &&
-      candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.Interrupted &&
-      candidate.resumeAllowed &&
-      !candidate.resumeAuthorized &&
-      this.data.isCurrentUserRoomHead &&
-      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod)
+    return canAuthorizeTestSlotCandidateResume(
+      candidate,
+      this.data.isCurrentUserRoomHead,
+      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod),
     );
   }
 
@@ -353,14 +336,10 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   }
 
   canReschedule(candidate: TestSlotCandidateListItemDto): boolean {
-    return (
-      candidate.testAttemptId !== null &&
-      candidate.sessionStatusBackendName === TestSlotCandidateSessionStatus.InProgress &&
-      candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.Interrupted &&
-      candidate.rescheduleAllowed &&
-      !candidate.resumeAuthorized &&
-      this.data.isCurrentUserRoomHead &&
-      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod)
+    return canRescheduleTestSlotCandidate(
+      candidate,
+      this.data.isCurrentUserRoomHead,
+      this.auth.hasPermission(Permissions.TestSlots.ManagePeriod),
     );
   }
 
