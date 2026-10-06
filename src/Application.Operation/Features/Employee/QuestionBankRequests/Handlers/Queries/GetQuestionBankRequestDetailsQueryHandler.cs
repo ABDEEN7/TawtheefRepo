@@ -22,6 +22,7 @@ public sealed class GetQuestionBankRequestDetailsQueryHandler(IUnitOfWork unitOf
                 RequestTypeId = x.RequestTypeId, RequestTypeNameAr = x.RequestType.NameAr, RequestTypeNameEn = x.RequestType.NameEn,
                 StatusId = x.StatusId, StatusNameAr = x.Status.NameAr, StatusNameEn = x.Status.NameEn,
                 CurrentReviewRound = x.CurrentReviewRound, Reason = x.Reason,
+                BaseVersionNo = x.BaseVersion == null ? null : x.BaseVersion.VersionNo,
                 SubmittedById = x.SubmittedById, SubmittedByNameAr = x.SubmittedBy.FullNameAr,
                 SubmittedByNameEn = x.SubmittedBy.FullNameEn, SubmittedAt = x.SubmittedAt,
                 QuestionBankTypeId = x.QuestionBank.QuestionBankTypeId,
