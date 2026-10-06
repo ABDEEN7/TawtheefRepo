@@ -40,6 +40,21 @@ export interface CreateQuestionBankRequest {
   stageId: null;
   reason: string | null;
 }
+export interface QuestionBankMaintenanceDetails {
+  questionBankId: string;
+  questionBankTypeId: string;
+  questionBankTypeNameAr: string;
+  questionBankTypeNameEn: string;
+  managementId?: string | null;
+  managementNameAr?: string | null;
+  managementNameEn?: string | null;
+  jobTitleId?: string | null;
+  jobTitleNameAr?: string | null;
+  jobTitleNameEn?: string | null;
+  currentApprovedVersionId?: string | null;
+  currentVersionNo?: number | null;
+  isActive: boolean;
+}
 export const QuestionBankTypeIds = {
   Specialized: 'a7f9646b-fcc3-4a00-944c-ceed82acd557',
   Skills: '686928db-b630-4689-b265-ae17eded73cf',
@@ -68,6 +83,7 @@ export interface QuestionBankAssignment {
   completedAt?: string;
 }
 export interface QuestionBankRequestDetails extends QuestionBankRequestListItem {
+  baseVersionNo?: number | null;
   reason?: string;
   isActive: boolean;
   canReview: boolean;
