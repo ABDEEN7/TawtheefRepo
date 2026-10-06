@@ -8,22 +8,11 @@ import {
 } from '../models/candidate-exam-execution.model';
 import { StartCandidateExamResponse } from '../models/candidate-exam.model';
 import { CandidateExamResumeResult } from '../models/candidate-exam-realtime.model';
-
-const CANDIDATE_EXAM_SESSION_KEY = 'candidate-exam-session';
-const CANDIDATE_EXAM_SESSION_VERSION = 1;
-
-export interface CandidateExamSessionState {
-  readonly testAttemptId: string;
-  readonly testAttemptPartId: string;
-  readonly activeSessionId: string;
-  readonly effectiveDeadlineAt: string;
-  readonly allowPreviousQuestion: boolean;
-  readonly currentQuestionNumber: number;
-}
-
-interface StoredCandidateExamSession extends CandidateExamSessionState {
-  readonly version: typeof CANDIDATE_EXAM_SESSION_VERSION;
-}
+import { CandidateExamSessionState, StoredCandidateExamSession } from '../models/candidate-exam-session.model';
+import {
+  CANDIDATE_EXAM_SESSION_STORAGE_KEY,
+  CANDIDATE_EXAM_SESSION_STORAGE_VERSION,
+} from '../constants/candidate-exam-storage.constants';
 
 @Injectable({ providedIn: 'root' })
 export class CandidateExamSessionService {
@@ -62,7 +51,7 @@ export class CandidateExamSessionService {
     this.outcomeState.set(null);
 
     try {
-      const rawSession = sessionStorage.getItem(CANDIDATE_EXAM_SESSION_KEY);
+      const rawSession = sessionStorage.getItem(CANDIDATE_EXAM_SESSION_STORAGE_KEY);
       if (!rawSession) {
         this.sessionState.set(null);
         return false;
@@ -173,12 +162,12 @@ export class CandidateExamSessionService {
     this.sessionState.set(session);
 
     const storedSession: StoredCandidateExamSession = {
-      version: CANDIDATE_EXAM_SESSION_VERSION,
+      version: CANDIDATE_EXAM_SESSION_STORAGE_VERSION,
       ...session,
     };
 
     try {
-      sessionStorage.setItem(CANDIDATE_EXAM_SESSION_KEY, JSON.stringify(storedSession));
+      sessionStorage.setItem(CANDIDATE_EXAM_SESSION_STORAGE_KEY, JSON.stringify(storedSession));
     } catch {
       // In-memory execution can continue when browser storage is unavailable.
     }
@@ -188,7 +177,7 @@ export class CandidateExamSessionService {
     this.sessionState.set(null);
 
     try {
-      sessionStorage.removeItem(CANDIDATE_EXAM_SESSION_KEY);
+      sessionStorage.removeItem(CANDIDATE_EXAM_SESSION_STORAGE_KEY);
     } catch {
       // The in-memory session is still cleared when browser storage is unavailable.
     }
@@ -198,7 +187,7 @@ export class CandidateExamSessionService {
     if (!this.isRecord(value)) return false;
 
     return (
-      value['version'] === CANDIDATE_EXAM_SESSION_VERSION &&
+      value['version'] === CANDIDATE_EXAM_SESSION_STORAGE_VERSION &&
       this.isNonEmptyString(value['testAttemptId']) &&
       this.isNonEmptyString(value['testAttemptPartId']) &&
       this.isNonEmptyString(value['activeSessionId']) &&

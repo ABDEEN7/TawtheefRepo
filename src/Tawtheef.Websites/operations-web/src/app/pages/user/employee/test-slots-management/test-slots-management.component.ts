@@ -23,7 +23,7 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { RoomListItemDto } from '../rooms-management/models/room-list-item.dto';
 import { TestSlotFilters, TestSlotListItemDto } from './models/test-slot-list-item.dto';
-import { TestSlotStatusIds } from './models/test-slot-status.ids';
+import { TestSlotStatusIds } from './constants/test-slot-status.ids';
 import { TestSlotsService } from './services/test-slots.service';
 
 @Component({

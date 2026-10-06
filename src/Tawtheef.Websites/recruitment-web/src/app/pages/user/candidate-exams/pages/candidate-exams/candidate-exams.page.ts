@@ -4,58 +4,22 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
-import { LanguageService } from '../../../core/services/language.service';
-import { routes } from '../../../routes/routes';
-import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
-import { CandidateExamAccessCodeDialogComponent } from './dialogs/candidate-exam-access-code/candidate-exam-access-code.dialog';
-import { CandidateExamResumeDialogComponent } from './dialogs/candidate-exam-resume/candidate-exam-resume.dialog';
-import { CandidateExamAssignment, CandidateExamEntryState } from './models/candidate-exam.model';
-import { CandidateExamService } from './services/candidate-exam.service';
-import { CandidateExamSessionService } from './services/candidate-exam-session.service';
-import { CandidateExamPendingStartService } from './services/candidate-exam-pending-start.service';
-import { CandidateExamPendingResumeService } from './services/candidate-exam-pending-resume.service';
-
-type CandidateExamStatusTone = 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'secondary';
-
-interface CandidateExamStatusPresentation {
-  readonly labelKey: string;
-  readonly tone: CandidateExamStatusTone;
-}
-
-const ENTRY_STATE_PRESENTATION: Record<CandidateExamEntryState, CandidateExamStatusPresentation> = {
-  Assigned: { labelKey: 'candidate_exams.states.assigned', tone: 'neutral' },
-  NotEligible: {
-    labelKey: 'candidate_exams.states.notEligible',
-    tone: 'neutral',
-  },
-  WaitingForSession: {
-    labelKey: 'candidate_exams.states.waitingForSession',
-    tone: 'info',
-  },
-  WaitingForAttendance: {
-    labelKey: 'candidate_exams.states.waitingForAttendance',
-    tone: 'warning',
-  },
-  EntryWindowClosed: {
-    labelKey: 'candidate_exams.states.entryWindowClosed',
-    tone: 'neutral',
-  },
-  WaitingForIdentityVerification: {
-    labelKey: 'candidate_exams.states.waitingForIdentityVerification',
-    tone: 'warning',
-  },
-  WaitingForAuthorization: {
-    labelKey: 'candidate_exams.states.waitingForAuthorization',
-    tone: 'info',
-  },
-  ReadyToEnter: { labelKey: 'candidate_exams.states.readyToEnter', tone: 'success' },
-  Started: { labelKey: 'candidate_exams.states.inProgress', tone: 'info' },
-  NoShow: { labelKey: 'candidate_exams.states.noShow', tone: 'danger' },
-  Completed: { labelKey: 'candidate_exams.states.completed', tone: 'success' },
-  Rescheduled: { labelKey: 'candidate_exams.states.rescheduled', tone: 'warning' },
-  Cancelled: { labelKey: 'candidate_exams.states.cancelled', tone: 'danger' },
-  Closed: { labelKey: 'candidate_exams.states.closed', tone: 'neutral' },
-};
+import { LanguageService } from '../../../../../core/services/language.service';
+import { routes } from '../../../../../routes/routes';
+import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
+import { CandidateExamAccessCodeDialogComponent } from '../../dialogs/candidate-exam-access-code/candidate-exam-access-code.dialog';
+import { CandidateExamResumeDialogComponent } from '../../dialogs/candidate-exam-resume/candidate-exam-resume.dialog';
+import { CandidateExamAssignment } from '../../models/candidate-exam.model';
+import { CandidateExamService } from '../../services/candidate-exam.service';
+import { CandidateExamSessionService } from '../../services/candidate-exam-session.service';
+import { CandidateExamPendingStartService } from '../../services/candidate-exam-pending-start.service';
+import { CandidateExamPendingResumeService } from '../../services/candidate-exam-pending-resume.service';
+import {
+  CandidateExamAttemptStatus,
+  CandidateExamSlotStatus,
+} from '../../constants/candidate-exam-backend-status.constants';
+import { CandidateExamStatusPresentation } from '../../models/candidate-exam-status-presentation.model';
+import { CANDIDATE_EXAM_ENTRY_STATE_PRESENTATION } from '../../constants/candidate-exam-status-presentation.constants';
 
 @Component({
   selector: 'app-candidate-exams',
@@ -96,7 +60,8 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
         .some(
           (assignment) =>
             assignment.entryState === 'Started' &&
-            assignment.attemptStatus?.backendName === 'Interrupted' &&
+            assignment.slotStatus.backendName === CandidateExamSlotStatus.Started &&
+            assignment.attemptStatus?.backendName === CandidateExamAttemptStatus.Interrupted &&
             !assignment.resumeAuthorized &&
             assignment.testAttemptId !== null,
         );
@@ -131,19 +96,19 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
   }
 
   statusPresentation(assignment: CandidateExamAssignment): CandidateExamStatusPresentation {
-  if (assignment.slotStatus.backendName === 'Closed') {
+  if (assignment.slotStatus.backendName === CandidateExamSlotStatus.Closed) {
     return { labelKey: 'candidate_exams.states.closed', tone: 'secondary' };
   }
 
   if (assignment.entryState !== 'Started') {
-    return ENTRY_STATE_PRESENTATION[assignment.entryState];
+    return CANDIDATE_EXAM_ENTRY_STATE_PRESENTATION[assignment.entryState];
   }
 
-  if (assignment.attemptStatus?.backendName === 'Interrupted') {
+  if (assignment.attemptStatus?.backendName === CandidateExamAttemptStatus.Interrupted) {
     return { labelKey: 'candidate_exams.states.interrupted', tone: 'warning' };
   }
 
-  return ENTRY_STATE_PRESENTATION.Started;
+  return CANDIDATE_EXAM_ENTRY_STATE_PRESENTATION.Started;
 }
 
   canEnterExam(assignment: CandidateExamAssignment): boolean {
@@ -155,7 +120,7 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
 
     return (
       assignment.entryState === 'Started' &&
-      assignment.attemptStatus?.backendName === 'InProgress' &&
+      assignment.attemptStatus?.backendName === CandidateExamAttemptStatus.InProgress &&
       assignment.testAttemptId !== null &&
       this.pendingResume.get(assignment.testAttemptId) === null &&
       session?.testAttemptId === assignment.testAttemptId
@@ -165,7 +130,7 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
   canRecoverStart(assignment: CandidateExamAssignment): boolean {
     return (
       assignment.entryState === 'Started' &&
-      assignment.attemptStatus?.backendName === 'InProgress' &&
+      assignment.attemptStatus?.backendName === CandidateExamAttemptStatus.InProgress &&
       !this.canContinueExam(assignment) &&
       this.pendingStart.get(assignment.testSessionCandidateId) !== null
     );
@@ -174,8 +139,8 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
   canRecoverResume(assignment: CandidateExamAssignment): boolean {
     return (
       assignment.entryState === 'Started' &&
-      assignment.slotStatus.backendName === 'Started' &&
-      assignment.attemptStatus?.backendName === 'InProgress' &&
+      assignment.slotStatus.backendName === CandidateExamSlotStatus.Started &&
+      assignment.attemptStatus?.backendName === CandidateExamAttemptStatus.InProgress &&
       assignment.testAttemptId !== null &&
       this.pendingResume.get(assignment.testAttemptId) !== null
     );
@@ -184,8 +149,8 @@ export class CandidateExamsPage implements OnInit, OnDestroy {
   canResumeExam(assignment: CandidateExamAssignment): boolean {
     return (
       assignment.entryState === 'Started' &&
-      assignment.slotStatus.backendName === 'Started' &&
-      assignment.attemptStatus?.backendName === 'Interrupted' &&
+      assignment.slotStatus.backendName === CandidateExamSlotStatus.Started &&
+      assignment.attemptStatus?.backendName === CandidateExamAttemptStatus.Interrupted &&
       assignment.resumeAuthorized &&
       assignment.testAttemptId !== null
     );

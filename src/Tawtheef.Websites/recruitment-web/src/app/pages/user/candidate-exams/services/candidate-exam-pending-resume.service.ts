@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-
-const STORAGE_KEY_PREFIX = 'candidate-exam-pending-resume:';
+import { CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX } from '../constants/candidate-exam-storage.constants';
 
 @Injectable({ providedIn: 'root' })
 export class CandidateExamPendingResumeService {
   get(testAttemptId: string): string | null {
-    const value = sessionStorage.getItem(STORAGE_KEY_PREFIX + testAttemptId);
+    const value = sessionStorage.getItem(CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX + testAttemptId);
 
     return value && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(value) ? value : null;
   }
@@ -17,12 +16,12 @@ export class CandidateExamPendingResumeService {
 
     const created = crypto.randomUUID();
 
-    sessionStorage.setItem(STORAGE_KEY_PREFIX + testAttemptId, created);
+    sessionStorage.setItem(CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX + testAttemptId, created);
 
     return created;
   }
 
   clear(testAttemptId: string): void {
-    sessionStorage.removeItem(STORAGE_KEY_PREFIX + testAttemptId);
+    sessionStorage.removeItem(CANDIDATE_EXAM_PENDING_RESUME_STORAGE_KEY_PREFIX + testAttemptId);
   }
 }

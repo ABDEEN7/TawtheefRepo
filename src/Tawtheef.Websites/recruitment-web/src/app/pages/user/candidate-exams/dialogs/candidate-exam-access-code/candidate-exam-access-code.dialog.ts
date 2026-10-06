@@ -13,10 +13,7 @@ import { CandidateExamService } from '../../services/candidate-exam.service';
 import { CandidateExamSessionService } from '../../services/candidate-exam-session.service';
 import { CandidateExamPendingStartService } from '../../services/candidate-exam-pending-start.service';
 import { StartCandidateExamResponse } from '../../models/candidate-exam.model';
-
-interface CandidateExamAccessCodeDialogData {
-  readonly testSessionCandidateId: string;
-}
+import { CandidateExamAccessCodeDialogData } from './models/candidate-exam-access-code-dialog.model';
 
 @Component({
   selector: 'app-candidate-exam-access-code-dialog',

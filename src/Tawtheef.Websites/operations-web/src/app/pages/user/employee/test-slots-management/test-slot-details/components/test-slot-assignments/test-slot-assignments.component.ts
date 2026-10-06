@@ -2,12 +2,12 @@ import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
-import { Permissions } from '../../../../../../core/constants/permissions';
-import { AuthService } from '../../../../../../core/auth/auth.service';
-import { HasPermissionDirective } from '../../../../../../shared/directives/has-permission.directive';
-import { TestSlotStaffDetailsDto } from '../../models/test-slot-details.dto';
-import { TestSlotStatusIds } from '../../models/test-slot-status.ids';
-import { TestSlotAssignmentDialogComponent } from '../dialogs/test-slot-assignment-dialog/test-slot-assignment-dialog.component';
+import { Permissions } from '../../../../../../../core/constants/permissions';
+import { AuthService } from '../../../../../../../core/auth/auth.service';
+import { HasPermissionDirective } from '../../../../../../../shared/directives/has-permission.directive';
+import { TestSlotStaffDetailsDto } from '../../../models/test-slot-details.dto';
+import { TestSlotStatusIds } from '../../../constants/test-slot-status.ids';
+import { TestSlotAssignmentDialogComponent } from '../../dialogs/test-slot-assignment-dialog/test-slot-assignment-dialog.component';
 @Component({
   selector: 'app-test-slot-assignments',
   standalone: true,

@@ -18,7 +18,7 @@ export const userRoutes: Routes = [
     path: 'candidate-exams/execution',
     canActivate: [profileCompleteGuard],
     loadComponent: () =>
-      import('./candidate-exams/candidate-exam-execution.page').then(
+      import('./candidate-exams/pages/candidate-exam-execution/candidate-exam-execution.page').then(
         m => m.CandidateExamExecutionPage
       )
   },
@@ -26,7 +26,7 @@ export const userRoutes: Routes = [
     path: 'candidate-exams',
     canActivate: [profileCompleteGuard],
     loadComponent: () =>
-      import('./candidate-exams/candidate-exams.page').then(m => m.CandidateExamsPage)
+      import('./candidate-exams/pages/candidate-exams/candidate-exams.page').then(m => m.CandidateExamsPage)
   },
   {
     path: 'job-details/:invitationId',

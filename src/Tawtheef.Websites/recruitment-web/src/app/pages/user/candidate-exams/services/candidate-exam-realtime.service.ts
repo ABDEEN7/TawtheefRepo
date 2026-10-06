@@ -2,15 +2,11 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { TokenService } from '../../../../core/auth/token.service';
 import { ApiConfigService } from '../../../../core/services/api-config.service';
-import { CandidateExamResumeResult } from '../models/candidate-exam-realtime.model';
-
-const CANDIDATE_EXAM_HUB_PATH = '/hubs/candidate-exam';
-
-export type CandidateExamConnectionStatus =
-  | 'disconnected'
-  | 'connecting'
-  | 'connected'
-  | 'reconnecting';
+import {
+  CandidateExamConnectionStatus,
+  CandidateExamResumeResult,
+} from '../models/candidate-exam-realtime.model';
+import { CANDIDATE_EXAM_HUB_PATH } from '../constants/candidate-exam-realtime.constants';
 
 @Injectable({ providedIn: 'root' })
 export class CandidateExamRealtimeService {

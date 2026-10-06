@@ -23,15 +23,18 @@ import {
   VerifyTestSlotCandidateIdentityRequest,
 } from '../../../models/test-slot-details.dto';
 import { TestSlotsService } from '../../../services/test-slots.service';
-import { VerifyIdentityDialogComponent } from './verify-identity-dialog.component';
+import { VerifyIdentityDialogComponent } from '../verify-identity-dialog/verify-identity-dialog.component';
 import { ReportOperationalIssueDialogComponent } from '../report-operational-issue-dialog/report-operational-issue-dialog.component';
 import { StatusSeverity } from '../../../../../../../shared/types/status-severity.type';
 import { RescheduleInterruptedCandidateDialogComponent } from '../reschedule-interrupted-candidate-dialog/reschedule-interrupted-candidate-dialog.component';
-
-interface TestSlotCandidatesDialogData {
-  testSlotId: string;
-  isCurrentUserRoomHead: boolean;
-}
+import {
+  TestSlotCandidateAttendanceStatus,
+  TestSlotCandidateAttemptStatus,
+  TestSlotCandidateIdentityStatus,
+  TestSlotCandidateSessionStatus,
+  TestSlotCandidateStatus,
+} from '../../../constants/test-slot-candidate-backend-status.constants';
+import { TestSlotCandidatesDialogData } from './models/test-slot-candidates-dialog.model';
 
 @Component({
   selector: 'app-test-slot-candidates-dialog',
@@ -125,29 +128,36 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
     return (
       this.data.isCurrentUserRoomHead &&
       this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
-      ['Approved', 'Ready', 'InProgress'].includes(candidate.sessionStatusBackendName) &&
-      candidate.candidateStatusBackendName === 'Assigned' &&
+      ([
+        TestSlotCandidateSessionStatus.Approved,
+        TestSlotCandidateSessionStatus.Ready,
+        TestSlotCandidateSessionStatus.InProgress,
+      ] as readonly string[]).includes(candidate.sessionStatusBackendName) &&
+      candidate.candidateStatusBackendName === TestSlotCandidateStatus.Assigned &&
       this.actingCandidateId() === null
     );
   }
 
   canMarkPresent(candidate: TestSlotCandidateListItemDto): boolean {
-    return this.canAct(candidate) && candidate.attendanceStatusBackendName === 'Pending';
+    return (
+      this.canAct(candidate) &&
+      candidate.attendanceStatusBackendName === TestSlotCandidateAttendanceStatus.Pending
+    );
   }
 
   canVerifyIdentity(candidate: TestSlotCandidateListItemDto): boolean {
     return (
       this.canAct(candidate) &&
-      candidate.attendanceStatusBackendName === 'Present' &&
-      candidate.identityVerificationStatusBackendName === 'Pending'
+      candidate.attendanceStatusBackendName === TestSlotCandidateAttendanceStatus.Present &&
+      candidate.identityVerificationStatusBackendName === TestSlotCandidateIdentityStatus.Pending
     );
   }
 
   canAuthorizeEntry(candidate: TestSlotCandidateListItemDto): boolean {
     return (
       this.canAct(candidate) &&
-      candidate.attendanceStatusBackendName === 'Present' &&
-      candidate.identityVerificationStatusBackendName === 'Matched'
+      candidate.attendanceStatusBackendName === TestSlotCandidateAttendanceStatus.Present &&
+      candidate.identityVerificationStatusBackendName === TestSlotCandidateIdentityStatus.Matched
     );
   }
 
@@ -226,11 +236,11 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
     return (
       this.data.isCurrentUserRoomHead &&
       this.auth.hasPermission(Permissions.TestSlots.ManagePeriod) &&
-      candidate.sessionStatusBackendName === 'InProgress' &&
-      candidate.candidateStatusBackendName === 'Completed' &&
+      candidate.sessionStatusBackendName === TestSlotCandidateSessionStatus.InProgress &&
+      candidate.candidateStatusBackendName === TestSlotCandidateStatus.Completed &&
       candidate.testAttemptId !== null &&
-      (candidate.attemptStatusBackendName === 'Completed' ||
-        candidate.attemptStatusBackendName === 'TimedOut') &&
+      (candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.Completed ||
+        candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.TimedOut) &&
       !candidate.hasOpenInterruption &&
       this.actingCandidateId() === null &&
       this.authorizingAttemptId() === null
@@ -240,8 +250,8 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   isOperationalIssueRecorded(candidate: TestSlotCandidateListItemDto): boolean {
     return (
       candidate.hasOpenInterruption &&
-      (candidate.attemptStatusBackendName === 'Completed' ||
-        candidate.attemptStatusBackendName === 'TimedOut')
+      (candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.Completed ||
+        candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.TimedOut)
     );
   }
 
@@ -273,7 +283,8 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   canAuthorizeResume(candidate: TestSlotCandidateListItemDto): boolean {
     return (
       candidate.testAttemptId !== null &&
-      candidate.attemptStatusBackendName === 'Interrupted' &&
+      candidate.sessionStatusBackendName === TestSlotCandidateSessionStatus.InProgress &&
+      candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.Interrupted &&
       candidate.resumeAllowed &&
       !candidate.resumeAuthorized &&
       this.data.isCurrentUserRoomHead &&
@@ -282,7 +293,10 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   }
 
   isResumeAuthorized(candidate: TestSlotCandidateListItemDto): boolean {
-    return candidate.attemptStatusBackendName === 'Interrupted' && candidate.resumeAuthorized;
+    return (
+      candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.Interrupted &&
+      candidate.resumeAuthorized
+    );
   }
 
   authorizeResume(candidate: TestSlotCandidateListItemDto): void {
@@ -341,7 +355,8 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
   canReschedule(candidate: TestSlotCandidateListItemDto): boolean {
     return (
       candidate.testAttemptId !== null &&
-      candidate.attemptStatusBackendName === 'Interrupted' &&
+      candidate.sessionStatusBackendName === TestSlotCandidateSessionStatus.InProgress &&
+      candidate.attemptStatusBackendName === TestSlotCandidateAttemptStatus.Interrupted &&
       candidate.rescheduleAllowed &&
       !candidate.resumeAuthorized &&
       this.data.isCurrentUserRoomHead &&
@@ -401,10 +416,10 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
 
   attendanceSeverity(backendName: string): StatusSeverity {
     switch (backendName) {
-      case 'Present':
+      case TestSlotCandidateAttendanceStatus.Present:
         return 'success';
 
-      case 'NoShow':
+      case TestSlotCandidateAttendanceStatus.NoShow:
         return 'danger';
 
       default:
@@ -414,13 +429,13 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
 
   identitySeverity(backendName: string): StatusSeverity {
     switch (backendName) {
-      case 'Matched':
+      case TestSlotCandidateIdentityStatus.Matched:
         return 'success';
 
-      case 'NotMatched':
+      case TestSlotCandidateIdentityStatus.NotMatched:
         return 'danger';
 
-      case 'Pending':
+      case TestSlotCandidateIdentityStatus.Pending:
         return 'info';
 
       default:
@@ -430,15 +445,15 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
 
   candidateStatusSeverity(backendName: string): StatusSeverity {
     switch (backendName) {
-      case 'Authorized':
-      case 'Completed':
+      case TestSlotCandidateStatus.Authorized:
+      case TestSlotCandidateStatus.Completed:
         return 'success';
 
-      case 'Started':
-      case 'Rescheduled':
+      case TestSlotCandidateStatus.Started:
+      case TestSlotCandidateStatus.Rescheduled:
         return 'info';
 
-      case 'Cancelled':
+      case TestSlotCandidateStatus.Cancelled:
         return 'danger';
 
       default:
@@ -448,17 +463,17 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
 
   attemptStatusSeverity(backendName?: string | null): StatusSeverity {
     switch (backendName) {
-      case 'Completed':
+      case TestSlotCandidateAttemptStatus.Completed:
         return 'success';
 
-      case 'TimedOut':
-      case 'Interrupted':
+      case TestSlotCandidateAttemptStatus.TimedOut:
+      case TestSlotCandidateAttemptStatus.Interrupted:
         return 'warn';
 
-      case 'InProgress':
+      case TestSlotCandidateAttemptStatus.InProgress:
         return 'info';
 
-      case 'Cancelled':
+      case TestSlotCandidateAttemptStatus.Cancelled:
         return 'danger';
 
       default:

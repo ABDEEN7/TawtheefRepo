@@ -20,14 +20,14 @@ import { TestSessionExamDetailsDto } from '../models/test-session-exam-details.d
 import { LocalTestSession } from '../models/ready-test-slot.dto';
 import {
   TestSlotConfigurationStaffDto,
-  TestSlotStaffRoleIds,
 } from '../../test-slots-management/models/create-test-slot.dto';
+import { TestSlotStaffRoleIds } from '../../test-slots-management/constants/test-slot-staff-role.constants';
 import { TestSlotsService } from '../../test-slots-management/services/test-slots.service';
 import {
   TestSessionEditDto,
   TestSessionLookupsDto,
-  TEST_SESSION_STATUS_IDS,
 } from '../models/test-session-list-item.dto';
+import { TEST_SESSION_STATUS_IDS } from '../constants/test-session-status.constants';
 import {
   TestSessionGenderFilter,
   TestSessionNationalityFilter,

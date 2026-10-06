@@ -12,10 +12,7 @@ import {
 import { ExamResultReportsService } from '../../services/exam-result-reports.service';
 import { DatePipe } from '@angular/common';
 import { TabsModule } from 'primeng/tabs';
-interface ExamResultCandidateAttemptDialogData {
-  reportId: string;
-  candidateResultId: string;
-}
+import { ExamResultCandidateAttemptDialogData } from './models/exam-result-candidate-attempt-dialog.model';
 
 @Component({
   selector: 'app-exam-result-candidate-attempt-dialog',

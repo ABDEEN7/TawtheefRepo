@@ -21,7 +21,8 @@ import { validateSlotDetails } from './helper/test-slot-create.validation';
 import { initialTeamAssignmentState, TeamAssignmentState } from './models/team-assignment-state.model';
 import { TeamAssignmentComponent } from './steps/team-assignment/team-assignment.component';
 import { ReviewComponent } from './steps/review/review.component';
-import { CreateTestSlotDto, TestSlotConfigurationDto, TestSlotStaffConflictDto, TestSlotStaffRoleIds } from '../models/create-test-slot.dto';
+import { CreateTestSlotDto, TestSlotConfigurationDto, TestSlotStaffConflictDto } from '../models/create-test-slot.dto';
+import { TestSlotStaffRoleIds } from '../constants/test-slot-staff-role.constants';
 
 @Component({
   selector: 'app-test-slot-create-page',

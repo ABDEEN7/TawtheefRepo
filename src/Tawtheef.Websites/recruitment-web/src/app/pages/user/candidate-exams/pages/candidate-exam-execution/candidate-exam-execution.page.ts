@@ -4,28 +4,24 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { firstValueFrom } from 'rxjs';
-import { DialogHelperService } from '../../../core/services/dialog-helper.service';
-import { routes } from '../../../routes/routes';
-import { I18nNamespaceDirective } from '../../../shared/directives/i18n-namespace.directive';
+import { DialogHelperService } from '../../../../../core/services/dialog-helper.service';
+import { routes } from '../../../../../routes/routes';
+import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import {
   CandidateExamCurrentQuestionResponse,
   CandidateExamQuestionOption,
   CandidateExamSubmissionOutcome,
   SubmitCandidateExamPartResponse,
   TimeoutCandidateExamPartResponse,
-} from './models/candidate-exam-execution.model';
-import { CandidateExamRealtimeService } from './services/candidate-exam-realtime.service';
-import { CandidateExamService } from './services/candidate-exam.service';
-import { CandidateExamSessionService } from './services/candidate-exam-session.service';
+} from '../../models/candidate-exam-execution.model';
+import { CandidateExamRealtimeService } from '../../services/candidate-exam-realtime.service';
+import { CandidateExamService } from '../../services/candidate-exam.service';
+import { CandidateExamSessionService } from '../../services/candidate-exam-session.service';
 import { HttpErrorResponse } from '@angular/common/http';
-
-type ExecutionPreparationState =
-  | 'preparing'
-  | 'loadingQuestion'
-  | 'ready'
-  | 'connectionError'
-  | 'questionError';
-type AnswerSaveState = 'idle' | 'saving' | 'saved' | 'error';
+import {
+  CandidateExamAnswerSaveState,
+  CandidateExamExecutionPreparationState,
+} from '../../models/candidate-exam-execution-state.model';
 
 @Component({
   selector: 'app-candidate-exam-execution',
@@ -41,11 +37,11 @@ export class CandidateExamExecutionPage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly dialogHelper = inject(DialogHelperService);
 
-  readonly preparationState = signal<ExecutionPreparationState>('preparing');
+  readonly preparationState = signal<CandidateExamExecutionPreparationState>('preparing');
   readonly executionOutcome = this.candidateExamSession.outcome;
   readonly currentQuestion = signal<CandidateExamCurrentQuestionResponse | null>(null);
   readonly selectedOptionId = signal<string | null>(null);
-  readonly answerSaveState = signal<AnswerSaveState>('idle');
+  readonly answerSaveState = signal<CandidateExamAnswerSaveState>('idle');
   readonly navigating = signal(false);
   readonly navigationError = signal(false);
   readonly connectionStatus = this.realtime.connectionStatus;

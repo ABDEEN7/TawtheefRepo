@@ -27,8 +27,8 @@ import {
   TestSessionFilters,
   TestSessionListItemDto,
   TestSessionLookupsDto,
-  TEST_SESSION_STATUS_IDS,
 } from './models/test-session-list-item.dto';
+import { TEST_SESSION_STATUS_IDS } from './constants/test-session-status.constants';
 import { TestSessionsService } from './services/test-sessions.service';
 
 @Component({

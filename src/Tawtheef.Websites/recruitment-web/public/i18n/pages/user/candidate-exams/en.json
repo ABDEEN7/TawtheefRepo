@@ -29,7 +29,7 @@
   "candidate_exams.states.completed": "Completed",
   "candidate_exams.states.rescheduled": "Rescheduled",
   "candidate_exams.states.cancelled": "Cancelled",
-  "candidate_exams.states.closed": "Closed",
+  "candidate_exams.states.closed": "Exam ended",
   "candidate_exams.actions.enterExam": "Enter Exam",
   "candidate_exams.actions.continue": "Continue",
   "candidate_exams.actions.resumeExam": "Resume Exam",

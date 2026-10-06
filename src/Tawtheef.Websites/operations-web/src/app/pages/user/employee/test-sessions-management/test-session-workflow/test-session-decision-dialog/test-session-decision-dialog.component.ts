@@ -4,10 +4,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TextareaModule } from 'primeng/textarea';
 import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n-namespace.directive';
-
-interface TestSessionDecisionDialogData {
-  action?: 'return' | 'reject';
-}
+import { TestSessionDecisionDialogData } from './models/test-session-decision-dialog.model';
 
 @Component({
   selector: 'app-test-session-decision-dialog',

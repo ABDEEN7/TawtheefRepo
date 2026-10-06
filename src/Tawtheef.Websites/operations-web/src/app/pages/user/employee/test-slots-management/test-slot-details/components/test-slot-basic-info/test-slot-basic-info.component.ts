@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TagModule } from 'primeng/tag';
-import { TestSlotDetailsDto } from '../../models/test-slot-details.dto';
+import { TestSlotDetailsDto } from '../../../models/test-slot-details.dto';
 
 @Component({
   selector: 'app-test-slot-basic-info',

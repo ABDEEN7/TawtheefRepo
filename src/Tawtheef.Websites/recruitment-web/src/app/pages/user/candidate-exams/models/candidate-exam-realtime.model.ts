@@ -1,3 +1,9 @@
+export type CandidateExamConnectionStatus =
+  | 'disconnected'
+  | 'connecting'
+  | 'connected'
+  | 'reconnecting';
+
 export interface CandidateExamResumeResult {
   readonly testAttemptId: string;
   readonly testAttemptPartId: string;

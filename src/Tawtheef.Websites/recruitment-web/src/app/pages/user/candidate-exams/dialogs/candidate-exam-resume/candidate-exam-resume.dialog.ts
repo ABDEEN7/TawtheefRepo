@@ -11,10 +11,7 @@ import { CandidateExamResumeResult } from '../../models/candidate-exam-realtime.
 import { CandidateExamRealtimeService } from '../../services/candidate-exam-realtime.service';
 import { CandidateExamSessionService } from '../../services/candidate-exam-session.service';
 import { CandidateExamPendingResumeService } from '../../services/candidate-exam-pending-resume.service';
-
-interface CandidateExamResumeDialogData {
-  readonly testAttemptId: string;
-}
+import { CandidateExamResumeDialogData } from './models/candidate-exam-resume-dialog.model';
 
 @Component({
   selector: 'app-candidate-exam-resume-dialog',

@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-
-const STORAGE_KEY_PREFIX = 'candidate-exam-pending-start:';
+import { CANDIDATE_EXAM_PENDING_START_STORAGE_KEY_PREFIX } from '../constants/candidate-exam-storage.constants';
 
 @Injectable({ providedIn: 'root' })
 export class CandidateExamPendingStartService {
   get(testSessionCandidateId: string): string | null {
     const value = sessionStorage.getItem(
-      STORAGE_KEY_PREFIX + testSessionCandidateId,
+      CANDIDATE_EXAM_PENDING_START_STORAGE_KEY_PREFIX + testSessionCandidateId,
     );
 
     return value && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(value)
@@ -23,7 +22,7 @@ export class CandidateExamPendingStartService {
 
     // Persist before sending /start: the response may never reach the browser.
     sessionStorage.setItem(
-      STORAGE_KEY_PREFIX + testSessionCandidateId,
+      CANDIDATE_EXAM_PENDING_START_STORAGE_KEY_PREFIX + testSessionCandidateId,
       created,
     );
 
@@ -32,7 +31,7 @@ export class CandidateExamPendingStartService {
 
   clear(testSessionCandidateId: string): void {
     sessionStorage.removeItem(
-      STORAGE_KEY_PREFIX + testSessionCandidateId,
+      CANDIDATE_EXAM_PENDING_START_STORAGE_KEY_PREFIX + testSessionCandidateId,
     );
   }
 }

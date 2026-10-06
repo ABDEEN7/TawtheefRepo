@@ -15,9 +15,9 @@ import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-na
 import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
 import { TestSlotDetailsDto } from '../models/test-slot-details.dto';
 import { TestSlotsService } from '../services/test-slots.service';
-import { TestSlotBasicInfoComponent } from './test-slot-basic-info/test-slot-basic-info.component';
-import { TestSlotCandidatesComponent } from './test-slot-candidates/test-slot-candidates.component';
-import { TestSlotAssignmentsComponent } from './test-slot-assignments/test-slot-assignments.component';
+import { TestSlotBasicInfoComponent } from './components/test-slot-basic-info/test-slot-basic-info.component';
+import { TestSlotCandidatesComponent } from './components/test-slot-candidates/test-slot-candidates.component';
+import { TestSlotAssignmentsComponent } from './components/test-slot-assignments/test-slot-assignments.component';
 import { TestSlotSessionsComponent } from '../../test-sessions/components/test-slot-sessions/test-slot-sessions.component';
 
 @Component({

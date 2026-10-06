@@ -29,7 +29,7 @@
   "candidate_exams.states.completed": "مكتمل",
   "candidate_exams.states.rescheduled": "أعيدت الجدولة",
   "candidate_exams.states.cancelled": "ملغى",
-  "candidate_exams.states.closed": "مغلق",
+  "candidate_exams.states.closed": "انتهى الاختبار",
   "candidate_exams.actions.enterExam": "دخول الاختبار",
   "candidate_exams.actions.continue": "متابعة",
   "candidate_exams.actions.resumeExam": "استئناف الاختبار",

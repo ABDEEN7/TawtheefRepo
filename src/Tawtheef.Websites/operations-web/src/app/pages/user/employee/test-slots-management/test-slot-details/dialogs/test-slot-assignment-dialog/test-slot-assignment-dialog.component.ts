@@ -9,20 +9,15 @@ import { I18nNamespaceDirective } from '../../../../../../../shared/directives/i
 import { UserDto } from '../../../../users-management/models/user.dto';
 import {
   TestSlotConfigurationDto,
-  TestSlotStaffRoleIds,
   UpdateTestSlotAssignmentsDto,
 } from '../../../models/create-test-slot.dto';
+import { TestSlotStaffRoleIds } from '../../../constants/test-slot-staff-role.constants';
 import { TestSlotsService } from '../../../services/test-slots.service';
 import {
-  TestSlotTeamAssignmentSelection,
   TestSlotTeamAssignmentSelectorComponent,
 } from '../../../test-slot-create/steps/test-slot-team-assignment-selector/test-slot-team-assignment-selector.component';
-
-interface TestSlotAssignmentDialogData {
-  testSlotId?: string;
-  localMode?: boolean;
-  initialAssignment?: TestSlotTeamAssignmentSelection;
-}
+import { TestSlotTeamAssignmentSelection } from '../../../test-slot-create/models/test-slot-team-assignment-selection.model';
+import { TestSlotAssignmentDialogData } from './models/test-slot-assignment-dialog.model';
 
 @Component({
   selector: 'app-test-slot-assignment-dialog',

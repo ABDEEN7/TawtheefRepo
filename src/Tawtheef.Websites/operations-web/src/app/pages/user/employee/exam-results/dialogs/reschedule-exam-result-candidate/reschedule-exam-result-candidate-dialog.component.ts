@@ -11,11 +11,7 @@ import { I18nNamespaceDirective } from '../../../../../../shared/directives/i18n
 import { ExamResultRescheduleOption } from '../../models/exam-result-report.models';
 import { ExamResultReportsService } from '../../services/exam-result-reports.service';
 import { DatePipe } from '@angular/common';
-
-interface RescheduleExamResultCandidateDialogData {
-  reportId: string;
-  candidateResultId: string;
-}
+import { RescheduleExamResultCandidateDialogData } from './models/reschedule-exam-result-candidate-dialog.model';
 
 @Component({
   selector: 'app-reschedule-exam-result-candidate-dialog',

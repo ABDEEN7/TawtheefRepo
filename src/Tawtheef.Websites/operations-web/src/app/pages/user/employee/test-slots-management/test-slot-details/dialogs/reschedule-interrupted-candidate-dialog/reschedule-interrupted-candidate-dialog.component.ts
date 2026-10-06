@@ -10,10 +10,7 @@ import { LanguageService } from '../../../../../../../core/services/language.ser
 import { NotificationService } from '../../../../../../../core/services/notification.service';
 import { CandidateExamRescheduleOptionDto } from '../../../models/test-slot-details.dto';
 import { TestSlotsService } from '../../../services/test-slots.service';
-
-interface RescheduleInterruptedCandidateDialogData {
-  testAttemptId: string;
-}
+import { RescheduleInterruptedCandidateDialogData } from './models/reschedule-interrupted-candidate-dialog.model';
 
 @Component({
   selector: 'app-reschedule-interrupted-candidate-dialog',
