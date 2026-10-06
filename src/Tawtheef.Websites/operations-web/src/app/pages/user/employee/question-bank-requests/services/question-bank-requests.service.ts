@@ -9,6 +9,7 @@ import {
   CreateQuestionBankRequest,
   EmployeeLookup,
   QuestionBankRequestDetails,
+  QuestionBankMaintenanceDetails,
   QuestionBankRequestFilters,
   QuestionBankRequestListItem,
   QuestionBankRequestReview,
@@ -30,6 +31,16 @@ export class QuestionBankRequestsService {
   }
   create(request: CreateQuestionBankRequest): Observable<string> {
     return this.http.post<string>(this.endpoints.questionBankRequests.create, request);
+  }
+  maintenanceDetails(id: string): Observable<QuestionBankMaintenanceDetails> {
+    return this.http.get<QuestionBankMaintenanceDetails>(
+      this.endpoints.questionBankRequests.maintenanceDetails(id),
+    );
+  }
+  createMaintenance(id: string, reason: string | null): Observable<string> {
+    return this.http.post<string>(this.endpoints.questionBankRequests.createMaintenance(id), {
+      reason,
+    });
   }
   details(id: string): Observable<QuestionBankRequestDetails> {
     return this.http.get<QuestionBankRequestDetails>(
