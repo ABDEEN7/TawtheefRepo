@@ -91,6 +91,37 @@
       />
     }
 
+    @if (workspace.baseQuestions.length) {
+      <h4 class="mt-4">{{ 'QUESTION_ASSIGNMENTS.BASE_VERSION_QUESTIONS' | translate }}</h4>
+      <div class="table-card rounded overflow-hidden mt-3">
+        <div class="table-responsive">
+          <p-table [value]="workspace.baseQuestions">
+            <ng-template #header><tr>
+              <th>{{ 'QUESTION_ASSIGNMENTS.QUESTION' | translate }}</th>
+              <th>{{ 'QUESTION_ASSIGNMENTS.OWNERSHIP' | translate }}</th>
+              <th>{{ 'QUESTION_ASSIGNMENTS.ACTIONS' | translate }}</th>
+            </tr></ng-template>
+            <ng-template #body let-question><tr>
+              <td><app-rich-content-renderer [content]="localizedContent(question.questionTextAr, question.questionTextEn)" /></td>
+              <td>{{ ('QUESTION_ASSIGNMENTS.' + question.ownership.toUpperCase()) | translate }}</td>
+              <td class="col-actions">
+                @if (editable && question.ownership === 'Available') {
+                  <button type="button" class="btn btn-action-icon" (click)="editBase(question)"
+                    [pTooltip]="'QUESTION_ASSIGNMENTS.EDIT' | translate">
+                    <i class="pi pi-pencil"></i>
+                  </button>
+                  <button type="button" class="btn btn-action-icon text-danger" (click)="deleteBase(question)"
+                    [pTooltip]="'QUESTION_ASSIGNMENTS.DELETE_CHANGE' | translate">
+                    <i class="pi pi-trash"></i>
+                  </button>
+                }
+              </td>
+            </tr></ng-template>
+          </p-table>
+        </div>
+      </div>
+    }
+
     <div class="table-card rounded overflow-hidden mt-3" [class.loading-shimmer]="loading()">
       <div class="table-responsive">
         <p-table [value]="workspace.questions" [loading]="loading()">
@@ -99,6 +130,7 @@
               <th>{{ 'QUESTION_ASSIGNMENTS.QUESTION' | translate }}</th>
               <th>{{ 'QUESTION_ASSIGNMENTS.TYPE' | translate }}</th>
               <th>{{ 'QUESTION_ASSIGNMENTS.DIFFICULTY' | translate }}</th>
+              <th>{{ 'QUESTION_ASSIGNMENTS.CHANGE_TYPE' | translate }}</th>
               <th>{{ 'QUESTION_ASSIGNMENTS.STATUS' | translate }}</th>
               @if (editable || correctionMode) {
                 <th>{{ 'QUESTION_ASSIGNMENTS.ACTIONS' | translate }}</th>
@@ -123,6 +155,7 @@
               </td>
               <td>{{ localized(question.questionTypeNameAr, question.questionTypeNameEn) }}</td>
               <td>{{ localized(question.difficultyNameAr, question.difficultyNameEn) }}</td>
+              <td>{{ changeTypeLabel(question.changeTypeId) | translate }}</td>
               <td>
                 <p-tag
                   [severity]="itemStatusSeverity(question.statusId)"

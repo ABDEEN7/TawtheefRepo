@@ -7,6 +7,7 @@ using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.QuestionsBank;
+using Tawtheef.Domain.Entities.Users;
 
 namespace Application.Operation.Features.Employee.QuestionBankRequests.Handlers.Commands;
 
@@ -21,6 +22,11 @@ public sealed class SubmitQuestionBankRequestReviewCommandHandler(
         SubmitQuestionBankRequestReviewCommand request, CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(currentUser.UserId, out var reviewerId))
+            return Result.Fail<SubmitQuestionBankRequestReviewResult>(ErrorsCodes.InvalidUserIdentifier);
+        var validReviewer = await unitOfWork.Context.Set<EmployeeUser>().AsNoTracking().AnyAsync(x =>
+            x.Id == reviewerId && !x.IsDeleted && !x.IsBlocked && x.EmployeeProfile != null &&
+            !x.EmployeeProfile.IsDeleted, cancellationToken);
+        if (!validReviewer)
             return Result.Fail<SubmitQuestionBankRequestReviewResult>(ErrorsCodes.InvalidUserIdentifier);
 
         if (request.Reviews is null || request.Reviews.Count == 0 ||
@@ -38,6 +44,8 @@ public sealed class SubmitQuestionBankRequestReviewCommandHandler(
                     .ThenInclude(i => i.Reviews)
                     .Include(x => x.QuestionBank)
                     .ThenInclude(x => x.Versions)
+                    .Include(x => x.BaseVersion)
+                    .ThenInclude(x => x!.Questions)
                     .Include(x => x.Assignments.Where(a => !a.IsDeleted))
                     .SingleOrDefaultAsync(x => x.Id == request.RequestId, ct);
 
@@ -57,8 +65,10 @@ public sealed class SubmitQuestionBankRequestReviewCommandHandler(
                 foreach (var item in reviewableItems)
                 {
                     var input = inputs[item.Id];
-                    if (!item.CurrentProposedRevisionId.HasValue ||
-                        item.CurrentProposedRevisionId.Value != input.ReviewedRevisionId)
+                    var reviewRevisionId = item.ChangeTypeId == QuestionChangeTypeIds.DELETE
+                        ? item.OriginalRevisionId
+                        : item.CurrentProposedRevisionId;
+                    if (!reviewRevisionId.HasValue || reviewRevisionId.Value != input.ReviewedRevisionId)
                         return Result.Fail<SubmitQuestionBankRequestReviewResult>(ErrorsCodes.StaleQuestionBankReview);
                 }
 
@@ -129,15 +139,23 @@ public sealed class SubmitQuestionBankRequestReviewCommandHandler(
                     var readyToIssue = includedItems.Length > 0 &&
                                        includedItems.All(i =>
                                            i.StatusId == QuestionBankRequestItemStatusIds.APPROVED &&
-                                           i.CurrentProposedRevisionId.HasValue &&
+                                           (i.ChangeTypeId == QuestionChangeTypeIds.DELETE
+                                               ? i.OriginalRevisionId.HasValue
+                                               : i.CurrentProposedRevisionId.HasValue) &&
                                            (inputs.TryGetValue(i.Id, out var currentReview)
-                                               ? currentReview.ReviewedRevisionId == i.CurrentProposedRevisionId.Value
+                                               ? currentReview.ReviewedRevisionId ==
+                                                 (i.ChangeTypeId == QuestionChangeTypeIds.DELETE
+                                                     ? i.OriginalRevisionId!.Value
+                                                     : i.CurrentProposedRevisionId!.Value)
                                                : i.Reviews.OrderByDescending(r => r.ReviewRound)
                                                    .ThenByDescending(r => r.ReviewedAt)
                                                    .Select(r => new { r.DecisionId, r.ReviewedRevisionId })
                                                    .FirstOrDefault() is { } lastReview &&
                                                  lastReview.DecisionId == QuestionReviewDecisionIds.APPROVED &&
-                                                 lastReview.ReviewedRevisionId == i.CurrentProposedRevisionId.Value));
+                                                 lastReview.ReviewedRevisionId ==
+                                                 (i.ChangeTypeId == QuestionChangeTypeIds.DELETE
+                                                     ? i.OriginalRevisionId!.Value
+                                                     : i.CurrentProposedRevisionId!.Value)));
 
                     // An all-approved payload must either issue the complete request or persist nothing.
                     // This prevents a corrupt/stale request from being left in PendingReview with no
@@ -145,6 +163,26 @@ public sealed class SubmitQuestionBankRequestReviewCommandHandler(
                     if (!readyToIssue)
                         return Result.Fail<SubmitQuestionBankRequestReviewResult>(
                             ErrorsCodes.InvalidQuestionBankReview);
+
+                    var maintenance = entity.RequestTypeId == QuestionBankRequestTypeIds.MAINTENANCE;
+                    if (maintenance && (entity.BaseVersionId is null || entity.BaseVersion is null ||
+                                        entity.QuestionBank.CurrentApprovedVersionId != entity.BaseVersionId))
+                        return Result.Fail<SubmitQuestionBankRequestReviewResult>(ErrorsCodes.QuestionBankBaseVersionStale);
+                    if (maintenance)
+                    {
+                        var baseRevisions = entity.BaseVersion!.Questions.Where(x => !x.IsDeleted)
+                            .ToDictionary(x => x.QuestionId, x => x.QuestionRevisionId);
+                        var invalidChange = includedItems.Any(item => item.ChangeTypeId switch
+                        {
+                            var type when type == QuestionChangeTypeIds.ADD => item.OriginalRevisionId.HasValue,
+                            var type when type == QuestionChangeTypeIds.UPDATE || type == QuestionChangeTypeIds.DELETE =>
+                                !baseRevisions.TryGetValue(item.QuestionId, out var original) ||
+                                item.OriginalRevisionId != original,
+                            _ => true
+                        });
+                        if (invalidChange)
+                            return Result.Fail<SubmitQuestionBankRequestReviewResult>(ErrorsCodes.InvalidQuestionBankMaintenanceChange);
+                    }
 
                     var versionId = Guid.NewGuid();
                     var versionNo = entity.QuestionBank.Versions.Count == 0
@@ -155,22 +193,46 @@ public sealed class SubmitQuestionBankRequestReviewCommandHandler(
                         Id = versionId,
                         QuestionBankId = entity.QuestionBankId,
                         VersionNo = versionNo,
-                        PreviousVersionId = entity.QuestionBank.CurrentApprovedVersionId,
+                        PreviousVersionId = maintenance ? entity.BaseVersionId : entity.QuestionBank.CurrentApprovedVersionId,
                         CreatedFromRequestId = entity.Id,
                         ApprovedById = reviewerId,
                         ApprovedAt = now,
                         EffectiveFrom = now
                     };
-                    foreach (var item in includedItems)
+                    if (maintenance)
                     {
-                        version.Questions.Add(new QuestionBankVersionQuestion
+                        var changes = includedItems.ToDictionary(x => x.QuestionId);
+                        foreach (var baseQuestion in entity.BaseVersion!.Questions.Where(x => !x.IsDeleted))
                         {
-                            Id = Guid.NewGuid(),
-                            QuestionBankVersionId = versionId,
-                            QuestionId = item.QuestionId,
-                            QuestionRevisionId = item.CurrentProposedRevisionId!.Value,
-                            SourceRequestItemId = item.Id
-                        });
+                            if (changes.TryGetValue(baseQuestion.QuestionId, out var change) &&
+                                change.ChangeTypeId == QuestionChangeTypeIds.DELETE) continue;
+                            version.Questions.Add(new QuestionBankVersionQuestion
+                            {
+                                Id = Guid.NewGuid(), QuestionBankVersionId = versionId,
+                                QuestionId = baseQuestion.QuestionId,
+                                QuestionRevisionId = change?.CurrentProposedRevisionId ?? baseQuestion.QuestionRevisionId,
+                                SourceRequestItemId = change?.Id
+                            });
+                        }
+                        foreach (var addition in includedItems.Where(x => x.ChangeTypeId == QuestionChangeTypeIds.ADD))
+                            version.Questions.Add(new QuestionBankVersionQuestion
+                            {
+                                Id = Guid.NewGuid(), QuestionBankVersionId = versionId,
+                                QuestionId = addition.QuestionId,
+                                QuestionRevisionId = addition.CurrentProposedRevisionId!.Value,
+                                SourceRequestItemId = addition.Id
+                            });
+                    }
+                    else
+                    {
+                        foreach (var item in includedItems)
+                            version.Questions.Add(new QuestionBankVersionQuestion
+                            {
+                                Id = Guid.NewGuid(), QuestionBankVersionId = versionId,
+                                QuestionId = item.QuestionId,
+                                QuestionRevisionId = item.CurrentProposedRevisionId!.Value,
+                                SourceRequestItemId = item.Id
+                            });
                     }
 
                     await unitOfWork.GetEntityRepository<QuestionBankVersion>().AddAsync(version, ct);
@@ -195,7 +257,14 @@ public sealed class SubmitQuestionBankRequestReviewCommandHandler(
                     }, ct);
                 }
 
-                await unitOfWork.SaveChangesAsync(ct);
+                try
+                {
+                    await unitOfWork.SaveChangesAsync(ct);
+                }
+                catch (DbUpdateConcurrencyException) when (entity.RequestTypeId == QuestionBankRequestTypeIds.MAINTENANCE)
+                {
+                    return Result.Fail<SubmitQuestionBankRequestReviewResult>(ErrorsCodes.QuestionBankBaseVersionStale);
+                }
                 return Result.Ok(new SubmitQuestionBankRequestReviewResult(changesRequired, issued, round));
             }, cancellationToken);
     }

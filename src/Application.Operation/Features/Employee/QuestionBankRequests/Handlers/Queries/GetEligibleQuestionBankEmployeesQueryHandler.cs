@@ -22,21 +22,22 @@ public sealed class GetEligibleQuestionBankEmployeesQueryHandler(IUnitOfWork uni
             .SingleOrDefaultAsync(cancellationToken);
         if (target is null) return Result.Fail<IReadOnlyCollection<QuestionBankEmployeeLookupDto>>(ErrorsCodes.QuestionBankRequestNotFound);
 
-        if (target.QuestionBankTypeId != QuestionBankTypeIds.Specialized || target.ManagementId is null)
-            return Result.Fail<IReadOnlyCollection<QuestionBankEmployeeLookupDto>>(ErrorsCodes.QuestionBankEmployeeScopeNotConfigured);
-
-        var departmentNumber = await unitOfWork.Context.Set<Management>().AsNoTracking()
-            .Where(x => x.Id == target.ManagementId)
-            .Select(x => x.DepartmentNumber)
-            .SingleOrDefaultAsync(cancellationToken);
-        if (string.IsNullOrWhiteSpace(departmentNumber))
-            return Result.Fail<IReadOnlyCollection<QuestionBankEmployeeLookupDto>>(ErrorsCodes.QuestionBankEmployeeScopeNotConfigured);
-
         var search = request.Search?.Trim();
-        var employees = await unitOfWork.Context.Set<EmployeeUser>().AsNoTracking()
+        var employeesQuery = unitOfWork.Context.Set<EmployeeUser>().AsNoTracking()
             .Where(x => !x.IsDeleted && !x.IsBlocked && x.EmployeeProfile != null &&
-                        !x.EmployeeProfile.IsDeleted &&
-                        x.EmployeeProfile.DepartmentNumber == departmentNumber)
+                        !x.EmployeeProfile.IsDeleted);
+        if (target.QuestionBankTypeId == QuestionBankTypeIds.Specialized)
+        {
+            if (target.ManagementId is null)
+                return Result.Fail<IReadOnlyCollection<QuestionBankEmployeeLookupDto>>(ErrorsCodes.QuestionBankEmployeeScopeNotConfigured);
+            var departmentNumber = await unitOfWork.Context.Set<Management>().AsNoTracking()
+                .Where(x => x.Id == target.ManagementId).Select(x => x.DepartmentNumber)
+                .SingleOrDefaultAsync(cancellationToken);
+            if (string.IsNullOrWhiteSpace(departmentNumber))
+                return Result.Fail<IReadOnlyCollection<QuestionBankEmployeeLookupDto>>(ErrorsCodes.QuestionBankEmployeeScopeNotConfigured);
+            employeesQuery = employeesQuery.Where(x => x.EmployeeProfile!.DepartmentNumber == departmentNumber);
+        }
+        var employees = await employeesQuery
             .Where(x => string.IsNullOrEmpty(search) || x.FullNameAr.Contains(search) || x.FullNameEn.Contains(search))
             .OrderBy(x => x.FullNameEn).Take(50)
             .Select(x => new QuestionBankEmployeeLookupDto(x.Id, x.FullNameAr, x.FullNameEn))

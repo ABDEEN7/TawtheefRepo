@@ -9,6 +9,7 @@ export interface AssignmentOption {
 export interface AssignmentQuestion {
   itemId: string;
   questionId: string;
+  changeTypeId: string;
   revisionId: string;
   revisionNo: number;
   questionTypeId: string;
@@ -30,6 +31,11 @@ export interface AssignmentQuestion {
   latestReviewNote?: string;
   latestReviewRound?: number;
   options: AssignmentOption[];
+}
+
+export interface MaintenanceBaseQuestion extends Omit<AssignmentQuestion, 'itemId' | 'changeTypeId' | 'statusId' | 'statusNameAr' | 'statusNameEn'> {
+  ownership: 'Available' | 'AssignedToMe' | 'AssignedToAnotherEmployee';
+  requestItemId?: string;
 }
 
 export interface QuestionInput {
@@ -92,7 +98,14 @@ export interface AssignmentWorkspace {
     canFinish: boolean;
   };
   questions: AssignmentQuestion[];
+  baseQuestions: MaintenanceBaseQuestion[];
 }
+
+export const QuestionChangeTypes = {
+  add: 'dd984c21-7b25-444b-85a9-78767e337ddc',
+  update: 'f7abde66-546b-4055-bfed-215c47bea845',
+  delete: 'f02136e2-ac6c-4d3e-9c37-efd28587177d',
+};
 
 export const AssignmentStatuses = {
   assigned: '9b38c5a0-fb16-44f2-8239-cb5ee704129d',
