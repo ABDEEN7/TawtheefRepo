@@ -20,5 +20,7 @@
   "QUESTION_BANKS.LOADING": "جارٍ تحميل بنوك الأسئلة",
   "QUESTION_BANKS.EMPTY": "لا توجد بنوك أسئلة",
   "QUESTION_BANKS.LOAD_ERROR": "تعذر تحميل بنوك الأسئلة. يرجى المحاولة مرة أخرى.",
-  "QUESTION_BANKS.NEW_REQUEST": "طلب جديد"
+  "QUESTION_BANKS.NEW_REQUEST": "طلب جديد",
+  "QUESTION_BANKS.ACTIONS": "الإجراءات",
+  "QUESTION_BANKS.MAINTENANCE_REQUEST": "طلب صيانة"
 }

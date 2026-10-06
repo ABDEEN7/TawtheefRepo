@@ -45,6 +45,10 @@
             <div>{{ name(r.questionBankTypeNameAr, r.questionBankTypeNameEn) }}</div>
           </div>
           <div class="col-md-6">
+            <div class="text-muted small">{{ 'QUESTION_BANK_REQUESTS.BASE_VERSION' | translate }}</div>
+            <div>{{ r.baseVersionNo != null ? ('QUESTION_BANK_REQUESTS.VERSION' | translate) + ' ' + r.baseVersionNo : '-' }}</div>
+          </div>
+          <div class="col-md-6">
             <div class="text-muted small">
               {{ 'QUESTION_BANK_REQUESTS.MANAGEMENT' | translate }}
             </div>

@@ -20,7 +20,9 @@ import {
   AssignmentStatuses,
   RequestItemStatuses,
   AssignmentWorkspace,
+  MaintenanceBaseQuestion,
   QuestionInput,
+  QuestionChangeTypes,
 } from './models/question-bank-assignment.models';
 import { QuestionDialogComponent } from './question-dialog/question-dialog.component';
 import { QuestionBankAssignmentsService } from './services/question-bank-assignments.service';
@@ -61,6 +63,7 @@ export class QuestionEntryPage {
   readonly loading = signal(true);
   readonly statuses = AssignmentStatuses;
   readonly itemStatuses = RequestItemStatuses;
+  readonly changeTypes = QuestionChangeTypes;
   readonly assignmentStatusSeverity = questionBankAssignmentStatusSeverity;
   readonly itemStatusSeverity = questionBankRequestItemStatusSeverity;
 
@@ -91,6 +94,7 @@ export class QuestionEntryPage {
       (this.editable && question.statusId === this.itemStatuses.draft) ||
       (this.correctionMode &&
         (question.statusId === this.itemStatuses.rejected ||
+          question.statusId === this.itemStatuses.needsModification ||
           question.statusId === this.itemStatuses.draft))
     );
   }
@@ -101,6 +105,12 @@ export class QuestionEntryPage {
 
   localizedContent(ar?: string, en?: string): string {
     return (this.language.get() === 'ar' ? ar : en) || '';
+  }
+
+  changeTypeLabel(id: string): string {
+    if (id === this.changeTypes.update) return 'QUESTION_ASSIGNMENTS.CHANGE_UPDATE';
+    if (id === this.changeTypes.delete) return 'QUESTION_ASSIGNMENTS.CHANGE_DELETE';
+    return 'QUESTION_ASSIGNMENTS.CHANGE_ADD';
   }
 
   percent(): number {
@@ -123,6 +133,43 @@ export class QuestionEntryPage {
 
   edit(question: AssignmentQuestion): void {
     this.openDialog(question);
+  }
+
+  editBase(question: MaintenanceBaseQuestion): void {
+    const ref = this.dialogs.open(QuestionDialogComponent, {
+      header: this.translate.instant('QUESTION_ASSIGNMENTS.EDIT'),
+      width: 'min(800px, 95vw)',
+      data: { question },
+    });
+    ref?.onClose.subscribe((input?: QuestionInput) => {
+      if (!input) return;
+      this.service.updateBaseQuestion(this.assignmentId, question.questionId, input).subscribe({
+        next: () => {
+          this.notification.success(this.translate.instant('QUESTION_ASSIGNMENTS.SAVED'));
+          this.load();
+        },
+        error: () => {
+          this.notification.error(this.translate.instant('QUESTION_ASSIGNMENTS.QUESTION_CLAIMED'));
+          this.load();
+        },
+      });
+    });
+  }
+
+  deleteBase(question: MaintenanceBaseQuestion): void {
+    this.confirmation.confirm({
+      message: this.translate.instant('QUESTION_ASSIGNMENTS.DELETE_BASE_CONFIRM'),
+      accept: () => this.service.deleteBaseQuestion(this.assignmentId, question.questionId).subscribe({
+        next: () => {
+          this.notification.success(this.translate.instant('QUESTION_ASSIGNMENTS.SAVED'));
+          this.load();
+        },
+        error: () => {
+          this.notification.error(this.translate.instant('QUESTION_ASSIGNMENTS.QUESTION_CLAIMED'));
+          this.load();
+        },
+      }),
+    });
   }
 
   remove(question: AssignmentQuestion): void {

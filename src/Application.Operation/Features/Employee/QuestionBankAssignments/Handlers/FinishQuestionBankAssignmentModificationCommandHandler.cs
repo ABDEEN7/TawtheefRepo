@@ -47,7 +47,8 @@ public sealed class FinishQuestionBankAssignmentModificationCommandHandler(
             if (drafts.Any(item => !Valid(item)))
                 return Result.Fail<Unit>(ErrorsCodes.InvalidQuestionEntry);
             foreach (var draft in drafts)
-                if (!await QuestionEntryRules.ValidResource(uow, draft.CurrentProposedRevision!.ResourceId, ct))
+                if (draft.ChangeTypeId != QuestionChangeTypeIds.DELETE &&
+                    !await QuestionEntryRules.ValidResource(uow, draft.CurrentProposedRevision!.ResourceId, ct))
                     return Result.Fail<Unit>(ErrorsCodes.InvalidQuestionEntry);
 
             foreach (var item in drafts) item.StatusId = QuestionBankRequestItemStatusIds.PENDING_REVIEW;
@@ -77,6 +78,8 @@ public sealed class FinishQuestionBankAssignmentModificationCommandHandler(
 
     private bool Valid(QuestionBankRequestItem item)
     {
+        if (item.ChangeTypeId == QuestionChangeTypeIds.DELETE)
+            return item.OriginalRevisionId.HasValue && item.CurrentProposedRevisionId is null;
         var revision = item.CurrentProposedRevision;
         if (revision is null) return false;
         var input = new QuestionInput(revision.QuestionTypeId, revision.DifficultyLevelId,

@@ -17,6 +17,7 @@ import { RichContentRendererComponent } from '../../../../shared/rich-content/ri
 import { QuestionBankAssignmentsService } from '../question-bank-assignments/services/question-bank-assignments.service';
 import {
   QuestionBankRequestReview,
+  QuestionChangeTypeIds,
   QuestionReviewDecisionIds,
   QuestionReviewInput,
 } from './models/question-bank-request.models';
@@ -61,6 +62,13 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
   readonly submitted = signal(false);
   readonly currentLang = signal<Lang>(this.language.get());
   readonly decisions = QuestionReviewDecisionIds;
+  readonly changeTypes = QuestionChangeTypeIds;
+
+  changeTypeLabel(changeTypeId: string): string {
+    if (changeTypeId === this.changeTypes.Update) return 'QUESTION_BANK_REQUESTS.CHANGE_UPDATE';
+    if (changeTypeId === this.changeTypes.Delete) return 'QUESTION_BANK_REQUESTS.CHANGE_DELETE';
+    return 'QUESTION_BANK_REQUESTS.CHANGE_ADD';
+  }
   readonly requestStatusSeverity = questionBankRequestStatusSeverity;
   readonly values = new Map<string, ReviewFormValue>();
   readonly imageUrls = new Map<string, string>();

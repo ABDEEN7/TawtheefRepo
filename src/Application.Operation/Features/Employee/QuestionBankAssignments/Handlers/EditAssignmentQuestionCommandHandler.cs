@@ -35,7 +35,16 @@ public sealed class EditAssignmentQuestionCommandHandler(
                 .Include(x => x.QuestionBankAssignment).ThenInclude(x => x.QuestionBankRequest)
                 .SingleOrDefaultAsync(x => x.Id == r.ItemId && x.QuestionBankAssignmentId == r.AssignmentId && !x.IsDeleted &&
                     (x.StatusId == QuestionBankRequestItemStatusIds.DRAFT || x.StatusId == QuestionBankRequestItemStatusIds.NEEDS_MODIFICATION), token);
-            if (item is null || item.QuestionBankAssignment.EmployeeId != employeeId || item.RequestId != item.QuestionBankAssignment.QuestionBankRequestId)
+            if (item is null)
+            {
+                var maintenanceItemExists = await uow.GetEntityRepository<QuestionBankRequestItem>().DbSet.AsNoTracking()
+                    .AnyAsync(x => x.Id == r.ItemId && !x.IsDeleted &&
+                        x.Request.RequestTypeId == QuestionBankRequestTypeIds.MAINTENANCE, token);
+                return Result.Fail<Unit>(maintenanceItemExists
+                    ? ErrorsCodes.QuestionBankMaintenanceItemNotOwned
+                    : ErrorsCodes.QuestionBankAssignmentQuestionNotFound);
+            }
+            if (item.QuestionBankAssignment.EmployeeId != employeeId || item.RequestId != item.QuestionBankAssignment.QuestionBankRequestId)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentQuestionNotFound);
             var initialEntry = item.StatusId == QuestionBankRequestItemStatusIds.DRAFT && QuestionEntryRules.Editable(item.QuestionBankAssignment.StatusId) &&
                                item.QuestionBankAssignment.QuestionBankRequest.StatusId == QuestionBankRequestStatusIds.QuestionEntryInProgress;
@@ -48,6 +57,8 @@ public sealed class EditAssignmentQuestionCommandHandler(
             var revision = QuestionEntryRules.Revision(item.QuestionId, next + 1, item.Id, questionInput);
             await uow.GetEntityRepository<QuestionRevision>().AddAsync(revision, token);
             item.CurrentProposedRevisionId = revision.Id;
+            if (item.ChangeTypeId == QuestionChangeTypeIds.DELETE)
+                item.ChangeTypeId = QuestionChangeTypeIds.UPDATE;
             item.StatusId = QuestionBankRequestItemStatusIds.DRAFT;
             await uow.SaveChangesAsync(token); return Result.Ok(Unit.Value);
         }, ct);

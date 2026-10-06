@@ -31,7 +31,14 @@ public sealed class FinishQuestionBankAssignmentEntryCommandHandler(IUnitOfWork 
             if (!QuestionEntryRules.Editable(a.StatusId) || a.QuestionBankRequest.StatusId != QuestionBankRequestStatusIds.QuestionEntryInProgress)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentNotEditable);
             var items = a.RequestItems.Where(x => x.RequestId == a.QuestionBankRequestId && x.StatusId == QuestionBankRequestItemStatusIds.DRAFT).ToList();
-            if (items.Count < a.MinimumQuestionCount || items.Count == 0 || items.Any(x => x.CurrentProposedRevision == null || x.CurrentProposedRevision.Options.Count < 2 || x.CurrentProposedRevision.Options.Count(o => o.IsCorrect) != 1))
+            var baseRevisions = a.QuestionBankRequest.RequestTypeId == QuestionBankRequestTypeIds.MAINTENANCE &&
+                                a.QuestionBankRequest.BaseVersionId.HasValue
+                ? await uow.GetEntityRepository<QuestionBankVersionQuestion>().DbSet.AsNoTracking()
+                    .Where(x => x.QuestionBankVersionId == a.QuestionBankRequest.BaseVersionId && !x.IsDeleted)
+                    .ToDictionaryAsync(x => x.QuestionId, x => x.QuestionRevisionId, token)
+                : new Dictionary<Guid, Guid>();
+            if (items.Count < a.MinimumQuestionCount || items.Count == 0 ||
+                items.Any(x => !Valid(x, a.QuestionBankRequest, baseRevisions)))
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankMinimumQuestionCountNotMet);
             foreach (var item in items) item.StatusId = QuestionBankRequestItemStatusIds.PENDING_REVIEW;
             var now = DateTime.UtcNow; a.StatusId = QuestionBankAssignmentStatusIds.QuestionEntryCompleted; a.QuestionEntryCompletedAt = now;
@@ -47,4 +54,28 @@ public sealed class FinishQuestionBankAssignmentEntryCommandHandler(IUnitOfWork 
             await uow.SaveChangesAsync(token); return Result.Ok(Unit.Value);
         }, ct);
     }
+
+    private static bool Valid(QuestionBankRequestItem item, QuestionBankRequest request,
+        IReadOnlyDictionary<Guid, Guid> baseRevisions)
+    {
+        if (request.RequestTypeId == QuestionBankRequestTypeIds.CREATE)
+            return item.ChangeTypeId == QuestionChangeTypeIds.ADD && ValidProposed(item);
+        if (request.RequestTypeId != QuestionBankRequestTypeIds.MAINTENANCE || request.BaseVersionId is null)
+            return false;
+        return item.ChangeTypeId switch
+        {
+            var type when type == QuestionChangeTypeIds.ADD => item.OriginalRevisionId is null && ValidProposed(item),
+            var type when type == QuestionChangeTypeIds.UPDATE =>
+                baseRevisions.TryGetValue(item.QuestionId, out var updateOriginal) &&
+                item.OriginalRevisionId == updateOriginal && ValidProposed(item),
+            var type when type == QuestionChangeTypeIds.DELETE =>
+                baseRevisions.TryGetValue(item.QuestionId, out var deleteOriginal) &&
+                item.OriginalRevisionId == deleteOriginal && item.CurrentProposedRevisionId is null,
+            _ => false
+        };
+    }
+
+    private static bool ValidProposed(QuestionBankRequestItem item) =>
+        item.CurrentProposedRevision is { Options.Count: >= 2 } revision &&
+        revision.Options.Count(o => o.IsCorrect) == 1;
 }
