@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  computed,
   DestroyRef,
   inject,
   input,
@@ -19,7 +20,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { DialogService } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
-import { catchError, debounceTime, finalize, of, Subject } from 'rxjs';
+import { catchError, debounceTime, finalize, of, skip, Subject } from 'rxjs';
 import { LanguageService } from '../../../../../../core/services/language.service';
 import { PaginationComponent } from '../../../../../../shared/components/pagination/pagination.component';
 import { PageFiltersComponent } from '../../../../../../shared/components/page-filters/page-filters.component';
@@ -32,7 +33,6 @@ import {
   LocalTestSession,
   ReadyTestSlotFilters,
   ReadyTestSlotListItemDto,
-  ReadyTestSlotsSummaryDto,
 } from '../../models/ready-test-slot.dto';
 import { TestSessionLookupsDto } from '../../models/test-session-list-item.dto';
 import { TestSessionsService } from '../../services/test-sessions.service';
@@ -60,6 +60,7 @@ import { TestSessionSetupDialogComponent } from '../test-session-setup-dialog/te
 })
 export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
   readonly examId = input.required<string>();
+  readonly currentTestSessionId = input<string | null>(null);
   readonly examDetails = input.required<TestSessionExamDetailsDto>();
   readonly candidateSummary = input.required<TestSessionCandidateSummaryDto>();
   readonly selectedCandidateIds = input.required<string[]>();
@@ -76,12 +77,20 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
   private readonly translate = inject(TranslateService);
   private readonly filterChanges$ = new Subject<void>();
 
-  readonly slots = signal<ReadyTestSlotListItemDto[]>([]);
-  readonly summary = signal<ReadyTestSlotsSummaryDto>({
-    existingExamSessionCount: 0,
-    existingExamCandidateCount: 0,
-    availableCapacity: 0,
+  readonly summaryCards = computed(() => {
+    const totalCandidates = this.selectedCandidateIds().length;
+    const addedSessions = this.localSession() ? 1 : 0;
+    const allocatedSeats = addedSessions ? totalCandidates : 0;
+
+    return {
+      totalCandidates,
+      addedSessions,
+      allocatedSeats,
+      remainingCandidates: Math.max(totalCandidates - allocatedSeats, 0),
+    };
   });
+
+  readonly slots = signal<ReadyTestSlotListItemDto[]>([]);
   readonly totalItems = signal(0);
   readonly loading = signal(false);
   readonly loadFailed = signal(false);
@@ -96,25 +105,36 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
   searchText = '';
   selectedRoomId?: string;
   selectedDate: Date | null = null;
+  private loadedExamId: string | null = null;
+  private loadedTestSessionId: string | null = null;
 
   ngOnInit(): void {
     this.filterChanges$
       .pipe(debounceTime(400), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.applyFilters());
-    this.language.current$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((language) => {
-      this.filters.update((filters) => ({ ...filters, language }));
-      this.loadSlots();
-    });
+    this.language.current$
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((language) => {
+        this.filters.update((filters) => ({ ...filters, language }));
+        this.loadSlots();
+      });
   }
 
   ngOnChanges(): void {
+    const examId = this.examId();
+    const testSessionId = this.currentTestSessionId();
     this.filters.update((filters) => ({
       ...filters,
-      examId: this.examId(),
+      examId,
+      excludeTestSessionId: testSessionId ?? undefined,
       selectedCandidateCount: this.selectedCandidateIds().length,
       pageNumber: 1,
     }));
-    this.loadSlots();
+    if (examId !== this.loadedExamId || testSessionId !== this.loadedTestSessionId) {
+      this.loadedExamId = examId;
+      this.loadedTestSessionId = testSessionId;
+      this.loadSlots();
+    }
   }
 
   onSearchChanged(): void {
@@ -183,13 +203,16 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
     this.sessionDeleted.emit();
   }
 
-  remainingCandidates(): number {
-    return this.selectedCandidateIds().length;
-  }
-
   canSetup(slot: ReadyTestSlotListItemDto): boolean {
     const selectedCandidateCount = this.selectedCandidateIds().length;
-    return selectedCandidateCount > 0 && slot.remainingCapacity >= selectedCandidateCount;
+    return (
+      selectedCandidateCount > 0 &&
+      slot.availabilityWindows.some((window) => window.availableSeats >= selectedCandidateCount)
+    );
+  }
+
+  formatTime(time: string): string {
+    return time.slice(0, 5);
   }
 
   isSessionCapacitySufficient(): boolean {
@@ -204,9 +227,7 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
 
   sessionCapacityGap(): number {
     const session = this.localSession();
-    return session
-      ? Math.max(0, this.selectedCandidateIds().length - session.availableCapacity)
-      : 0;
+    return session ? Math.max(0, this.selectedCandidateIds().length - session.availableCapacity) : 0;
   }
 
   isSessionTimeValid(session: LocalTestSession): boolean {
@@ -251,13 +272,6 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
       .subscribe((response) => {
         this.slots.set(response?.slots.items ?? []);
         this.totalItems.set(response?.slots.metadata.totalCount ?? 0);
-        this.summary.set(
-          response?.summary ?? {
-            existingExamSessionCount: 0,
-            existingExamCandidateCount: 0,
-            availableCapacity: 0,
-          },
-        );
       });
   }
 
@@ -268,4 +282,5 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
+
 }

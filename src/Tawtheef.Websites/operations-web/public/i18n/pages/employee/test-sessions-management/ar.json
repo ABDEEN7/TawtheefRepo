@@ -95,6 +95,8 @@
   "TEST_SESSION_WIZARD.PERIOD_SEARCH": "البحث حسب الفترة أو القاعة",
   "TEST_SESSION_WIZARD.ALL_ROOMS": "جميع القاعات",
   "TEST_SESSION_WIZARD.DATE": "التاريخ",
+  "TEST_SESSION_WIZARD.DATE_AVAILABLE_TIMES": "التاريخ والأوقات المتاحة",
+  "TEST_SESSION_WIZARD.AVAILABLE_SEATS_FOR_DURATION": "مقاعد متاحة لجلسة كاملة",
   "TEST_SESSION_WIZARD.DATE_TIME": "التاريخ والوقت",
   "TEST_SESSION_WIZARD.CURRENT_RESERVATIONS": "الحجوزات الحالية",
   "TEST_SESSION_WIZARD.EXISTING_SESSIONS": "جلسات الاختبار",
