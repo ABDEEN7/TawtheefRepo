@@ -9,6 +9,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { SortEvent } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, finalize, forkJoin, Subject } from 'rxjs';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -43,6 +45,8 @@ import { routes } from '../../../../routes/routes';
     InputIconModule,
     InputTextModule,
     TagModule,
+    ButtonModule,
+    TooltipModule,
   ],
 })
 export class QuestionBanksPage implements OnInit {
@@ -221,6 +225,20 @@ export class QuestionBanksPage implements OnInit {
   newRequest(): void {
     void this.router.navigate([routes.portal.questionBankRequests], {
       queryParams: { action: 'create' },
+    });
+  }
+
+  canRequestMaintenance(bank: QuestionBankListItemDto): boolean {
+    return (
+      bank.isActive &&
+      !!bank.currentApprovedVersionId &&
+      this.auth.hasPermission(Permissions.QuestionBankRequests.Maintenance)
+    );
+  }
+
+  requestMaintenance(id: string): void {
+    void this.router.navigate([routes.portal.questionBankRequests], {
+      queryParams: { action: 'maintenance', bankId: id },
     });
   }
 }

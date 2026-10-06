@@ -40,6 +40,21 @@ export interface CreateQuestionBankRequest {
   stageId: null;
   reason: string | null;
 }
+export interface QuestionBankMaintenanceDetails {
+  questionBankId: string;
+  questionBankTypeId: string;
+  questionBankTypeNameAr: string;
+  questionBankTypeNameEn: string;
+  managementId?: string | null;
+  managementNameAr?: string | null;
+  managementNameEn?: string | null;
+  jobTitleId?: string | null;
+  jobTitleNameAr?: string | null;
+  jobTitleNameEn?: string | null;
+  currentApprovedVersionId?: string | null;
+  currentVersionNo?: number | null;
+  isActive: boolean;
+}
 export const QuestionBankTypeIds = {
   Specialized: 'a7f9646b-fcc3-4a00-944c-ceed82acd557',
   Skills: '686928db-b630-4689-b265-ae17eded73cf',
@@ -68,6 +83,7 @@ export interface QuestionBankAssignment {
   completedAt?: string;
 }
 export interface QuestionBankRequestDetails extends QuestionBankRequestListItem {
+  baseVersionNo?: number | null;
   reason?: string;
   isActive: boolean;
   canReview: boolean;
@@ -98,6 +114,11 @@ export const QuestionReviewDecisionIds = {
   NeedsModification: 'a29e6157-401f-49ac-ba46-98ecd8ca73dd',
   Rejected: 'a0ce4f21-955b-4290-bf88-fc1775a21410',
 } as const;
+export const QuestionChangeTypeIds = {
+  Add: 'dd984c21-7b25-444b-85a9-78767e337ddc',
+  Update: 'f7abde66-546b-4055-bfed-215c47bea845',
+  Delete: 'f02136e2-ac6c-4d3e-9c37-efd28587177d',
+} as const;
 export interface QuestionBankReviewOption {
   id: string;
   optionTextAr?: string;
@@ -114,6 +135,13 @@ export interface QuestionBankReviewItem {
   changeTypeId: string;
   itemStatusId: string;
   currentProposedRevisionId: string;
+  originalRevisionId?: string;
+  originalQuestionTextAr?: string;
+  originalQuestionTextEn?: string;
+  originalDifficultyNameAr?: string;
+  originalDifficultyNameEn?: string;
+  originalImageUrl?: string;
+  originalOptions: QuestionBankReviewOption[];
   questionTypeId: string;
   questionTypeNameAr: string;
   questionTypeNameEn: string;
