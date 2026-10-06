@@ -63,6 +63,17 @@ public sealed class QuestionBankAssignmentsController(IMediator mediator, ICurre
         return (await mediator.Send(command, cancellationToken)).ToActionResult();
     }
 
+    [HttpPost("{assignmentId:guid}/base-questions/{questionId:guid}/update")]
+    [AllowRichText]
+    public async Task<IActionResult> UpdateBaseQuestion(Guid assignmentId, Guid questionId,
+        [FromBody] QuestionInput input, CancellationToken cancellationToken) =>
+        (await mediator.Send(new UpdateBaseVersionQuestionCommand(assignmentId, questionId, input), cancellationToken)).ToActionResult();
+
+    [HttpPost("{assignmentId:guid}/base-questions/{questionId:guid}/delete")]
+    public async Task<IActionResult> DeleteBaseQuestion(Guid assignmentId, Guid questionId,
+        CancellationToken cancellationToken) =>
+        (await mediator.Send(new DeleteBaseVersionQuestionCommand(assignmentId, questionId), cancellationToken)).ToActionResult();
+
     [HttpPut("{assignmentId:guid}/questions/{itemId:guid}")]
     [AllowRichText]
     public async Task<IActionResult> Edit(

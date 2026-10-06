@@ -10,6 +10,13 @@ public sealed record QuestionBankReviewItemDto
     public Guid ChangeTypeId { get; init; }
     public Guid ItemStatusId { get; init; }
     public Guid CurrentProposedRevisionId { get; init; }
+    public Guid? OriginalRevisionId { get; init; }
+    public string? OriginalQuestionTextAr { get; init; }
+    public string? OriginalQuestionTextEn { get; init; }
+    public string? OriginalDifficultyNameAr { get; init; }
+    public string? OriginalDifficultyNameEn { get; init; }
+    public string? OriginalImageUrl { get; init; }
+    public IReadOnlyCollection<QuestionBankReviewOptionDto> OriginalOptions { get; init; } = [];
     public Guid QuestionTypeId { get; init; }
     public required string QuestionTypeNameAr { get; init; }
     public required string QuestionTypeNameEn { get; init; }

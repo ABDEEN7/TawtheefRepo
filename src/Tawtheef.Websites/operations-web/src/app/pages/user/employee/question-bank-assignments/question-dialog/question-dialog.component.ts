@@ -38,6 +38,7 @@ export class QuestionDialogComponent implements OnDestroy {
   private readonly ref = inject(DynamicDialogRef);
   private readonly service = inject(QuestionBankAssignmentsService);
   readonly config = inject(DynamicDialogConfig);
+  readonly questionTypeReadOnly = !!this.config.data?.questionTypeReadOnly;
 
   readonly types = [
     { label: 'QUESTION_ASSIGNMENTS.MULTIPLE_CHOICE', value: QuestionTypes.multipleChoice },
@@ -125,6 +126,7 @@ export class QuestionDialogComponent implements OnDestroy {
     this.revokeImagePreview();
     this.imagePreview = undefined;
     this.imageFile = undefined;
+    this.imageError = false;
     this.form.controls.resourceId.setValue(null);
   }
 

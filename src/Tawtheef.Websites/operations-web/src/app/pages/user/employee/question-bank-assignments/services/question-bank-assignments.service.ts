@@ -51,6 +51,20 @@ export class QuestionBankAssignmentsService {
     );
   }
 
+  updateBaseQuestion(id: string, questionId: string, input: QuestionInput): Observable<string> {
+    return this.withUploadedImage(input).pipe(
+      switchMap((question) =>
+        this.http.post<string>(this.endpoints.questionBankAssignments.updateBaseQuestion(id, questionId), question),
+      ),
+    );
+  }
+
+  deleteBaseQuestion(id: string, questionId: string): Observable<string> {
+    return this.http.post<string>(
+      this.endpoints.questionBankAssignments.deleteBaseQuestion(id, questionId), {},
+    );
+  }
+
   private withUploadedImage(input: QuestionInput): Observable<QuestionInput> {
     if (!input.imageFile) return of(input);
     const data = new FormData();
