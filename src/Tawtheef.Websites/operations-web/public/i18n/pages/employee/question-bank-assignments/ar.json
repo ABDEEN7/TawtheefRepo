@@ -67,5 +67,17 @@
   "QUESTION_ASSIGNMENTS.FINISH_MODIFICATIONS": "إنهاء التعديلات",
   "QUESTION_ASSIGNMENTS.MODIFICATIONS_SUCCESS": "تم إرسال تعديلات الأسئلة بنجاح.",
   "QUESTION_ASSIGNMENTS.DESCRIPTION": "راجع وأكمل مهام بنوك الأسئلة المسندة إليك.",
-  "QUESTION_ASSIGNMENTS.NO_QUESTIONS": "لا توجد أسئلة."
+  "QUESTION_ASSIGNMENTS.NO_QUESTIONS": "لا توجد أسئلة.",
+  "QUESTION_ASSIGNMENTS.BASE_VERSION_QUESTIONS": "أسئلة الإصدار الأساسي",
+  "QUESTION_ASSIGNMENTS.OWNERSHIP": "مسؤولية الصيانة",
+  "QUESTION_ASSIGNMENTS.AVAILABLE": "متاح",
+  "QUESTION_ASSIGNMENTS.ASSIGNEDTOME": "مسند إليّ",
+  "QUESTION_ASSIGNMENTS.ASSIGNEDTOANOTHEREMPLOYEE": "مسند إلى موظف آخر",
+  "QUESTION_ASSIGNMENTS.DELETE_CHANGE": "اقتراح الحذف",
+  "QUESTION_ASSIGNMENTS.DELETE_BASE_CONFIRM": "هل تريد اقتراح حذف هذا السؤال من الإصدار التالي؟",
+  "QUESTION_ASSIGNMENTS.QUESTION_CLAIMED": "يعمل موظف آخر على هذا السؤال بالفعل. تم تحديث مساحة العمل.",
+  "QUESTION_ASSIGNMENTS.CHANGE_TYPE": "نوع التغيير",
+  "QUESTION_ASSIGNMENTS.CHANGE_ADD": "إضافة",
+  "QUESTION_ASSIGNMENTS.CHANGE_UPDATE": "تحديث",
+  "QUESTION_ASSIGNMENTS.CHANGE_DELETE": "حذف"
 }

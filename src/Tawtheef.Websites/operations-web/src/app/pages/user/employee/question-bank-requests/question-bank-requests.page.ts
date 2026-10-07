@@ -25,6 +25,7 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { dropdownOptionsModel } from '../../../../shared/models/dropdown-options.model';
 import { CreateQuestionBankRequestDialogComponent } from './dialogs/create-question-bank-request/create-question-bank-request.dialog.component';
+import { CreateQuestionBankMaintenanceRequestDialogComponent } from './dialogs/create-question-bank-maintenance-request/create-question-bank-maintenance-request.dialog.component';
 import {
   QuestionBankRequestFilters,
   QuestionBankRequestListItem,
@@ -93,6 +94,7 @@ export class QuestionBankRequestsPage implements OnInit {
   managementId?: string;
   jobTitleId?: string;
   private openCreateFromQuery = false;
+  private maintenanceBankId?: string;
   ngOnInit(): void {
     this.changes$
       .pipe(debounceTime(500), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
@@ -101,6 +103,9 @@ export class QuestionBankRequestsPage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((x) => this.currentLang.set(x));
     this.openCreateFromQuery = this.route.snapshot.queryParamMap.get('action') === 'create';
+    const action = this.route.snapshot.queryParamMap.get('action');
+    const bankId = this.route.snapshot.queryParamMap.get('bankId');
+    if (action === 'maintenance' && bankId && this.validGuid(bankId)) this.maintenanceBankId = bankId;
     this.loadLookups();
   }
   openCreate(): void {
@@ -123,6 +128,33 @@ export class QuestionBankRequestsPage implements OnInit {
         this.load();
       }
     });
+  }
+  private openMaintenance(bankId: string): void {
+    this.service
+      .maintenanceDetails(bankId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (bank) => {
+          const ref = this.dialogs.open(CreateQuestionBankMaintenanceRequestDialogComponent, {
+            header: this.translate.instant('QUESTION_BANK_REQUESTS.MAINTENANCE_TITLE'),
+            width: '720px',
+            modal: true,
+            closable: true,
+            dismissableMask: false,
+            breakpoints: { '768px': '95vw' },
+            data: { bank },
+          });
+          this.consumeActionQuery();
+          ref?.onClose.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((id) => {
+            if (id) {
+              this.notification.success(
+                this.translate.instant('QUESTION_BANK_REQUESTS.MAINTENANCE_SUCCESS'),
+              );
+              this.load();
+            }
+          });
+        },
+      });
   }
   onSearch(): void {
     this.changes$.next(this.search);
@@ -212,17 +244,33 @@ export class QuestionBankRequestsPage implements OnInit {
           if (this.openCreateFromQuery) {
             this.openCreateFromQuery = false;
             if (this.auth.hasPermission(Permissions.QuestionBankRequests.Create)) this.openCreate();
-            void this.router.navigate([], {
-              relativeTo: this.route,
-              queryParams: { action: null },
-              queryParamsHandling: 'merge',
-              replaceUrl: true,
-            });
+            this.consumeActionQuery();
+          } else if (
+            this.maintenanceBankId &&
+            this.auth.hasPermission(Permissions.QuestionBankRequests.Maintenance)
+          ) {
+            const bankId = this.maintenanceBankId;
+            this.maintenanceBankId = undefined;
+            this.openMaintenance(bankId);
+          } else if (this.route.snapshot.queryParamMap.get('action') === 'maintenance') {
+            this.consumeActionQuery();
           }
         },
         error: () =>
           this.notification.error(this.translate.instant('QUESTION_BANK_REQUESTS.LOAD_ERROR')),
       });
+  }
+  private consumeActionQuery(): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { action: null, bankId: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  private validGuid(value: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
   }
   private load(): void {
     this.loading.set(true);

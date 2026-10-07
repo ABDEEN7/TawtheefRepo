@@ -51,7 +51,7 @@ internal static class QuestionBankLookupImporter
             context,
             [
                 new(QuestionBankRequestTypeIds.CREATE, "CREATE", "إنشاء", "Create", 1),
-                new(QuestionBankRequestTypeIds.MAINTENANCE, "MODIFY", "تعديل", "Modify", 2)
+                new(QuestionBankRequestTypeIds.MAINTENANCE, "MAINTENANCE", "صيانة", "Maintenance", 2)
             ],
             ct);
 
