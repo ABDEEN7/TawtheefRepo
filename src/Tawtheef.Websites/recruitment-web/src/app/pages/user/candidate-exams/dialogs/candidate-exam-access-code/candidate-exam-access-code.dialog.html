@@ -62,12 +62,17 @@
           <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
           {{ 'candidate_exams.entry.accessAccepted' | translate }}
         </div>
-        <div class="start-warning" role="note">
-          <i class="fa-solid fa-clock" aria-hidden="true"></i>
-          <div>
-            <strong>{{ 'candidate_exams.entry.startWarningTitle' | translate }}</strong>
-            <p>{{ 'candidate_exams.entry.startWarning' | translate }}</p>
+        <div class="entry-instructions" role="note" aria-live="polite">
+          <div class="entry-instructions__header">
+            <h3>{{ 'candidate_exams.entry.instructionsTitle' | translate }}</h3>
           </div>
+
+          <ol class="entry-instructions__list">
+            <li>{{ 'candidate_exams.entry.instructions.1' | translate }}</li>
+            <li>{{ 'candidate_exams.entry.instructions.2' | translate }}</li>
+            <li>{{ 'candidate_exams.entry.instructions.3' | translate }}</li>
+            <li>{{ 'candidate_exams.entry.instructions.4' | translate }}</li>
+          </ol>
         </div>
       }
 
