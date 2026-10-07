@@ -173,6 +173,12 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
     if (this.readOnly()) return;
     if (this.localSession() && !session) return;
 
+    const currentSlot = session
+      ? this.slots().find((loadedSlot) => loadedSlot.testSlotId === session.slot.testSlotId) ??
+        (session.slot.availabilityWindows.length > 0 ? session.slot : undefined)
+      : slot;
+    if (!currentSlot) return;
+
     const ref = this.dialogService.open(TestSessionSetupDialogComponent, {
       header: this.translate.instant('TEST_SESSION_WIZARD.SESSION_SETUP_TITLE'),
       width: '80%',
@@ -181,7 +187,7 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
       dismissableMask: false,
       breakpoints: { '768px': '95vw' },
       data: {
-        slot,
+        slot: currentSlot,
         exam: this.examDetails(),
         selectedCandidateCount: this.selectedCandidateIds().length,
         initialSession: session,
@@ -190,7 +196,7 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
     ref?.onClose.subscribe((result) => {
       if (result) {
         this.sessionApplied.emit({
-          slot,
+          slot: currentSlot,
           startTime: result.startTime,
           endTime: result.endTime,
           availableCapacity: result.availableSeats,

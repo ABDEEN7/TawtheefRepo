@@ -40,7 +40,7 @@ export class TestSessionSetupDialogComponent implements OnInit {
   toPickerValue = this.dateFromTime(this.to);
   added = signal(!!this.initialSession);
   readonly sessions = computed(() => (this.added() ? [true] : []));
-  availableSeats = signal(this.initialSession?.availableCapacity ?? 0);
+  availableSeats = signal(0);
   error = signal<string | null>(null);
   validationPending = signal(false);
 
