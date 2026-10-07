@@ -67,5 +67,17 @@
   "QUESTION_ASSIGNMENTS.FINISH_MODIFICATIONS": "Finish Modifications",
   "QUESTION_ASSIGNMENTS.MODIFICATIONS_SUCCESS": "Question modifications submitted successfully.",
   "QUESTION_ASSIGNMENTS.DESCRIPTION": "Review and complete your assigned question bank work.",
-  "QUESTION_ASSIGNMENTS.NO_QUESTIONS": "No questions found."
+  "QUESTION_ASSIGNMENTS.NO_QUESTIONS": "No questions found.",
+  "QUESTION_ASSIGNMENTS.BASE_VERSION_QUESTIONS": "Base Version Questions",
+  "QUESTION_ASSIGNMENTS.OWNERSHIP": "Maintenance Ownership",
+  "QUESTION_ASSIGNMENTS.AVAILABLE": "Available",
+  "QUESTION_ASSIGNMENTS.ASSIGNEDTOME": "Assigned to me",
+  "QUESTION_ASSIGNMENTS.ASSIGNEDTOANOTHEREMPLOYEE": "Assigned to another employee",
+  "QUESTION_ASSIGNMENTS.DELETE_CHANGE": "Propose deletion",
+  "QUESTION_ASSIGNMENTS.DELETE_BASE_CONFIRM": "Propose deleting this question from the next version?",
+  "QUESTION_ASSIGNMENTS.QUESTION_CLAIMED": "This question is already being maintained by another employee. The workspace was refreshed.",
+  "QUESTION_ASSIGNMENTS.CHANGE_TYPE": "Change Type",
+  "QUESTION_ASSIGNMENTS.CHANGE_ADD": "Add",
+  "QUESTION_ASSIGNMENTS.CHANGE_UPDATE": "Update",
+  "QUESTION_ASSIGNMENTS.CHANGE_DELETE": "Delete"
 }

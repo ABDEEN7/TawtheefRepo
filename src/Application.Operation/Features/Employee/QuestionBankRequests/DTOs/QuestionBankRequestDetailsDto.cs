@@ -11,6 +11,7 @@ public sealed record QuestionBankRequestDetailsDto
     public required string StatusNameAr { get; init; }
     public required string StatusNameEn { get; init; }
     public int CurrentReviewRound { get; init; }
+    public int? BaseVersionNo { get; init; }
     public string? Reason { get; init; }
     public Guid SubmittedById { get; init; }
     public string? SubmittedByNameAr { get; init; }

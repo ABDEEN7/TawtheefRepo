@@ -457,6 +457,10 @@ export class EndpointsService {
     questions: (id: string) => this.getFullUrl(`/questionbankassignments/${id}/questions`),
     question: (id: string, itemId: string) =>
       this.getFullUrl(`/questionbankassignments/${id}/questions/${itemId}`),
+    updateBaseQuestion: (id: string, questionId: string) =>
+      this.getFullUrl(`/questionbankassignments/${id}/base-questions/${questionId}/update`),
+    deleteBaseQuestion: (id: string, questionId: string) =>
+      this.getFullUrl(`/questionbankassignments/${id}/base-questions/${questionId}/delete`),
     finish: (id: string) => this.getFullUrl(`/questionbankassignments/${id}/finish`),
     finishModifications: (id: string) =>
       this.getFullUrl(`/questionbankassignments/${id}/finish-modifications`),
@@ -465,6 +469,10 @@ export class EndpointsService {
   questionBankRequests = {
     list: this.getFullUrl('/questionbankrequests/list-question-bank-requests'),
     create: this.getFullUrl('/questionbankrequests/create-question-bank-request'),
+    maintenanceDetails: (id: string) =>
+      this.getFullUrl(`/questionbankrequests/banks/${id}/maintenance-details`),
+    createMaintenance: (id: string) =>
+      this.getFullUrl(`/questionbankrequests/${id}/maintenance`),
     details: (id: string) => this.getFullUrl(`/questionbankrequests/${id}`),
     eligibleEmployees: (id: string) =>
       this.getFullUrl(`/questionbankrequests/${id}/eligible-employees`),

@@ -60,6 +60,41 @@
           <h5 class="fw-bold mb-3">
             {{ 'QUESTION_BANK_REQUESTS.QUESTION' | translate }} {{ number + 1 }}
           </h5>
+          <p-tag [value]="changeTypeLabel(item.changeTypeId) | translate" />
+          @if (item.originalRevisionId && item.changeTypeId === changeTypes.Update) {
+            <div class="card bg-light my-3 p-3">
+              <strong>{{ 'QUESTION_BANK_REQUESTS.ORIGINAL_REVISION' | translate }}</strong>
+              <div class="row g-3 mt-1">
+                <div class="col-lg-6"><app-rich-content-renderer [content]="item.originalQuestionTextAr || ''" direction="rtl" /></div>
+                <div class="col-lg-6"><app-rich-content-renderer [content]="item.originalQuestionTextEn || ''" direction="ltr" /></div>
+              </div>
+              <div class="mt-2">
+                {{ 'QUESTION_BANK_REQUESTS.DIFFICULTY' | translate }}:
+                {{ name(item.originalDifficultyNameAr, item.originalDifficultyNameEn) }}
+              </div>
+              @if (imageUrls.get('original-' + item.requestItemId); as originalImageUrl) {
+                <img class="question-image img-thumbnail my-3" [src]="originalImageUrl"
+                  [alt]="'QUESTION_BANK_REQUESTS.ORIGINAL_REVISION' | translate" />
+              }
+              <div class="answer-grid mt-2">
+                @for (option of item.originalOptions; track option.id) {
+                  <div class="answer-option" [class.correct-answer]="option.isCorrect">
+                    <app-rich-content-renderer [content]="option.optionTextAr || ''" direction="rtl" />
+                    <app-rich-content-renderer [content]="option.optionTextEn || ''" direction="ltr" />
+                  </div>
+                }
+              </div>
+            </div>
+            <strong>{{ 'QUESTION_BANK_REQUESTS.PROPOSED_REVISION' | translate }}</strong>
+            <div class="mt-2">
+              {{ 'QUESTION_BANK_REQUESTS.DIFFICULTY' | translate }}:
+              {{ name(item.difficultyNameAr, item.difficultyNameEn) }}
+            </div>
+            <div class="alert alert-info mt-2">{{ imageChangeLabel(item) | translate }}</div>
+          }
+          @if (item.changeTypeId === changeTypes.Delete) {
+            <div class="alert alert-warning mt-3">{{ 'QUESTION_BANK_REQUESTS.CHANGE_DELETE' | translate }}</div>
+          }
           <div class="row g-3 mb-4">
             <div class="col-md-4">
               <span class="review-label">{{ 'QUESTION_BANK_REQUESTS.EMPLOYEE' | translate }}</span>
@@ -116,22 +151,6 @@
               }
             </div>
           </div>
-          @if (item.explanationAr || item.explanationEn) {
-            <div class="row g-4 mt-1">
-              <div class="col-lg-6">
-                <span class="review-label">{{
-                  'QUESTION_BANK_REQUESTS.EXPLANATION_AR' | translate
-                }}</span
-                ><app-rich-content-renderer [content]="item.explanationAr || ''" direction="rtl" />
-              </div>
-              <div class="col-lg-6">
-                <span class="review-label">{{
-                  'QUESTION_BANK_REQUESTS.EXPLANATION_EN' | translate
-                }}</span
-                ><app-rich-content-renderer [content]="item.explanationEn || ''" direction="ltr" />
-              </div>
-            </div>
-          }
           <fieldset class="mt-4">
             <legend class="review-label">
               {{ 'QUESTION_BANK_REQUESTS.MANAGER_DECISION' | translate }}
