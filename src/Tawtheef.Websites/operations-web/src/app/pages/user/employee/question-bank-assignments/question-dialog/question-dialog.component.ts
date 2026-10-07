@@ -1,20 +1,28 @@
 import {CommonModule} from '@angular/common';
 import {Component, inject, OnDestroy} from '@angular/core';
-import {FormArray, FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators,
+} from '@angular/forms';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ButtonModule} from 'primeng/button';
-import {Checkbox} from 'primeng/checkbox';
+import {RadioButton} from 'primeng/radiobutton';
 import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {InputTextModule} from 'primeng/inputtext';
 import {Select} from 'primeng/select';
 import {startWith, Subscription} from 'rxjs';
 import {hasMeaningfulRichContent} from '../../../../../shared/rich-content/rich-content.utils';
-import {AssignmentOption, AssignmentQuestion, QuestionTypes,} from '../models/question-bank-assignment.models';
+import {AssignmentQuestion, QuestionTypes,} from '../models/question-bank-assignment.models';
 import {QuestionBankAssignmentsService} from '../services/question-bank-assignments.service';
 import {RichContentEditorComponent} from '../../../../../shared/rich-content/rich-content-editor.component';
 import {RichContentInputComponent} from '../../../../../shared/rich-content/rich-content-input.component';
 
 
+type OptionFormGroup = FormGroup<{
+  optionTextAr: FormControl<string | null>;
+  optionTextEn: FormControl<string | null>;
+  isCorrect: FormControl<boolean | null>;
+  displayOrder: FormControl<number | null>;
+}>;
 
 @Component({
   selector: 'app-question-dialog',
@@ -23,11 +31,12 @@ import {RichContentInputComponent} from '../../../../../shared/rich-content/rich
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     TranslatePipe,
     ButtonModule,
     InputTextModule,
     Select,
-    Checkbox,
+    RadioButton,
     RichContentEditorComponent,
     RichContentInputComponent,
 
@@ -59,7 +68,11 @@ export class QuestionDialogComponent implements OnDestroy {
     explanationAr: [''],
     explanationEn: [''],
     resourceId: this.fb.control<string | null>(null),
-    options: this.fb.array<AssignmentOption>([]),
+    options: this.fb.array<OptionFormGroup>([], (control) =>
+      control.value.filter((option: { isCorrect: boolean }) => option.isCorrect === true).length === 1
+        ? null
+        : { oneCorrectOption: true },
+    ),
   });
 
   imageFile?: File;
@@ -144,13 +157,25 @@ export class QuestionDialogComponent implements OnDestroy {
 
   removeOption(index: number): void {
     if (this.isTrueFalse) return;
-    if (this.options.length > 2) this.options.removeAt(index);
+    if (this.options.length > 2) {
+      this.options.removeAt(index);
+      this.options.controls.forEach((control, index) => {
+        control.patchValue({ displayOrder: index + 1 });
+      });
+    }
+  }
+
+  get correctOptionIndex(): number {
+    return this.options.controls.findIndex((option) => option.value.isCorrect === true);
   }
 
   setCorrect(selectedIndex: number): void {
+    if (selectedIndex < 0 || selectedIndex >= this.options.length) return;
     this.options.controls.forEach((control, index) => {
-      control.patchValue({ isCorrect: index === selectedIndex });
+      control.patchValue({ isCorrect: index === selectedIndex }, { emitEvent: false });
     });
+    this.options.markAsDirty();
+    this.options.updateValueAndValidity();
   }
 
   save(): void {

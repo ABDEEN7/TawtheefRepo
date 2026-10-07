@@ -106,7 +106,7 @@
 
   <div formArrayName="options">
     <label>{{ 'QUESTION_ASSIGNMENTS.OPTIONS' | translate }}</label>
-    @for (option of options.controls; track $index) {
+    @for (option of options.controls; track option) {
       <div [formGroupName]="$index" class="row g-2 mb-2 align-items-center">
         <div class="col">
           @if (isTrueFalse) {
@@ -144,10 +144,12 @@
         </div>
         <div class="col-auto">
           <label class="d-flex align-items-center gap-2">
-            <p-checkbox
-              [binary]="true"
-              formControlName="isCorrect"
-              (onChange)="setCorrect($index)"
+            <p-radiobutton
+              name="correctOption"
+              [value]="$index"
+              [ngModel]="correctOptionIndex"
+              [ngModelOptions]="{ standalone: true }"
+              (onClick)="setCorrect($index)"
             />
             @if (isTrueFalse) {
               <span>{{ 'QUESTION_ASSIGNMENTS.CORRECT' | translate }}</span>

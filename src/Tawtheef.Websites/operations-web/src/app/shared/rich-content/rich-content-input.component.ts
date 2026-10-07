@@ -1,5 +1,5 @@
 import { Component, forwardRef, inject, Input } from '@angular/core';
-import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -13,7 +13,6 @@ import { RichContentRendererComponent } from './rich-content-renderer.component'
   selector: 'app-rich-content-input',
   standalone: true,
   imports: [
-    FormsModule,
     TranslatePipe,
     ButtonModule,
     InputTextModule,
@@ -37,8 +36,8 @@ import { RichContentRendererComponent } from './rich-content-renderer.component'
         <input
           pInputText
           class="w-100"
-          [(ngModel)]="value"
-          (ngModelChange)="changed($event)"
+          [value]="value"
+          (input)="changed($any($event.target).value)"
           (blur)="touched()"
           [placeholder]="placeholder"
           [attr.dir]="direction"
@@ -75,6 +74,7 @@ export class RichContentInputComponent {
     this.touched = fn;
   }
   changed(value: string): void {
+    this.value = value;
     this.onChange(value);
   }
   open(): void {
