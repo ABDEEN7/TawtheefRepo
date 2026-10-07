@@ -23,8 +23,8 @@ public sealed record ExamResultReportListItemDto
     public int NotCompletedCount { get; init; }
     public int RequiresActionCount { get; init; }
 
-    public DateTime? ApprovedAt { get; init; }
+    public DateTimeOffset? ApprovedAt { get; init; }
 
-    public DateTime CreatedDate { get; init; }
-    public DateTime LastUpdated { get; init; }
+    public DateTimeOffset CreatedDate { get; init; }
+    public DateTimeOffset LastUpdated { get; init; }
 }

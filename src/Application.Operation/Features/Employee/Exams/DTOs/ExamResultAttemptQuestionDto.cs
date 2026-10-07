@@ -9,7 +9,7 @@ public sealed record ExamResultAttemptQuestionDto(
     ExamResultLookupDto QuestionType,
     ExamResultLookupDto? Category,
     Guid? SelectedQuestionRevisionOptionId,
-    DateTime? SavedAt,
+    DateTimeOffset? SavedAt,
     bool IsAnswered,
     bool? IsCorrect,
     IReadOnlyList<ExamResultAttemptOptionDto> Options);

@@ -4,8 +4,8 @@ public sealed record ExamResultAttemptPartDto(
     Guid TestAttemptPartId,
     int PartNo,
     ExamResultLookupDto Status,
-    DateTime? StartedAt,
-    DateTime? CompletedAt,
+    DateTimeOffset? StartedAt,
+    DateTimeOffset? CompletedAt,
     int? DurationMinutesSnapshot,
-    DateTime? EffectiveDeadlineAt,
+    DateTimeOffset? EffectiveDeadlineAt,
     IReadOnlyList<ExamResultAttemptQuestionDto> Questions);

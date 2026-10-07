@@ -11,9 +11,9 @@ public sealed record ExamResultCandidateAttemptDetailsDto(
     decimal? SkillsScore,
     decimal? FinalScore,
     int? Rank,
-    DateTime SnapshotAt,
+    DateTimeOffset SnapshotAt,
     bool HasAttempt,
     ExamResultLookupDto? AttemptStatus,
-    DateTime? StartedAt,
-    DateTime? CompletedAt,
+    DateTimeOffset? StartedAt,
+    DateTimeOffset? CompletedAt,
     IReadOnlyList<ExamResultAttemptPartDto> Parts);

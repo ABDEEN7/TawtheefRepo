@@ -4,6 +4,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.QuestionsBank;
@@ -128,7 +129,7 @@ public sealed class GetExamResultCandidateAttemptDetailsQueryHandler(IUnitOfWork
                         question.QuestionType,
                         question.Category,
                         question.SelectedQuestionRevisionOptionId,
-                        question.SavedAt,
+                        question.SavedAt.AsUtcOffset(),
                         question.SelectedQuestionRevisionOptionId.HasValue,
                         selected?.IsCorrect,
                         revisionOptions.Select(option => new ExamResultAttemptOptionDto(
@@ -143,10 +144,10 @@ public sealed class GetExamResultCandidateAttemptDetailsQueryHandler(IUnitOfWork
                 part.Id,
                 part.PartNo,
                 part.Status,
-                part.StartedAt,
-                part.CompletedAt,
+                part.StartedAt.AsUtcOffset(),
+                part.CompletedAt.AsUtcOffset(),
                 part.DurationMinutesSnapshot,
-                part.EffectiveDeadlineAt,
+                part.EffectiveDeadlineAt.AsUtcOffset(),
                 questionsByPart.GetValueOrDefault(part.Id, []))).ToList();
         }
 
@@ -161,11 +162,11 @@ public sealed class GetExamResultCandidateAttemptDetailsQueryHandler(IUnitOfWork
             candidate.SkillsScore,
             candidate.FinalScore,
             candidate.Rank,
-            candidate.SnapshotAt,
+            candidate.SnapshotAt.AsUtcOffset(),
             candidate.TestAttemptId.HasValue,
             candidate.AttemptStatus,
-            candidate.StartedAt,
-            candidate.CompletedAt,
+            candidate.StartedAt.AsUtcOffset(),
+            candidate.CompletedAt.AsUtcOffset(),
             parts));
     }
 }
