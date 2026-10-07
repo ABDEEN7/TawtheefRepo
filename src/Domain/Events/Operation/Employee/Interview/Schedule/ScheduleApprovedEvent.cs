@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Entities.Interview;
 

@@ -127,6 +127,7 @@ namespace Application.Operation
                 services.AddScoped<InterviewDashboardAccessResolver>();
                 services.AddScoped<InterviewDashboardQueryScope>();
                 services.AddScoped<IInterviewNotifier, InterviewNotifier>();
+                services.AddScoped<InterviewWorkflowNotifier>();
             }
 
             private void RegisterValidators()

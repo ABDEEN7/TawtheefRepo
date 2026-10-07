@@ -431,7 +431,7 @@ export class EndpointsService {
     examDetails: (examId: string) => this.getFullUrl(`/test-sessions/wizard/exams/${examId}`),
     candidates: this.getFullUrl('/test-sessions/wizard/candidates'),
     readyTestSlots: this.getFullUrl('/test-sessions/wizard/ready-test-slots'),
-      capacity: this.getFullUrl('/test-sessions/wizard/capacity'),
+    capacity: this.getFullUrl('/test-sessions/wizard/capacity'),
     sessionSetup: this.getFullUrl('/test-sessions/wizard/session-setup'),
     edit: (id: string) => this.getFullUrl(`/test-sessions/wizard/${id}/edit`),
     view: (id: string) => this.getFullUrl(`/test-sessions/wizard/${id}/view`),
@@ -453,7 +453,8 @@ export class EndpointsService {
     list: this.getFullUrl('/questionbankassignments'),
     workspace: (id: string) => this.getFullUrl(`/questionbankassignments/${id}`),
     questions: (id: string) => this.getFullUrl(`/questionbankassignments/${id}/questions`),
-    question: (id: string, itemId: string) => this.getFullUrl(`/questionbankassignments/${id}/questions/${itemId}`),
+    question: (id: string, itemId: string) =>
+      this.getFullUrl(`/questionbankassignments/${id}/questions/${itemId}`),
     finish: (id: string) => this.getFullUrl(`/questionbankassignments/${id}/finish`),
   };
 
@@ -567,6 +568,7 @@ export class EndpointsService {
     appointmentSendNotification: this.getFullUrl(
       '/InterviewSchedule/appointments/send-notification',
     ),
+    sendInvitations: this.getFullUrl('/InterviewSchedule/send-invitations'),
     appointmentAttendance: this.getFullUrl('/InterviewSchedule/appointments/attendance'),
     appointmentStartInterview: this.getFullUrl('/InterviewSchedule/appointments/start-interview'),
     lookupRooms: this.getFullUrl('/InterviewSchedule/lookups/rooms'),

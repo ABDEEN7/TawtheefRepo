@@ -1,0 +1,37 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@using Tawtheef.Notifications.Templates.InterviewCommitteeAssignment
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewCommitteeAssignment.InterviewCommitteeAssignmentModel>
+@{
+    // Plain text (in-app bell, SMS): no HTML encoding, otherwise Arabic values come out as &#x...; entities.
+    DisableEncoding = true;
+    var m = Model.Model;
+    var job = string.IsNullOrWhiteSpace(m.JobTitle) ? "" : $" for the job \"{m.JobTitle}\"";
+    var sentence = m.Change switch
+    {
+        InterviewAssignmentChange.Assigned =>
+            $"You have been assigned to the interview committee \"{m.CommitteeName}\"{job}" + (string.IsNullOrWhiteSpace(m.Role) ? "." : $" as {m.Role}."),
+        InterviewAssignmentChange.Removed => $"You have been removed from the interview committee \"{m.CommitteeName}\"{job}.",
+        InterviewAssignmentChange.ScheduleApproved => $"The interview schedule \"{m.ScheduleName}\" for your committee \"{m.CommitteeName}\"{job} has been approved.",
+        InterviewAssignmentChange.ScheduleCancelled => $"The interview schedule \"{m.ScheduleName}\" for your committee \"{m.CommitteeName}\"{job} has been cancelled. Its interviews will not take place.",
+        _ => ""
+    };
+    var isSchedule = m.Change is InterviewAssignmentChange.ScheduleApproved or InterviewAssignmentChange.ScheduleCancelled;
+    var link = Model.Branding.OperationsUrl + InterviewNotificationLinks.Resolve(m.LinkPath, InterviewCommitteeAssignment.DefaultPath(m.Change));
+}
+@sentence
+@if (isSchedule && !string.IsNullOrWhiteSpace(m.Role))
+{
+<text>Your role: @m.Role
+</text>
+}
+@if (isSchedule && m.InterviewCount is not null)
+{
+<text>Interviews: @m.InterviewCount, from @m.FromDate to @m.ToDate
+</text>
+}
+@if (m.Change == InterviewAssignmentChange.ScheduleCancelled && !string.IsNullOrWhiteSpace(m.Reason))
+{
+<text>Reason: @m.Reason
+</text>
+}
+Portal Link: @link

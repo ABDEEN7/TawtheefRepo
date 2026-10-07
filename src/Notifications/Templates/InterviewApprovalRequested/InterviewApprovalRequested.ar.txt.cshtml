@@ -1,7 +1,7 @@
 @using Tawtheef.Notifications.Templates.InterviewShared
 @model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewApprovalRequested.InterviewApprovalRequestedModel>
 @{
-    // Plain text (in-app bell, SMS): no HTML encoding, otherwise Arabic values come out as ssymbol.
+    // Plain text (in-app bell, SMS): no HTML encoding, otherwise Arabic values come out as &#x...; entities.
     DisableEncoding = true;
     var m = Model.Model;
     var kind = m.Kind switch

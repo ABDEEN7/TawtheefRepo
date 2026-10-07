@@ -5,6 +5,7 @@ using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Recruitment;
+using Tawtheef.Domain.Events.Operation.Employee.Interview.Appointment;
 
 namespace Tawtheef.Domain.Entities.Interview;
 
@@ -178,8 +179,15 @@ public class InterviewAppointment : EventEntity
         if (editable.IsFailed)
             return editable;
 
+        // Only a live candidate booking being cancelled is news for the candidate (the handler then
+        // tells them if they had been invited); re-cancelling, or cancelling a superseded/empty row, isn't.
+        var cancelsLiveBooking = InvitationId is not null && Status == AppointmentStatus.Scheduled;
+
         Status = AppointmentStatus.Cancelled;
         CancellationReason = reason;
+
+        if (cancelsLiveBooking)
+            AddDomainEvent(new AppointmentCancelledEvent(this, DateTimeOffset.UtcNow));
         return Result.Ok();
     }
 
@@ -301,11 +309,18 @@ public class InterviewAppointment : EventEntity
 
     // Notification gating (schedule.md): first send sets InvitationSentAt: every later
     // send is a reminder and bumps LastReminderSentAt/ReminderCount instead. The caller
-    // must verify the parent InterviewSchedule.Status is Approved or Closed beforehand -
+    // must verify the parent InterviewSchedule.Status allows sending (see CanSendNotifications) -
     // a cross-aggregate check this entity cannot perform itself.
+    // Only a booked candidate who hasn't been seen yet can be invited or reminded: a Held slot has
+    // nobody to tell, and once attendance is recorded (or the booking moved / cancelled) the
+    // invitation is moot.
     public Result RecordNotificationSent()
     {
-        if (InvitationSentAt is null)
+        if (!CanBeNotified)
+            return Result.Fail(new Error(ErrorsCodes.InterviewAppointmentNotScheduled));
+
+        var isReminder = InvitationSentAt is not null;
+        if (!isReminder)
             InvitationSentAt = DateTime.UtcNow;
         else
         {
@@ -313,8 +328,12 @@ public class InterviewAppointment : EventEntity
             ReminderCount++;
         }
 
+        AddDomainEvent(new AppointmentNotificationSentEvent(this, isReminder, DateTimeOffset.UtcNow));
         return Result.Ok();
     }
+
+    [NotMapped]
+    public bool CanBeNotified => InvitationId is not null && Status == AppointmentStatus.Scheduled && AttendanceStatus is null;
 }
 
 public enum AppointmentStatus

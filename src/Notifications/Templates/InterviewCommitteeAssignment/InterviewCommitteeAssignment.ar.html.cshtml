@@ -1,0 +1,125 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@using Tawtheef.Notifications.Templates.InterviewCommitteeAssignment
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewCommitteeAssignment.InterviewCommitteeAssignmentModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductNameAr;
+    var website = b.OperationsUrl;
+    var targetPageUrl = website + InterviewNotificationLinks.Resolve(m.LinkPath, InterviewCommitteeAssignment.DefaultPath(m.Change));
+    var logo = b.LogoUrl;
+
+    var badge = m.Change switch
+    {
+        InterviewAssignmentChange.Assigned => "عضوية جديدة",
+        InterviewAssignmentChange.Removed => "انتهاء العضوية",
+        InterviewAssignmentChange.ScheduleApproved => "جدول معتمد",
+        InterviewAssignmentChange.ScheduleCancelled => "جدول ملغى",
+        _ => ""
+    };
+    var title = m.Change switch
+    {
+        InterviewAssignmentChange.Assigned => "تم تعيينكم في لجنة مقابلة",
+        InterviewAssignmentChange.Removed => "تم إلغاء عضويتكم في لجنة مقابلة",
+        InterviewAssignmentChange.ScheduleApproved => "تم اعتماد جدول المقابلات للجنتكم",
+        InterviewAssignmentChange.ScheduleCancelled => "تم إلغاء جدول المقابلات للجنتكم",
+        _ => ""
+    };
+    var text = m.Change switch
+    {
+        InterviewAssignmentChange.Assigned => "نود إفادتكم بأنه تم تعيينكم في لجنة المقابلة الموضحة أدناه.",
+        InterviewAssignmentChange.Removed => "نود إفادتكم بأنه تم إلغاء عضويتكم في لجنة المقابلة الموضحة أدناه.",
+        InterviewAssignmentChange.ScheduleApproved => "نود إفادتكم بأنه تم اعتماد جدول المقابلات الموضح أدناه، ويمكنكم الاطلاع على مواعيد المقابلات والبدء بالتقييم في موعدها.",
+        InterviewAssignmentChange.ScheduleCancelled => "نود إفادتكم بأنه تم إلغاء جدول المقابلات الموضح أدناه والذي سبق اعتماده للجنتكم، ولن تُعقد المقابلات المذكورة.",
+        _ => ""
+    };
+    var cta = m.Change switch
+    {
+        InterviewAssignmentChange.Assigned => "عرض اللجنة",
+        InterviewAssignmentChange.ScheduleApproved => "عرض المقابلات",
+        _ => "الدخول إلى"
+    };
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - تحديث على عضويتكم في لجنة المقابلة</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; text-align: right; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .details { width:100%; border-collapse:collapse; margin:0 0 20px; font-size:14px; }
+    .details td { padding:8px 0; border-bottom:1px solid #f1f2f6; vertical-align:top; }
+    .details td.label { color:#6b7280; width:35%; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; text-align: right; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container" style="direction: rtl;">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">@badge</p>
+      <h1 class="title">@title</h1>
+      <p class="text">تحية طيبة،</p>
+      <p class="text">@text</p>
+      <table class="details" role="presentation">
+        <tr><td class="label">لجنة المقابلة</td><td>@m.CommitteeName</td></tr>
+        @if (!string.IsNullOrWhiteSpace(m.JobTitle))
+        {
+          <tr><td class="label">الوظيفة</td><td>@m.JobTitle</td></tr>
+        }
+        @if (!string.IsNullOrWhiteSpace(m.Role))
+        {
+          <tr><td class="label">الصفة</td><td>@m.Role</td></tr>
+        }
+        @if (!string.IsNullOrWhiteSpace(m.ScheduleName))
+        {
+          <tr><td class="label">جدول المقابلات</td><td>@m.ScheduleName</td></tr>
+        }
+        @if (m.InterviewCount is not null)
+        {
+          <tr><td class="label">عدد المقابلات</td><td>@m.InterviewCount</td></tr>
+        }
+        @if (!string.IsNullOrWhiteSpace(m.FromDate))
+        {
+          <tr><td class="label">الفترة</td><td>@m.FromDate - @m.ToDate</td></tr>
+        }
+        @if (!string.IsNullOrWhiteSpace(m.Reason))
+        {
+          <tr><td class="label">السبب</td><td>@m.Reason</td></tr>
+        }
+      </table>
+      <a class="cta" style="color: white;" href="@targetPageUrl" target="_blank">@cta @(m.Change is InterviewAssignmentChange.Removed or InterviewAssignmentChange.ScheduleCancelled ? product : "")</a>
+      <div class="divider"></div>
+      <p class="muted">
+        رابط النظام: @targetPageUrl
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">مع تحيات،<br>فريق عمل @product</p>
+      <p class="muted">© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.</p>
+    </div>
+  </div>
+</body>
+</html>

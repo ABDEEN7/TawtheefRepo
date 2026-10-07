@@ -1,0 +1,15 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewResultReview.InterviewResultReviewModel>
+@{
+    // Plain text (in-app bell, SMS): no HTML encoding, otherwise Arabic values come out as &#x...; entities.
+    DisableEncoding = true;
+    var m = Model.Model;
+    var job = string.IsNullOrWhiteSpace(m.JobTitle) ? "" : $" لوظيفة «{m.JobTitle}»";
+}
+نتائج مقابلات الجدول «@m.ScheduleName»@job (عدد المرشحين: @m.CandidateCount) جاهزة لمراجعتكم بصفتكم رئيس اللجنة. يرجى مراجعة التوصيات وإرسالها للاعتماد النهائي.
+@if (!string.IsNullOrWhiteSpace(m.CommitteeName))
+{
+<text>اللجنة: @m.CommitteeName
+</text>
+}
+رابط النظام: @(Model.Branding.OperationsUrl + InterviewNotificationLinks.Resolve(m.LinkPath, InterviewNotificationLinks.StartInterviewPath))

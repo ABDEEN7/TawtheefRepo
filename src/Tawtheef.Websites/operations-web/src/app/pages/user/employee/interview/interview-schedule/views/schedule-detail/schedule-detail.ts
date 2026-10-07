@@ -111,9 +111,29 @@ export class ScheduleDetailComponent {
     return status === ScheduleStatus.Proposed || status === ScheduleStatus.Approved;
   }
 
+  // Server: InterviewSchedule.EnsureCanSendNotifications - from approval until the schedule is closed.
   canSendReminder(scheduleStatus: ScheduleStatus): boolean {
-    return scheduleStatus === ScheduleStatus.Approved || scheduleStatus === ScheduleStatus.Closed;
+    return (
+      scheduleStatus === ScheduleStatus.Approved ||
+      scheduleStatus === ScheduleStatus.ReadyForExecution ||
+      scheduleStatus === ScheduleStatus.InProgress
+    );
   }
+
+  // Server: InterviewAppointment.CanBeNotified - a booked candidate whose attendance isn't recorded yet.
+  canNotify(appointment: AppointmentModel): boolean {
+    return (
+      !!appointment.invitationId &&
+      appointment.status === AppointmentStatus.Scheduled &&
+      appointment.attendanceStatus == null
+    );
+  }
+
+  // Candidates "Send invitations to all" would reach: notifiable and never invited.
+  uninvitedCount = computed(
+    () =>
+      this.store.detailAppointments().filter((a) => this.canNotify(a) && !a.invitationSentAt).length,
+  );
 
   canReschedule(scheduleStatus: ScheduleStatus): boolean {
     return scheduleStatus === ScheduleStatus.Approved || scheduleStatus === ScheduleStatus.Returned;
@@ -233,6 +253,25 @@ export class ScheduleDetailComponent {
       })
       ?.onClose.subscribe((confirmed: boolean | undefined) => {
         if (confirmed) this.service.sendReminder(appointment.id, alreadySent);
+      });
+  }
+
+  sendAllInvitations() {
+    const schedule = this.store.detailSchedule();
+    const count = this.uninvitedCount();
+    if (!schedule || count === 0) return;
+
+    this.dialogHelper
+      .openConfirmDialog({
+        type: 'submit',
+        title: 'INTERVIEW_SCHEDULE.DETAIL.CONFIRM_SEND_ALL_TITLE',
+        // The dialog runs the description through the translate pipe; an already-translated string passes through.
+        description: this.translate.instant('INTERVIEW_SCHEDULE.DETAIL.CONFIRM_SEND_ALL_DESCRIPTION', { count }),
+        confirmText: 'INTERVIEW_SCHEDULE.DETAIL.SEND_ALL_INVITATIONS',
+        cancelText: 'INTERVIEW_SCHEDULE.WIZARD.CANCEL',
+      })
+      ?.onClose.subscribe((confirmed: boolean | undefined) => {
+        if (confirmed) this.service.sendAllInvitations(schedule.id);
       });
   }
 

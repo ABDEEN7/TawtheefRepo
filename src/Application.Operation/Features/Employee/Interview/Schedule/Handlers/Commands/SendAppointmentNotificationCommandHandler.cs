@@ -19,9 +19,12 @@ public sealed class SendAppointmentNotificationCommandHandler(IUnitOfWork unitOf
         if (appointment is null)
             return Result.Fail<Unit>(new Error(ErrorsCodes.InterviewAppointmentNotFound));
 
-        if (appointment.InterviewSchedule!.Status is not (ScheduleStatus.Approved or ScheduleStatus.Closed))
-            return Result.Fail<Unit>(new Error(ErrorsCodes.InterviewAppointmentNotificationNotAllowed));
+        var allowed = appointment.InterviewSchedule!.EnsureCanSendNotifications();
+        if (allowed.IsFailed)
+            return Result.Fail<Unit>(allowed.Errors);
 
+        // Raises AppointmentNotificationSentEvent; its handler queues the candidate's bell/email/SMS
+        // inside this save.
         var result = appointment.RecordNotificationSent();
         if (result.IsFailed)
             return Result.Fail<Unit>(result.Errors);

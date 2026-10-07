@@ -25,7 +25,7 @@ public sealed class InterviewNotifier(
             .AsNoTracking()
             .OfType<EmployeeUser>()
             .Where(u => !u.IsBlocked && !u.IsDeleted && permittedIds.Contains(u.Id))
-            .Where(u => excludeUserId == null || u.Id != excludeUserId) // this for exclude the user who is performing the action (Ex: the one who created the template) : we can change it if BRD asked
+            .Where(u => excludeUserId == null || u.Id != excludeUserId)
             .Cast<User>()
             .ToListAsync(ct);
     }

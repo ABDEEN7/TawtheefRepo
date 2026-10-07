@@ -57,6 +57,12 @@ public class InterviewSchedule : EventEntity
             ? Result.Ok()
             : Result.Fail(new Error(ErrorsCodes.InterviewScheduleNotEditable));
 
+    // Candidates can be invited / reminded from approval until the schedule is closed.
+    public Result EnsureCanSendNotifications() =>
+        Status is ScheduleStatus.Approved or ScheduleStatus.ReadyForExecution or ScheduleStatus.InProgress
+            ? Result.Ok()
+            : Result.Fail(new Error(ErrorsCodes.InterviewAppointmentNotificationNotAllowed));
+
     public Result Update(string titleAr, string? titleEn, InterviewType defaultInterviewType, int defaultDurationMinutes, int defaultBufferMinutes)
     {
         var editable = EnsureCoreEditable();
@@ -123,15 +129,29 @@ public class InterviewSchedule : EventEntity
         return Result.Ok();
     }
 
-    // BRD state table only lists Draft/Proposed/Approved as Cancel sources.
+    // BRD rule : lists Draft/Proposed/Approved as Cancel sources.
+    // Cancels every booked candidate that hasn't been seen yet along with the schedule (each raises
+    // AppointmentCancelledEvent, so invited candidates are told); empty slots are left as they are.
+    // Requires Appointments to be loaded. Interviews already under way are not touched.
     public Result Cancel(string reason)
     {
         if (Status is not (ScheduleStatus.Draft or ScheduleStatus.Proposed or ScheduleStatus.Approved))
             return Result.Fail(new Error(ErrorsCodes.InterviewScheduleNotCancellable));
 
+        var cancelledBookings = new List<Guid>();
+        foreach (var appointment in Appointments.Where(a => a.InvitationId is not null && a.Status == AppointmentStatus.Scheduled))
+        {
+            var cancelResult = appointment.Cancel(reason);
+            if (cancelResult.IsFailed)
+                return cancelResult;
+            cancelledBookings.Add(appointment.Id);
+        }
+
         Status = ScheduleStatus.Cancelled;
         DecisionNotes = reason;
-        AddDomainEvent(new ScheduleCancelledEvent(this, DateTimeOffset.Now));
+        // Carries the bookings it cancelled: handlers save as they run, so by the time a later handler
+        // queries the database those rows may already read Cancelled.
+        AddDomainEvent(new ScheduleCancelledEvent(this, cancelledBookings, DateTimeOffset.Now));
         return Result.Ok();
     }
 
