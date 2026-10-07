@@ -4,8 +4,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
-import { TestSessionsService } from '../../services/test-sessions.service';
-import { LocalTestSession, ReadyTestSlotListItemDto } from '../../models/ready-test-slot.dto';
+import { LocalTestSession, ReadyTestSlotListItemDto, TestSessionAvailabilityWindowDto } from '../../models/ready-test-slot.dto';
+import { calculateAvailableSeatsForInterval } from '../../models/test-session-availability.util';
 import { TestSessionExamDetailsDto } from '../../models/test-session-exam-details.dto';
 
 @Component({
@@ -25,21 +25,24 @@ export class TestSessionSetupDialogComponent implements OnInit {
       initialSession?: LocalTestSession;
     }>,
   );
-  private readonly service = inject(TestSessionsService);
   readonly slot = this.config.data.slot;
   readonly exam: TestSessionExamDetailsDto = this.config.data.exam;
   readonly selectedCandidateCount = this.config.data.selectedCandidateCount;
   readonly initialSession = this.config.data.initialSession;
-  from = this.normalizeTime(this.initialSession?.startTime ?? this.slot.startTime);
+  from = this.normalizeTime(
+    this.initialSession?.startTime ??
+      this.slot.availabilityWindows.find((window: TestSessionAvailabilityWindowDto) => window.availableSeats >= this.selectedCandidateCount)
+        ?.startTime ??
+      this.slot.startTime,
+  );
   to = this.initialSession?.endTime ?? this.addMinutes(this.from, this.exam.durationMinutes);
   fromPickerValue = this.dateFromTime(this.from);
   toPickerValue = this.dateFromTime(this.to);
   added = signal(!!this.initialSession);
   readonly sessions = computed(() => (this.added() ? [true] : []));
-  availableSeats = signal(this.initialSession?.availableCapacity ?? 0);
+  availableSeats = signal(0);
   error = signal<string | null>(null);
   validationPending = signal(false);
-  private validationAttempt = 0;
 
   firstExamDuration(): number | undefined {
     return this.exam.parts.find((part) => part.partNo === 1)?.durationMinutes;
@@ -76,7 +79,6 @@ export class TestSessionSetupDialogComponent implements OnInit {
   }
   validate(): void {
     if (!this.added()) return;
-    const attempt = ++this.validationAttempt;
     if (
       this.timeValue(this.from) < this.timeValue(this.slot.startTime) ||
       this.timeValue(this.to) > this.timeValue(this.slot.endTime) ||
@@ -87,28 +89,15 @@ export class TestSessionSetupDialogComponent implements OnInit {
       this.error.set('TEST_SESSION_WIZARD.SESSION_TIME_INVALID');
       return;
     }
-    this.validationPending.set(true);
+    this.validationPending.set(false);
     this.error.set(null);
-    this.service
-      .capacity({
-        testSlotId: this.slot.testSlotId,
-        startTime: this.from,
-        endTime: this.to,
-        selectedCandidateCount: this.selectedCandidateCount,
-      })
-      .subscribe({
-        next: (result) => {
-          if (attempt !== this.validationAttempt) return;
-          this.validationPending.set(false);
-          this.availableSeats.set(result.availableSeats);
-          this.error.set(result.isSufficient ? null : 'TEST_SESSION_WIZARD.INSUFFICIENT_CAPACITY');
-        },
-        error: () => {
-          if (attempt !== this.validationAttempt) return;
-          this.validationPending.set(false);
-          this.error.set('TEST_SESSION_WIZARD.INSUFFICIENT_CAPACITY');
-        },
-      });
+    const availableSeats = this.availableSeatsForInterval();
+    this.availableSeats.set(availableSeats);
+    this.error.set(
+      availableSeats >= this.selectedCandidateCount
+        ? null
+        : 'TEST_SESSION_WIZARD.INSUFFICIENT_CAPACITY',
+    );
   }
   apply(): void {
     if (this.added() && !this.validationPending() && !this.error())
@@ -123,7 +112,6 @@ export class TestSessionSetupDialogComponent implements OnInit {
     this.ref.close();
   }
   delete(): void {
-    this.validationAttempt++;
     this.added.set(false);
     this.validationPending.set(false);
     this.error.set(null);
@@ -142,6 +130,14 @@ export class TestSessionSetupDialogComponent implements OnInit {
   private timeValue(time: string): number {
     const [hour = '0', minute = '0'] = time.split(':');
     return Number(hour) * 60 + Number(minute.slice(0, 2));
+  }
+  private availableSeatsForInterval(): number {
+    return calculateAvailableSeatsForInterval(
+      this.slot,
+      this.from,
+      this.to,
+      this.exam.durationMinutes,
+    );
   }
   private dateFromTime(time: string): Date {
     const [hour = '0', minute = '0'] = time.split(':');

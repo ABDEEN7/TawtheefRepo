@@ -1,5 +1,7 @@
 namespace Application.Operation.Features.Employee.TestSessions.DTOs;
 
+public sealed record TestSessionAvailabilityWindowDto(TimeOnly StartTime, TimeOnly EndTime, int AvailableSeats);
+
 public sealed record ReadyTestSlotListItemDto
 {
     public Guid TestSlotId { get; init; }
@@ -14,5 +16,6 @@ public sealed record ReadyTestSlotListItemDto
     public int ExistingSessionCount { get; init; }
     public int ExistingExamSessionCount { get; init; }
     public int RemainingCapacity { get; init; }
+    public IReadOnlyList<TestSessionAvailabilityWindowDto> AvailabilityWindows { get; init; } = [];
     public required string Status { get; init; }
 }

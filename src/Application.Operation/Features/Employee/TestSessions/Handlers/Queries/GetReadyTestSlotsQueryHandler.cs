@@ -50,6 +50,7 @@ public sealed class GetReadyTestSlotsQueryHandler(IUnitOfWork unitOfWork)
             ? []
             : await unitOfWork.Context.Set<TestSession>().AsNoTracking()
                 .Where(session => roomIds.Contains(session.TestSlot!.RoomId) && dates.Contains(session.TestSlot.SlotDate))
+                .Where(session => !request.ExcludeTestSessionId.HasValue || session.Id != request.ExcludeTestSessionId.Value)
                 .Where(session => session.StartTime.HasValue && session.EndTime.HasValue)
                 .Where(session => !TestSessionCapacityService.NonReservingStatusIds.Contains(session.StatusId))
                 .Select(session => new SessionRow(session.ExamId, session.TestSlot!.RoomId,
@@ -60,17 +61,23 @@ public sealed class GetReadyTestSlotsQueryHandler(IUnitOfWork unitOfWork)
         var suitableSlots = slots.Select(slot =>
         {
             var slotSessions = sessions.Where(session => session.RoomId == slot.RoomId && session.Date == slot.Date).ToList();
+            var reservations = slotSessions.Select(session => new TestSessionCapacityReservation(
+                session.Start, session.End, session.CandidateCount)).ToList();
             var reservedSeats = TestSessionCapacityService.CalculatePeakOccupancy(
-                slotSessions.Select(session => new TestSessionCapacityReservation(
-                    session.Start, session.End, session.CandidateCount)), slot.StartTime, slot.EndTime);
-            var availableSeats = Math.Max(0, slot.RoomCapacity - reservedSeats);
+                reservations, slot.StartTime, slot.EndTime);
+            var availabilityWindows = TestSessionCapacityService.CalculateAvailabilityWindows(
+                reservations, slot.Date, slot.StartTime, slot.EndTime, slot.RoomCapacity, examDuration, currentDateTime);
+            var availableSeats = availabilityWindows.Select(window => window.AvailableSeats).DefaultIfEmpty(0).Max();
             return new ReadyTestSlotListItemDto
             {
                 TestSlotId = slot.Id, SlotName = slot.Name, SlotDate = slot.Date, StartTime = slot.StartTime,
                 EndTime = slot.EndTime, RoomId = slot.RoomId, RoomName = slot.RoomName,
                 RoomCapacity = slot.RoomCapacity, CurrentReservations = reservedSeats,
                 ExistingSessionCount = slotSessions.Count, ExistingExamSessionCount = slotSessions.Count(s => s.ExamId == request.ExamId),
-                RemainingCapacity = availableSeats, Status = slot.Status
+                RemainingCapacity = availableSeats,
+                AvailabilityWindows = availabilityWindows.Select(window => new TestSessionAvailabilityWindowDto(
+                    window.StartTime, window.EndTime, window.AvailableSeats)).ToList(),
+                Status = slot.Status
             };
         }).OrderBy(slot => slot.SlotDate).ThenBy(slot => slot.StartTime).ToList();
 
