@@ -16,6 +16,7 @@ using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.Lookups.NoneSeeds;
 using Tawtheef.Domain.Entities.Recruitment;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Events.Operation.Employee.TestSessions;
 
 namespace Application.Operation.Features.Employee.TestSessions.Handlers.Commands;
 
@@ -195,6 +196,8 @@ public sealed class SaveTestSessionSetupCommandHandler(
             })
             .ToList();
         await unitOfWork.Context.Set<TestSessionCandidate>().AddRangeAsync(additions, ct);
+        if (setup.SendToApprove)
+            session.AddDomainEvent(new TestSessionSubmittedForApprovalDomainEvent(session.Id, session.SessionNo));
         await unitOfWork.SaveChangesAsync(ct);
 
         return Result.Ok(new SavedTestSessionSetupDto(session.Id, session.SessionNo, session.StatusId,

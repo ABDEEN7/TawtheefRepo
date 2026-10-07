@@ -70,7 +70,7 @@
         </div>
       </div>
     </div>
-    @if (viewMode() && decisionNote(); as note) {
+    @if (showDecisionNote()) {
       <div
         class="alert my-4"
         [class.alert-danger]="statusBackendName() === 'REJECTED'"
@@ -78,7 +78,7 @@
         role="note"
       >
         <h5 class="mb-2">{{ 'TEST_SESSION_WIZARD.DECISION_NOTE' | translate }}</h5>
-        <p class="mb-3 text-break">{{ note }}</p>
+        <p class="mb-3 text-break">{{ decisionNote() }}</p>
         @if (decisionByName() || decisionAt()) {
           <dl class="row mb-0 small">
             @if (decisionByName()) {
@@ -127,6 +127,7 @@
     @if (step === 3 && selectedExamId && details()) {
       <app-test-session-periods-step
         [examId]="selectedExamId"
+        [currentTestSessionId]="testSessionId()"
         [examDetails]="details()!"
         [candidateSummary]="candidateSummary()"
         [selectedCandidateIds]="selectedCandidateIds()"

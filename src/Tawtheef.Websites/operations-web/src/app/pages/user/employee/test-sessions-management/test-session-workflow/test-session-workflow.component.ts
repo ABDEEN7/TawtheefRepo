@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -101,6 +101,10 @@ export class TestSessionWorkflowComponent {
   readonly decisionByName = signal<string | null>(null);
   readonly decisionAt = signal<string | null>(null);
   readonly statusBackendName = signal<string | null>(null);
+  readonly showDecisionNote = computed(() => {
+    const status = this.statusBackendName()?.toLowerCase();
+    return status === 'returned' || status === 'rejected';
+  });
   readonly testSlotStaff = signal<TestSlotConfigurationStaffDto[]>([]);
   readonly periodTeamLoading = signal(false);
   readonly periodTeamLoadFailed = signal(false);
@@ -221,6 +225,7 @@ export class TestSessionWorkflowComponent {
           existingSessionCount: 0,
           existingExamSessionCount: 0,
           remainingCapacity: session.availableCapacity,
+          availabilityWindows: [],
           status: '',
         },
         startTime: session.startTime,

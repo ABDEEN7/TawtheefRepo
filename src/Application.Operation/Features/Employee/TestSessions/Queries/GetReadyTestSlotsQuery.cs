@@ -9,6 +9,7 @@ public sealed record GetReadyTestSlotsQuery : PaginatedRequest, IRequest<IResult
 {
     public Guid ExamId { get; init; }
     public int SelectedCandidateCount { get; init; }
+    public Guid? ExcludeTestSessionId { get; init; }
     public string? SearchText { get; init; }
     public Guid? RoomId { get; init; }
     public DateOnly? Date { get; init; }
