@@ -1,0 +1,33 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="text-muted small">{{ 'QUESTION_BANK_REQUESTS.BANK_TYPE' | translate }}</div>
+      <div>{{ name(bank.questionBankTypeNameAr, bank.questionBankTypeNameEn) }}</div>
+    </div>
+    <div class="col-md-6">
+      <div class="text-muted small">{{ 'QUESTION_BANK_REQUESTS.CURRENT_VERSION' | translate }}</div>
+      <div>{{ 'QUESTION_BANK_REQUESTS.VERSION' | translate }} {{ bank.currentVersionNo }}</div>
+    </div>
+    <div class="col-md-6">
+      <div class="text-muted small">{{ 'QUESTION_BANK_REQUESTS.MANAGEMENT' | translate }}</div>
+      <div>{{ name(bank.managementNameAr, bank.managementNameEn) }}</div>
+    </div>
+    <div class="col-md-6">
+      <div class="text-muted small">{{ 'QUESTION_BANK_REQUESTS.JOB_TITLE' | translate }}</div>
+      <div>{{ name(bank.jobTitleNameAr, bank.jobTitleNameEn) }}</div>
+    </div>
+    <div class="col-12">
+      <label for="maintenance-reason" class="form-label">{{ 'QUESTION_BANK_REQUESTS.REASON' | translate }}</label>
+      <textarea id="maintenance-reason" pTextarea formControlName="reason" maxlength="2000" rows="4" class="w-100"></textarea>
+    </div>
+  </div>
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-light" [disabled]="saving()" (click)="cancel()">
+      {{ 'QUESTION_BANK_REQUESTS.CANCEL' | translate }}
+    </button>
+    <button type="submit" class="btn btn-primary" [disabled]="saving()">
+      @if (saving()) { <i class="fa-solid fa-spinner fa-spin me-2"></i> }
+      {{ 'QUESTION_BANK_REQUESTS.SUBMIT' | translate }}
+    </button>
+  </div>
+</form>

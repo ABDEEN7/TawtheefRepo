@@ -20,7 +20,8 @@ public sealed class AssignQuestionBankEmployeesCommandHandler(IUnitOfWork unitOf
             return Result.Fail<Unit>(ErrorsCodes.InvalidUserIdentifier);
 
         var currentEmployeeUserExists = await unitOfWork.Context.Set<EmployeeUser>().AsNoTracking()
-            .AnyAsync(x => x.Id == currentUserId && !x.IsDeleted && !x.IsBlocked, cancellationToken);
+            .AnyAsync(x => x.Id == currentUserId && !x.IsDeleted && !x.IsBlocked &&
+                x.EmployeeProfile != null && !x.EmployeeProfile.IsDeleted, cancellationToken);
         if (!currentEmployeeUserExists)
             return Result.Fail<Unit>(ErrorsCodes.InvalidUserIdentifier);
         if (command.Assignments.Count == 0) return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentsRequired);
@@ -57,12 +58,6 @@ public sealed class AssignQuestionBankEmployeesCommandHandler(IUnitOfWork unitOf
                 eligibleEmployees = eligibleEmployees.Where(x =>
                     x.EmployeeProfile!.DepartmentNumber == departmentNumber);
             }
-            else
-            {
-                // No organization-wide scope rule exists for global banks yet; fail closed.
-                return Result.Fail<Unit>(ErrorsCodes.QuestionBankEmployeeScopeNotConfigured);
-            }
-
             if (await eligibleEmployees.CountAsync(ct) != employeeIds.Length)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssigneeNotEligible);
 

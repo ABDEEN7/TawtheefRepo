@@ -1,50 +1,125 @@
-<div class="container-fluid py-4" i18nNamespace="pages/employee/question-bank-assignments">
-  <h1>{{ 'QUESTION_ASSIGNMENTS.TITLE' | translate }}</h1>
+<section class="page-shell" i18nNamespace="pages/employee/question-bank-assignments">
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <div class="row mb-4 g-3 align-items-center">
+        <div class="col">
+          <h3 class="fw-bold mb-0">{{ 'QUESTION_ASSIGNMENTS.TITLE' | translate }}</h3>
+          <p class="fs-16 m-0 text-muted">{{ 'QUESTION_ASSIGNMENTS.DESCRIPTION' | translate }}</p>
+        </div>
+      </div>
 
-  <p-table [value]="assignments()" [loading]="loading()" responsiveLayout="scroll">
-    <ng-template #header>
-      <tr>
-        <th>{{ 'QUESTION_ASSIGNMENTS.BANK_TYPE' | translate }}</th>
-        <th>{{ 'QUESTION_ASSIGNMENTS.MANAGEMENT' | translate }}</th>
-        <th>{{ 'QUESTION_ASSIGNMENTS.JOB_TITLE' | translate }}</th>
-        <th>{{ 'QUESTION_ASSIGNMENTS.MINIMUM' | translate }}</th>
-        <th>{{ 'QUESTION_ASSIGNMENTS.ENTERED' | translate }}</th>
-        <th>{{ 'QUESTION_ASSIGNMENTS.STATUS' | translate }}</th>
-        <th>{{ 'QUESTION_ASSIGNMENTS.ASSIGNED_AT' | translate }}</th>
-        <th>{{ 'QUESTION_ASSIGNMENTS.ACTIONS' | translate }}</th>
-      </tr>
-    </ng-template>
-
-    <ng-template #body let-assignment>
-      <tr>
-        <td>
-          {{
-            localized(
-              assignment.questionBankTypeNameAr,
-              assignment.questionBankTypeNameEn
-            )
-          }}
-        </td>
-        <td>
-          {{ localized(assignment.managementNameAr, assignment.managementNameEn) }}
-        </td>
-        <td>{{ localized(assignment.jobTitleNameAr, assignment.jobTitleNameEn) }}</td>
-        <td>{{ assignment.minimumQuestionCount }}</td>
-        <td>{{ assignment.currentQuestionCount }}</td>
-        <td>
-          <p-tag [value]="localized(assignment.statusNameAr, assignment.statusNameEn)" />
-        </td>
-        <td>{{ assignment.assignedAt | date: 'mediumDate' }}</td>
-        <td>
-          <p-button [label]="action(assignment) | translate" (onClick)="open(assignment)" />
-        </td>
-      </tr>
-    </ng-template>
-
-    <ng-template #emptymessage>
-      <tr>
-        <td colspan="8">{{ 'QUESTION_ASSIGNMENTS.EMPTY' | translate }}</td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
+      <div class="table-card rounded overflow-hidden" [class.loading-shimmer]="loading()">
+        <div class="table-responsive">
+          <p-table
+            [value]="assignments()"
+            [loading]="loading()"
+            [customSort]="true"
+            [sortField]="filters().sortBy"
+            [sortOrder]="filters().sortDirection === 'desc' ? -1 : 1"
+            (sortFunction)="onSort($event)"
+            responsiveLayout="scroll"
+          >
+            <ng-template #header>
+              <tr>
+                <th pSortableColumn="questionBankType">
+                  {{ 'QUESTION_ASSIGNMENTS.BANK_TYPE' | translate }}
+                  <p-sortIcon field="questionBankType" />
+                </th>
+                <th pSortableColumn="management">
+                  {{ 'QUESTION_ASSIGNMENTS.MANAGEMENT' | translate }}
+                  <p-sortIcon field="management" />
+                </th>
+                <th pSortableColumn="jobTitle">
+                  {{ 'QUESTION_ASSIGNMENTS.JOB_TITLE' | translate }} <p-sortIcon field="jobTitle" />
+                </th>
+                <th pSortableColumn="minimumQuestionCount">
+                  {{ 'QUESTION_ASSIGNMENTS.MINIMUM' | translate }}
+                  <p-sortIcon field="minimumQuestionCount" />
+                </th>
+                <th pSortableColumn="currentQuestionCount">
+                  {{ 'QUESTION_ASSIGNMENTS.ENTERED' | translate }}
+                  <p-sortIcon field="currentQuestionCount" />
+                </th>
+                <th pSortableColumn="status">
+                  {{ 'QUESTION_ASSIGNMENTS.STATUS' | translate }} <p-sortIcon field="status" />
+                </th>
+                <th pSortableColumn="assignedAt">
+                  {{ 'QUESTION_ASSIGNMENTS.ASSIGNED_AT' | translate }}
+                  <p-sortIcon field="assignedAt" />
+                </th>
+                <th class="col-actions text-center">
+                  {{ 'QUESTION_ASSIGNMENTS.ACTIONS' | translate }}
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-assignment>
+              <tr>
+                <td class="fw-semibold">
+                  {{
+                    localized(assignment.questionBankTypeNameAr, assignment.questionBankTypeNameEn)
+                  }}
+                </td>
+                <td>{{ localized(assignment.managementNameAr, assignment.managementNameEn) }}</td>
+                <td>{{ localized(assignment.jobTitleNameAr, assignment.jobTitleNameEn) }}</td>
+                <td>{{ assignment.minimumQuestionCount }}</td>
+                <td>{{ assignment.currentQuestionCount }}</td>
+                <td>
+                  <p-tag
+                    [severity]="statusSeverity(assignment.statusId)"
+                    [value]="localized(assignment.statusNameAr, assignment.statusNameEn)"
+                  />
+                </td>
+                <td>{{ assignment.assignedAt | date: 'yyyy/MM/dd HH:mm' }}</td>
+                <td class="col-actions">
+                  <div class="action-buttons">
+                    <button
+                      type="button"
+                      class="btn btn-action-icon"
+                      (click)="open(assignment)"
+                      [pTooltip]="action(assignment) | translate"
+                      tooltipPosition="top"
+                      [attr.aria-label]="action(assignment) | translate"
+                    >
+                      <i
+                        [class]="
+                          assignment.statusId === statuses.assigned
+                            ? 'pi pi-play'
+                            : assignment.statusId === statuses.returnedForModification
+                              ? 'pi pi-pencil'
+                              : 'pi pi-eye'
+                        "
+                      ></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+              <tr>
+                <td colspan="8" class="text-center py-5" [class.d-none]="loading() || loadFailed()">
+                  <div class="empty-state-container">
+                    <i class="hgi hgi-stroke hgi-task-01 mb-3 text-muted display-4"></i>
+                    <div class="empty__title h5 fw-bold text-muted">
+                      {{ 'QUESTION_ASSIGNMENTS.EMPTY' | translate }}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      @if (!loading() && total() > 0) {
+        <div class="pagination-box mt-3">
+          <app-pagination
+            [currentPage]="filters().pageNumber"
+            [itemsPerPage]="filters().pageSize"
+            [totalItems]="total()"
+            (pageChanged)="page($event)"
+            (pageSizeChanged)="pageSize($event)"
+          />
+        </div>
+      }
+    </div>
+  </div>
+</section>

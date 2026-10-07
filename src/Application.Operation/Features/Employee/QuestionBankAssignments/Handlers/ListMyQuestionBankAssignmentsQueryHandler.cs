@@ -22,7 +22,9 @@ public sealed class ListMyQuestionBankAssignmentsQueryHandler(IUnitOfWork uow, I
         var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, ct);
         if (employeeId is null) return Result.Fail<PaginatedResult<MyQuestionBankAssignmentDto>>(ErrorsCodes.InvalidUserIdentifier);
         var query = uow.GetEntityRepository<QuestionBankAssignment>().DbSet.AsNoTracking()
-            .Where(x => x.EmployeeId == employeeId && !x.IsDeleted).OrderByDescending(x => x.AssignedAt)
+            .Where(x => x.EmployeeId == employeeId && !x.IsDeleted);
+        var sorted = ApplySorting(query, r.SortBy, r.SortDirection);
+        var projected = sorted
             .Select(x => new MyQuestionBankAssignmentDto(x.Id, x.QuestionBankRequestId,
                 x.QuestionBankRequest.QuestionBank.QuestionBankTypeId, x.QuestionBankRequest.QuestionBank.QuestionBankType.NameAr,
                 x.QuestionBankRequest.QuestionBank.QuestionBankType.NameEn, x.QuestionBankRequest.QuestionBank.Management == null ? null : x.QuestionBankRequest.QuestionBank.Management.NameAr,
@@ -30,10 +32,38 @@ public sealed class ListMyQuestionBankAssignmentsQueryHandler(IUnitOfWork uow, I
                 x.QuestionBankRequest.QuestionBank.JobTitle == null ? null : x.QuestionBankRequest.QuestionBank.JobTitle.JobNameAr,
                 x.QuestionBankRequest.QuestionBank.JobTitle == null ? null : x.QuestionBankRequest.QuestionBank.JobTitle.JobNameEn,
                 x.StatusId, x.Status.NameAr, x.Status.NameEn, x.MinimumQuestionCount,
-                x.RequestItems.Count(i => !i.IsDeleted && i.RequestId == x.QuestionBankRequestId && i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST),
+                x.RequestItems.Count(i => !i.IsDeleted && i.RequestId == x.QuestionBankRequestId &&
+                    i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST &&
+                    i.StatusId != QuestionBankRequestItemStatusIds.REJECTED),
                 x.AssignedAt, x.QuestionEntryStartedAt, x.QuestionEntryCompletedAt));
-        var count = await query.CountAsync(ct);
-        var items = await query.Skip((r.PageNumber - 1) * r.PageSize).Take(r.PageSize).ToListAsync(ct);
+        var count = await projected.CountAsync(ct);
+        var items = await projected.Skip((r.PageNumber - 1) * r.PageSize).Take(r.PageSize).ToListAsync(ct);
         return Result.Ok(new PaginatedResult<MyQuestionBankAssignmentDto>(items, count, r.PageNumber, r.PageSize));
     }
+
+    private static IOrderedQueryable<QuestionBankAssignment> ApplySorting(
+        IQueryable<QuestionBankAssignment> query,
+        string? sortBy,
+        string? sortDirection)
+    {
+        var descending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+        return sortBy?.Trim().ToLowerInvariant() switch
+        {
+            "questionbanktype" => Order(query, x => x.QuestionBankRequest.QuestionBank.QuestionBankType.NameEn, descending),
+            "management" => Order(query, x => x.QuestionBankRequest.QuestionBank.Management == null ? string.Empty : x.QuestionBankRequest.QuestionBank.Management.NameEn, descending),
+            "jobtitle" => Order(query, x => x.QuestionBankRequest.QuestionBank.JobTitle == null ? string.Empty : x.QuestionBankRequest.QuestionBank.JobTitle.JobNameEn, descending),
+            "minimumquestioncount" => Order(query, x => x.MinimumQuestionCount, descending),
+            "currentquestioncount" => Order(query, x => x.RequestItems.Count(i => !i.IsDeleted && i.RequestId == x.QuestionBankRequestId && i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST && i.StatusId != QuestionBankRequestItemStatusIds.REJECTED), descending),
+            "status" => Order(query, x => x.Status.DisplayOrder, descending),
+            "assignedat" => Order(query, x => x.AssignedAt, descending),
+            _ => query.OrderByDescending(x => x.AssignedAt).ThenBy(x => x.Id)
+        };
+    }
+
+    private static IOrderedQueryable<QuestionBankAssignment> Order<TKey>(
+        IQueryable<QuestionBankAssignment> query,
+        System.Linq.Expressions.Expression<Func<QuestionBankAssignment, TKey>> key,
+        bool descending) => descending
+            ? query.OrderByDescending(key).ThenBy(x => x.Id)
+            : query.OrderBy(key).ThenBy(x => x.Id);
 }

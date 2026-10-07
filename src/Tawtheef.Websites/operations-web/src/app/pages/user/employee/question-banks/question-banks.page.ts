@@ -9,6 +9,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { SortEvent } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, finalize, forkJoin, Subject } from 'rxjs';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Lang, LanguageService } from '../../../../core/services/language.service';
@@ -41,8 +44,10 @@ import { routes } from '../../../../routes/routes';
     IconFieldModule,
     InputIconModule,
     InputTextModule,
-    TagModule
-  ]
+    TagModule,
+    ButtonModule,
+    TooltipModule,
+  ],
 })
 export class QuestionBanksPage implements OnInit {
   private readonly service = inject(QuestionBanksService);
@@ -56,8 +61,14 @@ export class QuestionBanksPage implements OnInit {
 
   readonly questionBanks = signal<QuestionBankListItemDto[]>([]);
   readonly loading = signal(false);
+  readonly loadFailed = signal(false);
   readonly totalCount = signal(0);
-  readonly filters = signal<QuestionBankFilters>({ pageNumber: 1, pageSize: 10 });
+  readonly filters = signal<QuestionBankFilters>({
+    pageNumber: 1,
+    pageSize: 10,
+    sortBy: 'updated',
+    sortDirection: 'desc',
+  });
   readonly questionBankTypes = signal<dropdownOptionsModel[]>([]);
   readonly managements = signal<dropdownOptionsModel[]>([]);
   readonly jobTitles = signal<dropdownOptionsModel[]>([]);
@@ -67,7 +78,7 @@ export class QuestionBanksPage implements OnInit {
     this.currentLang();
     return [
       { label: this.translate.instant('QUESTION_BANKS.ACTIVE'), value: true },
-      { label: this.translate.instant('QUESTION_BANKS.INACTIVE'), value: false }
+      { label: this.translate.instant('QUESTION_BANKS.INACTIVE'), value: false },
     ];
   });
 
@@ -83,7 +94,7 @@ export class QuestionBanksPage implements OnInit {
       .subscribe(() => this.applyFilters());
     this.language.current$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(lang => this.currentLang.set(lang));
+      .subscribe((lang) => this.currentLang.set(lang));
     this.loadLookups();
   }
 
@@ -96,12 +107,15 @@ export class QuestionBanksPage implements OnInit {
   }
 
   toggleAdvancedFilters(): void {
-    this.advancedFiltersExpanded.update(expanded => !expanded);
+    this.advancedFiltersExpanded.update((expanded) => !expanded);
   }
 
   activeAdvancedFilterCount(): number {
-    return Number(!!this.selectedManagementId) + Number(!!this.selectedJobTitleId) +
-      Number(this.selectedIsActive !== undefined);
+    return (
+      Number(!!this.selectedManagementId) +
+      Number(!!this.selectedJobTitleId) +
+      Number(this.selectedIsActive !== undefined)
+    );
   }
 
   clearFilters(): void {
@@ -114,19 +128,34 @@ export class QuestionBanksPage implements OnInit {
   }
 
   onPageChange(pageNumber: number): void {
-    this.filters.update(filters => ({ ...filters, pageNumber }));
+    this.filters.update((filters) => ({ ...filters, pageNumber }));
     this.loadQuestionBanks();
   }
 
   onPageSizeChange(pageSize: number): void {
-    this.filters.update(filters => ({ ...filters, pageNumber: 1, pageSize }));
+    this.filters.update((filters) => ({ ...filters, pageNumber: 1, pageSize }));
+    this.loadQuestionBanks();
+  }
+
+  onSort(event: SortEvent): void {
+    if (!event.field) return;
+    const sortDirection = event.order === -1 ? 'desc' : 'asc';
+    const filters = this.filters();
+    if (filters.sortBy === event.field && filters.sortDirection === sortDirection) return;
+    this.filters.update((filters) => ({
+      ...filters,
+      pageNumber: 1,
+      sortBy: event.field,
+      sortDirection: event.order === -1 ? 'desc' : 'asc',
+    }));
     this.loadQuestionBanks();
   }
 
   optionName(option: dropdownOptionsModel): string {
-    const localized = this.currentLang() === 'ar'
-      ? option.additionalData?.['nameAr']
-      : option.additionalData?.['nameEn'];
+    const localized =
+      this.currentLang() === 'ar'
+        ? option.additionalData?.['nameAr']
+        : option.additionalData?.['nameEn'];
     return typeof localized === 'string' && localized.trim() ? localized : option.name;
   }
 
@@ -135,14 +164,14 @@ export class QuestionBanksPage implements OnInit {
   }
 
   private applyFilters(): void {
-    this.filters.update(filters => ({
+    this.filters.update((filters) => ({
       ...filters,
       pageNumber: 1,
       search: this.search.trim() || undefined,
       questionBankTypeId: this.selectedQuestionBankTypeId,
       managementId: this.selectedManagementId,
       jobTitleId: this.selectedJobTitleId,
-      isActive: this.selectedIsActive
+      isActive: this.selectedIsActive,
     }));
     this.loadQuestionBanks();
   }
@@ -151,39 +180,65 @@ export class QuestionBanksPage implements OnInit {
     forkJoin({
       questionBankTypes: this.service.getQuestionBankTypes(),
       managements: this.service.getManagements(),
-      jobTitles: this.service.getJobTitles()
-    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: lookups => {
-        this.questionBankTypes.set(lookups.questionBankTypes);
-        this.managements.set(lookups.managements);
-        this.jobTitles.set(lookups.jobTitles);
-        this.loadQuestionBanks();
-      },
-      error: () => this.notification.error(this.translate.instant('QUESTION_BANKS.LOAD_ERROR'))
-    });
+      jobTitles: this.service.getJobTitles(),
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (lookups) => {
+          this.questionBankTypes.set(lookups.questionBankTypes);
+          this.managements.set(lookups.managements);
+          this.jobTitles.set(lookups.jobTitles);
+          this.loadQuestionBanks();
+        },
+        error: () => this.notification.error(this.translate.instant('QUESTION_BANKS.LOAD_ERROR')),
+      });
   }
 
   private loadQuestionBanks(): void {
     this.loading.set(true);
-    this.service.list(this.filters())
-      .pipe(finalize(() => this.loading.set(false)), takeUntilDestroyed(this.destroyRef))
+    this.loadFailed.set(false);
+    this.service
+      .list(this.filters())
+      .pipe(
+        finalize(() => this.loading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
-        next: response => {
+        next: (response) => {
           this.questionBanks.set(response.items ?? []);
           this.totalCount.set(response.metadata?.totalCount ?? 0);
         },
-        error: () => this.notification.error(this.translate.instant('QUESTION_BANKS.LOAD_ERROR'))
+        error: () => {
+          this.loadFailed.set(true);
+          this.notification.error(this.translate.instant('QUESTION_BANKS.LOAD_ERROR'));
+        },
       });
   }
 
   canCreateRequest(): boolean {
-    return this.auth.hasPermission([
-      Permissions.QuestionBankRequests.View,
-      Permissions.QuestionBankRequests.Create
-    ], true);
+    return this.auth.hasPermission(
+      [Permissions.QuestionBankRequests.View, Permissions.QuestionBankRequests.Create],
+      true,
+    );
   }
 
   newRequest(): void {
-    void this.router.navigate([routes.portal.questionBankRequests], { queryParams: { action: 'create' } });
+    void this.router.navigate([routes.portal.questionBankRequests], {
+      queryParams: { action: 'create' },
+    });
+  }
+
+  canRequestMaintenance(bank: QuestionBankListItemDto): boolean {
+    return (
+      bank.isActive &&
+      !!bank.currentApprovedVersionId &&
+      this.auth.hasPermission(Permissions.QuestionBankRequests.Maintenance)
+    );
+  }
+
+  requestMaintenance(id: string): void {
+    void this.router.navigate([routes.portal.questionBankRequests], {
+      queryParams: { action: 'maintenance', bankId: id },
+    });
   }
 }
