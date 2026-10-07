@@ -43,6 +43,5 @@ public sealed class ExamResultReportReadyForReviewDomainEventHandler(
                 language: reviewer.GetPreferredLanguage(),
                 idempotencyKey: $"err-{notification.ReportId:N}-{notification.TransitionAtUtc.Ticks:x}-{reviewer.Id:N}"), ct);
         }
-        await unitOfWork.SaveChangesAsync(ct);
     }
 }

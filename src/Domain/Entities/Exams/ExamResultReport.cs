@@ -26,19 +26,15 @@ public class ExamResultReport : EventEntity
     public Exam? Exam { get; set; }
     public ExamResultReportStatus? Status { get; set; }
 
-    public ICollection<ExamResultCandidate> Candidates { get; set; }
-        = new List<ExamResultCandidate>();
+    public ICollection<ExamResultCandidate> Candidates { get; set; } = new List<ExamResultCandidate>();
 
-    public static ExamResultReport Create(
-        Guid examId,
-        decimal specializedQualificationThreshold)
+    public static ExamResultReport Create(Guid examId, decimal specializedQualificationThreshold)
     {
         return new ExamResultReport
         {
             Id = Guid.NewGuid(),
             ExamId = examId,
-            SpecializedQualificationThreshold =
-                specializedQualificationThreshold,
+            SpecializedQualificationThreshold = specializedQualificationThreshold,
             StatusId = ExamResultReportStatusIds.Creating
         };
     }
@@ -49,10 +45,8 @@ public class ExamResultReport : EventEntity
             candidate.Rank = null;
 
         var groups = Candidates
-            .Where(x =>
-                x.ResultStatusId ==
-                    ExamResultCandidateResultStatusIds.QualifiedForInterview &&
-                x.FinalScore.HasValue)
+            .Where(x => x.ResultStatusId == ExamResultCandidateResultStatusIds.QualifiedForInterview
+                        && x.FinalScore.HasValue)
             .GroupBy(x => x.FinalScore!.Value)
             .OrderByDescending(x => x.Key)
             .ToList();
@@ -70,14 +64,11 @@ public class ExamResultReport : EventEntity
         }
     }
 
-    public Result MarkReadyForReview(
-        DateTime transitionAtUtc)
+    public Result MarkReadyForReview(DateTime transitionAtUtc)
     {
         if (StatusId != ExamResultReportStatusIds.Creating)
         {
-            return Result.Fail(
-                new Error(
-                    ErrorsCodes.ExamResultReportNotCreating));
+            return Result.Fail(new Error(ErrorsCodes.ExamResultReportNotCreating));
         }
 
         StatusId = ExamResultReportStatusIds.UnderReview;
@@ -90,16 +81,12 @@ public class ExamResultReport : EventEntity
     {
         if (StatusId != ExamResultReportStatusIds.UnderReview)
         {
-            return Result.Fail(
-                new Error(
-                    ErrorsCodes.ExamResultReportNotUnderReview));
+            return Result.Fail(new Error(ErrorsCodes.ExamResultReportNotUnderReview));
         }
 
         if (string.IsNullOrWhiteSpace(reason))
         {
-            return Result.Fail(
-                new Error(
-                    ErrorsCodes.ExamResultReportReturnReasonRequired));
+            return Result.Fail(new Error(ErrorsCodes.ExamResultReportReturnReasonRequired));
         }
 
         StatusId = ExamResultReportStatusIds.Returned;
@@ -108,13 +95,11 @@ public class ExamResultReport : EventEntity
         return Result.Ok();
     }
 
-    public Result MarkProcessingCompleted(
-        DateTime transitionAtUtc)
+    public Result MarkProcessingCompleted(DateTime transitionAtUtc)
     {
         if (StatusId != ExamResultReportStatusIds.Returned)
         {
-            return Result.Fail(
-                new Error(ErrorsCodes.ExamResultReportNotReturned));
+            return Result.Fail(new Error(ErrorsCodes.ExamResultReportNotReturned));
         }
 
         StatusId = ExamResultReportStatusIds.UnderReview;
@@ -122,27 +107,16 @@ public class ExamResultReport : EventEntity
         return Result.Ok();
     }
 
-    public Result Approve(
-        Guid approverId,
-        string? decisionNotes,
-        DateTime approvedAtUtc)
+    public Result Approve(Guid approverId, string? decisionNotes, DateTime approvedAtUtc)
     {
         if (StatusId != ExamResultReportStatusIds.UnderReview)
         {
-            return Result.Fail(
-                new Error(
-                    ErrorsCodes.ExamResultReportNotUnderReview));
+            return Result.Fail(new Error(ErrorsCodes.ExamResultReportNotUnderReview));
         }
 
-        if (Candidates.Any(x =>
-                x.ResultStatusId ==
-                    ExamResultCandidateResultStatusIds
-                        .RequiresAction))
+        if (Candidates.Any(x => x.ResultStatusId == ExamResultCandidateResultStatusIds.RequiresAction))
         {
-            return Result.Fail(
-                new Error(
-                    ErrorsCodes
-                        .ExamResultReportHasPendingActions));
+            return Result.Fail(new Error(ErrorsCodes.ExamResultReportHasPendingActions));
         }
 
         StatusId = ExamResultReportStatusIds.Approved;
@@ -150,22 +124,16 @@ public class ExamResultReport : EventEntity
         ApprovedById = approverId;
         ApprovedAt = approvedAtUtc;
 
-        DecisionNotes =
-            string.IsNullOrWhiteSpace(decisionNotes)
-                ? null
-                : decisionNotes.Trim();
+        DecisionNotes = string.IsNullOrWhiteSpace(decisionNotes) ? null : decisionNotes.Trim();
 
         return Result.Ok();
     }
 
-    public Result Close(
-        DateTime closedAtUtc)
+    public Result Close(DateTime closedAtUtc)
     {
         if (StatusId != ExamResultReportStatusIds.Approved)
         {
-            return Result.Fail(
-                new Error(
-                    ErrorsCodes.ExamResultReportNotApproved));
+            return Result.Fail(new Error(ErrorsCodes.ExamResultReportNotApproved));
         }
 
         StatusId = ExamResultReportStatusIds.Closed;

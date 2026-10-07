@@ -13,16 +13,11 @@ namespace Application.Operation.Common.EventHandlers.Exams;
 
 public sealed class ExamResultReportReadyForReviewDomainEventHandler(
     IUserRepository userRepository,
-    IUnitOfWork unitOfWork)
-    : INotificationHandler<
-        ExamResultReportReadyForReviewDomainEvent>
+    IUnitOfWork unitOfWork) : INotificationHandler<ExamResultReportReadyForReviewDomainEvent>
 {
-    public async Task Handle(
-        ExamResultReportReadyForReviewDomainEvent notification,
-        CancellationToken ct)
+    public async Task Handle(ExamResultReportReadyForReviewDomainEvent notification, CancellationToken ct)
     {
-        var exam = await unitOfWork.Context
-            .Set<Exam>()
+        var exam = await unitOfWork.Context.Set<Exam>()
             .AsNoTracking()
             .Where(x => x.Id == notification.ExamId)
             .Select(x => new
@@ -30,57 +25,30 @@ public sealed class ExamResultReportReadyForReviewDomainEventHandler(
                 x.ExamNo,
                 x.TitleAr,
                 x.TitleEn,
-
-                JobTitleAr =
-                    x.Job!.JobTitle!.JobNameAr,
-
-                JobTitleEn =
-                    x.Job.JobTitle.JobNameEn
+                JobTitleAr = x.Job!.JobTitle!.JobNameAr,
+                JobTitleEn = x.Job.JobTitle.JobNameEn
             })
             .SingleAsync(ct);
 
-        var reviewers =
-            await userRepository.GetUsersByPermissionAsync(
-                PermissionKeys.Exams.ApproveResults,
-                ct);
+        var reviewers = await userRepository.GetUsersByPermissionAsync(PermissionKeys.Exams.ApproveResults, ct);
 
         if (reviewers.Count == 0)
         {
             return;
         }
 
-        var payload =
-            JsonSerializer.Serialize(
-                new ExamResultReportReadyNotificationModel(
-                    exam.ExamNo,
-                    exam.TitleAr,
-                    exam.TitleEn,
-                    exam.JobTitleAr,
-                    exam.JobTitleEn,
-                    notification.CandidateCount));
+        var payload = JsonSerializer.Serialize(new ExamResultReportReadyNotificationModel(exam.ExamNo, exam.TitleAr,
+            exam.TitleEn, exam.JobTitleAr, exam.JobTitleEn, notification.CandidateCount));
 
         foreach (var reviewer in reviewers)
         {
-            await unitOfWork
-                .GetEntityRepository<Notification>()
+            await unitOfWork.GetEntityRepository<Notification>()
                 .AddAsync(
-                    Notification.Create(
-                        NotificationChannel.InApp,
-                        ExamResultReportReadyNotification.TemplateKey,
-                        reviewer.Id,
-                        reviewer.Email,
-                        payloadJson: payload,
-                        language:
-                            reviewer.GetPreferredLanguage(),
-
-                        idempotencyKey:
-                            $"exam-report-ready-" +
-                            $"{notification.ReportId:N}-" +
-                            $"{notification.TransitionAtUtc.Ticks}-" +
-                            $"{reviewer.Id:N}"),
-                    ct);
+                    Notification.Create(NotificationChannel.InApp, ExamResultReportReadyNotification.TemplateKey,
+                        reviewer.Id, reviewer.Email, payloadJson: payload, language: reviewer.GetPreferredLanguage(),
+                        idempotencyKey: $"exam-report-ready-" + $"{notification.ReportId:N}-"
+                                                              + $"{notification.TransitionAtUtc.Ticks:x}-"
+                                                              + $"{reviewer.Id:N}"), ct);
         }
-
-        await unitOfWork.SaveChangesAsync(ct);
     }
 }

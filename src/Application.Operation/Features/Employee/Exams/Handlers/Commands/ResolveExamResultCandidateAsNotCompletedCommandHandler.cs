@@ -88,10 +88,7 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
                         return InvalidState();
 
                     var interruption = openInterruptions[0];
-                    interruption.Resolve(
-                        TestAttemptInterruptionResolutionActionIds.Cancel,
-                        notes,
-                        employeeId,
+                    interruption.Resolve(TestAttemptInterruptionResolutionActionIds.Cancel, notes, employeeId,
                         resolvedAt);
                     attempt.CancelInterrupted();
                 }
@@ -103,10 +100,7 @@ public sealed class ResolveExamResultCandidateAsNotCompletedCommandHandler(
                         return InvalidState();
 
                     var interruption = openInterruptions[0];
-                    interruption.Resolve(
-                        TestAttemptInterruptionResolutionActionIds.Cancel,
-                        notes,
-                        employeeId,
+                    interruption.Resolve(TestAttemptInterruptionResolutionActionIds.Cancel, notes, employeeId,
                         resolvedAt);
                 }
                 else if ((attempt.StatusId != TestAttemptStatusIds.Cancelled

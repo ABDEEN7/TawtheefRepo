@@ -37,20 +37,13 @@ public class ExamResultCandidate : EventEntity
 
         Rank = null;
 
-        ResultStatusId =
-            ExamResultCandidateResultStatusIds.NoShow;
+        ResultStatusId = ExamResultCandidateResultStatusIds.NoShow;
 
         SnapshotAt = snapshotAt;
     }
 
-    public void ApplyCalculatedResult(
-        Guid testAttemptId,
-        decimal specializedScore,
-        decimal? educationalScore,
-        decimal? skillsScore,
-        decimal? finalScore,
-        bool isSpecializedQualified,
-        DateTime snapshotAt)
+    public void ApplyCalculatedResult(Guid testAttemptId, decimal specializedScore, decimal? educationalScore,
+        decimal? skillsScore, decimal? finalScore, bool isSpecializedQualified, DateTime snapshotAt)
     {
         TestAttemptId = testAttemptId;
 
@@ -61,25 +54,21 @@ public class ExamResultCandidate : EventEntity
 
         Rank = null;
 
-        ResultStatusId =
-            isSpecializedQualified
-                ? ExamResultCandidateResultStatusIds.QualifiedForInterview
-                : ExamResultCandidateResultStatusIds.NotQualifiedForInterview;
+        ResultStatusId = isSpecializedQualified
+            ? ExamResultCandidateResultStatusIds.QualifiedForInterview
+            : ExamResultCandidateResultStatusIds.NotQualifiedForInterview;
 
         SnapshotAt = snapshotAt;
     }
 
     public void MarkNotCompleted(DateTime snapshotAt)
     {
-        ResultStatusId =
-            ExamResultCandidateResultStatusIds.NotCompleted;
+        ResultStatusId = ExamResultCandidateResultStatusIds.NotCompleted;
 
         SnapshotAt = snapshotAt;
     }
 
-    public void MoveToRescheduledAssignment(
-        TestSessionCandidate replacement,
-        DateTime snapshotAt)
+    public void MoveToRescheduledAssignment(TestSessionCandidate replacement, DateTime snapshotAt)
     {
         TestSessionCandidateId = replacement.Id;
         TestSessionCandidate = replacement;
