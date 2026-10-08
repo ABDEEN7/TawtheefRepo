@@ -182,7 +182,7 @@ export class Sidebar {
       route: routes.portal.testSessionsManagement,
       permission: Permissions.TestSessions.View,
     },
-    
+
     {
       key: 'interview-axes-criteria',
       label: 'internal.sidebar.interview-axes-criteria',

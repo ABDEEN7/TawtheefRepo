@@ -19,7 +19,7 @@ public sealed class ListQuestionBanksQueryHandler(IUnitOfWork unitOfWork, IMappe
         CancellationToken cancellationToken)
     {
         var searchTerm = request.Search?.Trim();
-        var questionBanks = await unitOfWork
+        var query = unitOfWork
             .GetEntityRepository<QuestionBank>()
             .DbSet
             .AsNoTracking()
@@ -52,14 +52,41 @@ public sealed class ListQuestionBanksQueryHandler(IUnitOfWork unitOfWork, IMappe
                 request.JobTitleId.HasValue,
                 questionBank => questionBank.JobTitleId == request.JobTitleId)
             .WhereIf(request.StageId.HasValue, questionBank => questionBank.StageId == request.StageId)
-            .WhereIf(request.IsActive.HasValue, questionBank => questionBank.IsActive == request.IsActive)
-            .OrderByDescending(questionBank => questionBank.UpdatedDate ?? questionBank.CreatedDate)
-            .ThenBy(questionBank => questionBank.Id)
+            .WhereIf(request.IsActive.HasValue, questionBank => questionBank.IsActive == request.IsActive);
+
+        var sorted = ApplySorting(query, request.SortBy, request.SortDirection);
+
+        var questionBanks = await sorted
             .ToPaginatedListAsync<QuestionBank, QuestionBankListItemDto>(
                 mapper,
-                request,
+                request with { SortBy = null, SortDirection = null },
                 cancellationToken);
 
         return Result.Ok(questionBanks);
     }
+
+    private static IOrderedQueryable<QuestionBank> ApplySorting(
+        IQueryable<QuestionBank> query,
+        string? sortBy,
+        string? sortDirection)
+    {
+        var descending = string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase);
+        return sortBy?.Trim().ToLowerInvariant() switch
+        {
+            "questionbanktype" => Order(query, x => x.QuestionBankType.NameEn, descending),
+            "management" => Order(query, x => x.Management == null ? string.Empty : x.Management.NameEn, descending),
+            "jobtitle" => Order(query, x => x.JobTitle == null ? string.Empty : x.JobTitle.JobNameEn, descending),
+            "currentversion" => Order(query,
+                x => x.CurrentApprovedVersion == null ? 0 : x.CurrentApprovedVersion.VersionNo, descending),
+            "status" => Order(query, x => x.IsActive, descending),
+            _ => query.OrderByDescending(x => x.UpdatedDate ?? x.CreatedDate).ThenBy(x => x.Id)
+        };
+    }
+
+    private static IOrderedQueryable<QuestionBank> Order<TKey>(
+        IQueryable<QuestionBank> query,
+        System.Linq.Expressions.Expression<Func<QuestionBank, TKey>> key,
+        bool descending) => descending
+            ? query.OrderByDescending(key).ThenBy(x => x.Id)
+            : query.OrderBy(key).ThenBy(x => x.Id);
 }

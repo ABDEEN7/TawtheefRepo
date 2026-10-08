@@ -1,7 +1,7 @@
-@use "styles/base/tokens";
-@use "styles/base/flags";
-@use "custom-styles";
-@import "primeicons/primeicons.css";
+@use 'styles/base/tokens';
+@use 'styles/base/flags';
+@use 'custom-styles';
+@import 'primeicons/primeicons.css';
 
 $primary: #000;
 .form-check-input:checked {
@@ -36,4 +36,15 @@ body {
 .p-dialog .p-dialog-content {
   max-height: 80vh;
   overflow: auto;
+}
+/* Select overlays appended by the question-bank request dialog must remain readable in either direction. */
+.question-bank-request-long-options {
+  max-width: min(42rem, calc(100vw - 2rem));
+
+  .p-select-option,
+  .long-option {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
 }

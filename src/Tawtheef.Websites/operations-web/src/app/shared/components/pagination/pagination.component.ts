@@ -69,7 +69,10 @@ export class PaginationComponent {
     }
   }
   changePageSize(size: number | string) {
-    this.pageSizeChanged.emit(Number(size));
+    const pageSize = Number(size);
+    if (pageSize !== this.itemsPerPage()) {
+      this.pageSizeChanged.emit(pageSize);
+    }
   }
 
   nextPage() {

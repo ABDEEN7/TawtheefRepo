@@ -43,7 +43,7 @@ import { PageFiltersComponent } from '../../../../shared/components/page-filters
     InputIconModule,
     InputTextModule,
     PageFiltersComponent,
-  ]
+  ],
 })
 export class ProfileLogsComponent implements OnInit {
   private profileLogsService = inject(ProfileLogsService);
@@ -85,15 +85,27 @@ export class ProfileLogsComponent implements OnInit {
   isRtl = computed(() => this.currentLang() === 'ar');
   totalItems = computed(() => this.paginationMetadata()?.totalCount || 0);
   readonly sectionOptions = [
-    'Prerequisites', 'Personal', 'Contact', 'Qualifications', 'Experience',
-    'TrainingCourses', 'CertificatesAndAwards', 'Skills', 'Languages', 'Attachments', 'Assignment',
-  ].map(value => ({ value, label: `PROFILE_LOGS.SECTIONS.${value}` }));
+    'Prerequisites',
+    'Personal',
+    'Contact',
+    'Qualifications',
+    'Experience',
+    'TrainingCourses',
+    'CertificatesAndAwards',
+    'Skills',
+    'Languages',
+    'Attachments',
+    'Assignment',
+  ].map((value) => ({ value, label: `PROFILE_LOGS.SECTIONS.${value}` }));
 
   readonly profileStatusOptions = [
     { value: ProfileStatusNumber.InCreation, label: 'PROFILE_LOGS.PROFILE_STATUS.IN_CREATION' },
     { value: ProfileStatusNumber.Submitted, label: 'PROFILE_LOGS.PROFILE_STATUS.SUBMITTED' },
     { value: ProfileStatusNumber.UnderReview, label: 'PROFILE_LOGS.PROFILE_STATUS.UNDER_REVIEW' },
-    { value: ProfileStatusNumber.RequiresUpdate, label: 'PROFILE_LOGS.PROFILE_STATUS.REQUIRES_UPDATE' },
+    {
+      value: ProfileStatusNumber.RequiresUpdate,
+      label: 'PROFILE_LOGS.PROFILE_STATUS.REQUIRES_UPDATE',
+    },
     { value: ProfileStatusNumber.Approved, label: 'PROFILE_LOGS.PROFILE_STATUS.APPROVED' },
   ];
 
@@ -111,28 +123,31 @@ export class ProfileLogsComponent implements OnInit {
     if (!this.invalidProfileId()) this.loadLogs();
     this.language.current$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(lang => this.currentLang.set(lang));
+      .subscribe((lang) => this.currentLang.set(lang));
   }
 
   loadUserOptions() {
-    this.profileLogsService.getUsersLookup().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (users) => {
-        const options = (users || []).map(u => ({
-          id: u.id,
-          label: u.name
-        }));
-        this._userOptions.set(options.sort((a, b) => a.label.localeCompare(b.label)));
-      }
-    });
+    this.profileLogsService
+      .getUsersLookup()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (users) => {
+          const options = (users || []).map((u) => ({
+            id: u.id,
+            label: u.name,
+          }));
+          this._userOptions.set(options.sort((a, b) => a.label.localeCompare(b.label)));
+        },
+      });
   }
 
   private setupRequestOrchestration(): void {
-    this.setupTextFilter(this.candidateSearchChanges$, value => {
+    this.setupTextFilter(this.candidateSearchChanges$, (value) => {
       if (this.candidateSearch.trim() === value) return false;
       this.candidateSearch = value;
       return true;
     });
-    this.setupTextFilter(this.notesSearchChanges$, value => {
+    this.setupTextFilter(this.notesSearchChanges$, (value) => {
       if (this.notesSearch.trim() === value) return false;
       this.notesSearch = value;
       return true;
@@ -140,7 +155,7 @@ export class ProfileLogsComponent implements OnInit {
 
     this.queryChanges$
       .pipe(
-        map(force => {
+        map((force) => {
           const filters = this.buildFilters();
           return { filters, key: JSON.stringify(filters), force };
         }),
@@ -148,20 +163,22 @@ export class ProfileLogsComponent implements OnInit {
         switchMap(({ filters }) => this.profileLogsService.getLogs(filters)),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe({ next: response => this.applyResponse(response) });
+      .subscribe({ next: (response) => this.applyResponse(response) });
   }
 
   private setupTextFilter(changes$: Subject<string>, apply: (value: string) => boolean): void {
-    changes$.pipe(
-      map(value => (value ?? '').trim()),
-      debounceTime(400),
-      distinctUntilChanged(),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(value => {
-      if (!apply(value)) return;
-      this.filters.update(filters => ({ ...filters, pageNumber: 1 }));
-      this.loadLogs();
-    });
+    changes$
+      .pipe(
+        map((value) => (value ?? '').trim()),
+        debounceTime(400),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((value) => {
+        if (!apply(value)) return;
+        this.filters.update((filters) => ({ ...filters, pageNumber: 1 }));
+        this.loadLogs();
+      });
   }
 
   private buildFilters(): ProfileLogFilters {
@@ -175,7 +192,9 @@ export class ProfileLogsComponent implements OnInit {
       candidateSearch: this.candidateSearch.trim() || null,
       notesSearch: this.notesSearch.trim() || null,
       sections: this.selectedSections.length ? [...this.selectedSections] : null,
-      profileStatuses: this.selectedProfileStatuses.length ? [...this.selectedProfileStatuses] : null,
+      profileStatuses: this.selectedProfileStatuses.length
+        ? [...this.selectedProfileStatuses]
+        : null,
     };
     this.filters.set(updatedFilters);
     return updatedFilters;
@@ -185,8 +204,11 @@ export class ProfileLogsComponent implements OnInit {
     this._logs.set(response.items);
     this._paginationMetadata.set(response.metadata);
     if (response.metadata) {
-      this.filters.update(filters => ({ ...filters,
-        pageNumber: response.metadata.currentPage, pageSize: response.metadata.pageSize }));
+      this.filters.update((filters) => ({
+        ...filters,
+        pageNumber: response.metadata.currentPage,
+        pageSize: response.metadata.pageSize,
+      }));
     }
   }
 
@@ -195,7 +217,7 @@ export class ProfileLogsComponent implements OnInit {
   }
 
   onFiltersChanged(): void {
-    this.filters.update(f => ({ ...f, pageNumber: 1 }));
+    this.filters.update((f) => ({ ...f, pageNumber: 1 }));
     this.loadLogs();
   }
 
@@ -223,7 +245,7 @@ export class ProfileLogsComponent implements OnInit {
   }
 
   toggleAdvancedFilters(): void {
-    this.showAdvancedFilters.update(value => !value);
+    this.showAdvancedFilters.update((value) => !value);
   }
 
   activeAdvancedFilterCount(): number {
@@ -237,12 +259,12 @@ export class ProfileLogsComponent implements OnInit {
   }
 
   onPageChange(page: number) {
-    this.filters.update(f => ({ ...f, pageNumber: page }));
+    this.filters.update((f) => ({ ...f, pageNumber: page }));
     this.loadLogs();
   }
 
   onPageSizeChange(size: number) {
-    this.filters.update(f => ({ ...f, pageSize: size, pageNumber: 1 }));
+    this.filters.update((f) => ({ ...f, pageSize: size, pageNumber: 1 }));
     this.loadLogs();
   }
 
@@ -329,14 +351,22 @@ export class ProfileLogsComponent implements OnInit {
       try {
         const parsed = JSON.parse(log.notes);
         return this.findNameInObject(parsed);
-      } catch { }
+      } catch {}
     }
     return null;
   }
 
   private findNameInObject(obj: any): string | null {
     if (!obj || typeof obj !== 'object') return null;
-    const primaryKeys = ['nameEn', 'fullNameEn', 'adminNameEn', 'titleEn', 'nameAr', 'fullNameAr', 'email'];
+    const primaryKeys = [
+      'nameEn',
+      'fullNameEn',
+      'adminNameEn',
+      'titleEn',
+      'nameAr',
+      'fullNameAr',
+      'email',
+    ];
     for (const key of primaryKeys) {
       if (obj[key] && typeof obj[key] !== 'object') return String(obj[key]);
     }
@@ -413,7 +443,10 @@ export class ProfileLogsComponent implements OnInit {
       if (parsed?.eventType === 'ReviewSectionDecision') {
         return this.formatReviewSectionDecision(parsed);
       }
-      if (parsed?.eventType === 'ProfileChangeRequested' || parsed?.eventType === 'ProfileChangeUpdated') {
+      if (
+        parsed?.eventType === 'ProfileChangeRequested' ||
+        parsed?.eventType === 'ProfileChangeUpdated'
+      ) {
         return this.formatProfileChangeEvent(parsed);
       }
       if (parsed?.eventType === 'AssignmentCreated') {
@@ -474,24 +507,33 @@ export class ProfileLogsComponent implements OnInit {
   private formatReviewItemDecision(note: any): string {
     const section = note.section ? this.translateSection(note.section) : '-';
     const status = this.mapStatusLabel(note.status);
-    const itemLabel = note.entityName || note.fieldPath || this.translate.instant('PROFILE_LOGS.ACTIONS.ReviewItemDecision');
-    const reviewerNote = note.reviewerNote ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}` : '';
+    const itemLabel =
+      note.entityName ||
+      note.fieldPath ||
+      this.translate.instant('PROFILE_LOGS.ACTIONS.ReviewItemDecision');
+    const reviewerNote = note.reviewerNote
+      ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}`
+      : '';
     return `${this.translate.instant('PROFILE_LOGS.NOTES.ITEM_REVIEW_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.ITEM')}: ${itemLabel} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${status}${reviewerNote}`;
   }
 
   private formatReviewSectionDecision(note: any): string {
     const section = note.section ? this.translateSection(note.section) : '-';
     const status = this.mapStatusLabel(note.status);
-    const reviewerNote = note.reviewerNote ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}` : '';
+    const reviewerNote = note.reviewerNote
+      ? ` | ${this.translate.instant('PROFILE_LOGS.NOTES.NOTE')}: ${note.reviewerNote}`
+      : '';
     return `${this.translate.instant('PROFILE_LOGS.NOTES.SECTION_REVIEW_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.STATUS')}: ${status}${reviewerNote}`;
   }
 
   private formatProfileChangeEvent(note: any): string {
     const section = note.section ? this.translateSection(note.section) : '-';
-    const target = note.entityName || note.fieldPath || note.attachmentTitle || note.targetType || '-';
-    const action = note.eventType === 'ProfileChangeRequested'
-      ? this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeRequested')
-      : this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeUpdated');
+    const target =
+      note.entityName || note.fieldPath || note.attachmentTitle || note.targetType || '-';
+    const action =
+      note.eventType === 'ProfileChangeRequested'
+        ? this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeRequested')
+        : this.translate.instant('PROFILE_LOGS.ACTIONS.ProfileChangeUpdated');
     return `${action} | ${this.translate.instant('PROFILE_LOGS.NOTES.SECTION')}: ${section} | ${this.translate.instant('PROFILE_LOGS.NOTES.TARGET')}: ${target}`;
   }
 
@@ -517,7 +559,9 @@ export class ProfileLogsComponent implements OnInit {
     if (changeMatch) {
       const targetType = changeMatch[1];
       const targetValue = changeMatch[2];
-      const sanitizedTarget = /^[0-9a-f-]{36}$/i.test(targetValue) ? this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_DATA') : targetValue;
+      const sanitizedTarget = /^[0-9a-f-]{36}$/i.test(targetValue)
+        ? this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_DATA')
+        : targetValue;
       return `${this.translate.instant('PROFILE_LOGS.NOTES.PROFILE_CHANGE_UPDATED')} | ${this.translate.instant('PROFILE_LOGS.NOTES.TYPE')}: ${targetType} | ${this.translate.instant('PROFILE_LOGS.NOTES.TARGET')}: ${sanitizedTarget}`;
     }
 
@@ -536,10 +580,18 @@ export class ProfileLogsComponent implements OnInit {
     if (normalized === 'rejected' || normalized === String(ReviewStatus.Rejected)) {
       return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.REJECTED');
     }
-    if (normalized === 'needscorrection' || normalized === 'needs_correction' || normalized === String(ReviewStatus.NeedsCorrection)) {
+    if (
+      normalized === 'needscorrection' ||
+      normalized === 'needs_correction' ||
+      normalized === String(ReviewStatus.NeedsCorrection)
+    ) {
       return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.NEEDS_CORRECTION');
     }
-    if (normalized === 'notreviewed' || normalized === 'not_reviewed' || normalized === String(ReviewStatus.NotReviewed)) {
+    if (
+      normalized === 'notreviewed' ||
+      normalized === 'not_reviewed' ||
+      normalized === String(ReviewStatus.NotReviewed)
+    ) {
       return this.translate.instant('PROFILE_LOGS.REVIEW_STATUS.NOT_REVIEWED');
     }
     return String(status);
@@ -579,7 +631,7 @@ export class ProfileLogsComponent implements OnInit {
       oldAssignedUserName: 'Old Assigned User',
       newAssignedUserName: 'New Assigned User',
       oldAssignedUserId: 'Old Assigned User Id',
-      newAssignedUserId: 'New Assigned User Id'
+      newAssignedUserId: 'New Assigned User Id',
     };
 
     const skipPatterns = /^(id|countryId|cityId|officeId|userId|userProfileId)$/i;
@@ -605,16 +657,14 @@ export class ProfileLogsComponent implements OnInit {
 
       let displayVal = '';
       if (Array.isArray(value)) {
-        const filteredArr = value.filter(v => typeof v !== 'string' || !guidPattern.test(v));
+        const filteredArr = value.filter((v) => typeof v !== 'string' || !guidPattern.test(v));
         if (filteredArr.length > 0) {
           displayVal = filteredArr.join(', ');
         } else if (value.length > 0) {
           displayVal = `(${value.length} items)`;
         }
       } else {
-        displayVal = typeof value === 'boolean'
-          ? (value ? 'Yes' : 'No')
-          : String(value);
+        displayVal = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : String(value);
       }
 
       if (displayVal && displayVal !== 'null' && displayVal !== 'undefined') {
@@ -622,6 +672,4 @@ export class ProfileLogsComponent implements OnInit {
       }
     }
   }
-
 }
-
