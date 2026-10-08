@@ -81,7 +81,10 @@ public sealed class GetQuestionBankAssignmentWorkspaceQueryHandler(IUnitOfWork u
                                                         i.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST)
                         .Select(i => (Guid?)i.Id).FirstOrDefault())).ToListAsync(ct)
             : [];
-        var current = questions.Count(x => x.StatusId != QuestionBankRequestItemStatusIds.REJECTED); var bank = a.QuestionBankRequest.QuestionBank;
+        var current = await uow.GetEntityRepository<QuestionBankRequestItem>().DbSet.AsNoTracking()
+            .Where(QuestionAssignmentProgress.Countable)
+            .CountAsync(x => x.QuestionBankAssignmentId == a.Id && x.RequestId == a.QuestionBankRequestId, ct);
+        var bank = a.QuestionBankRequest.QuestionBank;
         return Result.Ok(new QuestionBankAssignmentWorkspaceDto(
             new(a.Id, a.StatusId, a.Status.NameAr, a.Status.NameEn, a.MinimumQuestionCount, a.Notes, a.AssignedAt, a.QuestionEntryStartedAt, a.QuestionEntryCompletedAt),
             new(a.QuestionBankRequestId, a.QuestionBankRequest.StatusId),

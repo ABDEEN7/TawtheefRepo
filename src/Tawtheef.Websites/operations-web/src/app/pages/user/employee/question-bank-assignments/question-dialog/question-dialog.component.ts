@@ -79,7 +79,9 @@ export class QuestionDialogComponent implements OnDestroy {
   imagePreview?: string;
   imageError = false;
   imageLoading = false;
+  imageValidating = false;
   submitted = false;
+  private imageSelection = 0;
   private imageSubscription?: Subscription;
   private readonly typeSubscription: Subscription;
 
@@ -116,16 +118,43 @@ export class QuestionDialogComponent implements OnDestroy {
     return this.form.controls.questionTypeId.value === QuestionTypes.trueFalse;
   }
 
-  chooseImage(event: Event): void {
+  async chooseImage(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
+    input.value = '';
+    const selection = ++this.imageSelection;
     const allowed = ['image/jpeg', 'image/png', 'image/webp'];
-    this.imageError = !allowed.includes(file.type) || file.size === 0 || file.size > 1_000_000;
-    if (this.imageError) {
-      input.value = '';
-      return;
+    const extension = file.name.trim().split('.').pop()?.toLowerCase();
+    // Keep aligned with UploadContentValidator.QuestionImagePolicy / ProfileLimits.
+    this.imageError = !['jpg', 'jpeg', 'png', 'webp'].includes(extension ?? '') ||
+      !file.name.trim().includes('.') || !allowed.includes(file.type.toLowerCase()) ||
+      file.size === 0 || file.size > 1_000_000;
+    this.imageValidating = false;
+    if (this.imageError) return;
+
+    this.imageValidating = true;
+    let valid = false;
+    try {
+      const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+      const startsWith = (signature: number[]) =>
+        signature.every((byte, index) => bytes[index] === byte);
+      if (extension === 'jpg' || extension === 'jpeg') {
+        valid = startsWith([0xff, 0xd8, 0xff]);
+      } else if (extension === 'png') {
+        valid = startsWith([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+      } else if (extension === 'webp') {
+        valid = bytes.length >= 12 && startsWith([0x52, 0x49, 0x46, 0x46]) &&
+          [0x57, 0x45, 0x42, 0x50].every((byte, index) => bytes[index + 8] === byte);
+      }
+    } catch {
+      valid = false;
     }
+    // A newer selection, removal, or dialog destruction wins over a slow file read.
+    if (selection !== this.imageSelection) return;
+    this.imageValidating = false;
+    this.imageError = !valid;
+    if (!valid) return;
     this.imageSubscription?.unsubscribe();
     this.imageLoading = false;
     this.revokeImagePreview();
@@ -134,6 +163,8 @@ export class QuestionDialogComponent implements OnDestroy {
   }
 
   removeImage(): void {
+    ++this.imageSelection;
+    this.imageValidating = false;
     this.imageSubscription?.unsubscribe();
     this.imageLoading = false;
     this.revokeImagePreview();
@@ -179,6 +210,7 @@ export class QuestionDialogComponent implements OnDestroy {
   }
 
   save(): void {
+    if (this.imageValidating) return;
     this.submitted = true;
     this.form.updateValueAndValidity();
     this.form.markAllAsTouched();
@@ -233,6 +265,7 @@ export class QuestionDialogComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    ++this.imageSelection;
     this.typeSubscription.unsubscribe();
     this.imageSubscription?.unsubscribe();
     this.revokeImagePreview();

@@ -35,14 +35,16 @@ public sealed class FinishQuestionBankAssignmentModificationCommandHandler(
                 assignment.QuestionBankRequest.StatusId != QuestionBankRequestStatusIds.ModificationInProgress)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentNotEditable);
 
-            var items = assignment.RequestItems.Where(x => x.RequestId == assignment.QuestionBankRequestId).ToList();
+            var items = assignment.RequestItems.Where(x => x.QuestionBankAssignmentId == assignment.Id &&
+                x.RequestId == assignment.QuestionBankRequestId && !x.IsDeleted).ToList();
             if (items.Any(x => x.StatusId == QuestionBankRequestItemStatusIds.NEEDS_MODIFICATION ||
                                x.StatusId == QuestionBankRequestItemStatusIds.REJECTED))
                 return Result.Fail<Unit>(ErrorsCodes.InvalidQuestionEntry);
 
             var active = items.Where(x => x.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST &&
                                           x.StatusId != QuestionBankRequestItemStatusIds.REJECTED).ToList();
-            if (active.Count < assignment.MinimumQuestionCount || active.Count == 0)
+            var current = QuestionAssignmentProgress.Count(active, assignment.Id, assignment.QuestionBankRequestId);
+            if (current < assignment.MinimumQuestionCount || current == 0)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankMinimumQuestionCountNotMet);
 
             var drafts = active.Where(x => x.StatusId == QuestionBankRequestItemStatusIds.DRAFT).ToList();

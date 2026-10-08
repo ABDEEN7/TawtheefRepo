@@ -45,7 +45,7 @@
   "QUESTION_ASSIGNMENTS.CHOOSE_IMAGE": "اختيار صورة",
   "QUESTION_ASSIGNMENTS.REPLACE_IMAGE": "استبدال الصورة",
   "QUESTION_ASSIGNMENTS.REMOVE_IMAGE": "إزالة الصورة",
-  "QUESTION_ASSIGNMENTS.INVALID_IMAGE": "اختر صورة JPEG أو PNG أو WebP غير فارغة وبحجم لا يتجاوز 1 ميجابايت.",
+  "QUESTION_ASSIGNMENTS.INVALID_IMAGE": "اختر صورة صالحة غير فارغة بامتداد .jpg أو .jpeg أو .png أو .webp وبحجم لا يتجاوز 1 ميجابايت.",
   "QUESTION_ASSIGNMENTS.IMAGE_ONLY": "سؤال بصورة فقط",
   "QUESTION_ASSIGNMENTS.PLEASE_SELECT": "يرجى الاختيار",
   "QUESTION_ASSIGNMENTS.TYPE_REQUIRED": "نوع السؤال مطلوب.",

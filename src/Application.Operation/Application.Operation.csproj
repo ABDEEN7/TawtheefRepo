@@ -19,6 +19,7 @@
 
     <ItemGroup>
       <PackageReference Include="ClosedXML" />
+      <InternalsVisibleTo Include="QuestionBankAssignments.Tests" />
     </ItemGroup>
 
 </Project>

@@ -45,7 +45,7 @@
   "QUESTION_ASSIGNMENTS.CHOOSE_IMAGE": "Choose image",
   "QUESTION_ASSIGNMENTS.REPLACE_IMAGE": "Replace image",
   "QUESTION_ASSIGNMENTS.REMOVE_IMAGE": "Remove image",
-  "QUESTION_ASSIGNMENTS.INVALID_IMAGE": "Choose a non-empty JPEG, PNG, or WebP image up to 1 MB.",
+  "QUESTION_ASSIGNMENTS.INVALID_IMAGE": "Choose a valid, non-empty .jpg, .jpeg, .png, or .webp image up to 1 MB.",
   "QUESTION_ASSIGNMENTS.IMAGE_ONLY": "Image-only question",
   "QUESTION_ASSIGNMENTS.PLEASE_SELECT": "Please select",
   "QUESTION_ASSIGNMENTS.TYPE_REQUIRED": "Question type is required.",

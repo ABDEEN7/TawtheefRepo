@@ -32,14 +32,17 @@ public sealed class FinishQuestionBankAssignmentEntryCommandHandler(IUnitOfWork 
             if (a is null) return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentNotFound);
             if (!QuestionEntryRules.Editable(a.StatusId) || a.QuestionBankRequest.StatusId != QuestionBankRequestStatusIds.QuestionEntryInProgress)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentNotEditable);
-            var items = a.RequestItems.Where(x => x.RequestId == a.QuestionBankRequestId && x.StatusId == QuestionBankRequestItemStatusIds.DRAFT).ToList();
+            var items = a.RequestItems.Where(x => x.QuestionBankAssignmentId == a.Id &&
+                x.RequestId == a.QuestionBankRequestId && !x.IsDeleted &&
+                x.StatusId == QuestionBankRequestItemStatusIds.DRAFT).ToList();
             var baseRevisions = a.QuestionBankRequest.RequestTypeId == QuestionBankRequestTypeIds.MAINTENANCE &&
                                 a.QuestionBankRequest.BaseVersionId.HasValue
                 ? await uow.GetEntityRepository<QuestionBankVersionQuestion>().DbSet.AsNoTracking()
                     .Where(x => x.QuestionBankVersionId == a.QuestionBankRequest.BaseVersionId && !x.IsDeleted)
                     .ToDictionaryAsync(x => x.QuestionId, x => x.QuestionRevisionId, token)
                 : new Dictionary<Guid, Guid>();
-            if (items.Count < a.MinimumQuestionCount || items.Count == 0 ||
+            var current = QuestionAssignmentProgress.Count(a.RequestItems, a.Id, a.QuestionBankRequestId);
+            if (current < a.MinimumQuestionCount || current == 0 ||
                 items.Any(x => !Valid(x, a.QuestionBankRequest, baseRevisions)))
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankMinimumQuestionCountNotMet);
             foreach (var item in items) item.StatusId = QuestionBankRequestItemStatusIds.PENDING_REVIEW;

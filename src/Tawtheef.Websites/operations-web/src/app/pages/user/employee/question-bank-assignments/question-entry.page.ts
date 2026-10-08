@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -35,6 +36,7 @@ import {
   selector: 'app-question-entry',
   standalone: true,
   templateUrl: './question-entry.page.html',
+  styleUrl: './question-entry.page.scss',
   imports: [
     CommonModule,
     TranslatePipe,
@@ -156,10 +158,7 @@ export class QuestionEntryPage {
           this.notification.success(this.translate.instant('QUESTION_ASSIGNMENTS.SAVED'));
           this.load();
         },
-        error: () => {
-          this.notification.error(this.translate.instant('QUESTION_ASSIGNMENTS.QUESTION_CLAIMED'));
-          this.load();
-        },
+        error: (error: HttpErrorResponse) => this.handleMaintenanceError(error),
       });
     });
   }
@@ -172,10 +171,7 @@ export class QuestionEntryPage {
           this.notification.success(this.translate.instant('QUESTION_ASSIGNMENTS.SAVED'));
           this.load();
         },
-        error: () => {
-          this.notification.error(this.translate.instant('QUESTION_ASSIGNMENTS.QUESTION_CLAIMED'));
-          this.load();
-        },
+        error: (error: HttpErrorResponse) => this.handleMaintenanceError(error),
       }),
     });
   }
@@ -188,7 +184,7 @@ export class QuestionEntryPage {
           this.notification.success(this.translate.instant('QUESTION_ASSIGNMENTS.SAVED'));
           this.load();
         },
-        error: () => this.notification.error(),
+        error: (error: HttpErrorResponse) => this.handleMaintenanceError(error),
       }),
     });
   }
@@ -287,5 +283,20 @@ export class QuestionEntryPage {
           this.back();
         },
       });
+  }
+
+  private handleMaintenanceError(error: HttpErrorResponse): void {
+    // The HTTP interceptor owns the toast, including the localized claim error.
+    // Refresh ownership only for the backend's specific duplicate-claim code.
+    const claimCode = 'QUESTION_BANK_QUESTION_ALREADY_ASSIGNED_FOR_MAINTENANCE';
+    let body = error.error;
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch { return; }
+    }
+    if (body?.detail === claimCode || body?.message === claimCode ||
+      (Array.isArray(body?.error) && body.error.some((item: { message?: string; reasons?: string[] }) =>
+        item.message === claimCode || item.reasons?.includes(claimCode)))) {
+      this.load();
+    }
   }
 }

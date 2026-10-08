@@ -427,5 +427,6 @@
   "server-error.INTERVIEW_COMMITTEE_REVIEW_FORBIDDEN": "Only the committee chair can review these results.",
   "server-error.INTERVIEW_COMMITTEE_REVIEW_OVERRIDE_FORBIDDEN": "You don't have permission to change the system suggestion.",
   "server-error.INTERVIEW_SCHOOL_STAGE_NOT_FOUND": "The selected school stage is not available.",
-  "server-error.TEST_SESSION_SCHEDULED_TIME_EXPIRED": "A test session cannot be submitted or approved for a past date or time. Return it for editing and select a valid time slot."
+  "server-error.TEST_SESSION_SCHEDULED_TIME_EXPIRED": "A test session cannot be submitted or approved for a past date or time. Return it for editing and select a valid time slot.",
+  "server-error.QUESTION_BANK_QUESTION_ALREADY_ASSIGNED_FOR_MAINTENANCE": "This question is already being maintained by another employee. The workspace was refreshed."
 }
