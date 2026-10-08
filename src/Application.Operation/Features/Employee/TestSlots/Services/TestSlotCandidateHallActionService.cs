@@ -43,9 +43,11 @@ public sealed class TestSlotCandidateHallActionService(
         }
 
         var isHallSupervisor = await unitOfWork.Context.Set<TestSlotStaff>()
-            .AnyAsync(
-                x => x.TestSlotId == testSlotId && x.StaffUserId == userId && x.IsActive
-                     && x.RoleId == TestSlotStaffRoleIds.HallSupervisor, cancellationToken);
+            .AnyAsync(x => x.TestSlotId == testSlotId &&
+                           x.StaffUserId == userId &&
+                           x.IsActive &&
+                           x.RoleId == TestSlotStaffRoleIds.HallSupervisor
+                , cancellationToken);
 
         if (!isHallSupervisor)
         {

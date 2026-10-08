@@ -8,7 +8,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
-import { finalize } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
 import { AuthService } from '../../../../../../../core/auth/auth.service';
 import { Permissions } from '../../../../../../../core/constants/permissions';
 import { NotificationService } from '../../../../../../../core/services/notification.service';
@@ -211,7 +211,7 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
 
   private runCandidateAction(
     candidateId: string,
-    action: import('rxjs').Observable<void>,
+    action: Observable<void>,
     successKey = 'TEST_SLOT_DETAILS.HALL_ACTION_SUCCESS',
   ): void {
     this.actingCandidateId.set(candidateId);

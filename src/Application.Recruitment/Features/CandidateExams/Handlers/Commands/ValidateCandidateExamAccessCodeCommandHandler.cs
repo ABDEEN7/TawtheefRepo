@@ -14,7 +14,10 @@ public sealed class ValidateCandidateExamAccessCodeCommandHandler(CandidateExamE
         CancellationToken cancellationToken)
     {
         var validation = await validationService.ValidateInitialEntryAsync(command.UserId,
-            command.TestSessionCandidateId, command.AccessCode, cancellationToken);
+            command.TestSessionCandidateId,
+            command.AccessCode,
+            cancellationToken);
+        
         if (validation.IsFailed)
             return Result.Fail<ValidateCandidateExamAccessCodeResponse>(validation.Errors);
 
