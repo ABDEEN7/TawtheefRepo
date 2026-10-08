@@ -33,12 +33,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifications.TemplateTeste
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B45F5473-33C2-49A7-8E46-29F378BD4187}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestionBankAssignments.Tests", "tests\QuestionBankAssignments.Tests\QuestionBankAssignments.Tests.csproj", "{D227C976-52D0-4B8F-B864-87577CEB9E7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D227C976-52D0-4B8F-B864-87577CEB9E7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D227C976-52D0-4B8F-B864-87577CEB9E7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D227C976-52D0-4B8F-B864-87577CEB9E7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D227C976-52D0-4B8F-B864-87577CEB9E7D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{62797216-ED9D-494D-AF38-1C0F3AA8AFB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{62797216-ED9D-494D-AF38-1C0F3AA8AFB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62797216-ED9D-494D-AF38-1C0F3AA8AFB1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -96,6 +102,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{D227C976-52D0-4B8F-B864-87577CEB9E7D} = {B45F5473-33C2-49A7-8E46-29F378BD4187}
 		{62797216-ED9D-494D-AF38-1C0F3AA8AFB1} = {43A9B289-C267-4098-AF70-3B1123039CF4}
 		{20153480-86EE-4E87-B669-7F78798263F4} = {43A9B289-C267-4098-AF70-3B1123039CF4}
 		{4E4EE20C-F06A-4A1B-851F-C5577796941C} = {F97FCCC7-1539-4D2E-B893-BBA6F5269E42}

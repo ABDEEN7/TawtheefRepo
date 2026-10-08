@@ -51,21 +51,16 @@ public sealed class UpdateBaseVersionQuestionCommandHandler(
             if (existing is not null && existing.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST)
                 return Result.Fail<Guid>(ErrorsCodes.QuestionBankQuestionAlreadyAssignedForMaintenance);
 
-            var itemId = existing?.Id ?? Guid.NewGuid();
-            var nextRevisionNo = (await uow.GetEntityRepository<QuestionRevision>().DbSet
-                .Where(x => x.QuestionId == command.QuestionId).MaxAsync(x => (int?)x.RevisionNo, ct) ?? 0) + 1;
-            var revision = QuestionEntryRules.Revision(command.QuestionId, nextRevisionNo, itemId, input);
             var item = existing ?? new QuestionBankRequestItem
-                { Id = itemId, RequestId = assignment.QuestionBankRequestId, QuestionId = command.QuestionId };
+                { Id = Guid.NewGuid(), RequestId = assignment.QuestionBankRequestId, QuestionId = command.QuestionId };
             item.QuestionBankAssignmentId = assignment.Id;
             item.ChangeTypeId = QuestionChangeTypeIds.UPDATE;
             item.StatusId = QuestionBankRequestItemStatusIds.DRAFT;
             item.OriginalRevisionId = original.QuestionRevisionId;
-            item.CurrentProposedRevisionId = revision.Id;
+            item.CurrentProposedRevisionId = null;
             item.RemovedById = null;
             item.RemovedAt = null;
             item.RemovalNote = null;
-            await uow.GetEntityRepository<QuestionRevision>().AddAsync(revision, ct);
             if (existing is null)
                 await uow.GetEntityRepository<QuestionBankRequestItem>().AddAsync(item, ct);
             if (assignment.StatusId == QuestionBankAssignmentStatusIds.Assigned)
@@ -73,7 +68,18 @@ public sealed class UpdateBaseVersionQuestionCommandHandler(
                 assignment.StatusId = QuestionBankAssignmentStatusIds.QuestionEntryInProgress;
                 assignment.QuestionEntryStartedAt ??= DateTime.UtcNow;
             }
-            try { await uow.SaveChangesAsync(ct); }
+            try
+            {
+                // Acquire the unique maintenance claim (or reclaim its row version) first.
+                // No revision number is allocated until this save succeeds.
+                await uow.SaveChangesAsync(ct);
+                var nextRevisionNo = (await uow.GetEntityRepository<QuestionRevision>().DbSet
+                    .Where(x => x.QuestionId == command.QuestionId).MaxAsync(x => (int?)x.RevisionNo, ct) ?? 0) + 1;
+                var revision = QuestionEntryRules.Revision(command.QuestionId, nextRevisionNo, item.Id, input);
+                item.CurrentProposedRevisionId = revision.Id;
+                await uow.GetEntityRepository<QuestionRevision>().AddAsync(revision, ct);
+                await uow.SaveChangesAsync(ct);
+            }
             catch (DbUpdateException exception) when (MaintenanceClaimConflict.IsDuplicateQuestionClaim(exception))
             {
                 return Result.Fail<Guid>(ErrorsCodes.QuestionBankQuestionAlreadyAssignedForMaintenance);

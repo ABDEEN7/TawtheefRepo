@@ -139,7 +139,11 @@
           </ng-template>
 
           <ng-template #body let-question>
-            <tr>
+            <tr
+              [class.maintenance-add]="question.changeTypeId === changeTypes.add"
+              [class.maintenance-update]="question.changeTypeId === changeTypes.update"
+              [class.maintenance-delete]="question.changeTypeId === changeTypes.delete"
+            >
               <td>
                 @if (
                   localizedContent(question.questionTextAr, question.questionTextEn);
@@ -216,7 +220,11 @@
               }
             </tr>
             @if (correctionMode && question.latestReviewNote) {
-              <tr>
+              <tr
+                [class.maintenance-add]="question.changeTypeId === changeTypes.add"
+                [class.maintenance-update]="question.changeTypeId === changeTypes.update"
+                [class.maintenance-delete]="question.changeTypeId === changeTypes.delete"
+              >
                 <td colspan="6">
                   <strong>{{ 'QUESTION_ASSIGNMENTS.MANAGER_FEEDBACK' | translate }}:</strong>
                   {{ question.latestReviewNote }}

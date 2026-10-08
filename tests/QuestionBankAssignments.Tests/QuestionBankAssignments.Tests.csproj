@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Application.Operation/Application.Operation.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="nunit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <Compile Include="../../src/Infrastructure/Configurations/Entities/QuestionsBank/QuestionRevisionConfiguration.cs" Link="Configurations/QuestionRevisionConfiguration.cs" />
+    <Compile Include="../../src/Infrastructure/Configurations/Entities/QuestionsBank/QuestionBankRequestItemConfiguration.cs" Link="Configurations/QuestionBankRequestItemConfiguration.cs" />
+  </ItemGroup>
+</Project>

@@ -61,7 +61,7 @@
       #imageInput
       type="file"
       class="d-none"
-      accept="image/jpeg,image/png,image/webp"
+      accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
       (change)="chooseImage($event)"
     />
     <p-button
@@ -199,6 +199,10 @@
       [text]="true"
       (onClick)="cancel()"
     />
-    <p-button type="submit" [label]="'QUESTION_ASSIGNMENTS.SAVE' | translate" />
+    <p-button
+      type="submit"
+      [label]="'QUESTION_ASSIGNMENTS.SAVE' | translate"
+      [disabled]="imageValidating"
+    />
   </div>
 </form>
