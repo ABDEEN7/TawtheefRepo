@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
 
@@ -94,7 +95,7 @@ public sealed class CandidateExamResumeService(
                     return null;
 
                 return new CandidateExamResumeResult(attemptId, currPart.Part.Id, activeSessionId,
-                    currPart.Part.EffectiveDeadlineAt!.Value, currPart.Part.LastQuestionNo!.Value,
+                    currPart.Part.EffectiveDeadlineAt!.Value.AsUtcOffset(), currPart.Part.LastQuestionNo!.Value,
                     currPart.AllowPreviousQuestion, false);
             }
 
@@ -146,7 +147,7 @@ public sealed class CandidateExamResumeService(
                 .Where(x => x.TestAttemptId == attemptId)
                 .ExecuteDeleteAsync(token);
 
-            return new CandidateExamResumeResult(attemptId, part.Id, activeSessionId, newDeadline,
+            return new CandidateExamResumeResult(attemptId, part.Id, activeSessionId, newDeadline.AsUtcOffset(),
                 part.LastQuestionNo!.Value, currentPart.AllowPreviousQuestion, true);
         }, cancellationToken);
 }

@@ -28,7 +28,7 @@ public sealed class ExamResultReportReadyForReviewDomainEventHandler(
             })
             .SingleAsync(ct);
         var reviewers = await userRepository.GetUsersByPermissionAsync(
-            PermissionKeys.Exams.WorkflowActions, ct);
+            PermissionKeys.Exams.ApproveResults, ct);
         var payload = JsonSerializer.Serialize(new ExamResultReportReadyNotificationModel(
             exam.ExamNo, exam.TitleAr, exam.TitleEn,
             exam.JobTitleAr, exam.JobTitleEn, notification.CandidateCount));

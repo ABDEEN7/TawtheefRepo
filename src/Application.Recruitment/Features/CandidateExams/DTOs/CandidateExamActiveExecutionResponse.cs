@@ -4,6 +4,6 @@ public sealed record CandidateExamActiveExecutionResponse(
     Guid TestAttemptId,
     Guid TestAttemptPartId,
     Guid ActiveSessionId,
-    DateTime EffectiveDeadlineAt,
+    DateTimeOffset EffectiveDeadlineAt,
     int CurrentQuestionNumber,
     bool AllowPreviousQuestion);

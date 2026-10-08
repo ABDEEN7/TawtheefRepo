@@ -5,6 +5,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
@@ -75,7 +76,7 @@ public sealed class GetCandidateExamActiveExecutionQueryHandler(IUnitOfWork unit
             attempt.Id,
             runningPart.Id,
             attempt.ActiveSessionId.Value,
-            runningPart.EffectiveDeadlineAt.Value,
+            runningPart.EffectiveDeadlineAt.Value.AsUtcOffset(),
             runningPart.LastQuestionNo.Value,
             attempt.AllowPreviousQuestion));
     }

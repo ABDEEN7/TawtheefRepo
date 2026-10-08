@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
@@ -180,8 +181,8 @@ public sealed class StartCandidateExamCommandHandler(
     private static IResult<StartCandidateExamResponse> Success(Guid candidateId, Guid examId, TestAttempt attempt,
         TestAttemptPart part, int partNo, bool allowPreviousQuestion) =>
         Result.Ok(new StartCandidateExamResponse(candidateId, attempt.Id, part.Id, examId,
-            attempt.ActiveSessionId!.Value, partNo, part.LastQuestionNo!.Value, part.StartedAt!.Value,
-            part.EffectiveDeadlineAt!.Value, part.DurationMinutesSnapshot!.Value, allowPreviousQuestion));
+            attempt.ActiveSessionId!.Value, partNo, part.LastQuestionNo!.Value, part.StartedAt!.Value.AsUtcOffset(),
+            part.EffectiveDeadlineAt!.Value.AsUtcOffset(), part.DurationMinutesSnapshot!.Value, allowPreviousQuestion));
 
     private static string AttemptError(Guid statusId) =>
         statusId == TestAttemptStatusIds.Interrupted ? ErrorsCodes.CandidateExamAttemptInterrupted :

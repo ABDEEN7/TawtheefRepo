@@ -10,6 +10,7 @@ using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Application.Features.Authenticator.DTOs.Responses;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities;
@@ -131,8 +132,9 @@ public sealed class GetCandidateExamCurrentQuestionQueryHandler(
             .ToList();
 
         return Result.Ok(new CandidateExamCurrentQuestionResponse(attempt.Id, part.Id, attempt.ExamId, part.PartNo,
-            part.Title, part.PartNo, parts.Count, part.DurationMinutes.Value, startedAtUtc, effectiveDeadlineAtUtc,
-            serverTimeUtc, remainingSeconds, remainingSeconds == 0, question.OrderNo, totalQuestions,
+            part.Title, part.PartNo, parts.Count, part.DurationMinutes.Value, startedAtUtc.AsUtcOffset(),
+            effectiveDeadlineAtUtc.AsUtcOffset(),
+            serverTimeUtc.AsUtcOffset(), remainingSeconds, remainingSeconds == 0, question.OrderNo, totalQuestions,
             attempt.AllowPreviousQuestion, attempt.AllowPreviousQuestion && question.OrderNo > 1,
             question.OrderNo < totalQuestions, question.Id,
             new DropdownOptions
@@ -142,7 +144,7 @@ public sealed class GetCandidateExamCurrentQuestionQueryHandler(
                 Name = question.QuestionTypeName,
                 Description = question.QuestionTypeDescription
             }, question.Text ?? string.Empty, Resource(question.ResourceId), question.SelectedOptionId,
-            question.SavedAt, options, attempt.JobTitle));
+            question.SavedAt.AsUtcOffset(), options, attempt.JobTitle));
     }
 
     private static IResult<CandidateExamCurrentQuestionResponse> Failure(string code, int statusCode = 409) =>

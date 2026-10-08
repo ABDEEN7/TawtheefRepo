@@ -8,6 +8,7 @@ using Tawtheef.Application.Common.Concurrency;
 using Tawtheef.Application.Common.Constants;
 using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
@@ -60,13 +61,14 @@ public sealed class CandidateExamExecutionMutationService(
                 if (state.Question.SavedAt is null)
                     return Failure<SaveCandidateExamAnswerResponse>(ErrorsCodes.CandidateExamCurrentStateInvalid);
                 return Result.Ok(new SaveCandidateExamAnswerResponse(state.Question.Id, selectedOptionId,
-                    state.Question.SavedAt.Value, false));
+                    state.Question.SavedAt.Value.AsUtcOffset(), false));
             }
 
             state.Question.SelectedQuestionRevisionOptionId = selectedOptionId;
             state.Question.SavedAt = now;
             await unitOfWork.SaveChangesAsync(token);
-            return Result.Ok(new SaveCandidateExamAnswerResponse(state.Question.Id, selectedOptionId, now, true));
+            return Result.Ok(new SaveCandidateExamAnswerResponse(state.Question.Id, selectedOptionId,
+                now.AsUtcOffset(), true));
         }, cancellationToken);
     }
 
@@ -544,8 +546,8 @@ public sealed class CandidateExamExecutionMutationService(
             throw new InvalidOperationException("A started attempt part must have a complete execution state.");
         }
 
-        return new StartedCandidateExamPartDto(part.Part.Id, part.PartNo, part.Part.StartedAt.Value,
-            part.Part.DurationMinutesSnapshot.Value, part.Part.EffectiveDeadlineAt.Value,
+        return new StartedCandidateExamPartDto(part.Part.Id, part.PartNo, part.Part.StartedAt.Value.AsUtcOffset(),
+            part.Part.DurationMinutesSnapshot.Value, part.Part.EffectiveDeadlineAt.Value.AsUtcOffset(),
             part.Part.LastQuestionNo.Value, totalQuestions.Value);
     }
 
@@ -556,7 +558,8 @@ public sealed class CandidateExamExecutionMutationService(
         var nextPart = CreateStartedPartDto(next, nextQuestionCount);
 
         return Result.Ok(new TimeoutCandidateExamPartResponse(attemptId,
-            new TimedOutCandidateExamPartDto(timedOut.Part.Id, timedOut.PartNo, timedOut.Part.CompletedAt!.Value),
+            new TimedOutCandidateExamPartDto(timedOut.Part.Id, timedOut.PartNo,
+                timedOut.Part.CompletedAt!.Value.AsUtcOffset()),
             outcome, next is not null, nextPart, attemptStatusId, examEnded, changed));
     }
 
@@ -589,7 +592,8 @@ public sealed class CandidateExamExecutionMutationService(
         var nextPart = CreateStartedPartDto(next, nextQuestionCount);
 
         return Result.Ok(new SubmitCandidateExamPartResponse(attemptId,
-            new CompletedCandidateExamPartDto(completed.Part.Id, completed.PartNo, completed.Part.CompletedAt!.Value),
+            new CompletedCandidateExamPartDto(completed.Part.Id, completed.PartNo,
+                completed.Part.CompletedAt!.Value.AsUtcOffset()),
             outcome, next is not null, nextPart, attemptStatusId, examEnded, allowPreviousQuestion, changed));
     }
 

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services;
 using Tawtheef.Application.Common.Models;
+using Tawtheef.Application.Extensions;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
 
@@ -153,7 +154,7 @@ public sealed class GetCandidateExamAssignmentsQueryHandler(
                                              == TestAttemptInterruptionResolutionActionIds.Resume
                                              && interruption.ResolvedById != null
                                              && interruption.ResolvedAt == null),
-                AuthorizedAt = candidate.AuthorizedAt,
+                AuthorizedAt = candidate.AuthorizedAt.AsUtcOffset(),
                 EntryState = candidate.StatusId == TestSessionCandidateStatusIds.Completed
                     ?
                     CandidateExamEntryStates.Completed

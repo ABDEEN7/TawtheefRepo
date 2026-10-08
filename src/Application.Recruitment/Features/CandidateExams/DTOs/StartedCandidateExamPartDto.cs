@@ -3,8 +3,8 @@ namespace Application.Recruitment.Features.CandidateExams.DTOs;
 public sealed record StartedCandidateExamPartDto(
     Guid TestAttemptPartId,
     int PartNo,
-    DateTime StartedAt,
+    DateTimeOffset StartedAt,
     int DurationMinutes,
-    DateTime EffectiveDeadlineAt,
+    DateTimeOffset EffectiveDeadlineAt,
     int CurrentQuestionNumber,
     int TotalQuestionsInPart);

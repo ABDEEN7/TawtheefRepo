@@ -4,7 +4,7 @@ public sealed record CandidateExamResumeResult(
     Guid TestAttemptId,
     Guid TestAttemptPartId,
     Guid ActiveSessionId,
-    DateTime EffectiveDeadlineAt,
+    DateTimeOffset EffectiveDeadlineAt,
     int CurrentQuestionNumber,
     bool AllowPreviousQuestion,
     bool WasChanged);

@@ -8,7 +8,7 @@ public sealed record StartCandidateExamResponse(
     Guid ActiveSessionId,
     int CurrentPartNumber,
     int CurrentQuestionNumber,
-    DateTime StartedAt,
-    DateTime EffectiveDeadlineAt,
+    DateTimeOffset StartedAt,
+    DateTimeOffset EffectiveDeadlineAt,
     int DurationMinutes,
     bool AllowPreviousQuestion);
