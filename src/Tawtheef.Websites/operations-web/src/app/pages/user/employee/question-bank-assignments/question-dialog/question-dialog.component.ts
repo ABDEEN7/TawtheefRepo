@@ -1,22 +1,20 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy } from '@angular/core';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
-import { Checkbox } from 'primeng/checkbox';
-import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
-import { Subscription } from 'rxjs';
-import { RichContentEditorComponent } from '../../../../../shared/rich-content/rich-content-editor.component';
-import { RichContentInputComponent } from '../../../../../shared/rich-content/rich-content-input.component';
-import { hasMeaningfulRichContent } from '../../../../../shared/rich-content/rich-content.utils';
-import {
-  AssignmentOption,
-  AssignmentQuestion,
-  QuestionTypes,
-} from '../models/question-bank-assignment.models';
-import { QuestionBankAssignmentsService } from '../services/question-bank-assignments.service';
+import {CommonModule} from '@angular/common';
+import {Component, inject, OnDestroy} from '@angular/core';
+import {FormArray, FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {TranslatePipe} from '@ngx-translate/core';
+import {ButtonModule} from 'primeng/button';
+import {Checkbox} from 'primeng/checkbox';
+import {DynamicDialogConfig, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {InputTextModule} from 'primeng/inputtext';
+import {Select} from 'primeng/select';
+import {startWith, Subscription} from 'rxjs';
+import {hasMeaningfulRichContent} from '../../../../../shared/rich-content/rich-content.utils';
+import {AssignmentOption, AssignmentQuestion, QuestionTypes,} from '../models/question-bank-assignment.models';
+import {QuestionBankAssignmentsService} from '../services/question-bank-assignments.service';
+import {RichContentEditorComponent} from '../../../../../shared/rich-content/rich-content-editor.component';
+import {RichContentInputComponent} from '../../../../../shared/rich-content/rich-content-input.component';
+
+
 
 @Component({
   selector: 'app-question-dialog',
@@ -32,6 +30,7 @@ import { QuestionBankAssignmentsService } from '../services/question-bank-assign
     Checkbox,
     RichContentEditorComponent,
     RichContentInputComponent,
+
   ],
 })
 export class QuestionDialogComponent implements OnDestroy {
@@ -39,6 +38,7 @@ export class QuestionDialogComponent implements OnDestroy {
   private readonly ref = inject(DynamicDialogRef);
   private readonly service = inject(QuestionBankAssignmentsService);
   readonly config = inject(DynamicDialogConfig);
+  readonly questionTypeReadOnly = !!this.config.data?.questionTypeReadOnly;
 
   readonly types = [
     { label: 'QUESTION_ASSIGNMENTS.MULTIPLE_CHOICE', value: QuestionTypes.multipleChoice },
@@ -68,6 +68,7 @@ export class QuestionDialogComponent implements OnDestroy {
   imageLoading = false;
   submitted = false;
   private imageSubscription?: Subscription;
+  private readonly typeSubscription: Subscription;
 
   get options(): FormArray {
     return this.form.controls.options;
@@ -77,13 +78,29 @@ export class QuestionDialogComponent implements OnDestroy {
     const question = this.config.data?.question as AssignmentQuestion | undefined;
     if (question) {
       this.form.patchValue(question);
-      question.options.forEach((option) => this.addOption(option));
+      if (question.questionTypeId === QuestionTypes.trueFalse) {
+        this.initializeTrueFalseOptions(question.options);
+      } else {
+        this.initializeMultipleChoiceOptions(question.options);
+      }
       if (question.imageUrl) this.loadExistingImage(question.imageUrl);
-      return;
+    } else {
+      this.initializeMultipleChoiceOptions();
     }
 
-    this.addOption();
-    this.addOption();
+    let previousType = this.form.controls.questionTypeId.value;
+    this.typeSubscription = this.form.controls.questionTypeId.valueChanges
+      .pipe(startWith(previousType))
+      .subscribe((type) => {
+        if (type === previousType) return;
+        previousType = type;
+        if (type === QuestionTypes.trueFalse) this.initializeTrueFalseOptions();
+        if (type === QuestionTypes.multipleChoice) this.initializeMultipleChoiceOptions();
+      });
+  }
+
+  get isTrueFalse(): boolean {
+    return this.form.controls.questionTypeId.value === QuestionTypes.trueFalse;
   }
 
   chooseImage(event: Event): void {
@@ -109,10 +126,12 @@ export class QuestionDialogComponent implements OnDestroy {
     this.revokeImagePreview();
     this.imagePreview = undefined;
     this.imageFile = undefined;
+    this.imageError = false;
     this.form.controls.resourceId.setValue(null);
   }
 
   addOption(value: Partial<AssignmentQuestion['options'][number]> = {}): void {
+    if (this.isTrueFalse) return;
     this.options.push(
       this.fb.group({
         optionTextAr: [value.optionTextAr ?? ''],
@@ -124,6 +143,7 @@ export class QuestionDialogComponent implements OnDestroy {
   }
 
   removeOption(index: number): void {
+    if (this.isTrueFalse) return;
     if (this.options.length > 2) this.options.removeAt(index);
   }
 
@@ -171,11 +191,16 @@ export class QuestionDialogComponent implements OnDestroy {
 
   optionInvalid(index: number, language: 'optionTextAr' | 'optionTextEn'): boolean {
     const control = this.options.at(index).get(language);
-    return !!control && (control.touched || this.submitted) && !hasMeaningfulRichContent(control.value);
+    return (
+      !!control && (control.touched || this.submitted) && !hasMeaningfulRichContent(control.value)
+    );
   }
 
   correctOptionInvalid(): boolean {
-    return this.submitted && this.options.controls.filter((option) => option.value.isCorrect).length !== 1;
+    return (
+      this.submitted &&
+      this.options.controls.filter((option) => option.value.isCorrect).length !== 1
+    );
   }
 
   cancel(): void {
@@ -183,8 +208,53 @@ export class QuestionDialogComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.typeSubscription.unsubscribe();
     this.imageSubscription?.unsubscribe();
     this.revokeImagePreview();
+  }
+
+  private initializeMultipleChoiceOptions(values: AssignmentQuestion['options'] = []): void {
+    this.options.clear();
+    (values.length >= 2 ? values : [{}, {}]).forEach((option) => this.addOption(option));
+  }
+
+  private initializeTrueFalseOptions(values: AssignmentQuestion['options'] = []): void {
+    const normalized = (value?: string | null) =>
+      value
+        ?.replace(/<[^>]*>/g, '')
+        .trim()
+        .toLowerCase();
+    const trueOption = values.find(
+      (option) =>
+        normalized(option.optionTextAr) === 'صح' || normalized(option.optionTextEn) === 'true',
+    );
+    const falseOption = values.find(
+      (option) =>
+        normalized(option.optionTextAr) === 'خطأ' || normalized(option.optionTextEn) === 'false',
+    );
+    const safelyUsePositions =
+      values.length === 2 &&
+      !trueOption &&
+      !falseOption &&
+      values[0].displayOrder === 1 &&
+      values[1].displayOrder === 2;
+    this.options.clear();
+    this.options.push(
+      this.fb.group({
+        optionTextAr: ['صح'],
+        optionTextEn: ['True'],
+        isCorrect: [trueOption?.isCorrect ?? (safelyUsePositions ? values[0].isCorrect : false)],
+        displayOrder: [1],
+      })
+    );
+    this.options.push(
+       this.fb.group({
+        optionTextAr: ['خطأ'],
+        optionTextEn: ['False'],
+        isCorrect: [falseOption?.isCorrect ?? (safelyUsePositions ? values[1].isCorrect : false)],
+        displayOrder: [2],
+      })
+    );
   }
 
   private loadExistingImage(blobKey: string): void {

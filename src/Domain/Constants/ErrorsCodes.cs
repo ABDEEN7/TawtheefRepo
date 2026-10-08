@@ -27,6 +27,9 @@ public class ErrorsCodes
     #region Question Banks
     public const string QuestionBankCreationRequestAlreadyInProgress = "QUESTION_BANK_CREATION_REQUEST_ALREADY_IN_PROGRESS";
     public const string QuestionBankAlreadyExists = "QUESTION_BANK_ALREADY_EXISTS";
+    public const string QuestionBankNotFound = "QUESTION_BANK_NOT_FOUND";
+    public const string QuestionBankNotMaintainable = "QUESTION_BANK_NOT_MAINTAINABLE";
+    public const string QuestionBankActiveRequestAlreadyExists = "QUESTION_BANK_ACTIVE_REQUEST_ALREADY_EXISTS";
     public const string QuestionBankCreationRequestStageNotSupported = "QUESTION_BANK_CREATION_REQUEST_STAGE_NOT_SUPPORTED";
     public const string SpecializedQuestionBankTargetRequired = "SPECIALIZED_QUESTION_BANK_TARGET_REQUIRED";
     public const string QuestionBankTargetNotAllowed = "QUESTION_BANK_TARGET_NOT_ALLOWED";
@@ -43,7 +46,15 @@ public class ErrorsCodes
     public const string QuestionBankAssignmentNotEditable = "QUESTION_BANK_ASSIGNMENT_NOT_EDITABLE";
     public const string QuestionBankAssignmentQuestionNotFound = "QUESTION_BANK_ASSIGNMENT_QUESTION_NOT_FOUND";
     public const string QuestionBankMinimumQuestionCountNotMet = "QUESTION_BANK_MINIMUM_QUESTION_COUNT_NOT_MET";
+    public const string QuestionBankRequestNotReviewable = "QUESTION_BANK_REQUEST_NOT_REVIEWABLE";
+    public const string InvalidQuestionBankReview = "INVALID_QUESTION_BANK_REVIEW";
+    public const string StaleQuestionBankReview = "STALE_QUESTION_BANK_REVIEW";
     public const string InvalidQuestionEntry = "INVALID_QUESTION_ENTRY";
+    public const string QuestionBankBaseVersionStale = "QUESTION_BANK_BASE_VERSION_STALE";
+    public const string QuestionBankBaseVersionQuestionNotFound = "QUESTION_BANK_BASE_VERSION_QUESTION_NOT_FOUND";
+    public const string QuestionBankQuestionAlreadyAssignedForMaintenance = "QUESTION_BANK_QUESTION_ALREADY_ASSIGNED_FOR_MAINTENANCE";
+    public const string QuestionBankMaintenanceItemNotOwned = "QUESTION_BANK_MAINTENANCE_ITEM_NOT_OWNED";
+    public const string InvalidQuestionBankMaintenanceChange = "INVALID_QUESTION_BANK_MAINTENANCE_CHANGE";
     #endregion
 
     // =========================================================
@@ -347,6 +358,8 @@ public class ErrorsCodes
     public const string TestSlotCanOnlyBeStartedOnScheduledDate = "TEST_SLOT_CAN_ONLY_BE_STARTED_ON_SCHEDULED_DATE";
     public const string TestSlotStartTooEarly = "TEST_SLOT_START_TOO_EARLY";
     public const string TestSessionInsufficientCapacity = "TEST_SESSION_INSUFFICIENT_CAPACITY";
+    public const string TestSessionScheduledTimeExpired = "TEST_SESSION_SCHEDULED_TIME_EXPIRED";
+    public const string TestSessionCandidatesAlreadyAssigned = "TEST_SESSION_CANDIDATES_ALREADY_ASSIGNED";
     #endregion
 
     public const string EmployeeDirectoryRequestFailed = "EMPLOYEE_DIRECTORY_REQUEST_FAILED";

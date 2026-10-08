@@ -96,5 +96,6 @@
   "internal.sidebar.start-interview": "بدء المقابلة",
   "internal.sidebar.approve-interview": "اعتماد نتائج المقابلة",
   "internal.sidebar.interview-dashboard": "لوحة المقابلات",
-  "internal.sidebar.question-bank-assignments": "مهام بنوك الأسئلة"
+  "internal.sidebar.question-bank-assignments": "مهام بنوك الأسئلة",
+  "internal.sidebar.testSessions": "جلسات الاختبار"
 }

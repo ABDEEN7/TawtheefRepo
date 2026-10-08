@@ -27,6 +27,17 @@ public sealed class QuestionBankRequestsController(IMediator mediator) : Control
     public async Task<IActionResult> Create([FromBody] CreateQuestionBankRequestCommand command, CancellationToken cancellationToken) =>
         (await mediator.Send(command, cancellationToken)).ToActionResult();
 
+    [HttpGet("banks/{questionBankId:guid}/maintenance-details")]
+    [AuthorizePermission(PermissionKeys.QuestionBankRequests.Maintenance)]
+    public async Task<IActionResult> MaintenanceDetails(Guid questionBankId, CancellationToken cancellationToken) =>
+        (await mediator.Send(new GetQuestionBankMaintenanceDetailsQuery(questionBankId), cancellationToken)).ToActionResult();
+
+    [HttpPost("{questionBankId:guid}/maintenance")]
+    [AuthorizePermission(PermissionKeys.QuestionBankRequests.Maintenance)]
+    public async Task<IActionResult> CreateMaintenance(Guid questionBankId,
+        [FromBody] CreateQuestionBankMaintenanceRequestCommand command, CancellationToken cancellationToken) =>
+        (await mediator.Send(command with { QuestionBankId = questionBankId }, cancellationToken)).ToActionResult();
+
     [HttpGet("{id:guid}")]
     [AuthorizePermission(PermissionKeys.QuestionBankRequests.View)]
     public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken) =>
@@ -40,6 +51,17 @@ public sealed class QuestionBankRequestsController(IMediator mediator) : Control
     [HttpPost("{id:guid}/assignments")]
     [AuthorizePermission(PermissionKeys.QuestionBankRequests.Assign)]
     public async Task<IActionResult> Assign(Guid id, [FromBody] AssignQuestionBankEmployeesCommand command, CancellationToken cancellationToken) =>
+        (await mediator.Send(command with { RequestId = id }, cancellationToken)).ToActionResult();
+
+    [HttpGet("{id:guid}/review")]
+    [AuthorizePermission(PermissionKeys.QuestionBankRequests.Review)]
+    public async Task<IActionResult> Review(Guid id, CancellationToken cancellationToken) =>
+        (await mediator.Send(new GetQuestionBankRequestReviewQuery(id), cancellationToken)).ToActionResult();
+
+    [HttpPost("{id:guid}/review")]
+    [AuthorizePermission(PermissionKeys.QuestionBankRequests.Review)]
+    public async Task<IActionResult> SubmitReview(Guid id,
+        [FromBody] SubmitQuestionBankRequestReviewCommand command, CancellationToken cancellationToken) =>
         (await mediator.Send(command with { RequestId = id }, cancellationToken)).ToActionResult();
 
     [HttpGet("lookups/question-bank-types")]

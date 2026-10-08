@@ -9,6 +9,7 @@ export interface AssignmentOption {
 export interface AssignmentQuestion {
   itemId: string;
   questionId: string;
+  changeTypeId: string;
   revisionId: string;
   revisionNo: number;
   questionTypeId: string;
@@ -26,7 +27,15 @@ export interface AssignmentQuestion {
   statusId: string;
   statusNameAr: string;
   statusNameEn: string;
+  latestDecisionId?: string;
+  latestReviewNote?: string;
+  latestReviewRound?: number;
   options: AssignmentOption[];
+}
+
+export interface MaintenanceBaseQuestion extends Omit<AssignmentQuestion, 'itemId' | 'changeTypeId' | 'statusId' | 'statusNameAr' | 'statusNameEn'> {
+  ownership: 'Available' | 'AssignedToMe' | 'AssignedToAnotherEmployee';
+  requestItemId?: string;
 }
 
 export interface QuestionInput {
@@ -89,12 +98,32 @@ export interface AssignmentWorkspace {
     canFinish: boolean;
   };
   questions: AssignmentQuestion[];
+  baseQuestions: MaintenanceBaseQuestion[];
 }
+
+export const QuestionChangeTypes = {
+  add: 'dd984c21-7b25-444b-85a9-78767e337ddc',
+  update: 'f7abde66-546b-4055-bfed-215c47bea845',
+  delete: 'f02136e2-ac6c-4d3e-9c37-efd28587177d',
+};
 
 export const AssignmentStatuses = {
   assigned: '9b38c5a0-fb16-44f2-8239-cb5ee704129d',
   inProgress: '8b73c382-c04b-49f7-bb78-4bc235df872f',
   completed: 'c6cddace-de75-4a6e-8d1f-65e7e93ba4ed',
+  returnedForModification: '238e3c8d-84de-4d70-8a1f-192ac93224ba',
+  modificationCompleted: 'c035e63f-d866-488f-affd-9ae08a7043dd',
+  workflowCompleted: 'a8ca906a-e1a3-44c9-87c1-8b4ec6192ab0',
+  cancelled: 'a4851953-f48a-4aa9-afb9-b51dfbc1e4d8',
+};
+
+export const RequestItemStatuses = {
+  draft: '19760735-e5f0-4236-9fff-8487f9f057ef',
+  pendingReview: 'c5ed702c-cfca-4d7e-8bf9-98cdf15f2106',
+  approved: '1914dd04-27d9-468d-b03e-813df6ce87ff',
+  needsModification: 'bfa1d9c1-a284-452b-8b59-a2d5fc0a6dfe',
+  rejected: '217164f8-c23d-4913-a549-16f80186f9cb',
+  removedFromRequest: 'f48eedf5-4fe9-4ded-931b-c76bd5c9ba80',
 };
 
 export const QuestionTypes = {

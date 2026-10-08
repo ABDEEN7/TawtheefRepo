@@ -25,6 +25,12 @@ export interface TestSessionCandidateSummaryDto {
   excluded: number;
 }
 
+export interface TestSessionCandidateConflictDto {
+  invitationId: string;
+  candidateName: string;
+  qid?: string | null;
+}
+
 export interface TestSessionCandidatesDto {
   candidates: TestSessionCandidateListItemDto[];
   summary: TestSessionCandidateSummaryDto;

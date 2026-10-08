@@ -24,4 +24,5 @@ public sealed record QuestionBankRequestListItemDto
     public string? SubmittedByNameEn { get; init; }
     public DateTime SubmittedAt { get; init; }
     public int CurrentReviewRound { get; init; }
+    public bool CanReview { get; init; }
 }

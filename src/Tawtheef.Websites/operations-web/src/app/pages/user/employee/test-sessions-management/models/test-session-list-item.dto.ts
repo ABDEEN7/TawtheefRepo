@@ -1,4 +1,5 @@
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
+import { TestSessionCandidateListItemDto } from './test-session-candidate.dto';
 
 export interface TestSessionListItemDto {
   id: string;
@@ -31,6 +32,7 @@ export interface TestSessionEditDto {
   genderFilter: 'Male' | 'Female' | null;
   nationalityFilter: 'Qatari' | 'NonQatari' | null;
   invitationIds: string[];
+  persistedCandidates?: TestSessionCandidateListItemDto[];
   testSlotId: string | null;
   slotName: string | null;
   slotDate: string | null;
@@ -42,6 +44,10 @@ export interface TestSessionEditDto {
   startTime: string | null;
   endTime: string | null;
   availableCapacity: number;
+  decisionNote: string | null;
+  decisionByName?: string | null;
+  decisionAt?: string | null;
+  statusBackendName?: string | null;
 }
 
 export interface TestSessionFilters {

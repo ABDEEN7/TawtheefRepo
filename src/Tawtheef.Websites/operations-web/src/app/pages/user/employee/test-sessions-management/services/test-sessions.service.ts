@@ -43,10 +43,6 @@ export class TestSessionsService {
     return this.http.get<ReadyTestSlotsDto>(this.endpoints.testSessions.readyTestSlots, filters);
   }
 
-  capacity(filters: { testSlotId: string; startTime: string; endTime: string; selectedCandidateCount: number }): Observable<{ availableSeats: number; isSufficient: boolean }> {
-    return this.http.get<{ availableSeats: number; isSufficient: boolean }>(this.endpoints.testSessions.capacity, filters);
-  }
-
   sessionSetup(examId: string, testSlotId: string): Observable<TestSessionSetupDto> {
     return this.http.get<TestSessionSetupDto>(this.endpoints.testSessions.sessionSetup, { examId, testSlotId });
   }
@@ -73,5 +69,13 @@ export class TestSessionsService {
 
   approve(testSessionId: string): Observable<void> {
     return this.http.post<void>(this.endpoints.testSessions.approve(testSessionId), {});
+  }
+
+  returnForEdit(testSessionId: string, decisionNote: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.testSessions.return(testSessionId), { decisionNote });
+  }
+
+  reject(testSessionId: string, decisionNote: string): Observable<void> {
+    return this.http.post<void>(this.endpoints.testSessions.reject(testSessionId), { decisionNote });
   }
 }

@@ -11,6 +11,7 @@ public sealed record QuestionBankRequestDetailsDto
     public required string StatusNameAr { get; init; }
     public required string StatusNameEn { get; init; }
     public int CurrentReviewRound { get; init; }
+    public int? BaseVersionNo { get; init; }
     public string? Reason { get; init; }
     public Guid SubmittedById { get; init; }
     public string? SubmittedByNameAr { get; init; }
@@ -26,5 +27,10 @@ public sealed record QuestionBankRequestDetailsDto
     public string? JobTitleNameAr { get; init; }
     public string? JobTitleNameEn { get; init; }
     public bool IsActive { get; init; }
+    public bool CanReview { get; init; }
+    public int PendingReviewItemCount { get; init; }
+    public int ApprovedItemCount { get; init; }
+    public int NeedsModificationItemCount { get; init; }
+    public int RejectedItemCount { get; init; }
     public IReadOnlyCollection<QuestionBankAssignmentDto> Assignments { get; init; } = [];
 }
