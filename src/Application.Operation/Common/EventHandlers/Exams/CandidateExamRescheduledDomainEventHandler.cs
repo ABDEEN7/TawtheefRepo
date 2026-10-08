@@ -2,6 +2,7 @@ using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Notifications;
 using Tawtheef.Domain.Entities.Notification;
 using Tawtheef.Domain.Entities.Users;
 using Tawtheef.Domain.Events.Operation.Employee.Exams;
@@ -25,14 +26,9 @@ public sealed class CandidateExamRescheduledDomainEventHandler(
             notification.SlotDate, notification.StartTime,
             notification.LocationAr, notification.LocationEn,
             notification.RoomAr, notification.RoomEn, notification.SessionNo));
-        await unitOfWork.GetEntityRepository<Notification>().AddAsync(Notification.Create(
-            NotificationChannel.InApp,
-            CandidateExamRescheduledNotification.TemplateKey,
-            applicant.Id,
-            applicant.Email,
-            payloadJson: payload,
-            language: applicant.GetPreferredLanguage(),
-            idempotencyKey: $"exam-rescheduled-{notification.AssignmentId:N}-{applicant.Id:N}"), ct);
+        await unitOfWork.GetEntityRepository<Notification>().AddRangeAsync(
+            ExamExecutionNotificationChannels.Create(CandidateExamRescheduledNotification.TemplateKey,
+                applicant, payload, "exam-rsch", notification.AssignmentId, candidateCritical: true).ToList(), ct);
         await unitOfWork.SaveChangesAsync(ct);
     }
 }

@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Notifications;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Notification;
@@ -34,14 +35,10 @@ public sealed class ExamResultReportReadyForReviewDomainEventHandler(
 
         foreach (var reviewer in reviewers)
         {
-            await unitOfWork.GetEntityRepository<Notification>().AddAsync(Notification.Create(
-                NotificationChannel.InApp,
-                ExamResultReportReadyNotification.TemplateKey,
-                reviewer.Id,
-                reviewer.Email,
-                payloadJson: payload,
-                language: reviewer.GetPreferredLanguage(),
-                idempotencyKey: $"err-{notification.ReportId:N}-{notification.TransitionAtUtc.Ticks:x}-{reviewer.Id:N}"), ct);
+            await unitOfWork.GetEntityRepository<Notification>().AddRangeAsync(
+                ExamExecutionNotificationChannels.Create(ExamResultReportReadyNotification.TemplateKey,
+                    reviewer, payload, $"rpt-ready-{notification.TransitionAtUtc.Ticks:x}",
+                    notification.ReportId, candidateCritical: false).ToList(), ct);
         }
     }
 }

@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Application.Common.Notifications;
 using Tawtheef.Application.Common.Security;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Notification;
@@ -65,24 +66,9 @@ public sealed class ExamResultReportApprovedDomainEventHandler(
             var recipient in
             interviewSchedulingUsers)
         {
-            await unitOfWork
-                .GetEntityRepository<Notification>()
-                .AddAsync(
-                    Notification.Create(
-                        NotificationChannel.InApp,
-                        ExamResultReportApprovedNotification
-                            .TemplateKey,
-                        recipient.Id,
-                        recipient.Email,
-                        payloadJson: payload,
-                        language:
-                        recipient
-                            .GetPreferredLanguage(),
-                        idempotencyKey:
-                        $"exam-report-approved-" +
-                        $"{notification.ReportId:N}-" +
-                        $"{recipient.Id:N}"),
-                    ct);
+            await unitOfWork.GetEntityRepository<Notification>().AddRangeAsync(
+                ExamExecutionNotificationChannels.Create(ExamResultReportApprovedNotification.TemplateKey,
+                    recipient, payload, "rpt-appr", notification.ReportId, candidateCritical: false).ToList(), ct);
         }
 
         await unitOfWork.SaveChangesAsync(ct);
