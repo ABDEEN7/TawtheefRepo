@@ -1,0 +1,183 @@
+<main class="candidate-exams-page" i18nNamespace="pages/user/candidate-exams">
+  <div class="container py-4 py-lg-5">
+    <header class="page-heading mb-4">
+      <div class="page-heading__icon" aria-hidden="true">
+        <i class="fa-solid fa-file-circle-check"></i>
+      </div>
+      <div>
+        <h1 class="page-heading__title">{{ 'candidate_exams.title' | translate }}</h1>
+        <p class="page-heading__description">
+          {{ 'candidate_exams.description' | translate }}
+        </p>
+      </div>
+    </header>
+
+    @if (assignmentsResource.isLoading() && assignmentsResource.value().length === 0) {
+      <section class="state-panel" aria-live="polite" aria-busy="true">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">{{ 'candidate_exams.loading' | translate }}</span>
+        </div>
+        <p>{{ 'candidate_exams.loading' | translate }}</p>
+      </section>
+    } @else if (assignmentsResource.error()) {
+      <section class="state-panel state-panel--error" role="alert">
+        <div class="state-panel__icon" aria-hidden="true">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h2>{{ 'candidate_exams.errorTitle' | translate }}</h2>
+        <p>{{ 'candidate_exams.errorDescription' | translate }}</p>
+        <button type="button" class="btn btn-outline-primary" (click)="retry()">
+          <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+          {{ 'candidate_exams.retry' | translate }}
+        </button>
+      </section>
+    } @else if (assignmentsResource.value().length === 0) {
+      <section class="state-panel">
+        <div class="state-panel__icon" aria-hidden="true">
+          <i class="fa-regular fa-calendar-xmark"></i>
+        </div>
+        <h2>{{ 'candidate_exams.emptyTitle' | translate }}</h2>
+        <p>{{ 'candidate_exams.emptyDescription' | translate }}</p>
+      </section>
+    } @else {
+      <section class="row g-4" [attr.aria-label]="'candidate_exams.listLabel' | translate">
+        @for (assignment of assignmentsResource.value(); track assignment.testSessionCandidateId) {
+          @let status = statusPresentation(assignment);
+          <div class="col-12 col-lg-6">
+            <article class="exam-card h-100">
+              <div class="exam-card__header">
+                <div class="min-w-0">
+                  <p class="exam-card__number">
+                    {{ 'candidate_exams.examNumber' | translate }}: {{ assignment.examNo }}
+                  </p>
+                  <h2 class="exam-card__title">{{ examTitle(assignment) }}</h2>
+                  <p class="mb-0">
+                    {{ 'candidate_exams.jobTitle' | translate }}:
+                    {{ localizedValue(assignment.jobTitleAr, assignment.jobTitleEn) }}
+                  </p>
+                </div>
+                <span class="status-pill" [ngClass]="'status-pill--' + status.tone">
+                  {{ status.labelKey | translate }}
+                </span>
+              </div>
+
+              <dl class="exam-details">
+                <div class="exam-details__item">
+                  <dt>
+                    <i class="fa-regular fa-calendar" aria-hidden="true"></i
+                    >{{ 'candidate_exams.date' | translate }}
+                  </dt>
+                  <dd>
+                    <time [attr.datetime]="assignment.slotDate">{{
+                      assignment.slotDate | date: 'mediumDate'
+                    }}</time>
+                  </dd>
+                </div>
+                <div class="exam-details__item">
+                  <dt>
+                    <i class="fa-regular fa-clock" aria-hidden="true"></i
+                    >{{ 'candidate_exams.startTime' | translate }}
+                  </dt>
+                  <dd>
+                    <time [attr.datetime]="assignment.startTime">{{
+                      displayTime(assignment.startTime)
+                    }}</time>
+                  </dd>
+                </div>
+                <div class="exam-details__item">
+                  <dt>
+                    <i class="fa-regular fa-clock" aria-hidden="true"></i
+                    >{{ 'candidate_exams.endTime' | translate }}
+                  </dt>
+                  <dd>
+                    <time [attr.datetime]="assignment.endTime">{{
+                      displayTime(assignment.endTime)
+                    }}</time>
+                  </dd>
+                </div>
+                <div class="exam-details__item">
+                  <dt>
+                    <i class="fa-solid fa-door-open" aria-hidden="true"></i
+                    >{{ 'candidate_exams.room' | translate }}
+                  </dt>
+                  <dd>{{ roomName(assignment) }}</dd>
+                </div>
+                <div class="exam-details__item">
+                  <dt>
+                    <i class="fa-solid fa-location-dot" aria-hidden="true"></i
+                    >{{ 'candidate_exams.location' | translate }}
+                  </dt>
+                  <dd>{{ locationName(assignment) }}</dd>
+                </div>
+                <div class="exam-details__item">
+                  <dt>
+                    <i class="fa-solid fa-list-ol" aria-hidden="true"></i
+                    >{{ 'candidate_exams.sessionNumber' | translate }}
+                  </dt>
+                  <dd>{{ assignment.sessionNo }}</dd>
+                </div>
+              </dl>
+
+              @if (
+                canEnterExam(assignment) ||
+                canContinueExam(assignment) ||
+                canRecoverStart(assignment) ||
+                canRecoverResume(assignment) ||
+                canResumeExam(assignment)
+              ) {
+                <div class="exam-card__actions">
+                  @if (canEnterExam(assignment)) {
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      (click)="openAccessCodeDialog(assignment)"
+                    >
+                      <i class="fa-solid fa-arrow-right-to-bracket" aria-hidden="true"></i>
+                      {{ 'candidate_exams.actions.enterExam' | translate }}
+                    </button>
+                  } @else if (canContinueExam(assignment)) {
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      (click)="continueExam(assignment)"
+                    >
+                      <i class="fa-solid fa-circle-play" aria-hidden="true"></i>
+                      {{ 'candidate_exams.actions.continue' | translate }}
+                    </button>
+                  } @else if (canRecoverStart(assignment)) {
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      (click)="openAccessCodeDialog(assignment)"
+                    >
+                      <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                      {{ 'candidate_exams.actions.continue' | translate }}
+                    </button>
+                  } @else if (canRecoverResume(assignment)) {
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      (click)="openResumeDialog(assignment)"
+                    >
+                      <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                      {{ 'candidate_exams.actions.resumeExam' | translate }}
+                    </button>
+                  } @else if (canResumeExam(assignment)) {
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      (click)="openResumeDialog(assignment)"
+                    >
+                      <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                      {{ 'candidate_exams.actions.resumeExam' | translate }}
+                    </button>
+                  }
+                </div>
+              }
+            </article>
+          </div>
+        }
+      </section>
+    }
+  </div>
+</main>

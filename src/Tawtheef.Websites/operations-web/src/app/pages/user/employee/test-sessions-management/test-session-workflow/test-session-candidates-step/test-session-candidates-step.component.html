@@ -104,7 +104,12 @@
   </div>
 
   <div class="col-12 col-lg-3 d-flex align-items-center">
-    <button type="button" class="btn btn-outline-primary light" (click)="clearSearch()">
+    <button
+      type="button"
+      class="btn btn-outline-primary light"
+      (click)="clearSearch()"
+      [disabled]="readOnly()"
+    >
       {{ 'TEST_SESSION_WIZARD.CLEAR_FILTERS' | translate }}
     </button>
   </div>
@@ -145,8 +150,8 @@
                 [binary]="true"
                 [class.bg-light]="readOnly()"
                 [ngModel]="selectedCandidateIds().includes(candidate.invitationId)"
-                (ngModelChange)="toggleCandidate(candidate.invitationId, $event)"
-                [disabled]="readOnly()"
+                (ngModelChange)="toggleCandidate(candidate, $event)"
+                [disabled]="readOnly() || candidate.eligibilityStatus !== 'Eligible'"
               />
             </td>
             <td>
@@ -171,21 +176,14 @@
               }}
             </td>
             <td>
-              <p-tag
-                [severity]="statusSeverity(candidate.eligibilityStatus)"
-                [value]="
-                  'TEST_SESSION_WIZARD.ELIGIBILITY_' + candidate.eligibilityStatus | translate
-                "
+              <app-status-pill
+                [tone]="eligibilityStatusTone(candidate.eligibilityStatus)"
+                [label]="'TEST_SESSION_WIZARD.ELIGIBILITY_' + candidate.eligibilityStatus | translate"
               />
-              @if (
-                candidate.eligibilityStatus === 'Excluded' &&
-                candidate.source === InvitationSource.Exceptional
-              ) {
-                <small class="d-block text-muted mt-1">{{
-                  'TEST_SESSION_WIZARD.INVITATION_SOURCE_EXCEPTIONAL' | translate
-                }}</small>
-              } @else if (candidate.eligibilityReason) {
-                <small class="d-block text-muted mt-1">{{ candidate.eligibilityReason }}</small>
+              @if (candidate.eligibilityReason) {
+                <small class="d-block text-muted mt-1">
+                  {{ candidate.eligibilityReason }}
+                </small>
               }
             </td>
           </tr>

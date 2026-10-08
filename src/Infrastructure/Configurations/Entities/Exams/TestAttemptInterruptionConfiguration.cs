@@ -10,6 +10,8 @@ public class TestAttemptInterruptionConfiguration : BaseEntityConfiguration<Test
     {
         base.Configure(builder);
 
+        builder.HasIndex(x => new { x.TestAttemptId, x.StatusId, x.ResolutionActionId, x.ResolvedAt });
+
         builder.HasOne(x => x.TestAttempt)
             .WithMany()
             .HasForeignKey(x => x.TestAttemptId)
@@ -20,10 +22,7 @@ public class TestAttemptInterruptionConfiguration : BaseEntityConfiguration<Test
             .HasForeignKey(x => x.TestAttemptPartId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(x => x.Status)
-            .WithMany()
-            .HasForeignKey(x => x.StatusId)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(x => x.Status).WithMany().HasForeignKey(x => x.StatusId).OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.ResolutionAction)
             .WithMany()

@@ -200,6 +200,8 @@ public static class PermissionKeys
         public const string View = "exams.view";
         public const string Create = "exams.create";
         public const string WorkflowActions = "exams.workflow-action";
+        public const string ApproveResults = "exams.approve-results";
+        public const string ViewAttemptDetails = "exams.view-attempt-details";
     }
 
     public static class TestSlots
@@ -238,7 +240,9 @@ public static class PermissionKeys
     {
         public const string View = "question-bank-requests.view";
         public const string Create = "question-bank-requests.create";
+        public const string Maintenance = "question-bank-requests.maintenance";
         public const string Assign = "question-bank-requests.assign";
+        public const string Review = "question-bank-requests.review";
     }
 
     public static class InterviewEvaluationBank

@@ -37,6 +37,15 @@ public class TestAttemptInterruptionResolutionActionConfiguration
                 NameAr = "إلغاء",
                 DisplayOrder = 3,
                 IsActive = true
+            },
+            new TestAttemptInterruptionResolutionAction
+            {
+                Id = TestAttemptInterruptionResolutionActionIds.AcceptCalculatedScore,
+                BackendName = nameof(TestAttemptInterruptionResolutionActionIds.AcceptCalculatedScore),
+                NameEn = "Accept Calculated Score",
+                NameAr = "اعتماد الدرجة المحتسبة",
+                DisplayOrder = 4,
+                IsActive = true
             }
         );
     }

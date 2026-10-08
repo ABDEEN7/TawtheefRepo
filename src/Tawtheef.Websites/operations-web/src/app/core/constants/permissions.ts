@@ -155,6 +155,8 @@ export const Permissions = {
     View: 'exams.view',
     Create: 'exams.create',
     WorkflowActions: 'exams.workflow-action',
+    ApproveResults: 'exams.approve-results',
+    ViewAttemptDetails: 'exams.view-attempt-details',
   },
   TestSlots: {
     View: 'test-slots.view',
@@ -180,7 +182,9 @@ export const Permissions = {
   QuestionBankRequests: {
     View: 'question-bank-requests.view',
     Create: 'question-bank-requests.create',
+    Maintenance: 'question-bank-requests.maintenance',
     Assign: 'question-bank-requests.assign',
+    Review: 'question-bank-requests.review',
   },
 
   Locations: {

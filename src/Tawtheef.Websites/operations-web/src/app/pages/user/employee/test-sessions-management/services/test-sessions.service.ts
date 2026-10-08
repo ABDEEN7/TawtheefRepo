@@ -43,10 +43,6 @@ export class TestSessionsService {
     return this.http.get<ReadyTestSlotsDto>(this.endpoints.testSessions.readyTestSlots, filters);
   }
 
-  capacity(filters: { testSlotId: string; startTime: string; endTime: string; selectedCandidateCount: number }): Observable<{ availableSeats: number; isSufficient: boolean }> {
-    return this.http.get<{ availableSeats: number; isSufficient: boolean }>(this.endpoints.testSessions.capacity, filters);
-  }
-
   sessionSetup(examId: string, testSlotId: string): Observable<TestSessionSetupDto> {
     return this.http.get<TestSessionSetupDto>(this.endpoints.testSessions.sessionSetup, { examId, testSlotId });
   }

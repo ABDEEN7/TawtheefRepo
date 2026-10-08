@@ -98,6 +98,8 @@
   "TEST_SESSION_WIZARD.ALL_ROOMS": "All rooms",
   "TEST_SESSION_WIZARD.DATE": "Date",
   "TEST_SESSION_WIZARD.DATE_TIME": "Date and time",
+  "TEST_SESSION_WIZARD.DATE_AVAILABLE_TIMES": "Date & Available Times",
+  "TEST_SESSION_WIZARD.AVAILABLE_SEATS_FOR_DURATION": "seats available for a full session",
   "TEST_SESSION_WIZARD.CURRENT_RESERVATIONS": "Current reservations",
   "TEST_SESSION_WIZARD.EXISTING_SESSIONS": "Test sessions",
   "TEST_SESSION_WIZARD.ACTIONS": "Actions",
@@ -179,6 +181,6 @@
   "TEST_SESSION_WIZARD.INSUFFICIENT_CAPACITY": "The available capacity for the selected period and time is insufficient. {{count}} candidate(s) do not have seats.",
   "TEST_SESSION_WIZARD.TEAM_ROOM_STEP_DESCRIPTION": "Room team setup will be handled in this step.",
   "TEST_SESSION_WIZARD.INVITATION_SOURCE_EXCEPTIONAL": "Exceptional",
-  "TEST_SESSION_WIZARD.SESSION_TIME_INVALID": "The selected time must be inside the period and meet the minimum exam duration.",
+  "TEST_SESSION_WIZARD.SESSION_TIME_INVALID": "The session must cover the full exam duration plus the allowed entry window and remain fully inside the test slot.",
   "TEST_SESSION_WIZARD.SESSION_CAPACITY_SUCCESS": "Capacity has been allocated for all candidates. You can proceed to the next step."
 }

@@ -2,6 +2,8 @@ using Application.Operation.Features.Employee.Exams.Commands;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Constants;
@@ -12,7 +14,11 @@ using Tawtheef.Domain.Events.Operation.Employee.Exams;
 
 namespace Application.Operation.Features.Employee.Exams.Handlers.Commands;
 
-public sealed class RejectExamCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+public sealed class RejectExamCommandHandler(
+    IUnitOfWork unitOfWork,
+    ICurrentUserService currentUser,
+    TimeProvider timeProvider,
+    IApplicationLockService applicationLockService)
     : IRequestHandler<RejectExamCommand, IResult<Unit>>
 {
     public Task<IResult<Unit>> Handle(RejectExamCommand request, CancellationToken ct)
@@ -23,11 +29,8 @@ public sealed class RejectExamCommandHandler(IUnitOfWork unitOfWork, ICurrentUse
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
             // Use the established approval lock so competing terminal decisions cannot both succeed.
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', @LockOwner = N'Transaction', " +
-                "@LockTimeout = 15000; IF @result < 0 THROW 51000, 'Exam workflow lock unavailable', 1;",
-                [$"Tawtheef.Exam.Workflow.{request.ExamId}"], token);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.ExamWorkflow(request.ExamId), token);
 
             var exam = await unitOfWork.GetEntityRepository<Exam>().DbSet
                 .FirstOrDefaultAsync(x => x.Id == request.ExamId && x.StatusId == ExamStatusIds.PendingApproval,
@@ -36,16 +39,17 @@ public sealed class RejectExamCommandHandler(IUnitOfWork unitOfWork, ICurrentUse
                 return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
             var note = request.Note.Trim();
+            var reviewedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
             var metadata = new ExamWorkflowMetadata(
                 reviewerId,
-                DateTime.UtcNow,
+                reviewedAtUtc,
                 nameof(ExamStatusIds.PendingApproval),
                 nameof(ExamStatusIds.Rejected));
             metadata.ApplyDecision(exam, ExamStatusIds.Rejected);
             exam.DecisionNotes = note;
 
             await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(
-                metadata.CreateActionLog(exam, "ExamRejected", note), token);
+                metadata.CreateActionLog(exam, ExamWorkflowAudit.Rejected, note), token);
 
             if (exam.CreatedById.HasValue)
                 exam.AddDomainEvent(new ExamRejectedDomainEvent(exam.CreatedById.Value, exam.Id, exam.ExamNo, note));

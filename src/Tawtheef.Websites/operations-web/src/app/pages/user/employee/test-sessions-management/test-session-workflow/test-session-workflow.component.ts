@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -20,14 +20,14 @@ import { TestSessionExamDetailsDto } from '../models/test-session-exam-details.d
 import { LocalTestSession } from '../models/ready-test-slot.dto';
 import {
   TestSlotConfigurationStaffDto,
-  TestSlotStaffRoleIds,
 } from '../../test-slots-management/models/create-test-slot.dto';
+import { TestSlotStaffRoleIds } from '../../test-slots-management/constants/test-slot-staff-role.constants';
 import { TestSlotsService } from '../../test-slots-management/services/test-slots.service';
 import {
   TestSessionEditDto,
   TestSessionLookupsDto,
-  TEST_SESSION_STATUS_IDS,
 } from '../models/test-session-list-item.dto';
+import { TEST_SESSION_STATUS_IDS } from '../constants/test-session-status.constants';
 import {
   TestSessionGenderFilter,
   TestSessionNationalityFilter,
@@ -101,6 +101,10 @@ export class TestSessionWorkflowComponent {
   readonly decisionByName = signal<string | null>(null);
   readonly decisionAt = signal<string | null>(null);
   readonly statusBackendName = signal<string | null>(null);
+  readonly showDecisionNote = computed(() => {
+    const status = this.statusBackendName()?.toLowerCase();
+    return status === 'returned' || status === 'rejected';
+  });
   readonly testSlotStaff = signal<TestSlotConfigurationStaffDto[]>([]);
   readonly periodTeamLoading = signal(false);
   readonly periodTeamLoadFailed = signal(false);
@@ -158,27 +162,25 @@ export class TestSessionWorkflowComponent {
     const loadSession = this.viewMode()
       ? this.service.view(testSessionId, this.language.get())
       : this.service.edit(testSessionId, this.language.get());
-    loadSession
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (session) => {
-          this.restoreEditState(session);
-          this.editLoading.set(false);
-          this.service
-            .examDetails(session.examId, this.language.get())
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe({
-              next: (details) => this.details.set(details),
-              error: () =>
-                this.notifications.error(this.translate.instant('TEST_SESSION_WIZARD.SAVE_FAILED')),
-            });
-        },
-        error: () => {
-          this.editLoading.set(false);
-          this.notifications.error(this.translate.instant('TEST_SESSION_WIZARD.SAVE_FAILED'));
-          void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
-        },
-      });
+    loadSession.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (session) => {
+        this.restoreEditState(session);
+        this.editLoading.set(false);
+        this.service
+          .examDetails(session.examId, this.language.get())
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: (details) => this.details.set(details),
+            error: () =>
+              this.notifications.error(this.translate.instant('TEST_SESSION_WIZARD.SAVE_FAILED')),
+          });
+      },
+      error: () => {
+        this.editLoading.set(false);
+        this.notifications.error(this.translate.instant('TEST_SESSION_WIZARD.SAVE_FAILED'));
+        void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
+      },
+    });
   }
 
   private restoreEditState(session: TestSessionEditDto): void {
@@ -198,9 +200,16 @@ export class TestSessionWorkflowComponent {
     this.candidateSelectionInitialized.set(this.viewMode() || session.invitationIds.length > 0);
 
     if (
-      session.testSlotId && session.slotDate && session.slotStartTime && session.slotEndTime &&
-      session.roomId && session.roomName && session.slotName && session.roomCapacity != null &&
-      session.startTime && session.endTime
+      session.testSlotId &&
+      session.slotDate &&
+      session.slotStartTime &&
+      session.slotEndTime &&
+      session.roomId &&
+      session.roomName &&
+      session.slotName &&
+      session.roomCapacity != null &&
+      session.startTime &&
+      session.endTime
     ) {
       this.localSession.set({
         slot: {
@@ -216,6 +225,7 @@ export class TestSessionWorkflowComponent {
           existingSessionCount: 0,
           existingExamSessionCount: 0,
           remainingCapacity: session.availableCapacity,
+          availabilityWindows: [],
           status: '',
         },
         startTime: session.startTime,
@@ -289,6 +299,9 @@ export class TestSessionWorkflowComponent {
     const session = this.localSession();
     const candidateCount = this.selectedCandidateIds().length;
     const examDuration = this.details()?.durationMinutes ?? 0;
+    const minimumEntryWindow = this.details()?.minimumEntryWindowMinutes ?? 0;
+
+    const requiredSessionDuration = examDuration + minimumEntryWindow;
     if (!session || candidateCount === 0 || session.availableCapacity < candidateCount)
       return false;
 
@@ -298,7 +311,7 @@ export class TestSessionWorkflowComponent {
       startTime >= this.timeValue(session.slot.startTime) &&
       endTime <= this.timeValue(session.slot.endTime) &&
       endTime > startTime &&
-      endTime - startTime >= examDuration
+      endTime - startTime >= requiredSessionDuration
     );
   }
 
@@ -324,7 +337,7 @@ export class TestSessionWorkflowComponent {
       startTime >= this.timeValue(session.slot.startTime) &&
       endTime <= this.timeValue(session.slot.endTime) &&
       endTime > startTime &&
-      endTime - startTime >= exam.durationMinutes;
+      endTime - startTime >= exam.durationMinutes + exam.minimumEntryWindowMinutes;
     if (!sessionTimeIsValid) return false;
 
     const roomHead = this.roomHeadStaff();
@@ -336,10 +349,10 @@ export class TestSessionWorkflowComponent {
     )
       return false;
 
-    const memberIds = this.teamMemberStaff().map(member => member.staffUserId);
+    const memberIds = this.teamMemberStaff().map((member) => member.staffUserId);
     const assignedIds = [roomHead.staffUserId, ...memberIds];
     return (
-      memberIds.every(id => id !== roomHead.staffUserId) &&
+      memberIds.every((id) => id !== roomHead.staffUserId) &&
       new Set(assignedIds).size === assignedIds.length
     );
   }
@@ -361,8 +374,13 @@ export class TestSessionWorkflowComponent {
 
   onApproveClicked(): void {
     const testSessionId = this.testSessionId();
-    if (!testSessionId || this.saving() || this.statusId() !== TEST_SESSION_STATUS_IDS.pendingApproval ||
-      !this.auth.hasPermission(Permissions.TestSessions.WorkflowActions)) return;
+    if (
+      !testSessionId ||
+      this.saving() ||
+      this.statusId() !== TEST_SESSION_STATUS_IDS.pendingApproval ||
+      !this.auth.hasPermission(Permissions.TestSessions.WorkflowActions)
+    )
+      return;
 
     this.saving.set(true);
     const dialogRef = this.dialogs.open(ConfirmationDialogComponent, {
@@ -384,14 +402,21 @@ export class TestSessionWorkflowComponent {
         this.saving.set(false);
         return;
       }
-      this.service.approve(testSessionId).pipe(finalize(() => this.saving.set(false)),
-        takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: () => {
-          this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.APPROVE_SUCCESS'));
-          void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
-        },
-        error: () => {},
-      });
+      this.service
+        .approve(testSessionId)
+        .pipe(
+          finalize(() => this.saving.set(false)),
+          takeUntilDestroyed(this.destroyRef),
+        )
+        .subscribe({
+          next: () => {
+            this.notifications.success(
+              this.translate.instant('TEST_SESSION_WIZARD.APPROVE_SUCCESS'),
+            );
+            void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
+          },
+          error: () => {},
+        });
     });
   }
 
@@ -473,18 +498,20 @@ export class TestSessionWorkflowComponent {
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: result => {
+        next: (result) => {
           this.testSessionId.set(result.testSessionId);
           this.sessionNo.set(result.sessionNo);
           this.saving.set(false);
           if (sendToApprove) {
-            this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.SUBMIT_SUCCESS'));
+            this.notifications.success(
+              this.translate.instant('TEST_SESSION_WIZARD.SUBMIT_SUCCESS'),
+            );
             void this.router.navigateByUrl(portalRoutes.testSessionsManagement);
           } else {
             this.notifications.success(this.translate.instant('TEST_SESSION_WIZARD.DRAFT_SAVED'));
           }
         },
-        error: error => {
+        error: (error) => {
           this.saving.set(false);
           const conflicts = this.getCandidateConflicts(error);
           if (conflicts.length > 0) {
@@ -527,13 +554,14 @@ export class TestSessionWorkflowComponent {
 
   roomHeadStaff(): TestSlotConfigurationStaffDto | null {
     return (
-      this.testSlotStaff().find(staff => staff.roleId === TestSlotStaffRoleIds.hallSupervisor) ?? null
+      this.testSlotStaff().find((staff) => staff.roleId === TestSlotStaffRoleIds.hallSupervisor) ??
+      null
     );
   }
 
   teamMemberStaff(): TestSlotConfigurationStaffDto[] {
     const roomHeadId = this.roomHeadStaff()?.staffUserId;
-    return this.testSlotStaff().filter(staff => staff.staffUserId !== roomHeadId);
+    return this.testSlotStaff().filter((staff) => staff.staffUserId !== roomHeadId);
   }
 
   private loadPeriodTeam(): void {
@@ -541,7 +569,8 @@ export class TestSessionWorkflowComponent {
     if (!session) return;
 
     const testSlotId = session.slot.testSlotId;
-    if (this.loadedTeamTestSlotId === testSlotId || this.periodTeamLoadingSlotId === testSlotId) return;
+    if (this.loadedTeamTestSlotId === testSlotId || this.periodTeamLoadingSlotId === testSlotId)
+      return;
 
     this.testSlotStaff.set([]);
     this.loadedTeamTestSlotId = null;
@@ -554,7 +583,7 @@ export class TestSessionWorkflowComponent {
       .configuration(testSlotId, this.language.get())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: configuration => {
+        next: (configuration) => {
           if (!this.isCurrentPeriodTeamRequest(requestId, testSlotId)) return;
 
           this.testSlotStaff.set(configuration.staff);

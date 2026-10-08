@@ -24,12 +24,33 @@ public sealed class RemoveAssignmentQuestionCommandHandler(IUnitOfWork uow, ICur
         return await uow.ExecuteInTransactionAsync<IResult<Unit>>(async token =>
         {
             var item = await uow.GetEntityRepository<QuestionBankRequestItem>().DbSet.Include(x => x.QuestionBankAssignment).ThenInclude(x => x.QuestionBankRequest)
-                .SingleOrDefaultAsync(x => x.Id == r.ItemId && x.QuestionBankAssignmentId == r.AssignmentId && !x.IsDeleted && x.StatusId == QuestionBankRequestItemStatusIds.DRAFT, token);
-            if (item is null || item.QuestionBankAssignment.EmployeeId != employeeId || item.RequestId != item.QuestionBankAssignment.QuestionBankRequestId)
+                .SingleOrDefaultAsync(x => x.Id == r.ItemId && x.QuestionBankAssignmentId == r.AssignmentId && !x.IsDeleted &&
+                    (x.StatusId == QuestionBankRequestItemStatusIds.DRAFT ||
+                     x.StatusId == QuestionBankRequestItemStatusIds.NEEDS_MODIFICATION ||
+                     x.StatusId == QuestionBankRequestItemStatusIds.REJECTED), token);
+            if (item is null)
+            {
+                var maintenanceItemExists = await uow.GetEntityRepository<QuestionBankRequestItem>().DbSet.AsNoTracking()
+                    .AnyAsync(x => x.Id == r.ItemId && !x.IsDeleted &&
+                        x.Request.RequestTypeId == QuestionBankRequestTypeIds.MAINTENANCE, token);
+                return Result.Fail<Unit>(maintenanceItemExists
+                    ? ErrorsCodes.QuestionBankMaintenanceItemNotOwned
+                    : ErrorsCodes.QuestionBankAssignmentQuestionNotFound);
+            }
+            if (item.QuestionBankAssignment.EmployeeId != employeeId || item.RequestId != item.QuestionBankAssignment.QuestionBankRequestId)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentQuestionNotFound);
-            if (!QuestionEntryRules.Editable(item.QuestionBankAssignment.StatusId) || item.QuestionBankAssignment.QuestionBankRequest.StatusId != QuestionBankRequestStatusIds.QuestionEntryInProgress)
+            var initialEntry = item.StatusId == QuestionBankRequestItemStatusIds.DRAFT && QuestionEntryRules.Editable(item.QuestionBankAssignment.StatusId) &&
+                               item.QuestionBankAssignment.QuestionBankRequest.StatusId == QuestionBankRequestStatusIds.QuestionEntryInProgress;
+            var correction = (item.StatusId == QuestionBankRequestItemStatusIds.DRAFT ||
+                              item.StatusId == QuestionBankRequestItemStatusIds.NEEDS_MODIFICATION ||
+                              item.StatusId == QuestionBankRequestItemStatusIds.REJECTED) &&
+                             QuestionEntryRules.CorrectionEditable(item.QuestionBankAssignment.StatusId) &&
+                             item.QuestionBankAssignment.QuestionBankRequest.StatusId == QuestionBankRequestStatusIds.ModificationInProgress;
+            if (!initialEntry && !correction)
                 return Result.Fail<Unit>(ErrorsCodes.QuestionBankAssignmentNotEditable);
-            item.StatusId = QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST; item.RemovedById = employeeId; item.RemovedAt = DateTime.UtcNow;
+            item.StatusId = QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST;
+            item.RemovedById = employeeId;
+            item.RemovedAt = DateTime.UtcNow;
             await uow.SaveChangesAsync(token); return Result.Ok(Unit.Value);
         }, ct);
     }

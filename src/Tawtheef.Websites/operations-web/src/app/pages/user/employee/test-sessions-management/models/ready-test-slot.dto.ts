@@ -13,7 +13,14 @@ export interface ReadyTestSlotListItemDto {
   existingSessionCount: number;
   existingExamSessionCount: number;
   remainingCapacity: number;
+  availabilityWindows: TestSessionAvailabilityWindowDto[];
   status: string;
+}
+
+export interface TestSessionAvailabilityWindowDto {
+  startTime: string;
+  endTime: string;
+  availableSeats: number;
 }
 
 export interface LocalTestSession {
@@ -40,6 +47,7 @@ export interface ReadyTestSlotFilters {
   pageNumber: number;
   pageSize: number;
   selectedCandidateCount: number;
+  excludeTestSessionId?: string;
   searchText?: string;
   roomId?: string;
   date?: string;

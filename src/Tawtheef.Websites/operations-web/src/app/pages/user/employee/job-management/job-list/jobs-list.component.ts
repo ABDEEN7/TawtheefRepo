@@ -20,6 +20,7 @@ import { Permissions } from '../../../../../core/constants/permissions';
 import { SystemRoles } from '../../../../../core/constants/systemRoles';
 import { FileUtilsService } from '../../../../../core/utils/file-utils';
 import { parseFilterYear } from '../../../../../core/utils/year-filter.util';
+import { StatusTone } from '../../../../../shared/components/status-pill/status-pill.component';
 
 export interface JobAction {
   label: string;
@@ -545,21 +546,21 @@ export class JobListComponent implements OnInit {
     menu.toggle(event);
   }
 
-  getStatusBadgeClass(statusName: string): string {
-    const badgeMap: Record<string, string> = {
-      [JobStatus.Draft]: 'pill neutral',
-      [JobStatus.NeedUpdate]: 'pill warning',
-      [JobStatus.PendingApproval]: 'pill warning',
-      [JobStatus.PendingPointConfiguration]: 'pill info',
-      [JobStatus.NeedPointUpdate]: 'pill warning',
-      [JobStatus.PendingPointApproval]: 'pill warning',
-      [JobStatus.Published]: 'pill success',
-      [JobStatus.Closed]: 'pill danger',
-      [JobStatus.Rejected]: 'pill danger',
-      [JobStatus.Cancelled]: 'pill secondary',
-      [JobStatus.ReadyForAnnouncement]: 'pill info',
+  getStatusTone(statusName: string): StatusTone {
+    const badgeMap: Record<string, StatusTone> = {
+      [JobStatus.Draft]: 'neutral',
+      [JobStatus.NeedUpdate]: 'warning',
+      [JobStatus.PendingApproval]: 'warning',
+      [JobStatus.PendingPointConfiguration]: 'info',
+      [JobStatus.NeedPointUpdate]: 'warning',
+      [JobStatus.PendingPointApproval]: 'warning',
+      [JobStatus.Published]: 'success',
+      [JobStatus.Closed]: 'danger',
+      [JobStatus.Rejected]: 'danger',
+      [JobStatus.Cancelled]: 'secondary',
+      [JobStatus.ReadyForAnnouncement]: 'info',
     };
-    return badgeMap[statusName] || 'pill neutral';
+    return badgeMap[statusName] || 'neutral';
   }
 
   private loadStats(): void {

@@ -12,33 +12,35 @@ using Tawtheef.Domain.Events.Operation.Employee.TestSessions;
 
 namespace Application.Operation.Features.Employee.TestSessions.Handlers.Commands;
 
-public sealed class RejectTestSessionCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+public sealed class RejectTestSessionCommandHandler(
+    IUnitOfWork unitOfWork,
+    ICurrentUserService currentUser,
+    TimeProvider timeProvider)
     : IRequestHandler<RejectTestSessionCommand, IResult<Unit>>
 {
     public async Task<IResult<Unit>> Handle(RejectTestSessionCommand request, CancellationToken ct)
     {
-        if (request.TestSessionId == Guid.Empty || string.IsNullOrWhiteSpace(request.DecisionNote) ||
-            !Guid.TryParse(currentUser.UserId, out var reviewerId))
+        if (request.TestSessionId == Guid.Empty || string.IsNullOrWhiteSpace(request.DecisionNote)
+                                                || !Guid.TryParse(currentUser.UserId, out var reviewerId))
             return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
-        var session = await unitOfWork.Context.Set<TestSession>().FirstOrDefaultAsync(
-            x => x.Id == request.TestSessionId && x.StatusId == TestSessionStatusIds.PendingApproval, ct);
+        var session = await unitOfWork.Context.Set<TestSession>()
+            .FirstOrDefaultAsync(
+                x => x.Id == request.TestSessionId && x.StatusId == TestSessionStatusIds.PendingApproval, ct);
         if (session is null)
             return Result.Fail<Unit>(ErrorsCodes.InvalidRequest);
 
         var note = request.DecisionNote.Trim();
-        var metadata = new TestSessionWorkflowMetadata(
-            reviewerId,
-            DateTime.UtcNow,
-            nameof(TestSessionStatusIds.PendingApproval),
-            nameof(TestSessionStatusIds.Rejected));
+        var reviewedAtUtc = timeProvider.GetUtcNow().UtcDateTime;
+        var metadata = new TestSessionWorkflowMetadata(reviewerId, reviewedAtUtc,
+            nameof(TestSessionStatusIds.PendingApproval), nameof(TestSessionStatusIds.Rejected));
         metadata.ApplyDecision(session, TestSessionStatusIds.Rejected);
-        await unitOfWork.GetEntityRepository<ActionLog>().AddAsync(
-            metadata.CreateActionLog(session, "TestSessionRejected", note), ct);
+        await unitOfWork.GetEntityRepository<ActionLog>()
+            .AddAsync(metadata.CreateActionLog(session, TestSessionWorkflowAudit.Rejected, note), ct);
 
         if (session.CreatedById.HasValue)
-            session.AddDomainEvent(new TestSessionRejectedDomainEvent(
-                session.CreatedById.Value, session.Id, session.SessionNo, note));
+            session.AddDomainEvent(new TestSessionRejectedDomainEvent(session.CreatedById.Value, session.Id,
+                session.SessionNo, note));
 
         await unitOfWork.SaveChangesAsync(ct);
         return Result.Ok(Unit.Value);

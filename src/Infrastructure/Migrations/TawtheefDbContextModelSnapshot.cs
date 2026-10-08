@@ -24,6 +24,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
             modelBuilder.HasSequence<int>("InterviewCommitteeNumber", "itv");
 
+            modelBuilder.HasSequence<int>("InterviewResultReportNumber", "itv");
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -204,9 +206,23 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = -6261347,
+                            Id = -1050949868,
                             ClaimType = "permission",
-                            ClaimValue = "examWorkflowActions",
+                            ClaimValue = "exams.workflow-action",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -1333939796,
+                            ClaimType = "permission",
+                            ClaimValue = "interview-committee-review.override-suggestion",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -783036742,
+                            ClaimType = "permission",
+                            ClaimValue = "interview-committee-review.view",
                             RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
                         },
                         new
@@ -568,6 +584,20 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = -1646454079,
+                            ClaimType = "permission",
+                            ClaimValue = "question-bank-requests.maintenance",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -1196982434,
+                            ClaimType = "permission",
+                            ClaimValue = "question-bank-requests.review",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
                             Id = -2007772309,
                             ClaimType = "permission",
                             ClaimValue = "question-bank-requests.view",
@@ -606,6 +636,27 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = -1900294407,
                             ClaimType = "permission",
                             ClaimValue = "rooms.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -1822399971,
+                            ClaimType = "permission",
+                            ClaimValue = "test-sessions.create",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -1786189931,
+                            ClaimType = "permission",
+                            ClaimValue = "test-sessions.view",
+                            RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
+                        },
+                        new
+                        {
+                            Id = -599213015,
+                            ClaimType = "permission",
+                            ClaimValue = "test-sessions.workflow-action",
                             RoleId = new Guid("5b757ede-93e1-4c7a-88d3-5e89007d648b")
                         },
                         new
@@ -837,6 +888,20 @@ namespace Tawtheef.Infrastructure.Migrations
                             Id = -1712025094,
                             ClaimType = "permission",
                             ClaimValue = "cities.view",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -1308318742,
+                            ClaimType = "permission",
+                            ClaimValue = "interview-committee-review.override-suggestion",
+                            RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
+                        },
+                        new
+                        {
+                            Id = -2097377010,
+                            ClaimType = "permission",
+                            ClaimValue = "interview-committee-review.view",
                             RoleId = new Guid("d8689e0c-d872-42e9-87b7-c3bb27305e07")
                         },
                         new
@@ -3395,8 +3460,15 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnOrder(98);
 
+                    b.Property<TimeOnly?>("EndTime")
+                        .HasColumnType("time");
+
                     b.Property<Guid>("ExamId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("GenderFilter")
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -3404,13 +3476,22 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasDefaultValue(false)
                         .HasColumnOrder(99);
 
-                    b.Property<int>("SessionNo")
-                        .HasColumnType("int");
+                    b.Property<string>("NationalityFilter")
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("SessionNo")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<TimeOnly?>("StartTime")
+                        .HasColumnType("time");
 
                     b.Property<Guid>("StatusId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TestSlotId")
+                    b.Property<Guid?>("TestSlotId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("UpdatedById")
@@ -3432,6 +3513,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasIndex("ExamId");
 
                     b.HasIndex("IsDeleted");
+
+                    b.HasIndex("SessionNo")
+                        .IsUnique();
 
                     b.HasIndex("StatusId");
 
@@ -4729,6 +4813,12 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<int>("CalculationMethod")
                         .HasColumnType("int");
 
+                    b.Property<string>("ChairRecommendationReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ChairRecommendedDecision")
+                        .HasColumnType("int");
+
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(93);
@@ -4780,6 +4870,9 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<decimal?>("QualificationScore")
                         .HasColumnType("decimal(6,2)");
 
+                    b.Property<Guid?>("RecommendedSchoolStageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("SnapshotAt")
                         .HasColumnType("datetime2");
 
@@ -4803,11 +4896,14 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("InterviewAppointmentId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_ResultCandidate");
+                        .HasDatabaseName("UQ_ResultCandidate")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.HasIndex("InterviewResultReportId");
 
                     b.HasIndex("IsDeleted");
+
+                    b.HasIndex("RecommendedSchoolStageId");
 
                     b.HasIndex("UpdatedById");
 
@@ -4905,6 +5001,19 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Property<DateTime?>("ClosedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasMaxLength(24)
+                        .HasColumnType("nvarchar(24)")
+                        .HasComputedColumnSql("'REP-INT-' + CAST(YEAR([CreatedDate]) AS varchar(4)) + '-' + CASE WHEN [Number] < 10000 THEN RIGHT('0000' + CAST([Number] AS varchar(10)), 4) ELSE CAST([Number] AS varchar(10)) END", true);
+
+                    b.Property<DateTime?>("CommitteeReviewedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CommitteeReviewedById")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnOrder(93);
@@ -4935,6 +5044,11 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasDefaultValue(false)
                         .HasColumnOrder(99);
 
+                    b.Property<int>("Number")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValueSql("NEXT VALUE FOR [itv].[InterviewResultReportNumber]");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -4950,6 +5064,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("ApprovedById");
 
+                    b.HasIndex("CommitteeReviewedById");
+
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("CreatedDate");
@@ -4958,7 +5074,8 @@ namespace Tawtheef.Infrastructure.Migrations
 
                     b.HasIndex("InterviewScheduleId")
                         .IsUnique()
-                        .HasDatabaseName("UQ_ResultReport");
+                        .HasDatabaseName("UQ_ResultReport")
+                        .HasFilter("[IsDeleted] = 0");
 
                     b.HasIndex("IsDeleted");
 
@@ -11034,6 +11151,133 @@ namespace Tawtheef.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.SchoolStage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BackendName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(93);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(94);
+
+                    b.Property<Guid?>("DeletedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(97);
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(98);
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnOrder(99);
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnOrder(95);
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnOrder(96);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BackendName")
+                        .IsUnique();
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedDate");
+
+                    b.HasIndex("DeletedById");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("SchoolStage", "lkp");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5c1a7e10-3b2d-4f6a-9c01-7d2e4b8a0001"),
+                            BackendName = "Kindergarten",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "رياض أطفال",
+                            NameEn = "Kindergarten"
+                        },
+                        new
+                        {
+                            Id = new Guid("5c1a7e10-3b2d-4f6a-9c01-7d2e4b8a0002"),
+                            BackendName = "Primary",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "ابتدائي",
+                            NameEn = "Primary"
+                        },
+                        new
+                        {
+                            Id = new Guid("5c1a7e10-3b2d-4f6a-9c01-7d2e4b8a0003"),
+                            BackendName = "Preparatory",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "إعدادي",
+                            NameEn = "Preparatory"
+                        },
+                        new
+                        {
+                            Id = new Guid("5c1a7e10-3b2d-4f6a-9c01-7d2e4b8a0004"),
+                            BackendName = "Secondary",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "ثانوي",
+                            NameEn = "Secondary"
+                        });
+                });
+
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.Sector", b =>
                 {
                     b.Property<Guid>("Id")
@@ -12892,13 +13136,13 @@ namespace Tawtheef.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("16b3ac19-2ff1-491f-acca-7663c19c226b"),
-                            BackendName = "InProgress",
+                            BackendName = "PendingApproval",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 4,
                             IsActive = true,
                             IsDeleted = false,
-                            NameAr = "قيد التنفيذ",
-                            NameEn = "In Progress"
+                            NameAr = "بانتظار الاعتماد",
+                            NameEn = "Pending Approval"
                         },
                         new
                         {
@@ -12921,6 +13165,28 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "ملغاة",
                             NameEn = "Cancelled"
+                        },
+                        new
+                        {
+                            Id = new Guid("f44d7a03-9eaf-498c-a3ad-6b6810b4c2da"),
+                            BackendName = "Rejected",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 7,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "مرفوضة",
+                            NameEn = "Rejected"
+                        },
+                        new
+                        {
+                            Id = new Guid("6c7b42ab-a356-47e6-93a1-a5e5a2dd09d4"),
+                            BackendName = "Returned",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 8,
+                            IsActive = true,
+                            IsDeleted = false,
+                            NameAr = "معاد",
+                            NameEn = "Returned"
                         });
                 });
 
@@ -18245,8 +18511,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("46e7fb1a-7503-355f-8f83-016cfef177c1"),
-                            BackendName = "examWorkflowActions",
+                            Id = new Guid("a2e10097-67d8-dc5b-a79d-0f2d6d7c87bb"),
+                            BackendName = "exams.workflow-action",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DisplayOrder = 108,
                             IsActive = true,
@@ -18302,6 +18568,42 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "فترات الاختبار - إدارة الفترة",
                             NameEn = "Exam Periods - Manage Period"
+                        },
+                        new
+                        {
+                            Id = new Guid("764cb011-3839-0158-b863-8a0345721de6"),
+                            BackendName = "test-sessions.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 113,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "جلسات الاختبار - عرض",
+                            NameEn = "Test Sessions - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("b49b90e1-57b6-e150-9bdc-2b8edcf98bf3"),
+                            BackendName = "test-sessions.create",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 114,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "جلسات الاختبار - إنشاء",
+                            NameEn = "Test Sessions - Create"
+                        },
+                        new
+                        {
+                            Id = new Guid("8dd78700-f9aa-0050-9912-3ee1ca4917c0"),
+                            BackendName = "test-sessions.workflow-action",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 115,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "إجراءات سير عمل جلسات الاختبار",
+                            NameEn = "Test Sessions - Workflow Actions"
                         },
                         new
                         {
@@ -18365,6 +18667,18 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = new Guid("68381294-9393-df53-8a1a-3e2fc242045e"),
+                            BackendName = "question-bank-requests.maintenance",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 116,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "طلبات بنوك الأسئلة - صيانة",
+                            NameEn = "Question Bank Requests - Maintenance"
+                        },
+                        new
+                        {
                             Id = new Guid("e832e3df-8c43-9d51-add9-104242b1e56a"),
                             BackendName = "question-bank-requests.assign",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -18374,6 +18688,18 @@ namespace Tawtheef.Infrastructure.Migrations
                             IsDeleted = false,
                             NameAr = "طلبات بنوك الأسئلة - إسناد",
                             NameEn = "Question Bank Requests - Assign"
+                        },
+                        new
+                        {
+                            Id = new Guid("0ef13ae9-123c-af53-a99e-323edeb522fa"),
+                            BackendName = "question-bank-requests.review",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 89,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "طلبات بنوك الأسئلة - مراجعة",
+                            NameEn = "Question Bank Requests - Review"
                         },
                         new
                         {
@@ -18461,6 +18787,30 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = new Guid("fe4a15d1-6b80-b65d-83b2-0007b60737a0"),
+                            BackendName = "interview-schedule.view",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 108,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "جدولة المقابلات - عرض",
+                            NameEn = "Interview Schedule - View"
+                        },
+                        new
+                        {
+                            Id = new Guid("68994108-43c5-6a56-ac33-5471af9d8411"),
+                            BackendName = "interview-schedule.manage",
+                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DisplayOrder = 109,
+                            IsActive = true,
+                            IsAssignableToRole = true,
+                            IsDeleted = false,
+                            NameAr = "جدولة المقابلات - إدارة",
+                            NameEn = "Interview Schedule - Manage"
+                        },
+                        new
+                        {
                             Id = new Guid("3126aa54-aa8b-4b51-bd72-992afea7c7dc"),
                             BackendName = "interview-evaluation.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -18509,27 +18859,27 @@ namespace Tawtheef.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("fe4a15d1-6b80-b65d-83b2-0007b60737a0"),
-                            BackendName = "interview-schedule.view",
+                            Id = new Guid("3e54df06-ed8b-6050-8753-060af580365c"),
+                            BackendName = "interview-committee-review.view",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 108,
+                            DisplayOrder = 114,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
-                            NameAr = "جدولة المقابلات - عرض",
-                            NameEn = "Interview Schedule - View"
+                            NameAr = "مراجعة نتائج اللجنة - عرض",
+                            NameEn = "Committee Head Review - View"
                         },
                         new
                         {
-                            Id = new Guid("68994108-43c5-6a56-ac33-5471af9d8411"),
-                            BackendName = "interview-schedule.manage",
+                            Id = new Guid("746ea540-2fce-cc55-a1fa-3f4d75ea984e"),
+                            BackendName = "interview-committee-review.override-suggestion",
                             CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DisplayOrder = 109,
+                            DisplayOrder = 115,
                             IsActive = true,
                             IsAssignableToRole = true,
                             IsDeleted = false,
-                            NameAr = "جدولة المقابلات - إدارة",
-                            NameEn = "Interview Schedule - Manage"
+                            NameAr = "مراجعة نتائج اللجنة - تعديل المقترح",
+                            NameEn = "Committee Head Review - Override Suggestion"
                         });
                 });
 
@@ -20639,8 +20989,7 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.HasOne("Tawtheef.Domain.Entities.Exams.TestSlot", "TestSlot")
                         .WithMany()
                         .HasForeignKey("TestSlotId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()
@@ -20697,7 +21046,7 @@ namespace Tawtheef.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Tawtheef.Domain.Entities.Exams.TestSession", "TestSession")
-                        .WithMany()
+                        .WithMany("TestSessionCandidates")
                         .HasForeignKey("TestSessionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -21303,6 +21652,11 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Tawtheef.Domain.Entities.Lookups.SchoolStage", "RecommendedSchoolStage")
+                        .WithMany()
+                        .HasForeignKey("RecommendedSchoolStageId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById")
@@ -21317,6 +21671,8 @@ namespace Tawtheef.Infrastructure.Migrations
                     b.Navigation("InterviewAppointment");
 
                     b.Navigation("InterviewResultReport");
+
+                    b.Navigation("RecommendedSchoolStage");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -21368,6 +21724,11 @@ namespace Tawtheef.Infrastructure.Migrations
                         .HasForeignKey("ApprovedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CommitteeReviewedBy")
+                        .WithMany()
+                        .HasForeignKey("CommitteeReviewedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
@@ -21390,6 +21751,8 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApprovedBy");
+
+                    b.Navigation("CommitteeReviewedBy");
 
                     b.Navigation("CreatedBy");
 
@@ -22771,6 +23134,30 @@ namespace Tawtheef.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.RoomType", b =>
+                {
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "DeletedBy")
+                        .WithMany()
+                        .HasForeignKey("DeletedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Tawtheef.Domain.Entities.Users.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedBy");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Lookups.SchoolStage", b =>
                 {
                     b.HasOne("Tawtheef.Domain.Entities.Users.User", "CreatedBy")
                         .WithMany()
@@ -25564,6 +25951,11 @@ namespace Tawtheef.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Office");
+                });
+
+            modelBuilder.Entity("Tawtheef.Domain.Entities.Exams.TestSession", b =>
+                {
+                    b.Navigation("TestSessionCandidates");
                 });
 
             modelBuilder.Entity("Tawtheef.Domain.Entities.Interview.InterviewCommittee", b =>

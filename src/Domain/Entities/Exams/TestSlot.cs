@@ -20,4 +20,18 @@ public class TestSlot : EventEntity
 
     public Room? Room { get; set; }
     public TestSlotStatus? Status { get; set; }
+
+    public void Start(
+        Guid startedById,
+        DateTime startedAt)
+    {
+        StatusId = TestSlotStatusIds.Started;
+        StartedById = startedById;
+        StartedAt = startedAt;
+    }
+
+    public void Close()
+    {
+        StatusId = TestSlotStatusIds.Closed;
+    }
 }

@@ -42,6 +42,24 @@ export const employeeRoutes: Routes = [
       ),
   },
   {
+    path: portalRoutes.examResultDetailsPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Exams.View] },
+    loadComponent: () =>
+      import('./exam-results/components/exam-result-report-details.component/exam-result-report-details.component').then(
+        (m) => m.ExamResultReportDetailsComponent,
+      ),
+  },
+  {
+    path: portalRoutes.examResultsPath,
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.Exams.View] },
+    loadComponent: () =>
+      import('./exam-results/components/exam-result-reports-list/exam-result-reports-list.component').then(
+        (m) => m.ExamResultReportsListComponent,
+      ),
+  },
+  {
     path: portalRoutes.createTestSlotPath,
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.TestSlots.Create], testSlotMode: 'create' },
@@ -436,13 +454,17 @@ export const employeeRoutes: Routes = [
     path: 'question-bank-assignments/:assignmentId/questions',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.QuestionBankAssignments.Manage] },
-    loadComponent: () => import('./question-bank-assignments/question-entry.page').then(m => m.QuestionEntryPage),
+    loadComponent: () =>
+      import('./question-bank-assignments/question-entry.page').then((m) => m.QuestionEntryPage),
   },
   {
     path: 'question-bank-assignments',
     canActivate: [permissionGuard],
     data: { permissions: [Permissions.QuestionBankAssignments.Manage] },
-    loadComponent: () => import('./question-bank-assignments/question-bank-assignments.page').then(m => m.QuestionBankAssignmentsPage),
+    loadComponent: () =>
+      import('./question-bank-assignments/question-bank-assignments.page').then(
+        (m) => m.QuestionBankAssignmentsPage,
+      ),
   },
   {
     path: 'question-banks',
@@ -450,6 +472,15 @@ export const employeeRoutes: Routes = [
     data: { permissions: [Permissions.QuestionBanks.View] },
     loadComponent: () =>
       import('./question-banks/question-banks.page').then((m) => m.QuestionBanksPage),
+  },
+  {
+    path: 'question-bank-requests/:id/review',
+    canActivate: [permissionGuard],
+    data: { permissions: [Permissions.QuestionBankRequests.Review] },
+    loadComponent: () =>
+      import('./question-bank-requests/question-bank-request-review.page').then(
+        (m) => m.QuestionBankRequestReviewPage,
+      ),
   },
   {
     path: 'question-bank-requests/:id',

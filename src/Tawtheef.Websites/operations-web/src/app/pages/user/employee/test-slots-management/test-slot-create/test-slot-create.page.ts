@@ -21,7 +21,8 @@ import { validateSlotDetails } from './helper/test-slot-create.validation';
 import { initialTeamAssignmentState, TeamAssignmentState } from './models/team-assignment-state.model';
 import { TeamAssignmentComponent } from './steps/team-assignment/team-assignment.component';
 import { ReviewComponent } from './steps/review/review.component';
-import { CreateTestSlotDto, TestSlotConfigurationDto, TestSlotStaffConflictDto, TestSlotStaffRoleIds } from '../models/create-test-slot.dto';
+import { CreateTestSlotDto, TestSlotConfigurationDto, TestSlotStaffConflictDto } from '../models/create-test-slot.dto';
+import { TestSlotStaffRoleIds } from '../constants/test-slot-staff-role.constants';
 
 @Component({
   selector: 'app-test-slot-create-page',
@@ -193,7 +194,7 @@ export class TestSlotCreatePage implements OnInit {
         header: this.translate.instant('TEST_SLOT_WIZARD.CANCEL'),
         width: 'min(32rem, 95vw)',
         modal: true,
-        data: { type: 'warning', description: 'TEST_SLOT_WIZARD.LEAVE_MESSAGE' },
+        data: { type: 'warning', primaryActionStyle: true, description: 'TEST_SLOT_WIZARD.LEAVE_MESSAGE' },
       })
       ?.onClose.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(confirmed => {

@@ -34,7 +34,9 @@ public sealed class AddQuestionToAssignmentCommandHandler(
             var a = await uow.GetEntityRepository<QuestionBankAssignment>().DbSet.Include(x => x.QuestionBankRequest)
                 .SingleOrDefaultAsync(x => x.Id == r.AssignmentId && x.EmployeeId == employeeId && !x.IsDeleted, token);
             if (a is null) return Result.Fail<Guid>(ErrorsCodes.QuestionBankAssignmentNotFound);
-            if (!QuestionEntryRules.Editable(a.StatusId) || a.QuestionBankRequest.StatusId != QuestionBankRequestStatusIds.QuestionEntryInProgress)
+            var initialEntry = QuestionEntryRules.Editable(a.StatusId) && a.QuestionBankRequest.StatusId == QuestionBankRequestStatusIds.QuestionEntryInProgress;
+            var correction = QuestionEntryRules.CorrectionEditable(a.StatusId) && a.QuestionBankRequest.StatusId == QuestionBankRequestStatusIds.ModificationInProgress;
+            if (!initialEntry && !correction)
                 return Result.Fail<Guid>(ErrorsCodes.QuestionBankAssignmentNotEditable);
             var question = new Question { Id = Guid.NewGuid() }; var itemId = Guid.NewGuid();
             var revision = QuestionEntryRules.Revision(question.Id, 1, null, questionInput);

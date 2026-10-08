@@ -10,7 +10,6 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
-import { TagModule } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { catchError, debounceTime, finalize, forkJoin, of, Subject, switchMap } from 'rxjs';
@@ -23,8 +22,10 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { HasPermissionDirective } from '../../../../shared/directives/has-permission.directive';
 import { RoomListItemDto } from '../rooms-management/models/room-list-item.dto';
 import { TestSlotFilters, TestSlotListItemDto } from './models/test-slot-list-item.dto';
-import { TestSlotStatusIds } from './models/test-slot-status.ids';
+import { TestSlotStatusIds } from './constants/test-slot-status.ids';
 import { TestSlotsService } from './services/test-slots.service';
+import { StatusPillComponent } from '../../../../shared/components/status-pill/status-pill.component';
+import { testSlotStatusTone } from './test-slot-status-presentation';
 
 @Component({
   selector: 'app-test-slots-management',
@@ -41,7 +42,7 @@ import { TestSlotsService } from './services/test-slots.service';
     InputIconModule,
     InputTextModule,
     Select,
-    TagModule,
+    StatusPillComponent,
     TableModule,
     TooltipModule,
     PaginationComponent,
@@ -52,6 +53,7 @@ import { TestSlotsService } from './services/test-slots.service';
   ],
 })
 export class TestSlotsManagementComponent implements OnInit {
+  readonly testSlotStatusTone = testSlotStatusTone;
   private readonly service = inject(TestSlotsService);
   private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);

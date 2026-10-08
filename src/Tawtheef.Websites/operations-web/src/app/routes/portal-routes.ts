@@ -151,6 +151,14 @@ export const portalRoutes = {
   get examsManagement() {
     return this.portal + '/' + this.examsManagementPath;
   },
+  examResultsPath: 'exam-results',
+  examResultDetailsPath: 'exam-results/:reportId',
+  get examResults() {
+    return this.portal + '/' + this.examResultsPath;
+  },
+  examResultDetails(reportId: string) {
+    return this.examResults + `/${reportId}`;
+  },
   testSlotsManagementPath: 'test-slots-management',
   createTestSlotPath: 'test-slots-management/create',
   editTestSlotPath: 'test-slots-management/:testSlotId/edit',
@@ -184,13 +192,20 @@ export const portalRoutes = {
   get questionBanks() {
     return this.portal + '/question-banks';
   },
-  get questionBankAssignments() { return this.portal + '/question-bank-assignments'; },
-  questionBankAssignmentQuestions(id: string) { return this.questionBankAssignments + `/${id}/questions`; },
+  get questionBankAssignments() {
+    return this.portal + '/question-bank-assignments';
+  },
+  questionBankAssignmentQuestions(id: string) {
+    return this.questionBankAssignments + `/${id}/questions`;
+  },
   get questionBankRequests() {
     return this.portal + '/question-bank-requests';
   },
   questionBankRequestDetails(id: string) {
     return this.questionBankRequests + `/${id}`;
+  },
+  questionBankRequestReview(id: string) {
+    return this.questionBankRequests + `/${id}/review`;
   },
   get interviewAxesCriteria() {
     return this.portal + '/interview-axes-criteria';

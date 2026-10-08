@@ -26,7 +26,7 @@ public static class Program
         // 1) Connection string selection
         var savedConnections = new List<SavedConnection>
         {
-            new("LocalDB", @"Server=(localdb)\MSSQLLocalDB;Database=TawtheefDB;Trusted_Connection=True;")
+            new("LocalDB", @"Server=(localdb)\MSSQLLocalDB;Database=TawtheefDB3;Trusted_Connection=True;")
         };
 
         var preStageConnectionString =

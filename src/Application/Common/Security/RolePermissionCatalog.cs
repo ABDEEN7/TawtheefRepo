@@ -25,6 +25,8 @@ public static class RolePermissionCatalog
                 Permissions.Exams.View.Key,
                 Permissions.Exams.Create.Key,
                 Permissions.Exams.WorkflowActions.Key,
+                Permissions.Exams.ApproveResults.Key,
+                Permissions.Exams.ViewAttemptDetails.Key,
                 Permissions.TestSlots.View.Key,
                 Permissions.TestSlots.Create.Key,
                 Permissions.TestSlots.ManagePeriod.Key,
@@ -99,7 +101,9 @@ public static class RolePermissionCatalog
                 Permissions.QuestionBanks.View.Key,
                 Permissions.QuestionBankRequests.View.Key,
                 Permissions.QuestionBankRequests.Create.Key,
+                Permissions.QuestionBankRequests.Maintenance.Key,
                 Permissions.QuestionBankRequests.Assign.Key,
+                Permissions.QuestionBankRequests.Review.Key,
                 Permissions.QuestionBankAssignments.Manage.Key,
                 Permissions.Locations.Manage.Key,
 

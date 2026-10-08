@@ -10,6 +10,12 @@ public class ExamResultReportConfiguration : BaseEntityConfiguration<ExamResultR
     {
         base.Configure(builder);
 
+        builder.Property(x => x.SpecializedQualificationThreshold)
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.DecisionNotes)
+            .HasMaxLength(4000);
+
         builder.HasOne(x => x.Exam)
             .WithMany()
             .HasForeignKey(x => x.ExamId)
@@ -19,6 +25,8 @@ public class ExamResultReportConfiguration : BaseEntityConfiguration<ExamResultR
             .WithMany()
             .HasForeignKey(x => x.StatusId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => x.ExamId);
+
     }
 }
-

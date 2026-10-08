@@ -10,6 +10,9 @@ public class ExamCategoryConfiguration : BaseEntityConfiguration<ExamCategory>
     {
         base.Configure(builder);
 
+        builder.Property(x => x.WeightPercent)
+            .HasPrecision(18, 2);
+
         builder.HasOne(x => x.ExamPart)
             .WithMany()
             .HasForeignKey(x => x.ExamPartId)
@@ -23,7 +26,7 @@ public class ExamCategoryConfiguration : BaseEntityConfiguration<ExamCategory>
         builder.HasOne(x => x.QuestionBankVersion)
             .WithMany()
             .HasForeignKey(x => x.QuestionBankVersionId)
-            .IsRequired(true)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

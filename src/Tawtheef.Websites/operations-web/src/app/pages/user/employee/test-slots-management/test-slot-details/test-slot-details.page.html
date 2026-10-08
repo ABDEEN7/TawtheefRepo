@@ -68,6 +68,7 @@
         <app-test-slot-basic-info [details]="details()!" />
         <app-test-slot-candidates
           [testSlotId]="details()!.id"
+          [isCurrentUserRoomHead]="details()!.isCurrentUserRoomHead"
           [sendingNotifications]="sendingNotifications()"
           (sendNotifications)="confirmCandidateNotifications()"
         />

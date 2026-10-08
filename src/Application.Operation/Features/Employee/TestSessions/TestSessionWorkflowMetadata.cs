@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Logger;
 
@@ -17,7 +18,7 @@ internal sealed record TestSessionWorkflowMetadata(
         UserId = ReviewerId,
         LogType = ActionLogType.Employee,
         ActionType = actionType,
-        Section = "TestSessionWorkflow",
+        Section = TestSessionWorkflowAudit.Section,
         EntityId = testSession.Id,
         Notes = JsonSerializer.Serialize(new
         {

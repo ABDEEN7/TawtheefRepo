@@ -37,7 +37,20 @@ public sealed record TestSlotCandidateListItemDto(
     string ExamNo,
     string AttendanceStatus,
     string AttemptStatus,
-    string? NotificationStatus);
+    Guid? TestAttemptId,
+    string? AttemptStatusBackendName,
+    bool ResumeAuthorized,
+    bool ResumeAllowed,
+    bool RescheduleAllowed,
+    string? NotificationStatus,
+    string AttendanceStatusBackendName,
+    string IdentityVerificationStatus,
+    string IdentityVerificationStatusBackendName,
+    string CandidateStatus,
+    string CandidateStatusBackendName,
+    string? IdentityVerificationNotes,
+    bool HasOpenInterruption,
+    string SessionStatusBackendName);
 
 public sealed record TestSlotSessionDto(
     Guid Id,

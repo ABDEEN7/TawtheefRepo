@@ -44,7 +44,7 @@
           {{ 'TEST_SESSION_WIZARD.TOTAL_CANDIDATES' | translate }}
         </span>
         <strong class="workflow-review-summary-card__value">{{
-          selectedCandidateIds().length
+          summaryCards().totalCandidates
         }}</strong>
       </div>
     </div>
@@ -59,7 +59,7 @@
           {{ 'TEST_SESSION_WIZARD.SESSIONS_ADDED' | translate }}
         </span>
         <strong class="workflow-review-summary-card__value">{{
-          summary().existingExamSessionCount
+          summaryCards().addedSessions
         }}</strong>
       </div>
     </div>
@@ -74,7 +74,7 @@
           {{ 'TEST_SESSION_WIZARD.ALLOCATED_SEATS' | translate }}
         </span>
         <strong class="workflow-review-summary-card__value">{{
-          summary().existingExamCandidateCount
+          summaryCards().allocatedSeats
         }}</strong>
       </div>
     </div>
@@ -88,7 +88,9 @@
         <span class="workflow-review-summary-card__label">
           {{ 'TEST_SESSION_WIZARD.REMAINING' | translate }}
         </span>
-        <strong class="workflow-review-summary-card__value">{{ remainingCandidates() }}</strong>
+        <strong class="workflow-review-summary-card__value">{{
+          summaryCards().remainingCandidates
+        }}</strong>
       </div>
     </div>
   </div>
@@ -160,7 +162,7 @@
           ><tr>
             <th>{{ 'TEST_SESSION_WIZARD.PERIOD' | translate }}</th>
             <th>{{ 'TEST_SESSION_WIZARD.ROOM' | translate }}</th>
-            <th>{{ 'TEST_SESSION_WIZARD.DATE_TIME' | translate }}</th>
+            <th>{{ 'TEST_SESSION_WIZARD.DATE_AVAILABLE_TIMES' | translate }}</th>
             <th>{{ 'TEST_SESSION_WIZARD.CURRENT_RESERVATIONS' | translate }}</th>
             <th>{{ 'TEST_SESSION_WIZARD.EXISTING_SESSIONS' | translate }}</th>
             <th class="text-center">{{ 'TEST_SESSION_WIZARD.ACTIONS' | translate }}</th>
@@ -172,13 +174,20 @@
             <td>
               <div>{{ slot.roomName }}</div>
               <small class="text-muted"
-                >{{ slot.remainingCapacity }} / {{ slot.roomCapacity }}
-                {{ 'TEST_SESSION_WIZARD.CAPACITY_AVAILABLE' | translate }}</small
+                >{{ slot.roomCapacity }} {{ 'TEST_SESSION_WIZARD.ROOM_CAPACITY' | translate }}</small
               >
             </td>
             <td class="text-nowrap">
               <div>{{ slot.slotDate | date: 'yyyy/MM/dd' }}</div>
-              <bdi>{{ slot.startTime }} - {{ slot.endTime }}</bdi>
+              @for (window of slot.availabilityWindows; track window.startTime) {
+                <div class="small mt-1">
+                  <bdi>{{ formatTime(window.startTime) }} - {{ formatTime(window.endTime) }}</bdi>
+                  <span class="text-muted d-block">
+                    {{ window.availableSeats }}
+                    {{ 'TEST_SESSION_WIZARD.AVAILABLE_SEATS_FOR_DURATION' | translate }}
+                  </span>
+                </div>
+              }
             </td>
             <td>{{ slot.currentReservations }}</td>
             <td>

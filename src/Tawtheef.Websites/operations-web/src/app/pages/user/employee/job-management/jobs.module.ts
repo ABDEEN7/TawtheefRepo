@@ -54,6 +54,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { MenuModule } from 'primeng/menu';
 import { DrawerModule } from 'primeng/drawer';
 import { CheckboxModule } from 'primeng/checkbox';
+import { StatusPillComponent } from '../../../../shared/components/status-pill/status-pill.component';
 import { JobCandidatesSpecializationFilterModalComponent } from './modals/job-candidates-specialization-filter-modal/job-candidates-specialization-filter-modal.component';
 import { CandidateEligibilityCheckDialogComponent } from './modals/candidate-eligibility-check-dialog/candidate-eligibility-check-dialog.component';
 import { CandidatePointsBreakdownDialogComponent } from './modals/candidate-points-breakdown-dialog/candidate-points-breakdown-dialog.component';
@@ -120,7 +121,8 @@ import { CandidatePointsBreakdownDialogComponent } from './modals/candidate-poin
         RemoteSelectComponent,
         MenuModule,
         DrawerModule,
-        CheckboxModule
+        CheckboxModule,
+        StatusPillComponent
     ],
   exports: [
     JobDetailsComponent,
