@@ -22,7 +22,11 @@
             {{ 'EXAM_RESULTS.ATTEMPT_STATUS' | translate }}
           </div>
 
-          <p-tag severity="success" [value]="lookupName(details.attemptStatus)" />
+          @if (details.attemptStatus; as status) {
+            <app-status-pill [label]="lookupName(status)" [tone]="attemptStatusTone(status.backendName)" />
+          } @else {
+            {{ lookupName(null) }}
+          }
         </div>
 
         <div class="col-12 col-md-4 summary-item">
@@ -78,7 +82,7 @@
                       {{ part.partNo }}
                     </strong>
 
-                    <p-tag severity="secondary" [value]="lookupName(part.status)" />
+                    <app-status-pill [label]="lookupName(part.status)" [tone]="attemptPartStatusTone(part.status.backendName)" />
                   </div>
 
                   <div class="d-flex flex-wrap gap-4 small text-muted">

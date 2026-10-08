@@ -18,7 +18,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
+import { StatusPillComponent, StatusTone } from '../../../../../../shared/components/status-pill/status-pill.component';
 import { TestSessionsService } from '../../services/test-sessions.service';
 import { LanguageService } from '../../../../../../core/services/language.service';
 import {
@@ -43,7 +43,7 @@ import { PaginationComponent } from '../../../../../../shared/components/paginat
     CheckboxModule,
     SelectModule,
     TableModule,
-    TagModule,
+    StatusPillComponent,
     PaginationComponent,
   ],
 })
@@ -180,10 +180,14 @@ export class TestSessionCandidatesStepComponent implements OnChanges {
     this.currentPage.set(1);
   }
 
-  statusSeverity(
+  eligibilityStatusTone(
     status: TestSessionCandidateListItemDto['eligibilityStatus'],
-  ): 'success' | 'warn' | 'danger' {
-    return status === 'Eligible' ? 'success' : status === 'NotReady' ? 'warn' : 'danger';
+  ): StatusTone {
+    switch (status) {
+      case 'Eligible': return 'success';
+      case 'NotReady': return 'warning';
+      case 'Excluded': return 'danger';
+    }
   }
 
   toggleCandidate(candidate: TestSessionCandidateListItemDto, checked: boolean): void {

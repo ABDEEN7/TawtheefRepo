@@ -176,11 +176,9 @@
               }}
             </td>
             <td>
-              <p-tag
-                [severity]="statusSeverity(candidate.eligibilityStatus)"
-                [value]="
-                  'TEST_SESSION_WIZARD.ELIGIBILITY_' + candidate.eligibilityStatus | translate
-                "
+              <app-status-pill
+                [tone]="eligibilityStatusTone(candidate.eligibilityStatus)"
+                [label]="'TEST_SESSION_WIZARD.ELIGIBILITY_' + candidate.eligibilityStatus | translate"
               />
               @if (candidate.eligibilityReason) {
                 <small class="d-block text-muted mt-1">

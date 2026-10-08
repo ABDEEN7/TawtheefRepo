@@ -13,15 +13,19 @@ import { ExamResultReportsService } from '../../services/exam-result-reports.ser
 import { DatePipe } from '@angular/common';
 import { TabsModule } from 'primeng/tabs';
 import { ExamResultCandidateAttemptDialogData } from './models/exam-result-candidate-attempt-dialog.model';
+import { StatusPillComponent } from '../../../../../../shared/components/status-pill/status-pill.component';
+import { attemptPartStatusTone, attemptStatusTone } from '../../exam-result-status-presentation';
 
 @Component({
   selector: 'app-exam-result-candidate-attempt-dialog',
   standalone: true,
-  imports: [TranslatePipe, TagModule, I18nNamespaceDirective, DatePipe, TabsModule],
+  imports: [TranslatePipe, TagModule, StatusPillComponent, I18nNamespaceDirective, DatePipe, TabsModule],
   templateUrl: './exam-result-candidate-attempt-dialog.component.html',
   styleUrl:'./exam-result-candidate-attempt-dialog.component.scss',
 })
 export class ExamResultCandidateAttemptDialogComponent implements OnInit {
+  readonly attemptStatusTone = attemptStatusTone;
+  readonly attemptPartStatusTone = attemptPartStatusTone;
   private readonly data = inject(DynamicDialogConfig<ExamResultCandidateAttemptDialogData>).data;
   private readonly service = inject(ExamResultReportsService);
   private readonly language = inject(LanguageService);

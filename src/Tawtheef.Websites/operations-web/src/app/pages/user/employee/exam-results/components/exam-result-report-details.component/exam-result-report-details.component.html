@@ -116,7 +116,7 @@
                 {{ 'EXAM_RESULTS.STATUS' | translate }}
               </div>
 
-              <p-tag severity="secondary" [value]="lookupName(details.status)" />
+              <app-status-pill [label]="lookupName(details.status)" [tone]="reportStatusTone(details.status.backendName)" />
             </div>
 
             <div class="col-12 col-md-6 col-xl-3">
@@ -239,22 +239,24 @@
 
                   <!-- Attendance -->
                   <td>
-                    {{ lookupName(candidate.attendanceStatus) }}
+                    @if (candidate.attendanceStatus; as status) {
+                      <app-status-pill [label]="lookupName(status)" [tone]="attendanceStatusTone(status.backendName)" />
+                    } @else {
+                      {{ lookupName(null) }}
+                    }
                   </td>
 
                   <!-- Attempt -->
                   <td>
                     <div class="d-flex flex-column align-items-start gap-1">
-                      <p-tag
-                        [severity]="attemptStatusSeverity(candidate.attemptStatus?.backendName)"
-                        [value]="lookupName(candidate.attemptStatus)"
-                      />
+                      @if (candidate.attemptStatus; as status) {
+                        <app-status-pill [label]="lookupName(status)" [tone]="attemptStatusTone(status.backendName)" />
+                      } @else {
+                        {{ lookupName(null) }}
+                      }
 
                       @if (candidate.hasOpenInterruption) {
-                        <p-tag
-                          severity="warn"
-                          [value]="'EXAM_RESULTS.OPEN_INTERRUPTION' | translate"
-                        />
+                        <app-status-pill [label]="'EXAM_RESULTS.OPEN_INTERRUPTION' | translate" tone="warning" />
                       }
                     </div>
                   </td>
@@ -305,10 +307,7 @@
 
                   <!-- Result -->
                   <td>
-                    <p-tag
-                      [severity]="resultStatusSeverity(candidate.resultStatus.backendName)"
-                      [value]="lookupName(candidate.resultStatus)"
-                    />
+                    <app-status-pill [label]="lookupName(candidate.resultStatus)" [tone]="candidateResultStatusTone(candidate.resultStatus.backendName)" />
                   </td>
 
                   <!-- Actions -->

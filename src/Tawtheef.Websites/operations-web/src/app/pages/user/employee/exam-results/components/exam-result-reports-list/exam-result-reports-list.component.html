@@ -139,10 +139,7 @@
 
                 <!-- Report status -->
                 <td>
-                  <p-tag
-                    [severity]="reportStatusSeverity(report.status.backendName)"
-                    [value]="report.status.name"
-                  />
+                  <app-status-pill [label]="report.status.name" [tone]="reportStatusTone(report.status.backendName)" />
                 </td>
 
                 <!-- Candidate summary -->

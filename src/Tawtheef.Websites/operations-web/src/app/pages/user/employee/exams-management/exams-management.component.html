@@ -166,7 +166,7 @@
                 <td>
                   {{ 'EXAMS.DURATION_MINUTES' | translate: { count: exam.totalDurationMinutes } }}
                 </td>
-                <td><p-tag severity="secondary" [value]="exam.status.name" /></td>
+                <td><app-status-pill [label]="exam.status.name" [tone]="examStatusTone(exam.status.backendName)" /></td>
                 <td class="text-nowrap">{{ exam.createdDate | date: 'yyyy/MM/dd HH:mm' }}</td>
                 <td class="text-nowrap">{{ exam.lastUpdated | date: 'yyyy/MM/dd HH:mm' }}</td>
                 <td class="text-center">

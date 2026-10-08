@@ -9,7 +9,6 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
 import { catchError, debounceTime, of, Subject, switchMap, tap } from 'rxjs';
 import { LanguageService } from '../../../../../../core/services/language.service';
 import { portalRoutes } from '../../../../../../routes/portal-routes';
@@ -22,6 +21,8 @@ import {
 } from '../../models/exam-result-report.models';
 import { ExamResultReportsService } from '../../services/exam-result-reports.service';
 import { TooltipModule } from 'primeng/tooltip';
+import { StatusPillComponent } from '../../../../../../shared/components/status-pill/status-pill.component';
+import { reportStatusTone } from '../../exam-result-status-presentation';
 
 @Component({
   selector: 'app-exam-result-reports-list',
@@ -36,7 +37,7 @@ import { TooltipModule } from 'primeng/tooltip';
     InputTextModule,
     TableModule,
     TooltipModule,
-    TagModule,
+    StatusPillComponent,
     PaginationComponent,
     PageFiltersComponent,
     I18nNamespaceDirective,
@@ -45,6 +46,7 @@ import { TooltipModule } from 'primeng/tooltip';
   styleUrl: './exam-result-reports-list.component.scss',
 })
 export class ExamResultReportsListComponent implements OnInit {
+  readonly reportStatusTone = reportStatusTone;
   private readonly service = inject(ExamResultReportsService);
   private readonly language = inject(LanguageService);
   private readonly router = inject(Router);
@@ -139,25 +141,6 @@ export class ExamResultReportsListComponent implements OnInit {
 
   open(reportId: string): void {
     void this.router.navigateByUrl(portalRoutes.examResultDetails(reportId));
-  }
-
-  reportStatusSeverity(backendName: string): 'success' | 'warn' | 'info' | 'secondary' {
-    switch (backendName) {
-      case 'Approved':
-        return 'success';
-
-      case 'UnderReview':
-        return 'info';
-
-      case 'Returned':
-        return 'warn';
-
-      case 'Closed':
-        return 'secondary';
-
-      default:
-        return 'secondary';
-    }
   }
 
   private toDateFilter(date: Date | null): string | undefined {

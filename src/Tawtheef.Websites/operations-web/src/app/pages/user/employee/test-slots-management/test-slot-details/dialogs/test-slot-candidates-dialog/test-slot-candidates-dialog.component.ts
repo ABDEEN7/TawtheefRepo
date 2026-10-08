@@ -8,7 +8,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../../../../../core/auth/auth.service';
 import { Permissions } from '../../../../../../../core/constants/permissions';
@@ -25,13 +24,16 @@ import {
 import { TestSlotsService } from '../../../services/test-slots.service';
 import { VerifyIdentityDialogComponent } from '../verify-identity-dialog/verify-identity-dialog.component';
 import { ReportOperationalIssueDialogComponent } from '../report-operational-issue-dialog/report-operational-issue-dialog.component';
-import { StatusSeverity } from '../../../../../../../shared/types/status-severity.type';
+import { StatusPillComponent } from '../../../../../../../shared/components/status-pill/status-pill.component';
+import {
+  attendanceStatusTone,
+  identityStatusTone,
+  candidateAssignmentStatusTone,
+  attemptStatusTone,
+} from '../../../../exam-results/exam-result-status-presentation';
 import { RescheduleInterruptedCandidateDialogComponent } from '../reschedule-interrupted-candidate-dialog/reschedule-interrupted-candidate-dialog.component';
 import {
-  TestSlotCandidateAttendanceStatus,
   TestSlotCandidateAttemptStatus,
-  TestSlotCandidateIdentityStatus,
-  TestSlotCandidateStatus,
 } from '../../../constants/test-slot-candidate-backend-status.constants';
 import { TestSlotCandidatesDialogData } from './models/test-slot-candidates-dialog.model';
 import {
@@ -57,11 +59,15 @@ import {
     InputTextModule,
     SelectModule,
     TableModule,
-    TagModule,
+    StatusPillComponent,
     PaginationComponent,
   ],
 })
 export class TestSlotCandidatesDialogComponent implements OnInit {
+  readonly attendanceStatusTone = attendanceStatusTone;
+  readonly identityStatusTone = identityStatusTone;
+  readonly candidateAssignmentStatusTone = candidateAssignmentStatusTone;
+  readonly attemptStatusTone = attemptStatusTone;
   private readonly service = inject(TestSlotsService);
   private readonly auth = inject(AuthService);
   private readonly language = inject(LanguageService);
@@ -393,70 +399,4 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
       });
   }
 
-  attendanceSeverity(backendName: string): StatusSeverity {
-    switch (backendName) {
-      case TestSlotCandidateAttendanceStatus.Present:
-        return 'success';
-
-      case TestSlotCandidateAttendanceStatus.NoShow:
-        return 'danger';
-
-      default:
-        return 'secondary';
-    }
-  }
-
-  identitySeverity(backendName: string): StatusSeverity {
-    switch (backendName) {
-      case TestSlotCandidateIdentityStatus.Matched:
-        return 'success';
-
-      case TestSlotCandidateIdentityStatus.NotMatched:
-        return 'danger';
-
-      case TestSlotCandidateIdentityStatus.Pending:
-        return 'info';
-
-      default:
-        return 'secondary';
-    }
-  }
-
-  candidateStatusSeverity(backendName: string): StatusSeverity {
-    switch (backendName) {
-      case TestSlotCandidateStatus.Authorized:
-      case TestSlotCandidateStatus.Completed:
-        return 'success';
-
-      case TestSlotCandidateStatus.Started:
-      case TestSlotCandidateStatus.Rescheduled:
-        return 'info';
-
-      case TestSlotCandidateStatus.Cancelled:
-        return 'danger';
-
-      default:
-        return 'secondary';
-    }
-  }
-
-  attemptStatusSeverity(backendName?: string | null): StatusSeverity {
-    switch (backendName) {
-      case TestSlotCandidateAttemptStatus.Completed:
-        return 'success';
-
-      case TestSlotCandidateAttemptStatus.TimedOut:
-      case TestSlotCandidateAttemptStatus.Interrupted:
-        return 'warn';
-
-      case TestSlotCandidateAttemptStatus.InProgress:
-        return 'info';
-
-      case TestSlotCandidateAttemptStatus.Cancelled:
-        return 'danger';
-
-      default:
-        return 'secondary';
-    }
-  }
 }

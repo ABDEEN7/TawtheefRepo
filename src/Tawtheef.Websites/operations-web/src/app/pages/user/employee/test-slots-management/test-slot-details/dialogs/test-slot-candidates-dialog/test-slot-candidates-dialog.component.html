@@ -111,17 +111,11 @@
           </td>
 
           <td>
-            <p-tag
-              [severity]="attendanceSeverity(candidate.attendanceStatusBackendName)"
-              [value]="candidate.attendanceStatus"
-            />
+            <app-status-pill [label]="candidate.attendanceStatus" [tone]="attendanceStatusTone(candidate.attendanceStatusBackendName)" />
           </td>
 
           <td>
-            <p-tag
-              [severity]="identitySeverity(candidate.identityVerificationStatusBackendName)"
-              [value]="candidate.identityVerificationStatus"
-            />
+            <app-status-pill [label]="candidate.identityVerificationStatus" [tone]="identityStatusTone(candidate.identityVerificationStatusBackendName)" />
 
             @if (candidate.identityVerificationNotes) {
               <div class="small text-muted mt-1">
@@ -131,18 +125,12 @@
           </td>
 
           <td>
-            <p-tag
-              [severity]="candidateStatusSeverity(candidate.candidateStatusBackendName)"
-              [value]="candidate.candidateStatus"
-            />
+            <app-status-pill [label]="candidate.candidateStatus" [tone]="candidateAssignmentStatusTone(candidate.candidateStatusBackendName)" />
           </td>
 
           <td>
             @if (candidate.attemptStatus) {
-              <p-tag
-                [severity]="attemptStatusSeverity(candidate.attemptStatusBackendName)"
-                [value]="candidate.attemptStatus"
-              />
+              <app-status-pill [label]="candidate.attemptStatus" [tone]="attemptStatusTone(candidate.attemptStatusBackendName)" />
             }
           </td>
 
@@ -191,10 +179,7 @@
               }
 
               @if (isOperationalIssueRecorded(candidate)) {
-                <p-tag
-                  severity="warn"
-                  [value]="'TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_RECORDED' | translate"
-                />
+                <app-status-pill [label]="'TEST_SLOT_DETAILS.OPERATIONAL_ISSUE_RECORDED' | translate" tone="warning" />
               } @else if (canReportOperationalIssue(candidate)) {
                 <button
                   type="button"
@@ -208,10 +193,7 @@
               }
 
               @if (isResumeAuthorized(candidate)) {
-                <p-tag
-                  severity="success"
-                  [value]="'TEST_SLOT_DETAILS.RESUME_AUTHORIZED' | translate"
-                />
+                <app-status-pill [label]="'TEST_SLOT_DETAILS.RESUME_AUTHORIZED' | translate" tone="success" />
               } @else if (canAuthorizeResume(candidate)) {
                 <button
                   type="button"

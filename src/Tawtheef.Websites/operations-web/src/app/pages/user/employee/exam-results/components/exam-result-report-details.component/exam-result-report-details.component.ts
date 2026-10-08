@@ -38,6 +38,13 @@ import { ExamResultCandidateAttemptDialogComponent } from '../../dialogs/exam-re
 import { ResolveExamResultCandidateDialogComponent } from '../../dialogs/resolve-exam-result-candidate/resolve-exam-result-candidate-dialog.component';
 import { RescheduleExamResultCandidateDialogComponent } from '../../dialogs/reschedule-exam-result-candidate/reschedule-exam-result-candidate-dialog.component';
 import { ReturnExamResultReportDialogComponent } from '../../dialogs/return-exam-result-report/return-exam-result-report-dialog.component';
+import { StatusPillComponent } from '../../../../../../shared/components/status-pill/status-pill.component';
+import {
+  attendanceStatusTone,
+  attemptStatusTone,
+  candidateResultStatusTone,
+  reportStatusTone,
+} from '../../exam-result-status-presentation';
 
 @Component({
   selector: 'app-exam-result-report-details',
@@ -48,6 +55,7 @@ import { ReturnExamResultReportDialogComponent } from '../../dialogs/return-exam
     TranslatePipe,
     TableModule,
     TagModule,
+    StatusPillComponent,
     TooltipModule,
     I18nNamespaceDirective,
     FaDirArrowDirective,
@@ -57,6 +65,10 @@ import { ReturnExamResultReportDialogComponent } from '../../dialogs/return-exam
   providers: [DialogService],
 })
 export class ExamResultReportDetailsComponent implements OnInit {
+  readonly reportStatusTone = reportStatusTone;
+  readonly candidateResultStatusTone = candidateResultStatusTone;
+  readonly attemptStatusTone = attemptStatusTone;
+  readonly attendanceStatusTone = attendanceStatusTone;
   private readonly route = inject(ActivatedRoute);
   private readonly service = inject(ExamResultReportsService);
   private readonly language = inject(LanguageService);
@@ -110,33 +122,6 @@ export class ExamResultReportDetailsComponent implements OnInit {
 
   lookupName(lookup: ExamResultLookup | null): string {
     return lookup ? this.localized(lookup.nameAr, lookup.nameEn) : '—';
-  }
-
-  resultStatusSeverity(backendName: string): 'success' | 'warn' | 'secondary' {
-    switch (backendName) {
-      case 'QualifiedForInterview':
-        return 'success';
-
-      case 'RequiresAction':
-        return 'warn';
-
-      default:
-        return 'secondary';
-    }
-  }
-
-  attemptStatusSeverity(backendName: string | undefined): 'success' | 'warn' | 'secondary' {
-    switch (backendName) {
-      case 'Completed':
-        return 'success';
-
-      case 'TimedOut':
-      case 'Interrupted':
-        return 'warn';
-
-      default:
-        return 'secondary';
-    }
   }
 
   openAttempt(candidateResultId: string): void {

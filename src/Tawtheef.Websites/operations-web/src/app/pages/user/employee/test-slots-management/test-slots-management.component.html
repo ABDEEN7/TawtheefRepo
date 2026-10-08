@@ -86,7 +86,7 @@
                 <td class="text-nowrap"><bdi>{{ testSlot.startTime }} - {{ testSlot.endTime }}</bdi></td>
                 <td>{{ testSlot.candidateCount }}</td>
                 <td>{{ testSlot.hallSupervisorName || ('TEST_SLOTS.NOT_AVAILABLE' | translate) }}</td>
-                <td><p-tag severity="secondary" [value]="testSlot.status.name" /></td>
+                <td><app-status-pill [label]="testSlot.status.name" [tone]="testSlotStatusTone(testSlot.status.id)" /></td>
                 <td class="text-center">
                   <div class="action-buttons justify-content-center">
                     <a

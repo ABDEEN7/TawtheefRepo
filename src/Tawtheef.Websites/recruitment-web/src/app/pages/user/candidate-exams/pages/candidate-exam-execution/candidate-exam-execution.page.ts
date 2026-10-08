@@ -24,11 +24,11 @@ import {
 } from '../../models/candidate-exam-execution-state.model';
 import { CANDIDATE_EXAM_TIMER_SERVER_SYNC_INTERVAL_MS } from '../../constants/candidate-exam-execution-timer.constants';
 import { CandidateExamExecutionTimerService } from '../../services/candidate-exam-execution-timer.service';
-
+import { FaDirArrowDirective } from '../../../../../shared/directives/dir-arrow.directive';
 @Component({
   selector: 'app-candidate-exam-execution',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, I18nNamespaceDirective],
+  imports: [CommonModule, TranslatePipe, I18nNamespaceDirective, FaDirArrowDirective],
   templateUrl: './candidate-exam-execution.page.html',
   styleUrl: './candidate-exam-execution.page.scss',
   providers: [CandidateExamExecutionTimerService],

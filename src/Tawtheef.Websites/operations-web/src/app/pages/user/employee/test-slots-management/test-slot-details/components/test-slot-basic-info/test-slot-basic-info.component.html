@@ -15,7 +15,7 @@
       </div>
       <div class="col-md-3">
         <dt>{{ 'TEST_SLOT_DETAILS.STATUS' | translate }}</dt>
-        <dd><p-tag severity="secondary" [value]="details.status.name" /></dd>
+        <dd><app-status-pill [label]="details.status.name" [tone]="testSlotStatusTone(details.status.id)" /></dd>
       </div>
       <div class="col-md-3">
         <dt>{{ 'TEST_SLOT_DETAILS.CANDIDATE_COUNT' | translate }}</dt>

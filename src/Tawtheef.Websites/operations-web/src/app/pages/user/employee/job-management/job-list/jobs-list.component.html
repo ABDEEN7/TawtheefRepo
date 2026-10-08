@@ -233,8 +233,7 @@
                     </td>
 
                     <td class="">
-                      <span [ngClass]="getStatusBadgeClass(job.jobStatus.backendName)">
-                        {{ job.jobStatus.name }}</span>
+                      <app-status-pill [label]="job.jobStatus.name" [tone]="getStatusTone(job.jobStatus.backendName)" />
                     </td>
 
                     <td>
