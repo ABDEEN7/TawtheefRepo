@@ -200,6 +200,8 @@ public static class PermissionKeys
         public const string View = "exams.view";
         public const string Create = "exams.create";
         public const string WorkflowActions = "exams.workflow-action";
+        public const string ApproveResults = "exams.approve-results";
+        public const string ViewAttemptDetails = "exams.view-attempt-details";
     }
 
     public static class TestSlots

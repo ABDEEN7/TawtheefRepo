@@ -3,7 +3,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { Permissions } from '../../../../../../core/constants/permissions';
 import { HasPermissionDirective } from '../../../../../../shared/directives/has-permission.directive';
-import { TEST_SESSION_STATUS_IDS } from '../../models/test-session-list-item.dto';
+import { TEST_SESSION_STATUS_IDS } from '../../constants/test-session-status.constants';
 
 @Component({
   selector: 'app-test-session-workflow-action',

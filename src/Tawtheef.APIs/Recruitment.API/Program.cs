@@ -15,6 +15,9 @@ using Tawtheef.Infrastructure;
 using Tawtheef.Infrastructure.Extensions;
 using Tawtheef.Infrastructure.Middlewares;
 using Tawtheef.Infrastructure.Services.Authorization;
+using Recruitment.API.Realtime;
+using Tawtheef.Domain.Configurations.Settings;
+using Tawtheef.Domain.Constants;
 using EnvironmentName = Tawtheef.Domain.Common.EnvironmentName;
 
 const string myCors = "_myAllowSpecificOrigins";
@@ -38,12 +41,11 @@ if (builder.Configuration.GetValue<bool>("KeyVault:Enabled"))
                       ?? throw new InvalidOperationException("KeyVault:Uri is required when KeyVault:Enabled is true.");
 
     var clientId = builder.Configuration["KeyVault:ClientId"]
-                   ?? throw new InvalidOperationException("KeyVault:ClientId is required when KeyVault:Enabled is true.");
+                   ?? throw new InvalidOperationException(
+                       "KeyVault:ClientId is required when KeyVault:Enabled is true.");
 
-    var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
-    {
-        ManagedIdentityClientId = clientId
-    });
+    var credential =
+        new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = clientId });
 
     builder.Configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential, new KeyVaultSecretManager());
 }
@@ -98,7 +100,7 @@ builder.Host.UseSerilog((ctx, services, lc) =>
         ?? ctx.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]
         ?? ctx.Configuration["APPSETTING_APPLICATIONINSIGHTS_CONNECTION_STRING"];
 
-    if (ctx.Configuration.GetValue<bool>("ApplicationInsights:Enabled") 
+    if (ctx.Configuration.GetValue<bool>("ApplicationInsights:Enabled")
         && !string.IsNullOrWhiteSpace(sinkAiCs))
     {
         lc.WriteTo.ApplicationInsights(
@@ -115,7 +117,25 @@ builder.Services.Configure<ForwardedHeadersOptions>(o =>
 
 builder.Services.AddInfrastructureLayer(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationRecruitment(builder.Configuration);
-
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<CandidateExamConnectionRegistry>();
+builder.Services.AddHostedService<CandidateExamConnectionRenewalWorker>();
+builder.Services.AddHostedService<CandidateExamInterruptionWorker>();
+builder.Services.AddHostedService<CandidateExamDeadlineWorker>();
+builder.Services.AddHostedService<CandidateExamResultGenerationWorker>();
+builder.Services.AddOptions<CandidateExamRealtimeSettings>()
+    .Bind(builder.Configuration.GetSection(CandidateExamRealtimeSettings.SectionName))
+    .Validate(x =>
+            x.InterruptionGraceSeconds > 0 &&
+            x.ConnectionLeaseSeconds > 0 &&
+            x.ConnectionRenewalSeconds > 0 &&
+            x.ResultGenerationIntervalSeconds > 0,
+        "Candidate exam realtime intervals must be greater than zero.")
+    .Validate(x => x.ConnectionRenewalSeconds < x.ConnectionLeaseSeconds,
+        "Candidate exam connection renewal must be shorter than the lease.")
+    .Validate(x => x.ConnectionLeaseSeconds <= x.InterruptionGraceSeconds,
+        "Candidate exam connection lease must not exceed the interruption grace period.")
+    .ValidateOnStart();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(PolicyNames.CompletedProfile,
@@ -137,9 +157,7 @@ builder.Services.AddControllers()
                 Instance = ctx.HttpContext.Request.Path,
                 Extensions =
                 {
-                    ["traceId"] = correlationId,
-                    ["correlationId"] = correlationId,
-                    ["ticket"] = correlationId
+                    ["traceId"] = correlationId, ["correlationId"] = correlationId, ["ticket"] = correlationId
                 }
             };
 
@@ -151,14 +169,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(myCors, policy =>
         policy.WithOrigins(builder.Configuration["AppConfig:FrontendUrl"]!)
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials()
-              .WithExposedHeaders(
-                  "Content-Disposition",
-                  "X-Blocked-By",
-                  HttpContextExtensions.CorrelationIdHeaderName,
-                  HttpContextExtensions.RequestIdHeaderName));
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .WithExposedHeaders(
+                "Content-Disposition",
+                "X-Blocked-By",
+                HttpContextExtensions.CorrelationIdHeaderName,
+                HttpContextExtensions.RequestIdHeaderName));
 });
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
@@ -202,7 +220,12 @@ app.UseSerilogRequestLogging(opts =>
         diagCtx.Set("CorrelationId", httpCtx.GetCorrelationId());
 
         diagCtx.Set("UserId", userId ?? "anonymous");
-        diagCtx.Set("QueryString", httpCtx.Request.QueryString.HasValue ? httpCtx.Request.QueryString.Value : "");
+        diagCtx.Set("QueryString",
+            httpCtx.Request.Path.StartsWithSegments(CandidateExamRealtimeConstants.HubPath)
+                ? ""
+                : httpCtx.Request.QueryString.HasValue
+                    ? httpCtx.Request.QueryString.Value
+                    : "");
         diagCtx.Set("Route", httpCtx.GetEndpoint()?.DisplayName ?? "");
         diagCtx.Set("ClientIP", httpCtx.Connection.RemoteIpAddress?.ToString() ?? "unknown");
         diagCtx.Set("Path", httpCtx.Request.Path);
@@ -224,7 +247,8 @@ app.UseExceptionHandler(appBuilder =>
         if (exceptionHandlerPathFeature?.Error != null)
         {
             var handler = context.RequestServices.GetRequiredService<CustomExceptionHandler>();
-            var handled = await handler.TryHandleAsync(context, exceptionHandlerPathFeature.Error, CancellationToken.None);
+            var handled =
+                await handler.TryHandleAsync(context, exceptionHandlerPathFeature.Error, CancellationToken.None);
             if (!handled)
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
@@ -234,7 +258,7 @@ app.UseExceptionHandler(appBuilder =>
 });
 app.UseHsts();
 
-if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production)) 
+if (builder.Environment.EnvironmentName != nameof(EnvironmentName.Production))
     app.MapSwagger();
 
 app.UseHttpsRedirection();
@@ -256,4 +280,5 @@ app.UseRateLimiter();
 
 app.MapGet("/", () => Results.Json(new { status = "" }));
 app.MapControllers();
+app.MapHub<CandidateExamHub>(CandidateExamRealtimeConstants.HubPath);
 app.Run();

@@ -7,11 +7,7 @@ import { finalize } from 'rxjs';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { I18nNamespaceDirective } from '../../../../../shared/directives/i18n-namespace.directive';
 import { ExamsService } from '../services/exams.service';
-
-interface ReturnExamDialogData {
-  examId: string;
-  action?: 'return' | 'reject';
-}
+import { ReturnExamDialogData } from './models/return-exam-dialog.model';
 
 @Component({
   selector: 'app-return-exam-dialog',

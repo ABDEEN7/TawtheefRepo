@@ -1,16 +1,15 @@
 import {
-  ApplicationConfig, ErrorHandler,
-  importProvidersFrom, inject, provideAppInitializer,
+  ApplicationConfig,
+  ErrorHandler,
+  importProvidersFrom,
+  inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
-  provideZoneChangeDetection
+  provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import {
-  HttpBackend, HttpClient,
-  provideHttpClient,
-  withInterceptors,
-} from '@angular/common/http';
+import { HttpBackend, HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -18,13 +17,15 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import { TawtheefPreset } from './shared/themes/twatheef-preset';
 import { LanguageService } from './core/services/language.service';
-import { authInterceptor, } from './core/interceptors/auth.interceptor';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { refreshInterceptor } from './core/interceptors/refresh.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { customHttpInterceptor } from './core/interceptors/http.interceptor';
 import { VersionedMultiTranslateLoader } from './core/http/version-translate.loader';
 import { ChunkErrorHandler } from './core/handlers/chunk-error-handler';
+import { DialogService } from 'primeng/dynamicdialog';
+
 export function rootLoaderFactory(_httpBackend: HttpBackend) {
   const resources = [
     { prefix: '/i18n/primeng/', suffix: '.json' },
@@ -37,6 +38,7 @@ export function rootLoaderFactory(_httpBackend: HttpBackend) {
 export const appConfig: ApplicationConfig = {
   providers: [
     { provide: ErrorHandler, useClass: ChunkErrorHandler },
+    DialogService,
     ConfirmationService,
     MessageService,
     importProvidersFrom(NgbModule),
@@ -46,9 +48,9 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: TawtheefPreset,
         options: {
-          darkModeSelector: 'none'
-        }
-      }
+          darkModeSelector: 'none',
+        },
+      },
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
@@ -65,7 +67,7 @@ export const appConfig: ApplicationConfig = {
         refreshInterceptor,
         authInterceptor,
         customHttpInterceptor,
-      ])
+      ]),
     ),
-  ]
+  ],
 };

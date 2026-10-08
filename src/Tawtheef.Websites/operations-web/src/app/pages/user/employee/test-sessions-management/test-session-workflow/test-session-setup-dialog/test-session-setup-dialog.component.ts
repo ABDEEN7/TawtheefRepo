@@ -35,7 +35,9 @@ export class TestSessionSetupDialogComponent implements OnInit {
         ?.startTime ??
       this.slot.startTime,
   );
-  to = this.initialSession?.endTime ?? this.addMinutes(this.from, this.exam.durationMinutes);
+  to =
+    this.initialSession?.endTime ??
+    this.addMinutes(this.from, this.exam.durationMinutes + this.exam.minimumEntryWindowMinutes);
   fromPickerValue = this.dateFromTime(this.from);
   toPickerValue = this.dateFromTime(this.to);
   added = signal(!!this.initialSession);
@@ -61,7 +63,10 @@ export class TestSessionSetupDialogComponent implements OnInit {
     this.validate();
   }
   onFromChanged(): void {
-    this.to = this.addMinutes(this.from, this.exam.durationMinutes);
+    this.to = this.addMinutes(
+      this.from,
+      this.exam.durationMinutes + this.exam.minimumEntryWindowMinutes,
+    );
     this.toPickerValue = this.dateFromTime(this.to);
     this.validate();
   }
@@ -83,7 +88,8 @@ export class TestSessionSetupDialogComponent implements OnInit {
       this.timeValue(this.from) < this.timeValue(this.slot.startTime) ||
       this.timeValue(this.to) > this.timeValue(this.slot.endTime) ||
       this.timeValue(this.to) <= this.timeValue(this.from) ||
-      this.minutes(this.from, this.to) < this.exam.durationMinutes
+      this.minutes(this.from, this.to) <
+        this.exam.durationMinutes + this.exam.minimumEntryWindowMinutes
     ) {
       this.validationPending.set(false);
       this.error.set('TEST_SESSION_WIZARD.SESSION_TIME_INVALID');

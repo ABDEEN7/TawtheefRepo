@@ -10,9 +10,28 @@ public class TestAttemptQuestionConfiguration : BaseEntityConfiguration<TestAtte
     {
         base.Configure(builder);
 
+        builder.HasIndex(x => new
+            {
+                x.TestAttemptPartId,
+                x.OrderNo
+            })
+            .IsUnique();
+
+        builder.HasIndex(x => new
+            {
+                x.TestAttemptId,
+                x.QuestionId
+            })
+            .IsUnique();
+
         builder.HasOne(x => x.TestAttempt)
-            .WithMany()
+            .WithMany(x => x.Questions)
             .HasForeignKey(x => x.TestAttemptId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.TestAttemptPart)
+            .WithMany(x => x.Questions)
+            .HasForeignKey(x => x.TestAttemptPartId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.ExamCategory)
@@ -24,6 +43,11 @@ public class TestAttemptQuestionConfiguration : BaseEntityConfiguration<TestAtte
             .WithMany()
             .HasForeignKey(x => x.QuestionId)
             .IsRequired(true)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.QuestionRevision)
+            .WithMany(x => x.TestAttemptQuestions)
+            .HasForeignKey(x => x.QuestionRevisionId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.SelectedQuestionRevisionOption)

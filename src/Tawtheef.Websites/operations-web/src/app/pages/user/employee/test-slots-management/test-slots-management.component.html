@@ -86,7 +86,7 @@
                 <td class="text-nowrap"><bdi>{{ testSlot.startTime }} - {{ testSlot.endTime }}</bdi></td>
                 <td>{{ testSlot.candidateCount }}</td>
                 <td>{{ testSlot.hallSupervisorName || ('TEST_SLOTS.NOT_AVAILABLE' | translate) }}</td>
-                <td><p-tag severity="secondary" [value]="testSlot.status.name" /></td>
+                <td><app-status-pill [label]="testSlot.status.name" [tone]="testSlotStatusTone(testSlot.status.id)" /></td>
                 <td class="text-center">
                   <div class="action-buttons justify-content-center">
                     <a
@@ -94,6 +94,7 @@
                       *hasPermission="Permissions.TestSlots.View"
                       [routerLink]="routes.viewTestSlot(testSlot.id)"
                       [pTooltip]="'TEST_SLOTS.VIEW' | translate"
+                      [attr.aria-label]="'TEST_SLOTS.VIEW' | translate"
                       tooltipPosition="top"
                     >
                       <i class="hgi hgi-stroke hgi-view"></i>
@@ -104,6 +105,7 @@
                         *hasPermission="Permissions.TestSlots.Create"
                         [routerLink]="routes.editTestSlot(testSlot.id)"
                         [pTooltip]="'TEST_SLOT_WIZARD.EDIT' | translate"
+                        [attr.aria-label]="'TEST_SLOT_WIZARD.EDIT' | translate"
                         tooltipPosition="top"
                       >
                         <i class="hgi hgi-stroke hgi-pencil-edit-02"></i>

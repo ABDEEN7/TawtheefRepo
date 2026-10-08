@@ -10,8 +10,15 @@ public class TestAttemptPartConfiguration : BaseEntityConfiguration<TestAttemptP
     {
         base.Configure(builder);
 
+        builder.HasIndex(x => new
+            {
+                x.TestAttemptId,
+                x.ExamPartId
+            })
+            .IsUnique();
+
         builder.HasOne(x => x.TestAttempt)
-            .WithMany()
+            .WithMany(x => x.Parts)
             .HasForeignKey(x => x.TestAttemptId)
             .OnDelete(DeleteBehavior.Restrict);
 

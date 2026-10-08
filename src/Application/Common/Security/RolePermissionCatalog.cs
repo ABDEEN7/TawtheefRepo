@@ -25,6 +25,8 @@ public static class RolePermissionCatalog
                 Permissions.Exams.View.Key,
                 Permissions.Exams.Create.Key,
                 Permissions.Exams.WorkflowActions.Key,
+                Permissions.Exams.ApproveResults.Key,
+                Permissions.Exams.ViewAttemptDetails.Key,
                 Permissions.TestSlots.View.Key,
                 Permissions.TestSlots.Create.Key,
                 Permissions.TestSlots.ManagePeriod.Key,

@@ -5,7 +5,11 @@ using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Tawtheef.Application.Common.Concurrency;
+using Tawtheef.Application.Common.Interfaces.Concurrency;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
+using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
@@ -16,50 +20,57 @@ using Tawtheef.Domain.Events.Operation.Employee.TestSessions;
 
 namespace Application.Operation.Features.Employee.TestSessions.Handlers.Commands;
 
-public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
+public sealed class SaveTestSessionSetupCommandHandler(
+    IUnitOfWork unitOfWork,
+    IOptions<TestSlotSettings> options,
+    TimeProvider timeProvider,
+    IApplicationLockService applicationLockService)
     : IRequestHandler<SaveTestSessionSetupCommand, IResult<SavedTestSessionSetupDto>>
 {
-    public Task<IResult<SavedTestSessionSetupDto>> Handle(
-        SaveTestSessionSetupCommand request,
-        CancellationToken ct)
-        => unitOfWork.ExecuteInTransactionAsync<IResult<SavedTestSessionSetupDto>>(
+    public Task<IResult<SavedTestSessionSetupDto>> Handle(SaveTestSessionSetupCommand request, CancellationToken ct) =>
+        unitOfWork.ExecuteInTransactionAsync<IResult<SavedTestSessionSetupDto>>(
             token => SaveAsync(request.Setup, token), ct);
 
-    private async Task<IResult<SavedTestSessionSetupDto>> SaveAsync(
-        SaveTestSessionSetupDto setup,
-        CancellationToken ct)
+    private async Task<IResult<SavedTestSessionSetupDto>> SaveAsync(SaveTestSessionSetupDto setup, CancellationToken ct)
     {
         var suppliedInvitationIds = setup.InvitationIds ?? [];
         var invitationIds = suppliedInvitationIds.Distinct().ToArray();
-        var hasCompleteSchedule = setup.TestSlotId.HasValue && setup.StartTime.HasValue &&
-                                  setup.EndTime.HasValue;
+        var hasCompleteSchedule = setup.TestSlotId.HasValue && setup.StartTime.HasValue && setup.EndTime.HasValue;
         var candidateIdsToPersist = hasCompleteSchedule || setup.SendToApprove ? invitationIds : [];
-        if (invitationIds.Length != suppliedInvitationIds.Count ||
-            (setup.TestSlotId.HasValue || setup.StartTime.HasValue || setup.EndTime.HasValue) &&
-            !hasCompleteSchedule ||
-            hasCompleteSchedule && setup.StartTime >= setup.EndTime ||
-            setup.SendToApprove && (!hasCompleteSchedule || invitationIds.Length == 0))
+        if (invitationIds.Length != suppliedInvitationIds.Count
+            || (setup.TestSlotId.HasValue || setup.StartTime.HasValue || setup.EndTime.HasValue) && !hasCompleteSchedule
+            || hasCompleteSchedule && setup.StartTime >= setup.EndTime
+            || setup.SendToApprove && (!hasCompleteSchedule || invitationIds.Length == 0))
             return ValidationFailure();
 
-        var exam = await unitOfWork.Context.Set<Exam>().AsNoTracking()
+        var exam = await unitOfWork.Context.Set<Exam>()
+            .AsNoTracking()
             .Where(x => x.Id == setup.ExamId)
-            .Select(x => new { x.Id, x.JobId, x.StatusId, Duration = unitOfWork.Context.Set<ExamPart>()
-                .Where(part => part.ExamId == x.Id).Sum(part => (int?)part.DurationMinutes) ?? 0 })
+            .Select(x => new
+            {
+                x.Id,
+                x.JobId,
+                x.StatusId,
+                Duration = unitOfWork.Context.Set<ExamPart>()
+                    .Where(part => part.ExamId == x.Id)
+                    .Sum(part => (int?)part.DurationMinutes) ?? 0,
+            })
             .FirstOrDefaultAsync(ct);
-        if (exam is null || setup.SendToApprove &&
-            (exam.StatusId != ExamStatusIds.Approved || exam.Duration <= 0))
+        if (exam is null || setup.SendToApprove && (exam.StatusId != ExamStatusIds.Approved || exam.Duration <= 0))
             return ValidationFailure();
+
+        var minimumSessionDuration = exam.Duration + options.Value.MinimumSessionEntryWindowMinutes;
 
         var session = setup.TestSessionId.HasValue
             ? await unitOfWork.Context.Set<TestSession>()
                 .FirstOrDefaultAsync(x => x.Id == setup.TestSessionId && x.ExamId == setup.ExamId, ct)
             : null;
-        if (setup.TestSessionId.HasValue &&
-            (session is null || !IsEditable(session.StatusId)))
+        if (setup.TestSessionId.HasValue && (session is null || !IsEditable(session.StatusId)))
             return ValidationFailure();
 
         var slot = hasCompleteSchedule
-            ? await unitOfWork.Context.Set<TestSlot>().AsNoTracking()
+            ? await unitOfWork.Context.Set<TestSlot>()
+                .AsNoTracking()
                 .Where(x => x.Id == setup.TestSlotId)
                 .Select(x => new
                 {
@@ -69,54 +80,46 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
                     x.StartTime,
                     x.EndTime,
                     x.StatusId,
-                    Capacity = x.Room!.Capacity,
-                    RoomStatusId = x.Room.StatusId
-                }).FirstOrDefaultAsync(ct)
+                    x.Room!.Capacity,
+                    RoomStatusId = x.Room.StatusId,
+                })
+                .FirstOrDefaultAsync(ct)
             : null;
 
-        if (hasCompleteSchedule && (exam.Duration <= 0 || slot is null ||
-            slot.StatusId != TestSlotStatusIds.Ready || slot.RoomStatusId != RoomStatusIds.Active ||
-            setup.StartTime!.Value < slot.StartTime || setup.EndTime!.Value > slot.EndTime ||
-            (setup.EndTime.Value - setup.StartTime.Value).TotalMinutes < exam.Duration))
+        var localNow = timeProvider.GetLocalNow().DateTime;
+        var numberingYear = slot?.SlotDate.Year ?? localNow.Year;
+
+        if (hasCompleteSchedule && (exam.Duration <= 0 || slot is null || slot.StatusId != TestSlotStatusIds.Ready
+                                    || slot.RoomStatusId != RoomStatusIds.Active
+                                    || setup.StartTime!.Value < slot.StartTime || setup.EndTime!.Value > slot.EndTime
+                                    || (setup.EndTime.Value - setup.StartTime.Value).TotalMinutes
+                                    < minimumSessionDuration))
             return ValidationFailure();
 
         if (setup.SendToApprove && slot is not null &&
             !TestSessionCapacityService.IsSessionStartCurrentOrFuture(
-                slot.SlotDate, setup.StartTime!.Value, DateTime.UtcNow))
+                slot.SlotDate, setup.StartTime!.Value, localNow))
             return SchedulingTimeFailure();
 
         if (setup.SendToApprove && slot is not null)
         {
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', " +
-                "@LockOwner = N'Transaction', @LockTimeout = 15000; " +
-                "IF @result < 0 THROW 51000, 'Test session room lock unavailable', 1;",
-                [$"Tawtheef.TestSession.Room.{slot.RoomId}.{slot.SlotDate:yyyyMMdd}"], ct);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.TestSessionRoomDate(slot.RoomId, slot.SlotDate), ct);
         }
 
         if (session is null)
         {
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', " +
-                "@LockOwner = N'Transaction', @LockTimeout = 15000; " +
-                "IF @result < 0 THROW 51000, 'Test session numbering lock unavailable', 1;",
-                [$"Tawtheef.TestSession.Numbering.{(slot?.SlotDate.Year ?? DateTime.UtcNow.Year)}"], ct);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.TestSessionNumbering(numberingYear), ct);
         }
 
         foreach (var invitationId in candidateIdsToPersist.OrderBy(id => id))
         {
-            await unitOfWork.Context.Database.ExecuteSqlRawAsync(
-                "DECLARE @result int; EXEC @result = sys.sp_getapplock " +
-                "@Resource = {0}, @LockMode = N'Exclusive', " +
-                "@LockOwner = N'Transaction', @LockTimeout = 15000; " +
-                "IF @result < 0 THROW 51000, 'Test session candidate lock unavailable', 1;",
-                [$"Tawtheef.TestSession.Candidate.{exam.JobId}.{invitationId}"], ct);
+            await applicationLockService.AcquireExclusiveAsync(
+                ApplicationLockResources.TestSessionCandidate(exam.JobId, invitationId), ct);
         }
 
-        var validCandidateCount = await ValidCandidateQuery(setup, exam.JobId, candidateIdsToPersist)
-            .CountAsync(ct);
+        var validCandidateCount = await ValidCandidateQuery(setup, exam.JobId, candidateIdsToPersist).CountAsync(ct);
         if (validCandidateCount != candidateIdsToPersist.Length)
             return ValidationFailure();
 
@@ -135,14 +138,17 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
 
         if (slot is not null)
         {
-            var reservations = await unitOfWork.Context.Set<TestSession>().AsNoTracking()
-                .Where(existing => existing.TestSlot!.RoomId == slot.RoomId &&
-                    existing.TestSlot.SlotDate == slot.SlotDate &&
-                    existing.Id != (session == null ? Guid.Empty : session.Id) &&
-                    !TestSessionCapacityService.NonReservingStatusIds.Contains(existing.StatusId))
-                .Select(existing => new TestSessionCapacityReservation(existing.StartTime!.Value, existing.EndTime!.Value,
-                    unitOfWork.Context.Set<TestSessionCandidate>().Count(candidate =>
-                        candidate.TestSessionId == existing.Id)))
+            var session2 = session;
+            var reservations = await unitOfWork.Context.Set<TestSession>()
+                .AsNoTracking()
+                .Where(existing => existing.TestSlot!.RoomId == slot.RoomId
+                                   && existing.TestSlot.SlotDate == slot.SlotDate
+                                   && existing.Id != (session2 == null ? Guid.Empty : session2.Id)
+                                   && !TestSessionCapacityService.NonReservingStatusIds.Contains(existing.StatusId))
+                .Select(existing => new TestSessionCapacityReservation(existing.StartTime!.Value,
+                    existing.EndTime!.Value,
+                    unitOfWork.Context.Set<TestSessionCandidate>()
+                        .Count(candidate => candidate.TestSessionId == existing.Id)))
                 .ToListAsync(ct);
             var occupied = TestSessionCapacityService.CalculatePeakOccupancy(
                 reservations, setup.StartTime!.Value, setup.EndTime!.Value);
@@ -158,8 +164,8 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
                 Id = Guid.NewGuid(),
                 ExamId = setup.ExamId,
                 TestSlotId = setup.TestSlotId,
-                SessionNo = await GenerateSessionNoAsync(slot?.SlotDate.Year ?? DateTime.UtcNow.Year, ct),
-                StatusId = TestSessionStatusIds.Draft
+                SessionNo = await GenerateSessionNoAsync(numberingYear, ct),
+                StatusId = TestSessionStatusIds.Draft,
             };
             await unitOfWork.Context.Set<TestSession>().AddAsync(session, ct);
         }
@@ -169,40 +175,39 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
         session.EndTime = setup.EndTime;
         session.GenderFilter = setup.GenderFilter;
         session.NationalityFilter = setup.NationalityFilter;
-        session.StatusId = setup.SendToApprove
-            ? TestSessionStatusIds.PendingApproval
-            : session.StatusId;
+        session.StatusId = setup.SendToApprove ? TestSessionStatusIds.PendingApproval : session.StatusId;
 
         var currentCandidates = await unitOfWork.Context.Set<TestSessionCandidate>()
-            .Where(candidate => candidate.TestSessionId == session.Id).ToListAsync(ct);
-        var deselected = currentCandidates
-            .Where(candidate => !candidateIdsToPersist.Contains(candidate.InvitationId)).ToList();
+            .Where(candidate => candidate.TestSessionId == session.Id)
+            .ToListAsync(ct);
+        var deselected = currentCandidates.Where(candidate => !candidateIdsToPersist.Contains(candidate.InvitationId))
+            .ToList();
         unitOfWork.RemoveRange(deselected);
         var existingIds = currentCandidates.Select(candidate => candidate.InvitationId).ToHashSet();
-        var additions = candidateIdsToPersist.Where(id => !existingIds.Contains(id)).Select(id => new TestSessionCandidate
-        {
-            Id = Guid.NewGuid(),
-            TestSessionId = session.Id,
-            InvitationId = id,
-            AttendanceStatusId = TestSessionCandidateAttendanceStatusIds.Pending,
-            IdentityVerificationStatusId = TestSessionCandidateIdentityVerificationStatusIds.Pending,
-            StatusId = TestSessionCandidateStatusIds.Assigned
-        }).ToList();
+        var additions = candidateIdsToPersist.Where(id => !existingIds.Contains(id))
+            .Select(id => new TestSessionCandidate
+            {
+                Id = Guid.NewGuid(),
+                TestSessionId = session.Id,
+                InvitationId = id,
+                AttendanceStatusId = TestSessionCandidateAttendanceStatusIds.Pending,
+                IdentityVerificationStatusId = TestSessionCandidateIdentityVerificationStatusIds.Pending,
+                StatusId = TestSessionCandidateStatusIds.Assigned,
+            })
+            .ToList();
         await unitOfWork.Context.Set<TestSessionCandidate>().AddRangeAsync(additions, ct);
         if (setup.SendToApprove)
             session.AddDomainEvent(new TestSessionSubmittedForApprovalDomainEvent(session.Id, session.SessionNo));
         await unitOfWork.SaveChangesAsync(ct);
 
-        return Result.Ok(new SavedTestSessionSetupDto(
-            session.Id, session.SessionNo, session.StatusId, candidateIdsToPersist.Length));
+        return Result.Ok(new SavedTestSessionSetupDto(session.Id, session.SessionNo, session.StatusId,
+            candidateIdsToPersist.Length));
     }
 
-    private IQueryable<Invitation> ValidCandidateQuery(
-        SaveTestSessionSetupDto setup,
-        Guid jobId,
-        Guid[] invitationIds)
+    private IQueryable<Invitation> ValidCandidateQuery(SaveTestSessionSetupDto setup, Guid jobId, Guid[] invitationIds)
     {
-        var query = unitOfWork.Context.Set<Invitation>().AsNoTracking()
+        var query = unitOfWork.Context.Set<Invitation>()
+            .AsNoTracking()
             .Where(invitation => invitationIds.Contains(invitation.Id) && invitation.JobId == jobId)
             .Where(invitation => invitation.Source == InvitationSource.Exceptional ||
                 invitation.InvitationStatusId == InvitationStatusIds.NewInvitation ||
@@ -213,25 +218,31 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
                  invitation.Applicant.Profile.AvailableForRecruitment));
 
         if (setup.GenderFilter.HasValue)
-            query = query.Where(invitation => invitation.Applicant!.Profile!.GenderId ==
-                (setup.GenderFilter == TestSessionGenderFilter.Male ? GenderIds.Male : GenderIds.Female));
+            query = query.Where(invitation =>
+                invitation.Applicant!.Profile!.GenderId == (setup.GenderFilter == TestSessionGenderFilter.Male
+                    ? GenderIds.Male
+                    : GenderIds.Female));
         if (setup.NationalityFilter.HasValue)
             query = setup.NationalityFilter == TestSessionNationalityFilter.Qatari
                 ? query.Where(invitation => invitation.Applicant!.Profile!.NationalityId == CountryIds.Qatar)
-                : query.Where(invitation => invitation.Applicant!.Profile!.NationalityId.HasValue &&
-                    invitation.Applicant.Profile.NationalityId != CountryIds.Qatar);
+                : query.Where(invitation => invitation.Applicant!.Profile!.NationalityId.HasValue
+                                            && invitation.Applicant.Profile.NationalityId != CountryIds.Qatar);
         return query;
     }
 
     private async Task<string> GenerateSessionNoAsync(int year, CancellationToken ct)
     {
         var prefix = $"TS-{year}-";
-        var numbers = await unitOfWork.Context.Set<TestSession>().AsNoTracking()
+        var numbers = await unitOfWork.Context.Set<TestSession>()
+            .AsNoTracking()
             .Where(session => session.SessionNo.StartsWith(prefix))
-            .Select(session => session.SessionNo).ToListAsync(ct);
+            .Select(session => session.SessionNo)
+            .ToListAsync(ct);
         var next = numbers.Select(number => int.TryParse(number[prefix.Length..], out var value) ? value : 0)
-            .DefaultIfEmpty().Max() + 1;
-        if (next > 9999) throw new InvalidOperationException("Test session sequence exceeded 9999.");
+            .DefaultIfEmpty()
+            .Max() + 1;
+        if (next > 9999)
+            throw new InvalidOperationException("Test session sequence exceeded 9999.");
         return $"{prefix}{next:D4}";
     }
 
@@ -246,8 +257,8 @@ public sealed class SaveTestSessionSetupCommandHandler(IUnitOfWork unitOfWork)
     private static bool IsEditable(Guid statusId) =>
         statusId == TestSessionStatusIds.Draft || statusId == TestSessionStatusIds.Returned;
 
-    private static IResult<SavedTestSessionSetupDto> CapacityFailure(int count)
-        => Result.Fail<SavedTestSessionSetupDto>(new Error(ErrorsCodes.TestSessionInsufficientCapacity)
+    private static IResult<SavedTestSessionSetupDto> CapacityFailure(int count) =>
+        Result.Fail<SavedTestSessionSetupDto>(new Error(ErrorsCodes.TestSessionInsufficientCapacity)
             .WithMetadata("Code", "Validation")
             .WithMetadata("UserMessage", $"TEST_SESSION_CAPACITY_INSUFFICIENT:{count}"));
 

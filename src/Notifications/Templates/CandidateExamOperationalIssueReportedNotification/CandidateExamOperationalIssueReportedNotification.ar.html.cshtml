@@ -1,0 +1,4 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.CandidateExamOperationalIssueReportedNotification.CandidateExamOperationalIssueReportedNotificationModel>
+<p>تم تسجيل مشكلة تشغيلية للاختبار @Model.Model.ExamNo (@Model.Model.ExamTitleAr)، الجلسة @Model.Model.SessionNo.</p>
+<p>رقم المحاولة: @Model.Model.TestAttemptId<br />مرجع البلاغ: @Model.Model.InterruptionId<br />وقت البلاغ: @Model.Model.ReportedAt.ToString("yyyy-MM-dd HH:mm") UTC.</p>
+<p>يرجى مراجعة البلاغ ضمن إجراءات نتائج الاختبار.</p>

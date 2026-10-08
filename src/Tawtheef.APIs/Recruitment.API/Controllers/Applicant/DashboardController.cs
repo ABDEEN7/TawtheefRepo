@@ -48,6 +48,7 @@ public class DashboardController(IMediator mediator) : ControllerBase
     #endregion
 
     #region Retrive Dashboard Data
+
     [HttpGet("get-candidate-invitations")]
     public async Task<IActionResult> GetCandidateInvitations([FromQuery] GetCandidateInvitationsQuery query)
     {

@@ -8,14 +8,7 @@ import { LanguageService } from '../../../../../../core/services/language.servic
 import { ExamCategoryForm } from '../helper/exam-wizard.form';
 import { ExamBankDto } from '../../models/exam-bank.dto';
 import { ExamLookupItemDto } from '../../models/exam-lookups.dto';
-
-type DifficultyRow = {
-  key: 'EASY' | 'MEDIUM' | 'HARD';
-  control: 'easyQuestionCount' | 'mediumQuestionCount' | 'hardQuestionCount';
-  available: 'easy' | 'medium' | 'hard';
-};
-
-type TotalRow = { key: 'TOTAL' };
+import { ExamCategoryDifficultyRow, ExamCategoryTotalRow } from '../models/exam-category-row.model';
 
 @Component({
   selector: 'app-exam-category',
@@ -35,12 +28,12 @@ export class ExamCategoryComponent {
 
   readonly language = inject(LanguageService);
   private readonly translate = inject(TranslateService);
-  readonly difficulties: readonly DifficultyRow[] = [
+  readonly difficulties: readonly ExamCategoryDifficultyRow[] = [
     { key: 'EASY', control: 'easyQuestionCount', available: 'easy' },
     { key: 'MEDIUM', control: 'mediumQuestionCount', available: 'medium' },
     { key: 'HARD', control: 'hardQuestionCount', available: 'hard' },
   ];
-  readonly distributionRows: (DifficultyRow | TotalRow)[] = [
+  readonly distributionRows: (ExamCategoryDifficultyRow | ExamCategoryTotalRow)[] = [
     ...this.difficulties,
     { key: 'TOTAL' },
   ];
@@ -62,7 +55,7 @@ export class ExamCategoryComponent {
     return !!this.bank && !this.hasDistributionAvailabilityError;
   }
 
-  hasDifficultyAvailabilityError(difficulty: DifficultyRow) {
+  hasDifficultyAvailabilityError(difficulty: ExamCategoryDifficultyRow) {
     const bank = this.bank;
     return !!bank && this.form.controls[difficulty.control].value > bank[difficulty.available];
   }

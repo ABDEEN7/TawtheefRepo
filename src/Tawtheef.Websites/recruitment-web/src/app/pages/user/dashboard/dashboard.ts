@@ -98,7 +98,6 @@ export class Dashboard implements OnInit {
     this.candidateService.loadCandidateLookups();
     this.candidateService.loadCandidateInvitationStatistics();
     this.loadCandidateInvitations();
-    console.log('candidaaaaaaaat :' , this.candidate);
   }
 
   // Refresh data

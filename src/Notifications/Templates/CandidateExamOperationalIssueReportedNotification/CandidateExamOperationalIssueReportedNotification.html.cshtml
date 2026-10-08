@@ -1,0 +1,4 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.CandidateExamOperationalIssueReportedNotification.CandidateExamOperationalIssueReportedNotificationModel>
+<p>An operational issue was reported for exam @Model.Model.ExamNo (@(Model.Model.ExamTitleEn ?? Model.Model.ExamTitleAr)), session @Model.Model.SessionNo.</p>
+<p>Attempt: @Model.Model.TestAttemptId<br />Issue reference: @Model.Model.InterruptionId<br />Reported at: @Model.Model.ReportedAt.ToString("yyyy-MM-dd HH:mm") UTC.</p>
+<p>Please review it in the exam results workflow.</p>

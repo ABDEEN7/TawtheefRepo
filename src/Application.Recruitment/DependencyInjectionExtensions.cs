@@ -1,11 +1,13 @@
-﻿using Mapster;
+using Application.Recruitment.Features.CandidateExams.Services;
+using FluentValidation;
+using Mapster;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application;
 
 namespace Application.Recruitment
 {
-     /// <summary>
+    /// <summary>
     /// Extension methods to register Application layer services (Mapster, Mediator, Validators, etc).
     /// </summary>
     public static class DependencyInjectionExtensions
@@ -17,6 +19,21 @@ namespace Application.Recruitment
                 services.AddApplicationLayer(config);
                 services.RegisterMapster();
                 services.RegisterMediator();
+                services.AddValidatorsFromAssembly(typeof(RecruitmentAssemblyMarker).Assembly);
+                services.AddScoped<CandidateExamEntryValidationService>();
+                services.AddScoped<CandidateExamExecutionMutationService>();
+                services.AddScoped<CandidateExamExecutionStateService>();
+                services.AddScoped<CandidateExamPartTransitionContextService>();
+                services.AddScoped<CandidateExamExecutionMutationService>();
+                services.AddScoped<CandidateExamAttemptPreparationService>();
+                services.AddScoped<CandidateExamQuestionGenerationService>();
+                services.AddScoped<CandidateExamConnectionService>();
+                services.AddScoped<CandidateExamInterruptionService>();
+                services.AddScoped<CandidateExamResumeService>();
+                services.AddScoped<CandidateExamScoringService>();
+                services.AddScoped<CandidateExamResultCalculationService>();
+                services.AddScoped<CandidateExamResultGenerationService>();
+                services.AddScoped<CandidateExamDeadlineService>();
                 return services;
             }
 

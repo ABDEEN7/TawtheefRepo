@@ -11,6 +11,6 @@ public sealed record ExamListItemDto
     public int TotalQuestions { get; init; }
     public int TotalDurationMinutes { get; init; }
     public required DropdownOptions Status { get; init; }
-    public DateTime CreatedDate { get; init; }
-    public DateTime LastUpdated { get; init; }
+    public DateTimeOffset CreatedDate { get; init; }
+    public DateTimeOffset LastUpdated { get; init; }
 }

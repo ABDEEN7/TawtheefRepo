@@ -247,7 +247,7 @@ export class TestSessionPeriodsStepComponent implements OnInit, OnChanges {
       start >= timeValue(session.slot.startTime) &&
       end <= timeValue(session.slot.endTime) &&
       end > start &&
-      end - start >= this.examDetails().durationMinutes
+      end - start >= this.examDetails().durationMinutes + this.examDetails().minimumEntryWindowMinutes
     );
   }
 

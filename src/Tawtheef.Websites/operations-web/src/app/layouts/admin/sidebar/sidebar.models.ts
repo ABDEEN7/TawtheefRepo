@@ -133,6 +133,13 @@ export class Sidebar {
       permission: Permissions.Exams.View,
     },
     {
+      key: 'exam-results',
+      label: 'internal.sidebar.exam-results',
+      icon: 'hgi-task-done-01',
+      route: routes.portal.examResults,
+      permission: Permissions.Exams.View,
+    },
+    {
       key: 'question-bank-assignments',
       label: 'internal.sidebar.question-bank-assignments',
       icon: 'hgi-task-daily-01',

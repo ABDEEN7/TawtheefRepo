@@ -3,7 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { LanguageService } from '../../../../core/services/language.service';
 import { portalRoutes } from '../../../../routes/portal-routes';
-import { TestSlotStatusIds } from './models/test-slot-status.ids';
+import { TestSlotStatusIds } from './constants/test-slot-status.ids';
 import { TestSlotsService } from './services/test-slots.service';
 
 export const testSlotEditStatusGuard: CanActivateFn = (route) => {

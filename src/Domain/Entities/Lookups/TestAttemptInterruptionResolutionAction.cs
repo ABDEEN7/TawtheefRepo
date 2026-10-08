@@ -8,6 +8,7 @@ public static class TestAttemptInterruptionResolutionActionIds
     public static readonly Guid Resume = Guid.Parse("76698ef2-ed94-47e0-8772-72a49372f384");
     public static readonly Guid Reschedule = Guid.Parse("4ec227a3-e99b-4f7f-b7e7-c732a3d58b29");
     public static readonly Guid Cancel = Guid.Parse("a10637d3-dd47-4cf0-8c0f-9e480d7e0576");
+    public static readonly Guid AcceptCalculatedScore = Guid.Parse("9a8d88c4-11a6-4b8f-97c6-783e21d15f54");
 }
 
 [Table(nameof(TestAttemptInterruptionResolutionAction), Schema = Schemas.Lookup)]

@@ -17,6 +17,12 @@ export const userRoutes = {
   get profileOverview(){
     return this.user + 'profile-overview';
   },
+  get candidateExams(){
+    return this.user + 'candidate-exams';
+  },
+  get candidateExamExecution(){
+    return this.user + 'candidate-exams/execution';
+  },
   get profileEdit(){
     return this.user + 'profile/edit';
   },

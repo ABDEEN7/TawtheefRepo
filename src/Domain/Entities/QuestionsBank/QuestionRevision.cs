@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Tawtheef.Domain.Common;
+using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities;
 
@@ -44,6 +45,9 @@ public class QuestionRevision : EventEntity
 
     public ICollection<QuestionBankRequestItemReview> Reviews { get; set; }
         = new List<QuestionBankRequestItemReview>();
+
+    public ICollection<TestAttemptQuestion> TestAttemptQuestions { get; set; }
+        = new List<TestAttemptQuestion>();
     
     public QuestionBankRequestItem? SourceRequestItem { get; set; }
 }

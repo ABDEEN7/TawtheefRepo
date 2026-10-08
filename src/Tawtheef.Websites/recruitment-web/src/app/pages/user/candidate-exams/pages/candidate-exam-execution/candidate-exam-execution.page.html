@@ -1,0 +1,345 @@
+<main class="execution-shell" i18nNamespace="pages/user/candidate-exams">
+  <div class="container py-4 py-lg-5">
+    @if (preparationState() === 'preparing') {
+      <section class="execution-state" aria-live="polite" aria-busy="true">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">{{
+            'candidate_exams.execution.preparing' | translate
+          }}</span>
+        </div>
+        <h1>{{ 'candidate_exams.execution.preparing' | translate }}</h1>
+        <p>{{ 'candidate_exams.execution.preparingDescription' | translate }}</p>
+      </section>
+    } @else if (preparationState() === 'loadingQuestion') {
+      <section class="execution-state" aria-live="polite" aria-busy="true">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">{{
+            'candidate_exams.execution.loadingQuestion' | translate
+          }}</span>
+        </div>
+        <h1>{{ 'candidate_exams.execution.loadingQuestion' | translate }}</h1>
+      </section>
+    } @else if (preparationState() === 'connectionError') {
+      <section class="execution-state" aria-live="polite">
+        <div class="execution-state__icon execution-state__icon--error" aria-hidden="true">
+          <i class="fa-solid fa-link-slash"></i>
+        </div>
+        <h1>{{ 'candidate_exams.execution.connectionErrorTitle' | translate }}</h1>
+        <p>{{ 'candidate_exams.execution.connectionError' | translate }}</p>
+        <div class="execution-state__actions">
+          <button type="button" class="btn btn-primary" (click)="prepareExecution()">
+            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+            {{ 'candidate_exams.entry.retryConnection' | translate }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" ... (click)="goToPrevious()">
+            <i class="hgi fs-18 lh-1" faDirArrow="start" aria-hidden="true"></i>
+
+            {{ 'candidate_exams.execution.previous' | translate }}
+          </button>
+        </div>
+      </section>
+    } @else if (preparationState() === 'questionError') {
+      <section class="execution-state" aria-live="polite">
+        <div class="execution-state__icon execution-state__icon--error" aria-hidden="true">
+          <i class="fa-solid fa-circle-exclamation"></i>
+        </div>
+        <h1>{{ 'candidate_exams.execution.questionLoadFailedTitle' | translate }}</h1>
+        <p>{{ 'candidate_exams.execution.questionLoadFailed' | translate }}</p>
+        <button type="button" class="btn btn-primary" (click)="retryQuestionLoad()">
+          <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+          {{ 'candidate_exams.execution.retry' | translate }}
+        </button>
+      </section>
+    } @else if (terminalOutcome()) {
+      <section class="execution-state terminal-state" aria-live="polite">
+        <div class="execution-state__icon" aria-hidden="true">
+          <i class="fa-solid fa-circle-info"></i>
+        </div>
+
+        <h1>
+          {{ 'candidate_exams.execution.ended' | translate }}
+        </h1>
+
+        <p>
+          {{ 'candidate_exams.execution.endedDescription' | translate }}
+        </p>
+
+        <button type="button" class="btn btn-primary" (click)="backToExams()">
+          {{ 'candidate_exams.execution.backToExams' | translate }}
+        </button>
+      </section>
+    } @else if (currentQuestion(); as question) {
+      @if (connectionStatus() === 'reconnecting' || reconnectRegistering()) {
+        <div class="alert alert-warning realtime-status" role="status" aria-live="polite">
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          {{
+            (reconnectRegistering()
+              ? 'candidate_exams.execution.restoringConnection'
+              : 'candidate_exams.execution.reconnecting'
+            ) | translate
+          }}
+        </div>
+      } @else if (reconnectRegistrationFailed()) {
+        <div class="alert alert-danger realtime-status" role="alert">
+          <span>{{ 'candidate_exams.execution.reconnectFailed' | translate }}</span>
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="backToExams()">
+            {{ 'candidate_exams.execution.backToExams' | translate }}
+          </button>
+        </div>
+      }
+
+      @if (executionOutcome() === 'PASSED') {
+        <div class="alert alert-info outcome-notice" role="status">
+          <div>
+            <strong>
+              {{ 'candidate_exams.execution.partTwoStartedTitle' | translate }}
+            </strong>
+
+            <span>
+              {{ 'candidate_exams.execution.partTwoStarted' | translate }}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            class="btn-close"
+            (click)="dismissPassedNotice()"
+            [attr.aria-label]="'candidate_exams.execution.dismissNotice' | translate"
+          ></button>
+        </div>
+      }
+
+      @if (timeoutProcessing() || timeoutFailed()) {
+        <div
+          class="alert timeout-status"
+          [class.alert-warning]="timeoutProcessing()"
+          [class.alert-danger]="timeoutFailed()"
+          aria-live="assertive"
+        >
+          <span>
+            {{
+              (timeoutProcessing()
+                ? 'candidate_exams.execution.finalizingTimeout'
+                : 'candidate_exams.execution.timeoutFailed'
+              ) | translate
+            }}
+          </span>
+          @if (timeoutFailed()) {
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="retryTimeout()">
+              {{ 'candidate_exams.execution.retry' | translate }}
+            </button>
+          }
+        </div>
+      }
+
+      @if (submissionProcessing() || submissionFailed()) {
+        <div
+          class="alert submission-status"
+          [class.alert-warning]="submissionProcessing()"
+          [class.alert-danger]="submissionFailed()"
+          aria-live="assertive"
+        >
+          <span>
+            {{
+              (submissionProcessing()
+                ? 'candidate_exams.execution.submitting'
+                : 'candidate_exams.execution.submissionFailed'
+              ) | translate
+            }}
+          </span>
+          @if (submissionFailed()) {
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              [disabled]="
+                connectionStatus() !== 'connected' ||
+                reconnectRegistrationPending() ||
+                reconnectRegistering() ||
+                submissionProcessing()
+              "
+              (click)="retrySubmit()"
+            >
+              {{ 'candidate_exams.execution.retrySubmit' | translate }}
+            </button>
+          }
+        </div>
+      }
+
+      <article class="question-card">
+        <header class="question-card__header">
+          <div>
+            <p class="mb-1">
+              {{ 'candidate_exams.jobTitle' | translate }}: {{ question.jobTitle }}
+            </p>
+            <p class="question-card__part-label">
+              {{ 'candidate_exams.execution.part' | translate }}
+              {{ question.currentPartNumber }} / {{ question.totalParts }}
+            </p>
+            <h1>{{ question.partTitle }}</h1>
+          </div>
+          <span class="question-card__progress">
+            {{
+              'candidate_exams.execution.questionProgress'
+                | translate
+                  : {
+                      current: question.currentQuestionNumber,
+                      total: question.totalQuestionsInPart,
+                    }
+            }}
+          </span>
+          <div
+            class="exam-timer"
+            [class.exam-timer--urgent]="remainingSeconds() <= 60"
+            role="timer"
+            aria-live="off"
+          >
+            <span>{{ 'candidate_exams.execution.timeRemaining' | translate }}</span>
+            <strong>{{ formattedRemainingTime() }}</strong>
+            @if (timerSynchronizing()) {
+              <span class="visually-hidden">{{
+                'candidate_exams.execution.synchronizingTime' | translate
+              }}</span>
+            }
+          </div>
+        </header>
+
+        <form class="question-card__body">
+          <fieldset
+            [disabled]="
+              questionMutationsBlocked() || answerSaveState() === 'saving' || navigating()
+            "
+          >
+            <legend>{{ question.questionText }}</legend>
+
+            <div class="answer-options">
+              @for (option of orderedOptions(); track option.optionId) {
+                <label
+                  class="answer-option"
+                  [class.answer-option--selected]="selectedOptionId() === option.optionId"
+                >
+                  <input
+                    type="radio"
+                    name="candidate-exam-answer"
+                    [value]="option.optionId"
+                    [checked]="selectedOptionId() === option.optionId"
+                    (change)="selectAnswer(option.optionId)"
+                  />
+                  <span>{{ option.optionText }}</span>
+                </label>
+              }
+            </div>
+          </fieldset>
+        </form>
+
+        <div class="question-feedback" aria-live="polite">
+          @if (answerSaveState() === 'saving') {
+            <span class="text-secondary">
+              <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+              {{ 'candidate_exams.execution.savingAnswer' | translate }}
+            </span>
+          } @else if (answerSaveState() === 'saved') {
+            <span class="text-success">
+              <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+              {{ 'candidate_exams.execution.answerSaved' | translate }}
+            </span>
+          } @else if (answerSaveState() === 'error') {
+            <span class="text-danger">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              {{ 'candidate_exams.execution.saveFailed' | translate }}
+            </span>
+          }
+        </div>
+
+        @if (navigationError()) {
+          <div class="alert alert-danger navigation-error" role="alert">
+            <span>{{ 'candidate_exams.execution.navigationFailed' | translate }}</span>
+            @if (navigationRequiresReload()) {
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-primary"
+                (click)="retryNavigation()"
+              >
+                {{ 'candidate_exams.execution.retry' | translate }}
+              </button>
+            }
+          </div>
+        }
+
+        @if (!question.hasNext) {
+          <p class="end-of-part" role="status">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            {{ 'candidate_exams.execution.endOfPart' | translate }}
+          </p>
+        }
+        <footer class="question-card__actions">
+          <div class="question-card__actions-start">
+            @if (question.allowPreviousQuestion && question.hasPrevious) {
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                [disabled]="
+                  questionMutationsBlocked() ||
+                  answerSaveState() === 'saving' ||
+                  navigating() ||
+                  navigationRequiresReload()
+                "
+                (click)="goToPrevious()"
+              >
+                <i class="hgi fs-18 lh-1" faDirArrow="start" aria-hidden="true"></i>
+
+                {{ 'candidate_exams.execution.previous' | translate }}
+              </button>
+            }
+          </div>
+
+          <div class="question-card__actions-end">
+            @if (
+              !submissionFailed() && !deadlineReached() && !timeoutProcessing() && !timeoutFailed()
+            ) {
+              <button
+                type="button"
+                class="btn btn-outline-danger"
+                [disabled]="
+                  questionMutationsBlocked() ||
+                  answerSaveState() === 'saving' ||
+                  navigating() ||
+                  navigationRequiresReload()
+                "
+                (click)="confirmSubmit()"
+              >
+                @if (submissionProcessing()) {
+                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                  {{ 'candidate_exams.execution.submitting' | translate }}
+                } @else {
+                  {{ 'candidate_exams.execution.submitPart' | translate }}
+                }
+              </button>
+            }
+
+            @if (question.hasNext) {
+              <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="
+                  questionMutationsBlocked() ||
+                  answerSaveState() === 'saving' ||
+                  navigating() ||
+                  navigationRequiresReload()
+                "
+                (click)="goToNext()"
+              >
+                @if (navigating()) {
+                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                }
+
+                {{ 'candidate_exams.execution.next' | translate }}
+
+                <i class="hgi fs-18 lh-1" faDirArrow="end" aria-hidden="true"></i>
+              </button>
+            }
+          </div>
+        </footer>
+      </article>
+    }
+  </div>
+</main>

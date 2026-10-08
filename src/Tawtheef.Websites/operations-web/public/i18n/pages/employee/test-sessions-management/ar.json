@@ -180,7 +180,7 @@
   "TEST_SESSION_WIZARD.INVITATION_SOURCE_EXCEPTIONAL": "استثنائي",
   "TEST_SESSION_WIZARD.MAIN_SPECIALIZATION": "التخصص الرئيسي",
   "TEST_SESSION_WIZARD.SUB_SPECIALIZATION": "التخصص الفرعي",
-  "TEST_SESSION_WIZARD.SESSION_TIME_INVALID": "الوقت المحدد غير صالح. يجب أن تكون مدة الجلسة مساوية لمدة الاختبار على الأقل وضمن وقت الفترة.",
+  "TEST_SESSION_WIZARD.SESSION_TIME_INVALID": "الوقت المحدد غير صالح. يجب أن تغطي الجلسة مدة الاختبار بالإضافة إلى فترة الدخول المسموحة، وأن تكون بالكامل ضمن وقت فترة الاختبار.",
   "TEST_SESSION_WIZARD.INSUFFICIENT_CAPACITY": "القاعة غير متاحة بالسعة الكافية خلال الوقت المحدد. يوجد {{count}} مرشحين لا تتوفر لهم مقاعد.",
   "TEST_SESSION_WIZARD.SESSION_CAPACITY_SUCCESS": "تم تخصيص سعة لجميع المرشحين، يمكنك الانتقال إلى المرحلة التالية."
 }

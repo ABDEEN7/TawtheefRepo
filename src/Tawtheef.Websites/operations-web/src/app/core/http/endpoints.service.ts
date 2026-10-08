@@ -417,6 +417,12 @@ export class EndpointsService {
     details: (id: string) => this.getFullUrl(`/test-slots/${id}`),
     sessions: (id: string) => this.getFullUrl(`/test-slots/${id}/sessions`),
     candidates: (id: string) => this.getFullUrl(`/test-slots/${id}/candidates`),
+    markPresent: (id: string, candidateId: string) =>
+      this.getFullUrl(`/test-slots/${id}/candidates/${candidateId}/mark-present`),
+    verifyIdentity: (id: string, candidateId: string) =>
+      this.getFullUrl(`/test-slots/${id}/candidates/${candidateId}/verify-identity`),
+    authorizeEntry: (id: string, candidateId: string) =>
+      this.getFullUrl(`/test-slots/${id}/candidates/${candidateId}/authorize-entry`),
     accessCode: (id: string) => this.getFullUrl(`/test-slots/${id}/access-code`),
     start: (id: string) => this.getFullUrl(`/test-slots/${id}/start`),
     close: (id: string) => this.getFullUrl(`/test-slots/${id}/close`),
@@ -425,13 +431,53 @@ export class EndpointsService {
     wizardStaffMembers: this.getFullUrl('/test-slots/wizard/staff'),
   };
 
+  candidateExamAttempts = {
+    authorizeResume: (testAttemptId: string) =>
+      this.getFullUrl(`/candidate-exam-attempts/${testAttemptId}/authorize-resume`),
+
+    rescheduleOptions: (testAttemptId: string) =>
+      this.getFullUrl(`/candidate-exam-attempts/${testAttemptId}/reschedule-options`),
+
+    reschedule: (testAttemptId: string) =>
+      this.getFullUrl(`/candidate-exam-attempts/${testAttemptId}/reschedule`),
+
+    reportOperationalIssue: (testAttemptId: string) =>
+      this.getFullUrl(`/candidate-exam-attempts/${testAttemptId}/operational-issue`),
+  };
+
+  examResultReports = {
+    list: this.getFullUrl('/exam-result-reports'),
+    details: (reportId: string) => this.getFullUrl(`/exam-result-reports/${reportId}`),
+    candidateAttempt: (reportId: string, candidateResultId: string) =>
+      this.getFullUrl(`/exam-result-reports/${reportId}/candidates/${candidateResultId}/attempt`),
+    rescheduleOptions: (reportId: string, candidateResultId: string) =>
+      this.getFullUrl(
+        `/exam-result-reports/${reportId}/candidates/${candidateResultId}/reschedule-options`,
+      ),
+    approve: (reportId: string) => this.getFullUrl(`/exam-result-reports/${reportId}/approve`),
+    returnForProcessing: (reportId: string) =>
+      this.getFullUrl(`/exam-result-reports/${reportId}/return-for-processing`),
+    resolveNotCompleted: (reportId: string, candidateResultId: string) =>
+      this.getFullUrl(
+        `/exam-result-reports/${reportId}/candidates/${candidateResultId}/resolve-not-completed`,
+      ),
+    acceptCalculatedScore: (reportId: string, candidateResultId: string) =>
+      this.getFullUrl(
+        `/exam-result-reports/${reportId}/candidates/${candidateResultId}/accept-calculated-score`,
+      ),
+    reschedule: (reportId: string, candidateResultId: string) =>
+      this.getFullUrl(
+        `/exam-result-reports/${reportId}/candidates/${candidateResultId}/reschedule`,
+      ),
+  };
+
   testSessions = {
     list: this.getFullUrl('/test-sessions'),
     lookups: this.getFullUrl('/test-sessions/lookups'),
     examDetails: (examId: string) => this.getFullUrl(`/test-sessions/wizard/exams/${examId}`),
     candidates: this.getFullUrl('/test-sessions/wizard/candidates'),
     readyTestSlots: this.getFullUrl('/test-sessions/wizard/ready-test-slots'),
-      capacity: this.getFullUrl('/test-sessions/wizard/capacity'),
+    capacity: this.getFullUrl('/test-sessions/wizard/capacity'),
     sessionSetup: this.getFullUrl('/test-sessions/wizard/session-setup'),
     edit: (id: string) => this.getFullUrl(`/test-sessions/wizard/${id}/edit`),
     view: (id: string) => this.getFullUrl(`/test-sessions/wizard/${id}/view`),
@@ -456,6 +502,7 @@ export class EndpointsService {
     workspace: (id: string) => this.getFullUrl(`/questionbankassignments/${id}`),
     questions: (id: string) => this.getFullUrl(`/questionbankassignments/${id}/questions`),
     question: (id: string, itemId: string) =>
+     
       this.getFullUrl(`/questionbankassignments/${id}/questions/${itemId}`),
     updateBaseQuestion: (id: string, questionId: string) =>
       this.getFullUrl(`/questionbankassignments/${id}/base-questions/${questionId}/update`),
