@@ -1,0 +1,5 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.TestSessionCandidateScheduledNotification.TestSessionCandidateScheduledNotificationModel>
+@{
+    var m = Model.Model;
+}
+You have been scheduled for a test for the job "@m.JobNameEn" on @m.TestDate.ToString("yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture), from @m.StartTime.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture) to @m.EndTime.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture), at @m.LocationNameEn - @m.RoomNameEn. Location: @m.LocationUrl

@@ -1,16 +1,21 @@
 import { dropdownOptionsModel } from '../../../../../shared/models/dropdown-options.model';
 
-export interface TestSlotStaffDetailsDto {
-  userId: string;
-  name: string;
-  roleName: string;
-}
+export interface TestSlotStaffDetailsDto { userId: string; name: string; roleName: string; }
+export type TestSessionGenderFilter = 'Male' | 'Female' | null;
+export type TestSessionNationalityFilter = 'Qatari' | 'NonQatari' | null;
 export interface TestSlotSessionDto {
   id: string;
   sessionNo: string;
-  examNo: string;
-  statusName: string;
+   examNo: string;
+  jobName: string;
+  examName: string;
+  examCode: string;
   candidateCount: number;
+  startTime: string | null;
+  endTime: string | null;
+  genderFilter: TestSessionGenderFilter;
+  nationalityFilter: TestSessionNationalityFilter;
+  statusName: string;
 }
 export interface TestSlotDetailsDto {
   id: string;
@@ -36,6 +41,7 @@ export interface TestSlotDetailsDto {
 export interface TestSlotAccessCodeDto {
   accessCode: string;
 }
+export interface TestSlotCandidateNotificationResultDto { notifiedCandidateCount: number; }
 export interface TestSlotCandidateListItemDto {
   candidateId: string;
   candidateName: string;
