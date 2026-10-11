@@ -22,6 +22,7 @@ import {
   TestSlotDetailsDto,
   TestSlotSessionDto,
   VerifyTestSlotCandidateIdentityRequest,
+  TestSlotCandidateNotificationResultDto,
 } from '../models/test-slot-details.dto';
 
 @Injectable({ providedIn: 'root' })
@@ -135,6 +136,16 @@ rescheduleInterruptedAttempt(
 
   accessCode(id: string): Observable<TestSlotAccessCodeDto> {
     return this.http.get<TestSlotAccessCodeDto>(this.endpoints.testSlots.accessCode(id));
+  }
+
+  sendCandidateNotifications(
+    id: string,
+    testSessionId: string | null,
+  ): Observable<TestSlotCandidateNotificationResultDto> {
+    return this.http.post<TestSlotCandidateNotificationResultDto>(
+      this.endpoints.testSlots.candidateNotifications(id),
+      { testSessionId },
+    );
   }
 
   start(id: string): Observable<void> {

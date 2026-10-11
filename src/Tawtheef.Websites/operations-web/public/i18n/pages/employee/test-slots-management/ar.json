@@ -96,6 +96,18 @@
   "TEST_SLOT_DETAILS.SESSIONS": "الجلسات",
   "TEST_SLOT_DETAILS.SESSION": "الجلسة",
   "TEST_SLOT_DETAILS.EXAM": "الاختبار",
+  "TEST_SLOT_DETAILS.TEST_TIME": "وقت الاختبار",
+  "TEST_SLOT_DETAILS.GENDER": "الجنس",
+  "TEST_SLOT_DETAILS.NATIONALITY": "الجنسية",
+  "TEST_SLOT_DETAILS.ACTIONS": "الإجراءات",
+  "TEST_SLOT_DETAILS.VIEW": "عرض",
+  "TEST_SLOT_DETAILS.SEND_NOTIFICATION": "إرسال إشعار",
+  "TEST_SLOT_DETAILS.SEND_NOTIFICATION_All": "إرسال إشعار للجميع",
+  "TEST_SLOT_DETAILS.ALL": "الكل",
+  "TEST_SLOT_DETAILS.MALE": "ذكر",
+  "TEST_SLOT_DETAILS.FEMALE": "أنثى",
+  "TEST_SLOT_DETAILS.QATARI": "قطري",
+  "TEST_SLOT_DETAILS.NON_QATARI": "غير قطري",
   "TEST_SLOT_DETAILS.NO_SESSIONS": "لا توجد جلسات معينة.",
   "TEST_SLOT_DETAILS.ACCESS_CODE": "رمز الدخول",
   "TEST_SLOT_DETAILS.SHOW": "إظهار",
@@ -163,5 +175,11 @@
   "TEST_SLOT_DETAILS.RESCHEDULE_REASON_REQUIRED": "سبب إعادة الجدولة مطلوب.",
   "TEST_SLOT_DETAILS.RETRY": "إعادة المحاولة",
   "TEST_SLOT_DETAILS.SESSION_NO": "رقم الجلسة",
-  "TEST_SLOT_DETAILS.AVAILABLE_CAPACITY": "المقاعد المتاحة"
+  "TEST_SLOT_DETAILS.AVAILABLE_CAPACITY": "المقاعد المتاحة",
+  "TEST_SLOT_DETAILS.CONFIRM_NOTIFICATION_TITLE": "تأكيد إرسال الإشعارات",
+  "TEST_SLOT_DETAILS.CONFIRM_ALL_NOTIFICATIONS": "هل أنت متأكد من رغبتك في إرسال إشعارات إلى المرشحين في جميع جلسات هذه الفترة؟",
+  "TEST_SLOT_DETAILS.CONFIRM_SESSION_NOTIFICATION": "هل أنت متأكد من رغبتك في إرسال إشعارات إلى المرشحين في الجلسة رقم {{sessionNo}}؟",
+  "TEST_SLOT_DETAILS.ALL_NOTIFICATIONS_SENT": "تم إرسال الإشعارات إلى مرشحي جميع جلسات الفترة بنجاح.",
+  "TEST_SLOT_DETAILS.SESSION_NOTIFICATIONS_SENT": "تم إرسال الإشعارات إلى مرشحي هذه الجلسة بنجاح."
 }
+

@@ -95,10 +95,10 @@ export class TestSlotCandidatesDialogComponent implements OnInit {
     pageSize: 10,
     language: this.language.get(),
     search: null,
-    sessionId: null,
+    sessionId: this.data.testSessionId ?? null,
   });
   search = '';
-  selectedSessionId: string | null = null;
+  selectedSessionId: string | null = this.data.testSessionId ?? null;
 
   ngOnInit(): void {
     this.service
