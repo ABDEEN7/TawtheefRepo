@@ -1,0 +1,28 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewAppointmentChanged.InterviewAppointmentChangedModel>
+@{
+    // Plain text (in-app bell, SMS): no HTML encoding, otherwise Arabic values come out as &#x...; entities.
+    DisableEncoding = true;
+    var m = Model.Model;
+    var rescheduled = m.Change == InterviewAppointmentChange.Rescheduled;
+    var opening = rescheduled
+        ? $"Your interview for the job \"{m.JobTitle}\" has been rescheduled to {m.NewDay} {m.NewDate}, {m.NewStartTime} - {m.NewEndTime} (Qatar time), instead of {m.OldDay} {m.OldDate} at {m.OldStartTime}."
+        : $"We regret to inform you that your interview for the job \"{m.JobTitle}\" on {m.OldDay} {m.OldDate} at {m.OldStartTime} (Qatar time) has been cancelled. You will be notified if a new date is set.";
+}
+@opening
+@if (rescheduled && m.IsRemote)
+{
+<text>Remote interview@(string.IsNullOrWhiteSpace(m.MeetingUrl) ? "" : ": " + m.MeetingUrl)
+</text>
+}
+else if (rescheduled && !string.IsNullOrWhiteSpace(m.Location))
+{
+<text>Location: @m.Location@(string.IsNullOrWhiteSpace(m.LocationMapUrl) ? "" : " - " + m.LocationMapUrl)
+</text>
+}
+@if (rescheduled && !string.IsNullOrWhiteSpace(m.Instructions))
+{
+<text>Instructions: @m.Instructions
+</text>
+}
+Portal Link: @Model.Branding.RecruitmentUrl

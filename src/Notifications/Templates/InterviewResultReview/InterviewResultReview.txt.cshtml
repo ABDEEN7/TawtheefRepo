@@ -1,0 +1,15 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewResultReview.InterviewResultReviewModel>
+@{
+    // Plain text (in-app bell, SMS): no HTML encoding, otherwise Arabic values come out as &#x...; entities.
+    DisableEncoding = true;
+    var m = Model.Model;
+    var job = string.IsNullOrWhiteSpace(m.JobTitle) ? "" : $" for the job \"{m.JobTitle}\"";
+}
+The interview results of the schedule "@m.ScheduleName"@job (@m.CandidateCount candidate(s)) are ready for your review as committee chair. Please review the recommendations and send them for final approval.
+@if (!string.IsNullOrWhiteSpace(m.CommitteeName))
+{
+<text>Committee: @m.CommitteeName
+</text>
+}
+Portal Link: @(Model.Branding.OperationsUrl + InterviewNotificationLinks.Resolve(m.LinkPath, InterviewNotificationLinks.StartInterviewPath))

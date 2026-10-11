@@ -3,6 +3,7 @@ using FluentResults;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
+using Tawtheef.Domain.Events.Operation.Employee.Interview.ResultReport;
 
 namespace Tawtheef.Domain.Entities.Interview;
 
@@ -57,6 +58,7 @@ public class InterviewResultReport : EventEntity
             return Result.Fail(new Error(ErrorsCodes.InterviewResultReportNotUnderReview));
 
         Status = ResultReportStatus.CommitteeReview;
+        AddDomainEvent(new ResultReportReadyForCommitteeReviewEvent(this, DateTimeOffset.UtcNow));
         return Result.Ok();
     }
 
@@ -72,6 +74,7 @@ public class InterviewResultReport : EventEntity
         Status = ResultReportStatus.UnderReview;
         CommitteeReviewedById = reviewerId;
         CommitteeReviewedAt = DateTime.UtcNow;
+        AddDomainEvent(new ResultReportSentForApprovalEvent(this, DateTimeOffset.UtcNow));
         return Result.Ok();
     }
 
@@ -101,6 +104,7 @@ public class InterviewResultReport : EventEntity
         Status = ResultReportStatus.Approved;
         ApprovedById = approverId;
         ApprovedAt = DateTime.UtcNow;
+        AddDomainEvent(new ResultReportApprovedEvent(this, DateTimeOffset.UtcNow));
         return Result.Ok();
     }
 }

@@ -1,0 +1,26 @@
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewInvitation.InterviewInvitationModel>
+@{
+    // Plain text (in-app bell, SMS): no HTML encoding, otherwise Arabic values come out as &#x...; entities.
+    DisableEncoding = true;
+    var m = Model.Model;
+    var opening = m.IsReminder
+        ? $"Reminder: your interview for the job \"{m.JobTitle}\" is on {m.InterviewDay} {m.InterviewDate}, {m.StartTime} - {m.EndTime} (Qatar time)."
+        : $"You are invited to an interview for the job \"{m.JobTitle}\" on {m.InterviewDay} {m.InterviewDate}, {m.StartTime} - {m.EndTime} (Qatar time).";
+}
+@opening
+@if (m.IsRemote)
+{
+<text>Remote interview@(string.IsNullOrWhiteSpace(m.MeetingUrl) ? "" : ": " + m.MeetingUrl)
+</text>
+}
+else if (!string.IsNullOrWhiteSpace(m.Location))
+{
+<text>Location: @m.Location@(string.IsNullOrWhiteSpace(m.LocationMapUrl) ? "" : " - " + m.LocationMapUrl)
+</text>
+}
+@if (!string.IsNullOrWhiteSpace(m.Instructions))
+{
+<text>Instructions: @m.Instructions
+</text>
+}
+Portal Link: @Model.Branding.RecruitmentUrl

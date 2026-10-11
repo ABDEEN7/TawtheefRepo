@@ -193,6 +193,9 @@ export class InterviewTemplatesFacade {
   // ======== Wizard: step 2 (axes) ========
   addAxisRow() {
     this.store.addWizardAxis();
+    // The new row comes pre-filled with the first unused axis : nothing "changes" for it, so we load its criteria.
+    const added = this.store.wizardAxes().at(-1);
+    if (added?.axisId) this.loadCriterionBankOptions(added.axisId);
   }
 
   removeAxisRow(localId: string) {

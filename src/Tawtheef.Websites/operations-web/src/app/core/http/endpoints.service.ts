@@ -628,6 +628,7 @@ export class EndpointsService {
     appointmentSendNotification: this.getFullUrl(
       '/InterviewSchedule/appointments/send-notification',
     ),
+    sendInvitations: this.getFullUrl('/InterviewSchedule/send-invitations'),
     appointmentAttendance: this.getFullUrl('/InterviewSchedule/appointments/attendance'),
     appointmentStartInterview: this.getFullUrl('/InterviewSchedule/appointments/start-interview'),
     lookupRooms: this.getFullUrl('/InterviewSchedule/lookups/rooms'),

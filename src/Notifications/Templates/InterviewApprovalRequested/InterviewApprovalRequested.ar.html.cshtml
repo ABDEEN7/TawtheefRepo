@@ -1,0 +1,86 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewApprovalRequested.InterviewApprovalRequestedModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductNameAr;
+    var website = b.OperationsUrl;
+    var targetPageUrl = website + InterviewNotificationLinks.Resolve(m.Kind, m.LinkPath);
+    var logo = b.LogoUrl;
+
+    var kind = m.Kind switch
+    {
+        InterviewEntityKind.Template => "نموذج التقييم",
+        InterviewEntityKind.Committee => "لجنة المقابلة",
+        InterviewEntityKind.Schedule => "جدول المقابلات",
+        InterviewEntityKind.ResultReport => "تقرير نتائج المقابلة",
+        _ => ""
+    };
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - طلب اعتماد جديد</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; text-align: right; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .details { width:100%; border-collapse:collapse; margin:0 0 20px; font-size:14px; }
+    .details td { padding:8px 0; border-bottom:1px solid #f1f2f6; vertical-align:top; }
+    .details td.label { color:#6b7280; width:35%; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; text-align: right; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container" style="direction: rtl;">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">بانتظار الاعتماد</p>
+      <h1 class="title">طلب اعتماد @kind</h1>
+      <p class="text">تحية طيبة،</p>
+      <p class="text">تم تقديم @kind «@m.EntityName» وهو بانتظار مراجعتكم واعتماده.</p>
+      <table class="details" role="presentation">
+        <tr><td class="label">@kind</td><td>@m.EntityName</td></tr>
+        @if (!string.IsNullOrWhiteSpace(m.JobTitle))
+        {
+          <tr><td class="label">الوظيفة</td><td>@m.JobTitle</td></tr>
+        }
+        @if (!string.IsNullOrWhiteSpace(m.SubmittedBy))
+        {
+          <tr><td class="label">مقدم الطلب</td><td>@m.SubmittedBy</td></tr>
+        }
+      </table>
+      <a class="cta" style="color: white;" href="@targetPageUrl" target="_blank">مراجعة الطلب في @product</a>
+      <div class="divider"></div>
+      <p class="muted">
+        رابط النظام: @targetPageUrl
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">مع تحيات،<br>فريق عمل @product</p>
+      <p class="muted">© @(DateTime.UtcNow.Year) @product. جميع الحقوق محفوظة.</p>
+    </div>
+  </div>
+</body>
+</html>

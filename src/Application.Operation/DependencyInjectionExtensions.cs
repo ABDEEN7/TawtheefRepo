@@ -1,3 +1,4 @@
+using Application.Operation.Common.Services.Interview;
 using Application.Operation.Features.Employee.CandidateUsers.Services;
 using Application.Operation.Features.Employee.Common.Access;
 using Application.Operation.Features.Employee.Dashboard.Services.Access;
@@ -128,6 +129,8 @@ namespace Application.Operation
                 services.AddScoped<CommitteeMemberEligibilityService>();
                 services.AddScoped<InterviewDashboardAccessResolver>();
                 services.AddScoped<InterviewDashboardQueryScope>();
+                services.AddScoped<IInterviewNotifier, InterviewNotifier>();
+                services.AddScoped<InterviewWorkflowNotifier>();
             }
 
             private void RegisterValidators()

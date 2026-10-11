@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Interview;
+using Tawtheef.Domain.Events.Operation.Employee.Interview.Appointment;
 
 namespace Application.Operation.Features.Employee.Interview.Schedule.Handlers.Commands;
 
@@ -102,6 +103,12 @@ public sealed class RescheduleAppointmentCommandHandler(IUnitOfWork unitOfWork)
         var acceptResult = targetSlot.AcceptRescheduledCandidate(invitationId, appointment.Id);
         if (acceptResult.IsFailed)
             return Result.Fail<Guid>(acceptResult.Errors);
+
+        // An invited candidate is told about the move (the event's handler) and the new booking counts as
+        // invited; one who was never invited hears nothing and is invited for the new time as usual.
+        if (appointment.InvitationSentAt is not null)
+            targetSlot.InvitationSentAt = DateTime.UtcNow;
+        targetSlot.AddDomainEvent(new AppointmentRescheduledEvent(appointment, targetSlot, DateTimeOffset.UtcNow));
 
         // The candidate's old seat goes back into the pool as an open slot, so the schedule's capacity
         // is preserved for the next reschedule. A seat already in the past (e.g. the corrective

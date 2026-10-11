@@ -25,6 +25,12 @@
               <i class="hgi hgi-stroke hgi-arrow-turn-backward me-1"></i>{{ 'INTERVIEW_SCHEDULE.DETAIL.RETURN' | translate }}
             </button>
           }
+          @if (canSendReminder(schedule.status) && uninvitedCount() > 0) {
+            <button type="button" class="btn btn-primary" (click)="sendAllInvitations()">
+              <i class="hgi hgi-stroke hgi-mail-send-01 me-1"></i>{{ 'INTERVIEW_SCHEDULE.DETAIL.SEND_ALL_INVITATIONS' | translate }}
+              ({{ uninvitedCount() }})
+            </button>
+          }
           @if (canCancel(schedule.status)) {
             <button type="button" class="btn btn-outline-danger" (click)="cancelSchedule()">
               <i class="hgi hgi-stroke hgi-cancel-01 me-1"></i>{{ 'INTERVIEW_SCHEDULE.DETAIL.CANCEL_SCHEDULE' | translate }}
@@ -124,7 +130,7 @@
               </td>
               <td (click)="$event.stopPropagation()">
                 <div class="action-buttons d-flex" *hasPermission="Permissions.InterviewSchedule.Manage">
-                  @if (store.detailSchedule() && canSendReminder(store.detailSchedule()!.status) && appointment.invitationId) {
+                  @if (store.detailSchedule() && canSendReminder(store.detailSchedule()!.status) && canNotify(appointment)) {
                     <button type="button" class="btn" (click)="sendReminder(appointment)"
                       [pTooltip]="(appointment.invitationSentAt ? 'INTERVIEW_SCHEDULE.DETAIL.SEND_REMINDER' : 'INTERVIEW_SCHEDULE.DETAIL.SEND_NOTIFICATION') | translate"
                       tooltipPosition="top">

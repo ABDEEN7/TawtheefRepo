@@ -1,0 +1,34 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewApprovalDecision.InterviewApprovalDecisionModel>
+@{
+    // Plain text (in-app bell, SMS): no HTML encoding, otherwise Arabic values come out as &#x...; entities.
+    DisableEncoding = true;
+    var m = Model.Model;
+    var kind = m.Kind switch
+    {
+        InterviewEntityKind.Template => "evaluation template",
+        InterviewEntityKind.Committee => "interview committee",
+        InterviewEntityKind.Schedule => "interview schedule",
+        InterviewEntityKind.ResultReport => "interview result report",
+        _ => ""
+    };
+    var outcome = m.Decision switch
+    {
+        InterviewDecision.Approved => "has been approved",
+        InterviewDecision.Returned => "has been returned for update",
+        InterviewDecision.Cancelled => "has been cancelled",
+        _ => ""
+    };
+}
+The @kind "@m.EntityName"@(string.IsNullOrWhiteSpace(m.JobTitle) ? "" : $" for the job \"{m.JobTitle}\"") @outcome.
+@if (!string.IsNullOrWhiteSpace(m.Reason))
+{
+<text>@(m.Decision == InterviewDecision.Approved ? "Notes" : "Reason"): @m.Reason
+</text>
+}
+@if (!string.IsNullOrWhiteSpace(m.DecidedBy))
+{
+<text>By: @m.DecidedBy
+</text>
+}
+Portal Link: @(Model.Branding.OperationsUrl + InterviewNotificationLinks.Resolve(m.Kind, m.LinkPath))
