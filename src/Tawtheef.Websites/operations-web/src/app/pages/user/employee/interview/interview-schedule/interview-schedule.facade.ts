@@ -560,6 +560,19 @@ export class InterviewScheduleFacade {
     });
   }
 
+  // Invites every live candidate not invited yet (the backend skips the rest, so a repeat press is harmless).
+  sendAllInvitations(scheduleId: string) {
+    this.api.sendScheduleInvitations(scheduleId).subscribe({
+      next: (count) => {
+        this.toast(
+          count > 0 ? 'INTERVIEW_SCHEDULE.INVITATIONS_QUEUED' : 'INTERVIEW_SCHEDULE.NO_INVITATIONS_TO_SEND',
+          { count },
+        );
+        this.loadDetail(scheduleId);
+      },
+    });
+  }
+
   // Handed to the reschedule dialog so it can load (and retry) its own slot list.
   loadRescheduleSlots = (scheduleId: string, appointmentId: string): Observable<RescheduleSlotModel[]> =>
     this.api.getRescheduleSlots(scheduleId, appointmentId);
@@ -590,7 +603,7 @@ export class InterviewScheduleFacade {
     });
   }
 
-  private toast(key: string) {
-    this.notify.success(this.translate.instant(key));
+  private toast(key: string, params?: Record<string, unknown>) {
+    this.notify.success(this.translate.instant(key, params));
   }
 }

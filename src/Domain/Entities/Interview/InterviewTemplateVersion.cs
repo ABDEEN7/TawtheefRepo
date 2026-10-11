@@ -3,7 +3,7 @@ using FluentResults;
 using Tawtheef.Domain.Common;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Users;
-using Tawtheef.Domain.Events.Operation.Interview.TemplateVersion;
+using Tawtheef.Domain.Events.Operation.Employee.Interview.TemplateVersion;
 
 namespace Tawtheef.Domain.Entities.Interview;
 

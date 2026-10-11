@@ -208,6 +208,14 @@ public class InterviewScheduleController(IMediator mediator) : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpPut("send-invitations")]
+    [AuthorizePermission(PermissionKeys.InterviewSchedule.Manage)]
+    public async Task<IActionResult> SendInvitations([FromBody] SendScheduleInvitationsCommand command, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(command, cancellationToken);
+        return result.ToActionResult();
+    }
+
     // ---- Lookups ----
 
     // Manage only: only the wizard's Step 2 period dialog calls this, to populate the In-Person

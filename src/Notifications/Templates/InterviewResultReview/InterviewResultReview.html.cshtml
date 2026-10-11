@@ -1,0 +1,78 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewResultReview.InterviewResultReviewModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductNameEn;
+    var website = b.OperationsUrl;
+    var targetPageUrl = website + InterviewNotificationLinks.Resolve(m.LinkPath, InterviewNotificationLinks.StartInterviewPath);
+    var logo = b.LogoUrl;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - Interview Results Awaiting Your Review</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .details { width:100%; border-collapse:collapse; margin:0 0 20px; font-size:14px; }
+    .details td { padding:8px 0; border-bottom:1px solid #f1f2f6; vertical-align:top; }
+    .details td.label { color:#6b7280; width:35%; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">Awaiting your review</p>
+      <h1 class="title">Interview Results Ready for Your Review</h1>
+      <p class="text">Dear Committee Chair,</p>
+      <p class="text">The interview results below are ready for your review. Please review the recommended decisions and send them for final approval.</p>
+      <table class="details" role="presentation">
+        <tr><td class="label">Interview schedule</td><td>@m.ScheduleName</td></tr>
+        @if (!string.IsNullOrWhiteSpace(m.JobTitle))
+        {
+          <tr><td class="label">Job</td><td>@m.JobTitle</td></tr>
+        }
+        @if (!string.IsNullOrWhiteSpace(m.CommitteeName))
+        {
+          <tr><td class="label">Interview committee</td><td>@m.CommitteeName</td></tr>
+        }
+        <tr><td class="label">Candidates</td><td>@m.CandidateCount</td></tr>
+      </table>
+      <a class="cta" style="color: white;" href="@targetPageUrl" target="_blank">Review results</a>
+      <div class="divider"></div>
+      <p class="muted">
+        Portal Link: @targetPageUrl
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Regards,<br>@product Team</p>
+      <p class="muted">© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
