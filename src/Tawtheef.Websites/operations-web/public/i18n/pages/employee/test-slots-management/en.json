@@ -176,7 +176,7 @@
   "TEST_SLOT_DETAILS.RETRY": "Retry",
   "TEST_SLOT_DETAILS.SESSION_NO": "Session No.",
   "TEST_SLOT_DETAILS.AVAILABLE_CAPACITY": "Available capacity",
-  "TEST_SLOT_DETAILS.CONFIRM_NOTIFICATION_TITLE": "Confirm Notification",
+  "TEST_SLOT_DETAILS.CONFIRM_NOTIFICATION_TITLE": "Confirm Send Notification",
   "TEST_SLOT_DETAILS.CONFIRM_ALL_NOTIFICATIONS": "Are you sure you want to notify candidates in all sessions of this period?",
   "TEST_SLOT_DETAILS.CONFIRM_SESSION_NOTIFICATION": "Are you sure you want to notify candidates in session {{sessionNo}}?",
   "TEST_SLOT_DETAILS.ALL_NOTIFICATIONS_SENT": "Notifications sent to candidates of the period successfully.",

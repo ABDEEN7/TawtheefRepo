@@ -67,6 +67,7 @@
         </div>
         <app-test-slot-basic-info [details]="details()!" />
         <app-test-slot-candidates
+          #candidateDialog
           [testSlotId]="details()!.id"
           [isCurrentUserRoomHead]="details()!.isCurrentUserRoomHead"
           [sendingNotifications]="sendingNotifications()"
@@ -88,7 +89,7 @@
               class="d-block w-100"
               [testSlotId]="details()!.id"
               [sendingNotifications]="sendingNotifications()"
-              (viewSession)="viewTestSession($event)"
+              (viewSession)="candidateDialog.openCandidates($event)"
               (sendSessionNotifications)="confirmCandidateNotifications($event)"
             />
           </div>

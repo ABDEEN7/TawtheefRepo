@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { catchError, finalize, of, switchMap, take } from 'rxjs';
@@ -53,7 +53,6 @@ export class TestSlotDetailsPage implements OnInit {
   readonly canClose = computed(() => this.details()?.status.backendName === 'Started');
   private readonly service = inject(TestSlotsService);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly language = inject(LanguageService);
   private readonly notifications = inject(NotificationService);
   private readonly dialogs = inject(DialogHelperService);
@@ -93,14 +92,6 @@ export class TestSlotDetailsPage implements OnInit {
         this.failed.set(true);
         this.loading.set(false);
       },
-    });
-  }
-
-  viewTestSession(testSessionId: string): void {
-    void this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { testSessionId },
-      queryParamsHandling: 'merge',
     });
   }
 
