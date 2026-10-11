@@ -12,7 +12,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { catchError, debounceTime, finalize, forkJoin, of, Subject, switchMap } from 'rxjs';
 import { Permissions } from '../../../../core/constants/permissions';
@@ -24,6 +23,8 @@ import { I18nNamespaceDirective } from '../../../../shared/directives/i18n-names
 import { dropdownOptionsModel } from '../../../../shared/models/dropdown-options.model';
 import { ExamFilters, ExamListItemDto } from './models/exam-list-item.dto';
 import { ExamsService } from './services/exams.service';
+import { StatusPillComponent } from '../../../../shared/components/status-pill/status-pill.component';
+import { examStatusTone } from './exam-status-presentation';
 
 @Component({
   selector: 'app-exams-management',
@@ -42,7 +43,7 @@ import { ExamsService } from './services/exams.service';
     InputTextModule,
     Select,
     TableModule,
-    TagModule,
+    StatusPillComponent,
     TooltipModule,
     PaginationComponent,
     PageFiltersComponent,
@@ -51,6 +52,7 @@ import { ExamsService } from './services/exams.service';
   ],
 })
 export class ExamsManagementComponent implements OnInit {
+  readonly examStatusTone = examStatusTone;
   protected readonly routes = portalRoutes;
   private readonly service = inject(ExamsService);
   private readonly language = inject(LanguageService);

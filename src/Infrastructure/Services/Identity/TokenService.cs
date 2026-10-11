@@ -71,7 +71,7 @@ public class TokenService(
         if (tokenResult.IsFailed)
             return tokenResult;
 
-        // Set the current session in Redis ONLY after building the token response successfully.
+        // Set the current session only after building the token response successfully.
         await sessions.SetCurrentAsync(user.Id, sid, device, ct);
         
         await uow.SaveChangesAsync(ct);

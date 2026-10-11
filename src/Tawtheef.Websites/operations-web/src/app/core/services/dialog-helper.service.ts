@@ -15,6 +15,7 @@ export class DialogHelperService {
     descriptionParams?: Record<string, string>;
     cancelText?: string;
     confirmText?: string;
+    primaryActionStyle?: boolean;
     showInputField?: boolean;
     inputType?: 'text' | 'textarea';
     inputLabel?: string;

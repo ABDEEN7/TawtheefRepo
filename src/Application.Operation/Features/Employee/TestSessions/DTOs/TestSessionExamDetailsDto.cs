@@ -10,6 +10,7 @@ public sealed record TestSessionExamDetailsDto(
     string ExamStatus,
     int TotalCandidates,
     int DurationMinutes,
+    int MinimumEntryWindowMinutes,
     IReadOnlyList<TestSessionExamPartDto> Parts,
     int NumberOfQuestions,
     decimal? QualificationScore);

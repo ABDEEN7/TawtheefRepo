@@ -1,3 +1,4 @@
+using Application.Operation.Common.Services.Interview;
 using Application.Operation.Features.Employee.CandidateUsers.Services;
 using Application.Operation.Features.Employee.Common.Access;
 using Application.Operation.Features.Employee.Dashboard.Services.Access;
@@ -20,6 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tawtheef.Application;
 using Application.Operation.Features.Employee.QuestionBankAssignments.Services;
+using Application.Operation.Features.Employee.TestSlots.Services;
 
 namespace Application.Operation
 {
@@ -66,6 +68,8 @@ namespace Application.Operation
                 services.RegisterJobManagementServices();
                 services.RegisterJobInvitationSummaryServices();
                 services.AddScoped<ExamService>();
+                services.AddScoped<TestSlotCandidateHallActionService>();
+                services.AddScoped<TestSessionNoShowService>();
                 services.RegisterInterviewServices();
             }
 
@@ -125,6 +129,8 @@ namespace Application.Operation
                 services.AddScoped<CommitteeMemberEligibilityService>();
                 services.AddScoped<InterviewDashboardAccessResolver>();
                 services.AddScoped<InterviewDashboardQueryScope>();
+                services.AddScoped<IInterviewNotifier, InterviewNotifier>();
+                services.AddScoped<InterviewWorkflowNotifier>();
             }
 
             private void RegisterValidators()

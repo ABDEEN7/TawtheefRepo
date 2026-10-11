@@ -237,7 +237,7 @@
                 <td>{{ session.roomName || ('TEST_SESSIONS.NOT_AVAILABLE' | translate) }}</td>
                 <td>{{ session.candidateCount }}</td>
                 <td>{{ session.roomHeadName || ('TEST_SESSIONS.NOT_AVAILABLE' | translate) }}</td>
-                <td><p-tag severity="secondary" [value]="session.status.name" /></td>
+                <td><app-status-pill [label]="session.status.name" [tone]="testSessionStatusTone(session.status.backendName)" /></td>
                 <td *hasPermission="[Permissions.TestSessions.View, Permissions.TestSessions.Create]" class="text-center">
                   <div class="action-buttons justify-content-center">
                     <button

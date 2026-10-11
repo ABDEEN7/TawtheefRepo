@@ -1,0 +1,130 @@
+@if (loading()) {
+  <div class="text-muted py-3" role="status">
+    {{ 'TEST_SLOT_DETAILS.RESCHEDULE_OPTIONS_LOADING' | translate }}
+  </div>
+} @else if (loadError()) {
+  <div class="alert alert-danger" role="alert">
+    {{ 'TEST_SLOT_DETAILS.RESCHEDULE_OPTIONS_ERROR' | translate }}
+  </div>
+
+  <button type="button" class="btn btn-outline-primary" (click)="loadOptions()">
+    {{ 'TEST_SLOT_DETAILS.RETRY' | translate }}
+  </button>
+} @else if (options().length === 0) {
+  <div class="alert alert-info" role="status">
+    {{ 'TEST_SLOT_DETAILS.NO_AVAILABLE_RESCHEDULE_SESSIONS' | translate }}
+  </div>
+} @else {
+  <p class="mb-3">
+    {{ 'TEST_SLOT_DETAILS.RESCHEDULE_SELECT_SESSION' | translate }}
+  </p>
+
+  <div
+    role="radiogroup"
+    class="d-grid gap-2 mb-3"
+    [attr.aria-label]="'TEST_SLOT_DETAILS.RESCHEDULE_SELECT_SESSION' | translate"
+  >
+    @for (option of options(); track option.testSessionId) {
+      <label
+        class="border rounded p-3 d-flex align-items-start gap-3"
+        [class.border-primary]="targetSessionId.value === option.testSessionId"
+        [class.bg-primary-subtle]="targetSessionId.value === option.testSessionId"
+      >
+        <input
+          type="radio"
+          name="candidate-exam-reschedule-session"
+          class="form-check-input mt-1"
+          [value]="option.testSessionId"
+          [formControl]="targetSessionId"
+        />
+
+        <span class="d-block">
+          <strong class="d-block">
+            {{ slotTitle(option) }}
+          </strong>
+
+          <span class="d-block">
+            {{ option.slotDate | date: 'mediumDate' }}
+          </span>
+
+          <span class="d-block">
+            {{ formatTime(option.startTime) }}
+            –
+            {{ formatTime(option.endTime) }}
+          </span>
+
+          <span class="d-block">
+            {{ 'TEST_SLOT_DETAILS.ROOM' | translate }}:
+            {{ roomName(option) }}
+          </span>
+
+          <span class="d-block">
+            {{ 'TEST_SLOT_DETAILS.SESSION_NO' | translate }}:
+            {{ option.sessionNo }}
+          </span>
+
+          <span class="d-block">
+            {{ 'TEST_SLOT_DETAILS.AVAILABLE_CAPACITY' | translate }}:
+            {{ option.availableCapacity }}
+          </span>
+        </span>
+      </label>
+    }
+  </div>
+
+  @if (targetSessionId.invalid && targetSessionId.touched) {
+    <small class="text-danger d-block mb-3" role="alert">
+      {{ 'TEST_SLOT_DETAILS.RESCHEDULE_SESSION_REQUIRED' | translate }}
+    </small>
+  }
+
+  <label for="candidate-exam-reschedule-reason" class="form-label fw-semibold">
+    {{ 'TEST_SLOT_DETAILS.RESCHEDULE_REASON' | translate }}
+
+    <span class="text-danger">*</span>
+  </label>
+
+  <textarea
+    pTextarea
+    id="candidate-exam-reschedule-reason"
+    class="form-control w-100"
+    rows="4"
+    maxlength="2000"
+    [formControl]="reason"
+    [attr.aria-invalid]="reason.invalid && reason.touched"
+  ></textarea>
+
+  @if (reason.invalid && reason.touched) {
+    <small class="text-danger d-block mt-1" role="alert">
+      {{ 'TEST_SLOT_DETAILS.RESCHEDULE_REASON_REQUIRED' | translate }}
+    </small>
+  }
+}
+
+<div class="d-flex justify-content-end gap-2 mt-4">
+  <button
+    type="button"
+    class="btn btn-outline-secondary"
+    [disabled]="submitting()"
+    (click)="close()"
+  >
+    {{ 'TEST_SLOT_DETAILS.CLOSE' | translate }}
+  </button>
+
+  @if (!loading() && !loadError() && options().length > 0) {
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="targetSessionId.invalid || reason.invalid || submitting()"
+      (click)="submit()"
+    >
+      @if (submitting()) {
+        <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+
+        {{ 'TEST_SLOT_DETAILS.RESCHEDULING' | translate }}
+      } @else {
+        {{ 'TEST_SLOT_DETAILS.RESCHEDULE' | translate }}
+      }
+    </button>
+  }
+</div>

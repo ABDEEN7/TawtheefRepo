@@ -1,0 +1,18 @@
+<section i18nNamespace="pages/employee/exam-results">
+  <p>{{ 'EXAM_RESULTS.RETURN_CONFIRMATION' | translate }}</p>
+  <label class="form-label fw-semibold" for="exam-result-return-reason">
+    {{ 'EXAM_RESULTS.RETURN_REASON' | translate }} <span class="text-danger">*</span>
+  </label>
+  <textarea pTextarea id="exam-result-return-reason" class="form-control w-100"
+    rows="5" [formControl]="reason" maxlength="2000"
+    [attr.aria-invalid]="reason.invalid && reason.touched"></textarea>
+  @if (reason.invalid && reason.touched) {
+    <small class="text-danger d-block mt-1" role="alert">{{ 'EXAM_RESULTS.RETURN_REASON_REQUIRED' | translate }}</small>
+  }
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">{{ 'common.cancel' | translate }}</button>
+    <button type="button" class="btn btn-primary" [disabled]="reason.invalid" (click)="confirm()">
+      {{ 'EXAM_RESULTS.RETURN_FOR_PROCESSING' | translate }}
+    </button>
+  </div>
+</section>

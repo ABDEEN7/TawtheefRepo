@@ -101,7 +101,7 @@
                   @if (!isViewMode) {
                     <button
                       type="button"
-                      class="btn btn-outline-primary light d-flex align-items-center gap-2"
+                      class="btn btn-outline-secondary d-flex align-items-center gap-2"
                       (click)="cancel()"
                     >
                       {{ 'TEST_SLOT_WIZARD.CANCEL' | translate }}
@@ -110,14 +110,14 @@
                   @if (step < wizardSteps.length) {
                     <button
                       type="button"
-                      class="btn btn-outline-primary light d-flex align-items-center gap-2"
+                      class="btn btn-primary d-flex align-items-center gap-2"
                       (click)="goTo(step + 1)"
                     >
                       {{ 'TEST_SLOT_WIZARD.NEXT' | translate }}
                       <i class="hgi" faDirArrow="end"></i>
                     </button>
                   } @else if (!isViewMode) {
-                    <button type="button" class="btn btn-success d-flex align-items-center gap-2" (click)="save()" [disabled]="saving">
+                    <button type="button" class="btn btn-primary d-flex align-items-center gap-2" (click)="save()" [disabled]="saving">
                       {{ (isEditMode ? 'TEST_SLOT_WIZARD.UPDATE' : 'TEST_SLOT_WIZARD.CREATE_SLOT') | translate }}
                     </button>
                   }

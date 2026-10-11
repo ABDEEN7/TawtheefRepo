@@ -58,6 +58,12 @@ public static class Permissions
         public static readonly PermissionDefinition WorkflowActions =
             Def(PermissionKeys.Exams.WorkflowActions, nameof(PermissionKeys.Exams), PermissionAction.Manage,
                 "Job Exams - Workflow Actions", "إجراءات سير عمل اختبارات الوظائف", 108);
+        public static readonly PermissionDefinition ApproveResults =
+            Def(PermissionKeys.Exams.ApproveResults, nameof(PermissionKeys.Exams), PermissionAction.Approve,
+                "Job Exams - Approve Results", "اختبارات الوظائف - اعتماد النتائج", 113);
+        public static readonly PermissionDefinition ViewAttemptDetails =
+            Def(PermissionKeys.Exams.ViewAttemptDetails, nameof(PermissionKeys.Exams), PermissionAction.View,
+                "Job Exams - View Attempt Details", "اختبارات الوظائف - عرض تفاصيل تنفيذ الاختبار", 114);
 
     }
 

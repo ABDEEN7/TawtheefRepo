@@ -6,7 +6,7 @@ using Tawtheef.Domain.Configurations.Settings;
 
 namespace Tawtheef.Infrastructure.Services.Security;
 
-public sealed class AccessCodeProtector : IAccessCodeProtector
+public sealed class AccessCodeProtector(IOptions<TestSlotAccessCodeOptions> options) : IAccessCodeProtector
 {
     private const string Purpose = "Tawtheef.TestSlots.AccessCode.v1";
     private const string PayloadVersion = "v1";
@@ -14,12 +14,7 @@ public sealed class AccessCodeProtector : IAccessCodeProtector
     private const int NonceLength = 12;
     private const int TagLength = 16;
 
-    private readonly byte[] encryptionKey;
-
-    public AccessCodeProtector(IOptions<TestSlotAccessCodeOptions> options)
-    {
-        encryptionKey = DecodeEncryptionKey(options.Value.EncryptionKey);
-    }
+    private readonly byte[] _encryptionKey = DecodeEncryptionKey(options.Value.EncryptionKey);
 
     public string Protect(string accessCode)
     {
@@ -30,7 +25,7 @@ public sealed class AccessCodeProtector : IAccessCodeProtector
         var ciphertext = new byte[plaintext.Length];
         var tag = new byte[TagLength];
 
-        using (var aesGcm = new AesGcm(encryptionKey, TagLength))
+        using (var aesGcm = new AesGcm(_encryptionKey, TagLength))
         {
             aesGcm.Encrypt(nonce, plaintext, ciphertext, tag, Encoding.UTF8.GetBytes(Purpose));
         }
@@ -45,7 +40,7 @@ public sealed class AccessCodeProtector : IAccessCodeProtector
 
         try
         {
-            var parts = protectedAccessCode.Split('.', StringSplitOptions.None);
+            var parts = protectedAccessCode.Split('.');
             if (parts.Length != 4 || parts[0] != PayloadVersion || parts.Skip(1).Any(string.IsNullOrEmpty))
                 throw new CryptographicException("Invalid TestSlot Access Code payload.");
 
@@ -56,7 +51,7 @@ public sealed class AccessCodeProtector : IAccessCodeProtector
                 throw new CryptographicException("Invalid TestSlot Access Code payload.");
 
             var plaintext = new byte[ciphertext.Length];
-            using (var aesGcm = new AesGcm(encryptionKey, TagLength))
+            using (var aesGcm = new AesGcm(_encryptionKey, TagLength))
             {
                 aesGcm.Decrypt(nonce, ciphertext, tag, plaintext, Encoding.UTF8.GetBytes(Purpose));
             }

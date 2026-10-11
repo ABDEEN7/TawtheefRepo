@@ -7,8 +7,8 @@ import { testSlotCreateForm } from '../../helper/test-slot-create.form';
 import { TeamAssignmentState } from '../../models/team-assignment-state.model';
 import {
   TestSlotTeamAssignmentSelectorComponent,
-  TestSlotTeamAssignmentSelection,
 } from '../test-slot-team-assignment-selector/test-slot-team-assignment-selector.component';
+import { TestSlotTeamAssignmentSelection } from '../../models/test-slot-team-assignment-selection.model';
 
 @Component({
   selector: 'app-team-assignment',

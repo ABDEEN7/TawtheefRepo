@@ -1,0 +1,287 @@
+<section class="management-list-shell" i18nNamespace="pages/employee/exam-results">
+  <div class="card card-table mb-4">
+    <div class="card-body">
+      <h3 class="fw-bold mb-4">{{ 'EXAM_RESULTS.TITLE' | translate }}</h3>
+      <app-page-filters
+        [advancedLabel]="'EXAM_RESULTS.ADVANCED' | translate"
+        [clearLabel]="'EXAM_RESULTS.CLEAR' | translate"
+        [advancedExpanded]="advancedExpanded()"
+        [activeAdvancedCount]="(createdFrom ? 1 : 0) + (createdTo ? 1 : 0)"
+        [showSecondary]="false"
+        (advancedToggled)="advancedExpanded.set(!advancedExpanded())"
+        (filtersCleared)="clearFilters()"
+      >
+        <p-iconfield filterSearch class="search-icon-field w-100">
+          <p-inputicon styleClass="fa-solid fa-magnifying-glass" />
+          <input
+            pInputText
+            type="search"
+            class="w-100 form-control"
+            [(ngModel)]="search"
+            (ngModelChange)="onSearchChange()"
+            [attr.aria-label]="'EXAM_RESULTS.SEARCH' | translate"
+            [placeholder]="'EXAM_RESULTS.SEARCH' | translate"
+          />
+        </p-iconfield>
+        <div advancedFilters class="row g-3">
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="report-created-from">{{
+              'EXAM_RESULTS.CREATED_FROM' | translate
+            }}</label>
+            <p-datepicker
+              inputId="report-created-from"
+              class="w-100"
+              [fluid]="true"
+              [(ngModel)]="createdFrom"
+              (ngModelChange)="applyFilters()"
+              [readonlyInput]="true"
+              [maxDate]="createdTo"
+              [invalid]="invalidCreatedRange()"
+              iconDisplay="input"
+              [showIcon]="true"
+              [showClear]="true"
+              dateFormat="yy-mm-dd"
+              [placeholder]="'EXAM_RESULTS.CREATED_FROM_PLACEHOLDER' | translate"
+              appendTo="body"
+            />
+          </div>
+          <div class="col-12 col-md-6 filter-field">
+            <label class="form-label" for="report-created-to">{{
+              'EXAM_RESULTS.CREATED_TO' | translate
+            }}</label>
+            <p-datepicker
+              inputId="report-created-to"
+              class="w-100"
+              [fluid]="true"
+              [(ngModel)]="createdTo"
+              (ngModelChange)="applyFilters()"
+              [readonlyInput]="true"
+              [minDate]="createdFrom"
+              [invalid]="invalidCreatedRange()"
+              [showIcon]="true"
+              iconDisplay="input"
+              [showClear]="true"
+              dateFormat="yy-mm-dd"
+              appendTo="body"
+              [placeholder]="'EXAM_RESULTS.CREATED_TO_PLACEHOLDER' | translate"
+            />
+          </div>
+          @if (invalidCreatedRange()) {
+            <div class="col-12 text-danger" role="alert">
+              {{ 'EXAM_RESULTS.INVALID_RANGE' | translate }}
+            </div>
+          }
+        </div>
+      </app-page-filters>
+
+      @if (loadError()) {
+        <div class="text-danger my-2" role="alert">{{ 'EXAM_RESULTS.LOAD_ERROR' | translate }}</div>
+      }
+      <div class="table-card rounded overflow-hidden">
+        <div class="table-responsive">
+          <p-table [value]="reports()" dataKey="id" [loading]="loading()">
+            <ng-template #header>
+              <tr>
+                <th>
+                  {{ 'EXAM_RESULTS.EXAM_TITLE' | translate }}
+                </th>
+
+                <th>
+                  {{ 'EXAM_RESULTS.JOB_TITLE' | translate }}
+                </th>
+
+                <th>
+                  {{ 'EXAM_RESULTS.STATUS' | translate }}
+                </th>
+
+                <th>
+                  {{ 'EXAM_RESULTS.CANDIDATES' | translate }}
+                </th>
+
+                <th>
+                  {{ 'EXAM_RESULTS.REQUIRES_ACTION' | translate }}
+                </th>
+
+                <th>
+                  {{ 'EXAM_RESULTS.DATES' | translate }}
+                </th>
+
+                <th class="report-open-column"></th>
+              </tr>
+            </ng-template>
+
+            <ng-template #body let-report>
+              <tr
+                class="report-row"
+                tabindex="0"
+                role="link"
+                (click)="open(report.id)"
+                (keydown.enter)="open(report.id)"
+                [attr.aria-label]="('EXAM_RESULTS.OPEN' | translate) + ' ' + report.examNo"
+              >
+                <!-- Exam -->
+                <td>
+                  <div class="report-exam">
+                    <span class="fw-semibold">
+                      {{ report.examTitle }}
+                    </span>
+
+                    <span class="small text-muted">
+                      <bdi>{{ report.examNo }}</bdi>
+                    </span>
+                  </div>
+                </td>
+
+                <!-- Job -->
+                <td>
+                  {{ report.jobTitle }}
+                </td>
+
+                <!-- Report status -->
+                <td>
+                  <app-status-pill [label]="report.status.name" [tone]="reportStatusTone(report.status.backendName)" />
+                </td>
+
+                <!-- Candidate summary -->
+                <td>
+                  <div class="candidate-summary">
+                    <div class="candidate-total">
+                      <span class="candidate-total-number">
+                        {{ report.candidateCount }}
+                      </span>
+
+                      <span class="text-muted small">
+                        {{ 'EXAM_RESULTS.CANDIDATES' | translate }}
+                      </span>
+                    </div>
+
+                    <div class="candidate-summary-items">
+                      <span class="result-summary result-summary--success">
+                        {{ 'EXAM_RESULTS.QUALIFIED' | translate }}:
+                        <strong>
+                          {{ report.qualifiedForInterviewCount }}
+                        </strong>
+                      </span>
+
+                      <span class="result-summary">
+                        {{ 'EXAM_RESULTS.NOT_QUALIFIED' | translate }}:
+                        <strong>
+                          {{ report.notQualifiedForInterviewCount }}
+                        </strong>
+                      </span>
+
+                      @if (report.noShowCount > 0) {
+                        <span class="result-summary">
+                          {{ 'EXAM_RESULTS.NO_SHOW' | translate }}:
+                          <strong>
+                            {{ report.noShowCount }}
+                          </strong>
+                        </span>
+                      }
+
+                      @if (report.notCompletedCount > 0) {
+                        <span class="result-summary">
+                          {{ 'EXAM_RESULTS.NOT_COMPLETED' | translate }}:
+                          <strong>
+                            {{ report.notCompletedCount }}
+                          </strong>
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Requires action -->
+                <td>
+                  @if (report.requiresActionCount > 0) {
+                    <span class="requires-action">
+                      <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+
+                      <strong>
+                        {{ report.requiresActionCount }}
+                      </strong>
+
+                      <span>
+                        {{ 'EXAM_RESULTS.REQUIRES_ACTION' | translate }}
+                      </span>
+                    </span>
+                  } @else {
+                    <span class="text-muted"> — </span>
+                  }
+                </td>
+
+                <!-- Dates -->
+                <td>
+                  <div class="report-dates">
+                    <div class="report-date-item">
+                      <span class="report-date-label">
+                        {{ 'EXAM_RESULTS.CREATED_AT' | translate }}
+                      </span>
+
+                      <span class="report-date-value">
+                        {{ report.createdDate | date: 'yyyy/MM/dd HH:mm:ss' }}
+                      </span>
+                    </div>
+
+                    <div class="report-date-item">
+                      <span class="report-date-label">
+                        {{ 'EXAM_RESULTS.UPDATED_AT' | translate }}
+                      </span>
+
+                      <span class="report-date-value">
+                        {{ report.lastUpdated | date: 'yyyy/MM/dd HH:mm:ss' }}
+                      </span>
+                    </div>
+
+                    @if (report.approvedAt) {
+                      <div class="report-date-item">
+                        <span class="report-date-label">
+                          {{ 'EXAM_RESULTS.APPROVED_AT' | translate }}
+                        </span>
+
+                        <span class="report-date-value">
+                          {{ report.approvedAt | date: 'yyyy/MM/dd HH:mm:ss' }}
+                        </span>
+                      </div>
+                    }
+                  </div>
+                </td>
+
+                <!-- Open -->
+                <td class="report-open-column">
+                  <i
+                    class="pi pi-angle-left report-open-icon"
+                    aria-hidden="true"
+                    [pTooltip]="'common.viewDetails' | translate"
+                    tooltipPosition="top"
+                  ></i>
+                </td>
+              </tr>
+            </ng-template>
+
+            <ng-template #emptymessage>
+              <tr>
+                <td colspan="7" class="text-center py-4 text-muted">
+                  @if (!loading() && !loadError()) {
+                    {{ 'EXAM_RESULTS.EMPTY' | translate }}
+                  }
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      @if (!loading() && totalItems() > 0) {
+        <div class="pagination-box mt-3">
+          <app-pagination
+            [currentPage]="filters().pageNumber"
+            [itemsPerPage]="filters().pageSize"
+            [totalItems]="totalItems()"
+            (pageChanged)="onPageChange($event)"
+            (pageSizeChanged)="onPageSizeChange($event)"
+          />
+        </div>
+      }
+    </div>
+  </div>
+</section>

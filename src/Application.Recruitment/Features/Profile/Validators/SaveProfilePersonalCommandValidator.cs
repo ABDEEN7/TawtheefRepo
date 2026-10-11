@@ -1,6 +1,7 @@
 ﻿using Application.Recruitment.Features.Profile.Command.SaveOperation;
 using FluentValidation;
 using Tawtheef.Domain.Constants;
+using Tawtheef.Domain.Entities.Lookups;
 
 namespace Application.Recruitment.Features.Profile.Validators;
 
@@ -28,7 +29,8 @@ public sealed class SaveProfilePersonalCommandValidator : AbstractValidator<Save
                 {
                     RuleFor(x => x.Request.SponsorEmployerName).NotEmpty();
                     RuleFor(x => x.Request.SponsorEmployerNumber).NotEmpty();
-                    RuleFor(x => x.Request.SponsorQidExpiry).NotEmpty();
+                    RuleFor(x => x.Request.SponsorQidExpiry).NotEmpty().When(
+                        x => x.Request.SponsorTypeId == SponsorTypeIds.Individual);
 
                     RuleFor(x => x.Request)
                         .Must(r =>

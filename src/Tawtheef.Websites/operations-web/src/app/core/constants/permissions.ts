@@ -155,6 +155,8 @@ export const Permissions = {
     View: 'exams.view',
     Create: 'exams.create',
     WorkflowActions: 'exams.workflow-action',
+    ApproveResults: 'exams.approve-results',
+    ViewAttemptDetails: 'exams.view-attempt-details',
   },
   TestSlots: {
     View: 'test-slots.view',

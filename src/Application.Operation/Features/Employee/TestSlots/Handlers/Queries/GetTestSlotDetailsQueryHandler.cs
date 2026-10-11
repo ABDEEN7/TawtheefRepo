@@ -2,6 +2,7 @@ using Application.Operation.Features.Employee.TestSlots.DTOs;
 using Application.Operation.Features.Employee.TestSlots.Queries;
 using FluentResults;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
@@ -9,6 +10,7 @@ using Tawtheef.Application.Common.Models;
 using Tawtheef.Domain.Constants;
 using Tawtheef.Domain.Entities.Exams;
 using Tawtheef.Domain.Entities.Lookups;
+using Error = FluentResults.Error;
 
 namespace Application.Operation.Features.Employee.TestSlots.Handlers.Queries;
 
@@ -17,6 +19,19 @@ public sealed class GetTestSlotDetailsQueryHandler(IUnitOfWork unitOfWork, ICurr
 {
     public async Task<IResult<TestSlotDetailsDto>> Handle(GetTestSlotDetailsQuery request, CancellationToken ct)
     {
+        var scope = await TestSlotReadScope.ResolveAsync(
+            unitOfWork,
+            currentUser,
+            ct);
+
+        if (!await TestSlotReadScope.CanAccessAsync(
+                unitOfWork,
+                scope,
+                request.TestSlotId,
+                ct))
+        {
+            return Forbidden<TestSlotDetailsDto>();
+        }
         var isArabic = string.Equals(request.Language, "ar", StringComparison.OrdinalIgnoreCase);
         var currentUserId = Guid.TryParse(currentUser.UserId, out var id) ? id : Guid.Empty;
         var slot = await unitOfWork.Context.Set<TestSlot>().AsNoTracking()
@@ -55,8 +70,14 @@ public sealed class GetTestSlotDetailsQueryHandler(IUnitOfWork unitOfWork, ICurr
                 IsCurrentUserRoomHead = currentUserId != Guid.Empty && unitOfWork.Context.Set<TestSlotStaff>()
                     .Any(s => s.TestSlotId == x.Id && s.IsActive && s.RoleId == TestSlotStaffRoleIds.HallSupervisor &&
                               s.StaffUserId == currentUserId),
-                HasRevealableAccessCode = x.AccessCodeHash != null,
+                HasRevealableAccessCode = true,
             }).FirstOrDefaultAsync(ct);
         return slot is null ? Result.Fail<TestSlotDetailsDto>(ErrorsCodes.ItemNotFound) : Result.Ok(slot);
     }
+    private static IResult<T> Forbidden<T>() =>
+        Result.Fail<T>(
+            new Error(ErrorsCodes.UnauthorizedAction)
+                .WithMetadata(
+                    "StatusCode",
+                    StatusCodes.Status403Forbidden));
 }

@@ -20,4 +20,14 @@ public class TestSession : EventEntity
     public Exam? Exam { get; set; }
     public TestSessionStatus? Status { get; set; }
     public ICollection<TestSessionCandidate> TestSessionCandidates { get; set; } = [];
+
+    public void MarkInProgress()
+    {
+        StatusId = TestSessionStatusIds.InProgress;
+    }
+
+    public void MarkClosed()
+    {
+        StatusId = TestSessionStatusIds.Closed;
+    }
 }

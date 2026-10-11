@@ -10,6 +10,23 @@ public class TestSessionCandidateConfiguration : BaseEntityConfiguration<TestSes
     {
         base.Configure(builder);
 
+        builder.HasIndex(x => new
+            {
+                x.TestSessionId,
+                x.InvitationId
+            })
+            .IsUnique();
+
+        builder.HasIndex(x => x.RescheduledFromTestSessionCandidateId)
+            .IsUnique()
+            .HasFilter("[RescheduledFromTestSessionCandidateId] IS NOT NULL");
+
+        builder.HasOne(x => x.RescheduledFromTestSessionCandidate)
+            .WithMany()
+            .HasForeignKey(x => x.RescheduledFromTestSessionCandidateId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasOne(x => x.TestSession)
             .WithMany(x => x.TestSessionCandidates)
             .HasForeignKey(x => x.TestSessionId)

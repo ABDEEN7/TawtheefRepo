@@ -13,9 +13,15 @@ import { HasPermissionDirective } from '../../../../../../../shared/directives/h
 import { Permissions } from '../../../../../../../core/constants/permissions';
 
 import { InterviewType, ScheduleStatus } from '../../../interview-schedule/models/enums';
-import { SessionSummary, summarizeSessions } from '../../../interview-schedule/models/schedule-time';
+import {
+  SessionSummary,
+  summarizeSessions,
+} from '../../../interview-schedule/models/schedule-time';
 
-import { InterviewEvaluationStore, ELIGIBLE_SESSION_STATUSES } from '../../interview-evaluation.store';
+import {
+  InterviewEvaluationStore,
+  ELIGIBLE_SESSION_STATUSES,
+} from '../../interview-evaluation.store';
 import { InterviewEvaluationFacade } from '../../interview-evaluation.facade';
 import { SessionListRowModel } from '../../models/session-row.model';
 // Local label maps, not interview-schedule's - see EVAL_SCHEDULE_STATUS_LABELS's own comment: this
@@ -48,9 +54,7 @@ export class SessionsListComponent {
   store = inject(InterviewEvaluationStore);
   service = inject(InterviewEvaluationFacade);
 
-  // Only statuses the "Start Interview" stage cares about - Closed included so a finished session's
-  // final progress stays reachable via the filter, even though it isn't shown by default.
-  readonly statusOptions = [...ELIGIBLE_SESSION_STATUSES, ScheduleStatus.Closed].map((status) => ({
+  readonly statusOptions = [...ELIGIBLE_SESSION_STATUSES].map((status) => ({
     value: status,
     label: EVAL_SCHEDULE_STATUS_LABELS[status],
   }));

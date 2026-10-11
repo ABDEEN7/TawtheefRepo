@@ -38,6 +38,7 @@
     "@angular/router": "20.3.25",
     "@auth0/angular-jwt": "^5.2.0",
     "@fortawesome/fontawesome-free": "^7.1.0",
+    "@microsoft/signalr": "^10.0.11",
     "@ng-bootstrap/ng-bootstrap": "19.0.1",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",

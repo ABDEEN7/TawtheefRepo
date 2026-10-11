@@ -13,6 +13,7 @@ export interface TestSessionExamDetailsDto {
   examStatus: string;
   totalCandidates: number;
   durationMinutes: number;
+  minimumEntryWindowMinutes: number;
   parts: TestSessionExamPartDto[];
   numberOfQuestions: number;
   qualificationScore?: number | null;

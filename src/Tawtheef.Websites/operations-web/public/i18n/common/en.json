@@ -102,6 +102,7 @@
   "common.fontScale.increase": "Increase Font",
   "common.fontScale.decrease": "Decrease Font",
   "common.fontScale.reset": "Reset Font",
+  "common.viewDetails": "View Details",
   "admin.sidebar.notificationTester": "Notification Tester",
   "NOTIFICATION_TESTER": {
     "PAGE_TITLE": "Notification Template Tester",

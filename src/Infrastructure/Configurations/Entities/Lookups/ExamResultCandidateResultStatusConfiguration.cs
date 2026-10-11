@@ -3,26 +3,28 @@ using Tawtheef.Domain.Entities.Lookups;
 
 namespace Tawtheef.Infrastructure.Configurations.Entities.Lookups;
 
-public class ExamResultCandidateResultStatusConfiguration : LookupBaseConfiguration<ExamResultCandidateResultStatus>
+public class ExamResultCandidateResultStatusConfiguration
+    : LookupBaseConfiguration<ExamResultCandidateResultStatus>
 {
     public override void Configure(EntityTypeBuilder<ExamResultCandidateResultStatus> builder)
     {
         base.Configure(builder);
+
         builder.HasData(
             new ExamResultCandidateResultStatus
             {
-                Id = ExamResultCandidateResultStatusIds.Passed,
-                BackendName = nameof(ExamResultCandidateResultStatusIds.Passed),
-                NameEn = "Passed",
-                NameAr = "ناجح",
+                Id = ExamResultCandidateResultStatusIds.QualifiedForInterview,
+                BackendName = nameof(ExamResultCandidateResultStatusIds.QualifiedForInterview),
+                NameEn = "Qualified for Interview",
+                NameAr = "مؤهل للمقابلة",
                 DisplayOrder = 1
             },
             new ExamResultCandidateResultStatus
             {
-                Id = ExamResultCandidateResultStatusIds.Failed,
-                BackendName = nameof(ExamResultCandidateResultStatusIds.Failed),
-                NameEn = "Failed",
-                NameAr = "راسب",
+                Id = ExamResultCandidateResultStatusIds.NotQualifiedForInterview,
+                BackendName = nameof(ExamResultCandidateResultStatusIds.NotQualifiedForInterview),
+                NameEn = "Not Qualified for Interview",
+                NameAr = "غير مؤهل للمقابلة",
                 DisplayOrder = 2
             },
             new ExamResultCandidateResultStatus
@@ -38,10 +40,17 @@ public class ExamResultCandidateResultStatusConfiguration : LookupBaseConfigurat
                 Id = ExamResultCandidateResultStatusIds.NotCompleted,
                 BackendName = nameof(ExamResultCandidateResultStatusIds.NotCompleted),
                 NameEn = "Not Completed",
-                NameAr = "غير مكتمل",
+                NameAr = "لم يكتمل الاختبار",
                 DisplayOrder = 4
+            },
+            new ExamResultCandidateResultStatus
+            {
+                Id = ExamResultCandidateResultStatusIds.RequiresAction,
+                BackendName = nameof(ExamResultCandidateResultStatusIds.RequiresAction),
+                NameEn = "Requires Action",
+                NameAr = "بحاجة إلى معالجة",
+                DisplayOrder = 5
             }
         );
     }
 }
-

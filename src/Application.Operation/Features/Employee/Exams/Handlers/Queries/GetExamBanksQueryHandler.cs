@@ -11,7 +11,7 @@ using Tawtheef.Domain.Entities.Recruitment;
 
 namespace Application.Operation.Features.Employee.Exams.Handlers.Queries;
 
-public sealed class GetExamBanksQueryHandler(IUnitOfWork unitOfWork)
+public sealed class GetExamBanksQueryHandler(IUnitOfWork unitOfWork, TimeProvider timeProvider)
     : IRequestHandler<GetExamBanksQuery, IResult<List<ExamBankDto>>>
 {
     public async Task<IResult<List<ExamBankDto>>> Handle(GetExamBanksQuery request, CancellationToken ct)
@@ -21,22 +21,22 @@ public sealed class GetExamBanksQueryHandler(IUnitOfWork unitOfWork)
             .Select(x => new { x.ManagementId, x.JobTitleId })
             .FirstOrDefaultAsync(ct);
         if (jobScope == null) return Result.Fail<List<ExamBankDto>>(ErrorsCodes.ItemNotFound);
+        var nowUtc = timeProvider.GetUtcNow().UtcDateTime;
         return Result.Ok(await ExamBankSelection.Load(
-            unitOfWork, jobScope.ManagementId, jobScope.JobTitleId, ct));
+            unitOfWork, jobScope.ManagementId, jobScope.JobTitleId, nowUtc, ct));
     }
 }
 
 internal static class ExamBankSelection
 {
     internal static async Task<List<ExamBankDto>> Load(IUnitOfWork unitOfWork, Guid managementId,
-        Guid jobTitleId, CancellationToken ct)
+        Guid jobTitleId, DateTime nowUtc, CancellationToken ct)
     {
-        var now = DateTime.UtcNow;
         var eligibleVersions = unitOfWork.Context.Set<QuestionBankVersion>().AsNoTracking()
-            .Where(v => !v.IsDeleted && v.ApprovedAt != null && v.ApprovedAt <= now &&
+            .Where(v => !v.IsDeleted && v.ApprovedAt != null && v.ApprovedAt <= nowUtc &&
                         v.QuestionBank.IsActive && !v.QuestionBank.IsDeleted &&
-                        (v.EffectiveFrom == null || v.EffectiveFrom <= now) &&
-                        (v.EffectiveTo == null || v.EffectiveTo > now) &&
+                        (v.EffectiveFrom == null || v.EffectiveFrom <= nowUtc) &&
+                        (v.EffectiveTo == null || v.EffectiveTo > nowUtc) &&
                         (v.QuestionBank.ManagementId == null || v.QuestionBank.ManagementId == managementId) &&
                         (v.QuestionBank.JobTitleId == null || v.QuestionBank.JobTitleId == jobTitleId) &&
                         (v.QuestionBank.QuestionBankTypeId == QuestionBankTypeIds.Specialized ||

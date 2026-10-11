@@ -24,11 +24,7 @@ import { UserDto } from '../../../../users-management/models/user.dto';
 import { UserFilters } from '../../../../users-management/models/user-filters.dto';
 import { TestSlotStaffMemberDto } from '../../../models/test-slot-staff-member.dto';
 import { TestSlotsService } from '../../../services/test-slots.service';
-
-export interface TestSlotTeamAssignmentSelection {
-  roomHead: UserDto | null;
-  selectedStaff: UserDto[];
-}
+import { TestSlotTeamAssignmentSelection } from '../../models/test-slot-team-assignment-selection.model';
 
 @Component({
   selector: 'app-test-slot-team-assignment-selector',

@@ -13,7 +13,9 @@ public sealed class CancelScheduleCommandHandler(IUnitOfWork unitOfWork)
 {
     public async Task<IResult<Unit>> Handle(CancelScheduleCommand request, CancellationToken cancellationToken)
     {
+        // Appointments are needed: cancelling the schedule cancels its booked candidates too.
         var schedule = await unitOfWork.GetEntityRepository<InterviewSchedule>().DbSet
+            .Include(s => s.Appointments)
             .FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
         if (schedule is null)
             return Result.Fail<Unit>(new Error(ErrorsCodes.InterviewScheduleNotFound));

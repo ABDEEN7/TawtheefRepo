@@ -1,0 +1,37 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@using Tawtheef.Notifications.Templates.InterviewCommitteeAssignment
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewCommitteeAssignment.InterviewCommitteeAssignmentModel>
+@{
+    // Plain text (in-app bell, SMS): no HTML encoding, otherwise Arabic values come out as &#x...; entities.
+    DisableEncoding = true;
+    var m = Model.Model;
+    var job = string.IsNullOrWhiteSpace(m.JobTitle) ? "" : $" للوظيفة «{m.JobTitle}»";
+    var sentence = m.Change switch
+    {
+        InterviewAssignmentChange.Assigned =>
+            $"تم تعيينكم في لجنة المقابلة «{m.CommitteeName}»{job}" + (string.IsNullOrWhiteSpace(m.Role) ? "." : $" بصفة {m.Role}."),
+        InterviewAssignmentChange.Removed => $"تم إلغاء عضويتكم في لجنة المقابلة «{m.CommitteeName}»{job}.",
+        InterviewAssignmentChange.ScheduleApproved => $"تم اعتماد جدول المقابلات «{m.ScheduleName}» للجنة «{m.CommitteeName}»{job}.",
+        InterviewAssignmentChange.ScheduleCancelled => $"تم إلغاء جدول المقابلات «{m.ScheduleName}» للجنة «{m.CommitteeName}»{job}، ولن تُعقد مقابلاته.",
+        _ => ""
+    };
+    var isSchedule = m.Change is InterviewAssignmentChange.ScheduleApproved or InterviewAssignmentChange.ScheduleCancelled;
+    var link = Model.Branding.OperationsUrl + InterviewNotificationLinks.Resolve(m.LinkPath, InterviewCommitteeAssignment.DefaultPath(m.Change));
+}
+@sentence
+@if (isSchedule && !string.IsNullOrWhiteSpace(m.Role))
+{
+<text>صفتكم في اللجنة: @m.Role
+</text>
+}
+@if (isSchedule && m.InterviewCount is not null)
+{
+<text>عدد المقابلات: @m.InterviewCount، من @m.FromDate إلى @m.ToDate
+</text>
+}
+@if (m.Change == InterviewAssignmentChange.ScheduleCancelled && !string.IsNullOrWhiteSpace(m.Reason))
+{
+<text>السبب: @m.Reason
+</text>
+}
+رابط النظام: @link

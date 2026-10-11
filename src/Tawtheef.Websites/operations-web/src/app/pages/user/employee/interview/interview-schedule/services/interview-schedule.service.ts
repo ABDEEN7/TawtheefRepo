@@ -190,6 +190,11 @@ export class InterviewScheduleService {
     });
   }
 
+    // Invites every live candidate not invited yet; resolves to how many invitations were queued.
+  sendScheduleInvitations(scheduleId: string): Observable<number> {
+    return this.http.put<number>(this.endpoints.interviewSchedule.sendInvitations, { scheduleId });
+  }
+  
   // AttendanceStatus mirrors Tawtheef.Domain.Entities.Interview.AttendanceStatus (Present=1, NoShow=2, Withdrew=3, Late=4).
   recordAppointmentAttendance(appointmentId: string, attendanceStatus: number): Observable<void> {
     return this.http.put<void>(this.endpoints.interviewSchedule.appointmentAttendance, {

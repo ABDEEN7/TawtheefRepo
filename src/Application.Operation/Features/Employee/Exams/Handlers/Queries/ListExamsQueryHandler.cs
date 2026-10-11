@@ -96,8 +96,8 @@ public sealed class ListExamsQueryHandler(IUnitOfWork unitOfWork)
                 TotalQuestions = exam.TotalQuestions,
                 TotalDurationMinutes = exam.TotalDurationMinutes,
                 Status = exam.Status,
-                CreatedDate = exam.CreatedDate,
-                LastUpdated = exam.LastUpdated
+                CreatedDate = exam.CreatedDate.AsUtcOffset(),
+                LastUpdated = exam.LastUpdated.AsUtcOffset()
             };
         }).ToList();
 

@@ -11,7 +11,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
 import { Ripple } from 'primeng/ripple';
 import { Tooltip } from 'primeng/tooltip';
 import { catchError, debounceTime, finalize, forkJoin, of, Subject, switchMap } from 'rxjs';
@@ -27,9 +26,11 @@ import {
   TestSessionFilters,
   TestSessionListItemDto,
   TestSessionLookupsDto,
-  TEST_SESSION_STATUS_IDS,
 } from './models/test-session-list-item.dto';
+import { TEST_SESSION_STATUS_IDS } from './constants/test-session-status.constants';
 import { TestSessionsService } from './services/test-sessions.service';
+import { StatusPillComponent } from '../../../../shared/components/status-pill/status-pill.component';
+import { testSessionStatusTone } from './test-session-status-presentation';
 
 @Component({
   selector: 'app-test-sessions-management',
@@ -48,7 +49,7 @@ import { TestSessionsService } from './services/test-sessions.service';
     InputTextModule,
     Select,
     TableModule,
-    TagModule,
+    StatusPillComponent,
     Ripple,
     Tooltip,
     PaginationComponent,
@@ -58,6 +59,7 @@ import { TestSessionsService } from './services/test-sessions.service';
   ],
 })
 export class TestSessionsManagementComponent implements OnInit {
+  readonly testSessionStatusTone = testSessionStatusTone;
   protected readonly Permissions = Permissions;
   private readonly service = inject(TestSessionsService);
   private readonly language = inject(LanguageService);

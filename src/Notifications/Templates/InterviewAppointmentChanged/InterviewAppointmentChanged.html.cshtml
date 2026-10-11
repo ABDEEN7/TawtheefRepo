@@ -1,0 +1,111 @@
+@using Tawtheef.Notifications.Templates.InterviewShared
+@model Tawtheef.Notifications.Context.TemplateContext<Tawtheef.Notifications.Templates.InterviewAppointmentChanged.InterviewAppointmentChangedModel>
+
+@{
+    var b = Model.Branding;
+    var m = Model.Model;
+
+    var primary = b.PrimaryHex;
+    var product = b.ProductNameEn;
+    var website = b.RecruitmentUrl;
+    var logo = b.LogoUrl;
+
+    var rescheduled = m.Change == InterviewAppointmentChange.Rescheduled;
+    var badge = rescheduled ? "Interview rescheduled" : "Interview cancelled";
+    var title = rescheduled ? "Your Interview Has Been Rescheduled" : "Your Interview Has Been Cancelled";
+    var text = rescheduled
+        ? "We would like to inform you that your interview has been moved to a new date and time. Please find the updated details below."
+        : "We regret to inform you that your interview below has been cancelled. You will be notified if a new date is set. We apologize for any inconvenience.";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@product - @title</title>
+  <style>
+    body { margin:0; padding:0; background:#f6f7fb; font-family: Arial, sans-serif; color:#111827; }
+    .container { max-width:600px; margin:24px auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .brand-bar { height:8px; background:@primary; }
+    .content { padding:28px; }
+    .title { font-size:22px; font-weight:700; margin:0 0 12px; }
+    .text { font-size:15px; line-height:22px; margin:0 0 16px; }
+    .badge { display:inline-block; font-size:13px; font-weight:700; color:@primary; background:#f7f1f5; padding:6px 10px; border-radius:999px; }
+    .details { width:100%; border-collapse:collapse; margin:0 0 20px; font-size:14px; }
+    .details td { padding:8px 0; border-bottom:1px solid #f1f2f6; vertical-align:top; }
+    .details td.label { color:#6b7280; width:35%; }
+    .details a { color:@primary; }
+    .old { color:#6b7280; text-decoration:line-through; }
+    .cta { display:inline-block; padding:12px 18px; background:@primary; color:#ffffff; text-decoration:none; border-radius:8px; font-weight:700; font-size:14px; }
+    .muted { font-size:12px; color:#6b7280; margin:0; }
+    .footer { padding:0 28px 24px; }
+    .logo { max-width:140px; height:auto; }
+    .divider { height:1px; background:#e5e7eb; margin:20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand-bar"></div>
+    <div class="content">
+      @if (!string.IsNullOrWhiteSpace(logo))
+      {
+        <a href="@website" target="_blank">
+          <img class="logo" src="@logo" alt="@product" style="display: block; margin: 0 auto;">
+        </a>
+        <br/>
+      }
+      <p class="badge">@badge</p>
+      <h1 class="title">@title</h1>
+      <p class="text">Dear @(string.IsNullOrWhiteSpace(m.CandidateName) ? "Candidate" : m.CandidateName),</p>
+      <p class="text">@text</p>
+      <table class="details" role="presentation">
+        <tr><td class="label">Job</td><td>@m.JobTitle</td></tr>
+        @if (rescheduled)
+        {
+          <tr><td class="label">New date</td><td>@m.NewDay @m.NewDate</td></tr>
+          <tr><td class="label">New time (Qatar)</td><td>@m.NewStartTime - @m.NewEndTime</td></tr>
+          <tr><td class="label">Previous appointment</td><td class="old">@m.OldDay @m.OldDate, @m.OldStartTime - @m.OldEndTime</td></tr>
+          @if (m.IsRemote)
+          {
+            <tr><td class="label">Interview type</td><td>Remote</td></tr>
+            @if (!string.IsNullOrWhiteSpace(m.MeetingUrl))
+            {
+              <tr><td class="label">Meeting link</td><td><a href="@m.MeetingUrl" target="_blank">@m.MeetingUrl</a></td></tr>
+            }
+          }
+          else
+          {
+            <tr><td class="label">Interview type</td><td>In person</td></tr>
+            @if (!string.IsNullOrWhiteSpace(m.Location))
+            {
+              <tr><td class="label">Location</td><td>@m.Location</td></tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(m.LocationMapUrl))
+            {
+              <tr><td class="label">Map</td><td><a href="@m.LocationMapUrl" target="_blank">Open location</a></td></tr>
+            }
+          }
+          @if (!string.IsNullOrWhiteSpace(m.Instructions))
+          {
+            <tr><td class="label">Instructions</td><td>@m.Instructions</td></tr>
+          }
+        }
+        else
+        {
+          <tr><td class="label">Cancelled interview</td><td>@m.OldDay @m.OldDate, @m.OldStartTime - @m.OldEndTime (Qatar time)</td></tr>
+        }
+      </table>
+      <a class="cta" style="color: white;" href="@website" target="_blank">Open @product</a>
+      <div class="divider"></div>
+      <p class="muted">
+        Portal Link: @website
+      </p>
+    </div>
+    <div class="footer">
+      <p class="muted">Best regards,<br>@product Team</p>
+      <p class="muted">© @(DateTime.UtcNow.Year) @product. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

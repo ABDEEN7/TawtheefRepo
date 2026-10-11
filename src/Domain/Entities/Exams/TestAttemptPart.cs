@@ -12,9 +12,100 @@ public class TestAttemptPart : EventEntity
     public Guid StatusId { get; set; }
     public DateTime? StartedAt { get; set; }
     public DateTime? CompletedAt { get; set; }
+    public int? DurationMinutesSnapshot { get; set; }
+    public DateTime? EffectiveDeadlineAt { get; set; }
     public int? LastQuestionNo { get; set; }
+
+    public bool IsCompletelyNotStarted =>
+        StatusId == TestAttemptPartStatusIds.NotStarted && StartedAt is null && CompletedAt is null
+        && DurationMinutesSnapshot is null && EffectiveDeadlineAt is null && LastQuestionNo is null;
+
+    public bool HasValidRunningState =>
+        StatusId == TestAttemptPartStatusIds.InProgress && StartedAt is not null && CompletedAt is null
+        && DurationMinutesSnapshot is > 0 && EffectiveDeadlineAt is not null && LastQuestionNo is > 0;
+
+    public bool HasValidExecutionHistory =>
+        (StatusId == TestAttemptPartStatusIds.InProgress || StatusId == TestAttemptPartStatusIds.Completed
+                                                         || StatusId == TestAttemptPartStatusIds.TimedOut)
+        && StartedAt is not null && DurationMinutesSnapshot is > 0 && EffectiveDeadlineAt is not null
+        && EffectiveDeadlineAt.Value >= StartedAt.Value.AddMinutes(DurationMinutesSnapshot.Value)
+        && LastQuestionNo is > 0 && (StatusId == TestAttemptPartStatusIds.InProgress || CompletedAt is not null);
 
     public TestAttempt? TestAttempt { get; set; }
     public ExamPart? ExamPart { get; set; }
     public TestAttemptPartStatus? Status { get; set; }
+    public ICollection<TestAttemptQuestion> Questions { get; set; } = new List<TestAttemptQuestion>();
+
+    public void Start(DateTime startedAt, int durationMinutes)
+    {
+        if (!IsCompletelyNotStarted)
+        {
+            throw new InvalidOperationException("Only a completely not-started attempt part can be started.");
+        }
+
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(durationMinutes);
+
+        StatusId = TestAttemptPartStatusIds.InProgress;
+        StartedAt = startedAt;
+        DurationMinutesSnapshot = durationMinutes;
+        EffectiveDeadlineAt = startedAt.AddMinutes(durationMinutes);
+        LastQuestionNo = 1;
+    }
+
+    public void Complete(DateTime completedAt)
+    {
+        if (!HasValidRunningState)
+        {
+            throw new InvalidOperationException(
+                "Only a valid in-progress attempt part can be completed.");
+        }
+
+        StatusId = TestAttemptPartStatusIds.Completed;
+        CompletedAt = completedAt;
+    }
+
+    public void MarkTimedOut()
+    {
+        if (!HasValidRunningState)
+        {
+            throw new InvalidOperationException(
+                "Only a valid in-progress attempt part can time out.");
+        }
+
+        StatusId = TestAttemptPartStatusIds.TimedOut;
+        CompletedAt = EffectiveDeadlineAt!.Value;
+    }
+
+    public void Interrupt()
+    {
+        if (!HasValidRunningState)
+        {
+            throw new InvalidOperationException(
+                "Only a valid in-progress attempt part can be interrupted.");
+        }
+
+        StatusId = TestAttemptPartStatusIds.Interrupted;
+    }
+
+    public void Resume(DateTime newEffectiveDeadlineAt)
+    {
+        if (StatusId != TestAttemptPartStatusIds.Interrupted)
+        {
+            throw new InvalidOperationException("Only an interrupted attempt part can be resumed.");
+        }
+
+        if (StartedAt is null || EffectiveDeadlineAt is null || LastQuestionNo is not > 0)
+        {
+            throw new InvalidOperationException("An interrupted attempt part must have a valid execution state.");
+        }
+
+        if (newEffectiveDeadlineAt < EffectiveDeadlineAt.Value)
+        {
+            throw new ArgumentOutOfRangeException(nameof(newEffectiveDeadlineAt),
+                "The resumed deadline cannot be earlier than the current deadline.");
+        }
+
+        EffectiveDeadlineAt = newEffectiveDeadlineAt;
+        StatusId = TestAttemptPartStatusIds.InProgress;
+    }
 }

@@ -10,7 +10,7 @@ using Tawtheef.Domain.Entities.Exams;
 
 namespace Application.Operation.Features.Employee.TestSessions.Handlers.Queries;
 
-public sealed class GetTestSessionCapacityQueryHandler(IUnitOfWork unitOfWork)
+public sealed class GetTestSessionCapacityQueryHandler(IUnitOfWork unitOfWork, TimeProvider timeProvider)
     : IRequestHandler<GetTestSessionCapacityQuery, IResult<TestSessionCapacityDto>>
 {
     public async Task<IResult<TestSessionCapacityDto>> Handle(GetTestSessionCapacityQuery request, CancellationToken ct)
@@ -19,8 +19,9 @@ public sealed class GetTestSessionCapacityQueryHandler(IUnitOfWork unitOfWork)
             .Select(x => new { x.RoomId, x.SlotDate, Capacity = x.Room!.Capacity }).FirstOrDefaultAsync(ct);
         if (slot is null || request.StartTime < TimeOnly.MinValue || request.EndTime <= request.StartTime)
             return Result.Fail<TestSessionCapacityDto>(ErrorsCodes.InvalidRequest);
+        var localNow = timeProvider.GetLocalNow().DateTime;
         if (!TestSessionCapacityService.IsSessionStartCurrentOrFuture(
-                slot.SlotDate, request.StartTime, DateTime.UtcNow))
+                slot.SlotDate, request.StartTime, localNow))
             return Result.Fail<TestSessionCapacityDto>(ErrorsCodes.TestSessionScheduledTimeExpired);
         var sessions = await unitOfWork.Context.Set<TestSession>().AsNoTracking()
             .Where(x => x.TestSlot!.RoomId == slot.RoomId && x.TestSlot.SlotDate == slot.SlotDate)
