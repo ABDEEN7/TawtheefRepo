@@ -19,12 +19,41 @@
 
   <nav class="sidebar-nav">
     @for (item of filteredMenuItems; track item.key) {
-    <a class="nav-item" *hasPermission="item.permission" [class.active]="activeItem === item.key"
-      [routerLink]="item.route" (click)="onSidebarItemClick($event, item)"
-      [pTooltip]="isCollapsed ? (item.label | translate) : ''" tooltipPosition="right" [tooltipDisabled]="!isCollapsed">
-      <i class="icons hgi hgi-stroke " [ngClass]="item.icon"></i>
-      <span class="label">{{ item.label | translate }}</span>
-    </a>
+      @if (isGroup(item)) {
+        <div class="nav-group">
+          <button type="button" class="nav-item group-toggle"
+            [attr.aria-expanded]="!isCollapsed && groupExpanded(item)"
+            [attr.aria-controls]="'sidebar-group-' + item.key"
+            [attr.aria-label]="item.label | translate"
+            (click)="toggleGroup(item)"
+            [pTooltip]="isCollapsed ? (item.label | translate) : ''"
+            tooltipPosition="right" [tooltipDisabled]="!isCollapsed">
+            <i class="icons hgi hgi-stroke" [ngClass]="item.icon"></i>
+            <span class="label">{{ item.label | translate }}</span>
+            <i class="fa-solid group-chevron" [ngClass]="groupExpanded(item) ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+          </button>
+          <div class="group-children" [id]="'sidebar-group-' + item.key"
+            [hidden]="isCollapsed || !groupExpanded(item)">
+            @for (child of item.children; track child.key) {
+              <a class="nav-item" *hasPermission="child.permission"
+                [class.active]="activeItem === child.key"
+                [attr.aria-current]="activeItem === child.key ? 'page' : null"
+                [routerLink]="child.route" (click)="onSidebarItemClick($event, child)">
+                <i class="icons hgi hgi-stroke" [ngClass]="child.icon"></i>
+                <span class="label">{{ child.label | translate }}</span>
+              </a>
+            }
+          </div>
+        </div>
+      } @else {
+        <a class="nav-item" *hasPermission="item.permission" [class.active]="activeItem === item.key"
+          [attr.aria-current]="activeItem === item.key ? 'page' : null"
+          [routerLink]="item.route" (click)="onSidebarItemClick($event, item)"
+          [pTooltip]="isCollapsed ? (item.label | translate) : ''" tooltipPosition="right" [tooltipDisabled]="!isCollapsed">
+          <i class="icons hgi hgi-stroke" [ngClass]="item.icon"></i>
+          <span class="label">{{ item.label | translate }}</span>
+        </a>
+      }
     }
 
   </nav>

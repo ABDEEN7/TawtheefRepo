@@ -4,4 +4,4 @@ public sealed record MyQuestionBankAssignmentDto(Guid AssignmentId, Guid Request
     string QuestionBankTypeNameAr, string QuestionBankTypeNameEn, string? ManagementNameAr, string? ManagementNameEn,
     string? JobTitleNameAr, string? JobTitleNameEn, Guid StatusId, string StatusNameAr, string StatusNameEn,
     int MinimumQuestionCount, int CurrentQuestionCount, DateTime AssignedAt, DateTime? QuestionEntryStartedAt,
-    DateTime? QuestionEntryCompletedAt);
+    DateTime? QuestionEntryCompletedAt, bool CanAccess);

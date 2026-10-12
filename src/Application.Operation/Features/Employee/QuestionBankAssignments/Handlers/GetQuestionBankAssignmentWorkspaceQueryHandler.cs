@@ -21,11 +21,15 @@ public sealed class GetQuestionBankAssignmentWorkspaceQueryHandler(IUnitOfWork u
     {
         var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, ct);
         if (employeeId is null) return Result.Fail<QuestionBankAssignmentWorkspaceDto>(ErrorsCodes.InvalidUserIdentifier);
+        var access = await AssignmentAccess.ValidateAsync(uow, r.AssignmentId, employeeId.Value, ct);
+        if (access.IsFailed) return Result.Fail<QuestionBankAssignmentWorkspaceDto>(access.Errors);
         var a = await uow.GetEntityRepository<QuestionBankAssignment>().DbSet.AsNoTracking()
             .Include(x => x.Status).Include(x => x.QuestionBankRequest).ThenInclude(x => x.QuestionBank).ThenInclude(x => x.QuestionBankType)
             .Include(x => x.QuestionBankRequest.QuestionBank.Management).Include(x => x.QuestionBankRequest.QuestionBank.JobTitle)
             .SingleOrDefaultAsync(x => x.Id == r.AssignmentId && x.EmployeeId == employeeId && !x.IsDeleted, ct);
         if (a is null) return Result.Fail<QuestionBankAssignmentWorkspaceDto>(ErrorsCodes.QuestionBankAssignmentNotFound);
+        if (!AssignmentAccess.CanAccess(a))
+            return Result.Fail<QuestionBankAssignmentWorkspaceDto>(AssignmentAccess.Forbidden());
         var questions = await uow.GetEntityRepository<QuestionBankRequestItem>().DbSet.AsNoTracking()
             .Where(x => x.QuestionBankAssignmentId == a.Id && x.RequestId == a.QuestionBankRequestId && !x.IsDeleted &&
                         x.StatusId != QuestionBankRequestItemStatusIds.REMOVED_FROM_REQUEST)

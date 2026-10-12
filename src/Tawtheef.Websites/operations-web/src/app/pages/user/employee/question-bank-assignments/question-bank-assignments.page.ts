@@ -59,7 +59,12 @@ export class QuestionBankAssignmentsPage {
     return (this.language.get() === 'ar' ? ar : en) || '-';
   }
 
+  canOpen(assignment: MyAssignment): boolean {
+    return assignment.canAccess && assignment.statusId !== this.statuses.workflowCompleted;
+  }
+
   open(assignment: MyAssignment): void {
+    if (!this.canOpen(assignment)) return;
     this.router.navigateByUrl(
       routes.portal.questionBankAssignmentQuestions(assignment.assignmentId),
     );

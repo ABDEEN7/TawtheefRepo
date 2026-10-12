@@ -20,6 +20,8 @@ public sealed class FinishQuestionBankAssignmentModificationCommandHandler(
     {
         var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, cancellationToken);
         if (employeeId is null) return Result.Fail<Unit>(ErrorsCodes.InvalidUserIdentifier);
+        var access = await AssignmentAccess.ValidateAsync(uow, request.AssignmentId, employeeId.Value, cancellationToken);
+        if (access.IsFailed) return Result.Fail<Unit>(access.Errors);
 
         return await uow.ExecuteInTransactionAsync<IResult<Unit>>(async ct =>
         {

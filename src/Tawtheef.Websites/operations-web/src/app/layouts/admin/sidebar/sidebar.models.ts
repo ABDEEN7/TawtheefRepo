@@ -9,6 +9,19 @@ export interface MenuItem {
   permission: string | string[];
 }
 
+export interface MenuGroup {
+  key: string;
+  label: string;
+  icon: string;
+  children: MenuItem[];
+}
+
+export type SidebarItem = MenuItem | MenuGroup;
+
+export function isMenuGroup(item: SidebarItem): item is MenuGroup {
+  return 'children' in item;
+}
+
 export class Sidebar {
   static menuItems: MenuItem[] = [
     {
@@ -329,4 +342,126 @@ export class Sidebar {
       permission: Permissions.ProfileLogs.View,
     },
   ];
+
+  // Keep the existing page definitions and their order as the single source for
+  // routes, permissions, and the default landing page after login.
+  static groupedMenuItems: SidebarItem[] = Sidebar.groupMenuItems();
+
+  private static groupMenuItems(): SidebarItem[] {
+    const children = (keys: string[]) =>
+      keys.map(key => Sidebar.menuItems.find(item => item.key === key)!);
+    const groups: MenuGroup[] = [
+      {
+        key: 'user-access',
+        label: 'internal.sidebar.groups.user-access',
+        icon: 'hgi-user-group',
+        children: children([
+          'roles',
+          'users',
+          'candidate-users',
+          'office-users',
+        ]),
+      },
+      {
+        key: 'profiles',
+        label: 'internal.sidebar.groups.profiles',
+        icon: 'hgi-user-multiple',
+        children: children([
+          'distribution',
+          'approve-profile',
+          'kawader',
+        ]),
+      },
+      {
+        key: 'jobs',
+        label: 'internal.sidebar.groups.jobs',
+        icon: 'hgi-ai-beautify',
+        children: children([
+          'job',
+          'invitation-summary',
+          'exceptions',
+          'job-titles',
+          'job-points-configuration',
+          'job-category-candidate-settings',
+          'invitation-expiry-configuration',
+        ]),
+      },
+      {
+        key: 'organization',
+        label: 'internal.sidebar.groups.organization',
+        icon: 'hgi-structure-03',
+        children: children([
+          'organization-structures',
+          'offices',
+          'target-entities',
+        ]),
+      },
+      {
+        key: 'examinations',
+        label: 'internal.sidebar.groups.examinations',
+        icon: 'hgi-task-01',
+        children: children([
+          'exams',
+          'exam-results',
+          'test-slots',
+          'test-sessions',
+          'locations',
+          'rooms',
+        ]),
+      },
+      {
+        key: 'question-banks-group',
+        label: 'internal.sidebar.groups.question-banks-group',
+        icon: 'hgi-file-validation',
+        children: children([
+          'question-banks',
+          'question-bank-requests',
+          'question-bank-assignments',
+        ]),
+      },
+      {
+        key: 'interviews-group',
+        label: 'internal.sidebar.groups.interviews-group',
+        icon: 'hgi-user-question-02',
+        children: children([
+          'interview-dashboard',
+          'interview-axes-criteria',
+          'interview-template',
+          'interview-committee',
+          'interviews',
+          'start-interview',
+          'approve-interview',
+        ]),
+      },
+      {
+        key: 'reference-data',
+        label: 'internal.sidebar.groups.reference-data',
+        icon: 'hgi-list-setting',
+        children: children([
+          'major-skill',
+          'countries',
+          'languages',
+          'religions',
+          'universities',
+        ]),
+      },
+      {
+        key: 'audit-logs',
+        label: 'internal.sidebar.groups.audit-logs',
+        icon: 'hgi-audit-01',
+        children: children([
+          'profileLogs',
+          'systemAdminLogs',
+        ]),
+      },
+    ];
+    const includedGroups = new Set<string>();
+    return Sidebar.menuItems.flatMap((item): SidebarItem[] => {
+      const group = groups.find(group => group.children.some(child => child.key === item.key));
+      if (!group) return [item];
+      if (includedGroups.has(group.key)) return [];
+      includedGroups.add(group.key);
+      return [group];
+    });
+  }
 }

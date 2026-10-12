@@ -43,6 +43,7 @@ public sealed class QuestionBankAssignmentsController(IMediator mediator, ICurre
         return (await mediator.Send(query, cancellationToken)).ToActionResult();
     }
 
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     [HttpGet("{assignmentId:guid}")]
     public async Task<IActionResult> Workspace(
         Guid assignmentId,

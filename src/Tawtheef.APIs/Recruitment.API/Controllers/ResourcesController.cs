@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Application.Features.Resources.Queries;
 using Tawtheef.Infrastructure.Extensions;
@@ -75,8 +76,8 @@ public class ResourcesController(IMediator mediator) : ControllerBase
     [HttpGet("/files/{*path}")]
     public async Task<IActionResult> GetFile(string path)
     {
-        var publicPath = "public/" + Uri.UnescapeDataString(path);
-        return await mediator.Send(new GetPublicFileQuery(publicPath));
+        if (!StoragePathRules.TryPublicKey(path, out var publicPath)) return NotFound();
+        return await mediator.Send(new GetPublicFileQuery(publicPath), HttpContext.RequestAborted);
     }
     private static string SafeDecode(string encoded)
     {

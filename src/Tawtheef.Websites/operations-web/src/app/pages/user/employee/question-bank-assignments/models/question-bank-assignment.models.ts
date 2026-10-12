@@ -51,6 +51,7 @@ export interface QuestionInput {
 }
 
 export interface MyAssignment {
+  canAccess: boolean;
   assignmentId: string;
   requestId: string;
   questionBankTypeNameAr: string;

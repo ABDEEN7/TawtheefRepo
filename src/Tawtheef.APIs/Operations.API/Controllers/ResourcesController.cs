@@ -1,4 +1,5 @@
-﻿using System.Text;
+using Application.Operation.Features.Employee.QuestionBankAssignments.Queries;
+using System.Text;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.WebUtilities;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Application.Features.Resources.DTOs;
 using Tawtheef.Application.Features.Resources.Queries;
 using Tawtheef.Infrastructure.Extensions;
@@ -20,12 +22,18 @@ public class ResourcesController(IMediator mediator) : ControllerBase
     
     [HttpGet("{encoded}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public IActionResult Get(string encoded, [FromServices] IFileStorageService storage)
+    public async Task<IActionResult> Get(string encoded, [FromServices] IFileStorageService storage)
     {
         var blobKey = Decode(encoded);
         if (!blobKey.StartsWith("private/", StringComparison.OrdinalIgnoreCase))
             return BadRequest("Only private blob keys allowed here.");
     
+        var imageAccess = new CheckQuestionBankImageAccessQuery(blobKey);
+        var access = await mediator.Send(imageAccess, HttpContext.RequestAborted);
+        if (access.IsFailed) return access.ToActionResult();
+        if (imageAccess.IsQuestionBankImage)
+            Response.Headers.CacheControl = "no-store";
+
         var map = storage.MapPath(blobKey, true);
         if (map.IsFailed) 
             return Problem(map.Errors[0].Message);
@@ -42,6 +50,12 @@ public class ResourcesController(IMediator mediator) : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetSigned([FromQuery] string b, [FromQuery] long exp, [FromQuery] string sig, [FromServices] IFileStorageService storage)
     {
+        var imageAccess = new CheckQuestionBankImageAccessQuery(SafeDecode(b));
+        var access = await mediator.Send(imageAccess, HttpContext.RequestAborted);
+        if (access.IsFailed) return access.ToActionResult();
+        if (imageAccess.IsQuestionBankImage)
+            Response.Headers.CacheControl = "no-store";
+
         var result = await mediator.Send(new GetSignedBlobQuery(b, exp, sig));
         if (result.IsFailed)
             return result.ToActionResult();
@@ -76,8 +90,8 @@ public class ResourcesController(IMediator mediator) : ControllerBase
     [HttpGet("/files/{*path}")]
     public async Task<IActionResult> GetFile(string path)
     {
-        var publicPath = "public/" + Uri.UnescapeDataString(path);
-        return await mediator.Send(new GetPublicFileQuery(publicPath));
+        if (!StoragePathRules.TryPublicKey(path, out var publicPath)) return NotFound();
+        return await mediator.Send(new GetPublicFileQuery(publicPath), HttpContext.RequestAborted);
     }
 
     private static string SafeDecode(string encoded)

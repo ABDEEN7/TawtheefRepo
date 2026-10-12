@@ -2,6 +2,7 @@ using System.Collections;
 using Application.Operation.Features.Employee.QuestionBankAssignments.Commands;
 using Application.Operation.Features.Employee.QuestionBankAssignments.Handlers;
 using Application.Operation.Features.Employee.QuestionBankAssignments.Services;
+using Application.Operation.Features.Employee.QuestionBankRequests.Commands;
 using FluentResults;
 using MediatR;
 using Microsoft.Data.Sqlite;
@@ -11,6 +12,7 @@ using Tawtheef.Application.Common.Interfaces;
 using Tawtheef.Application.Common.Interfaces.Repositories.Base;
 using Tawtheef.Application.Common.Interfaces.Services.Security;
 using Tawtheef.Domain.Common;
+using Tawtheef.Domain.Entities;
 using Tawtheef.Domain.Entities.Lookups;
 using Tawtheef.Domain.Entities.QuestionsBank;
 using Tawtheef.Domain.Entities.Users;
@@ -20,9 +22,11 @@ namespace QuestionBankAssignments.Tests;
 
 // A relational slice using the production revision/item configurations. Unrelated
 // user, bank, and lookup relationships are excluded only from this test model.
-internal sealed class AssignmentTestContext(DbContextOptions<AssignmentTestContext> options)
+internal class AssignmentTestContext(DbContextOptions options)
     : DbContext(options), ITawtheefDbContext
 {
+    protected virtual void AddWorkflowNavigations(Dictionary<Type, string[]> navigations) { }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new QuestionRevisionConfiguration());
@@ -31,7 +35,8 @@ internal sealed class AssignmentTestContext(DbContextOptions<AssignmentTestConte
         var navigations = new Dictionary<Type, string[]>
         {
             [typeof(Question)] = ["Revisions", "RequestItems", "BankVersionQuestions"],
-            [typeof(QuestionRevision)] = ["Question", "Options", "SourceRequestItem"],
+            [typeof(QuestionRevision)] = ["Question", "Options", "SourceRequestItem", "Resource"],
+            [typeof(Resource)] = [],
             [typeof(QuestionRevisionOption)] = ["QuestionRevision"],
             [typeof(QuestionBankRequestItem)] = ["Request", "QuestionBankAssignment", "Question", "OriginalRevision", "CurrentProposedRevision"],
             [typeof(QuestionBankAssignment)] = ["QuestionBankRequest", "RequestItems"],
@@ -41,6 +46,7 @@ internal sealed class AssignmentTestContext(DbContextOptions<AssignmentTestConte
             [typeof(EmployeeUser)] = ["EmployeeProfile"],
             [typeof(EmployeeProfile)] = []
         };
+        AddWorkflowNavigations(navigations);
         foreach (var (type, allowed) in navigations)
         {
             var entity = builder.Entity(type);
@@ -56,6 +62,11 @@ internal sealed class AssignmentTestContext(DbContextOptions<AssignmentTestConte
             if (!navigations.ContainsKey(entity.ClrType)) builder.Ignore(entity.ClrType);
         builder.Entity<QuestionBankAssignment>().HasOne(x => x.QuestionBankRequest)
             .WithMany(x => x.Assignments).HasForeignKey(x => x.QuestionBankRequestId);
+        // Match production soft-delete filters for image-reference access checks.
+        builder.Entity<QuestionRevision>().HasQueryFilter(x => !x.IsDeleted);
+        builder.Entity<Resource>().HasQueryFilter(x => !x.IsDeleted);
+        // SQLite cannot order ulong values; image sizes fit its signed integer type.
+        builder.Entity<Resource>().Property(x => x.Size).HasConversion<long>();
     }
 }
 
@@ -78,12 +89,13 @@ internal sealed class AssignmentFixture : IAsyncDisposable
         DifficultyLevelIds.EASY, "سؤال", "Question", null, null, null,
         [new("أول", "First", true, 1), new("ثاني", "Second", false, 2)]);
 
-    public static async Task<AssignmentFixture> Create()
+    public static async Task<AssignmentFixture> Create(bool workflowReads = false)
     {
         var fixture = new AssignmentFixture();
         await fixture.connection.OpenAsync();
-        fixture.Db = new(new DbContextOptionsBuilder<AssignmentTestContext>()
-            .UseSqlite(fixture.connection).Options);
+        fixture.Db = workflowReads
+            ? new WorkflowReadTestContext(new DbContextOptionsBuilder<WorkflowReadTestContext>().UseSqlite(fixture.connection).Options)
+            : new AssignmentTestContext(new DbContextOptionsBuilder<AssignmentTestContext>().UseSqlite(fixture.connection).Options);
         await fixture.Db.Database.EnsureCreatedAsync();
         var employee = new EmployeeUser
         {
@@ -102,6 +114,7 @@ internal sealed class AssignmentFixture : IAsyncDisposable
             QuestionBankRequestId = request.Id, StatusId = QuestionBankAssignmentStatusIds.Assigned,
             MinimumQuestionCount = 5
         };
+        if (workflowReads) WorkflowReadTestContext.Seed(fixture.Db, request);
         fixture.Db.AddRange(employee, fixture.Assignment);
         var baseQuestion = await fixture.CreateBaseQuestion();
         fixture.BaseQuestionId = baseQuestion.QuestionId;
@@ -113,6 +126,9 @@ internal sealed class AssignmentFixture : IAsyncDisposable
         fixture.Sanitizer.Setup(x => x.HasMeaningfulContent(It.IsAny<string?>()))
             .Returns((string? text) => !string.IsNullOrWhiteSpace(text));
         fixture.Uow.SetupGet(x => x.Context).Returns(fixture.Db);
+        fixture.Repository<Resource>();
+        fixture.Repository<Question>();
+        fixture.Repository<QuestionBankRequest>();
         fixture.Repository<QuestionBankAssignment>();
         fixture.Repository<QuestionBankRequestItem>();
         fixture.Repository<QuestionRevision>();
@@ -144,6 +160,14 @@ internal sealed class AssignmentFixture : IAsyncDisposable
                 return Result.Ok(entity);
             });
         Uow.Setup(x => x.GetEntityRepository<T>()).Returns(repository.Object);
+    }
+
+    public void EnableReviewSubmission()
+    {
+        Repository<QuestionBankVersion>();
+        Repository<QuestionBankRequestReview>();
+        Repository<QuestionBankRequestItemReview>();
+        Transaction<IResult<SubmitQuestionBankRequestReviewResult>>();
     }
 
     private void Transaction<TResult>() where TResult : IResultBase

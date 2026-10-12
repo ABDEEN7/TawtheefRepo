@@ -21,6 +21,8 @@ public sealed class FinishQuestionBankAssignmentEntryCommandHandler(IUnitOfWork 
     {
         var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, ct);
         if (employeeId is null) return Result.Fail<Unit>(ErrorsCodes.InvalidUserIdentifier);
+        var access = await AssignmentAccess.ValidateAsync(uow, r.AssignmentId, employeeId.Value, ct);
+        if (access.IsFailed) return Result.Fail<Unit>(access.Errors);
         return await uow.ExecuteInTransactionAsync<IResult<Unit>>(async token =>
         {
             var a = await uow.GetEntityRepository<QuestionBankAssignment>().DbSet.Include(x => x.QuestionBankRequest)

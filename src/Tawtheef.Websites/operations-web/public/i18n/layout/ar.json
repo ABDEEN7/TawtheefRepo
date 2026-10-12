@@ -98,5 +98,14 @@
   "internal.sidebar.approve-interview": "اعتماد نتائج المقابلة",
   "internal.sidebar.interview-dashboard": "لوحة المقابلات",
   "internal.sidebar.question-bank-assignments": "مهام بنوك الأسئلة",
-  "internal.sidebar.testSessions": "جلسات الاختبار"
+  "internal.sidebar.testSessions": "جلسات الاختبار",
+  "internal.sidebar.groups.user-access": "المستخدمون والصلاحيات",
+  "internal.sidebar.groups.profiles": "ملفات المرشحين",
+  "internal.sidebar.groups.jobs": "الوظائف",
+  "internal.sidebar.groups.organization": "الهيكل التنظيمي",
+  "internal.sidebar.groups.examinations": "الاختبارات",
+  "internal.sidebar.groups.question-banks-group": "بنوك الأسئلة",
+  "internal.sidebar.groups.interviews-group": "المقابلات",
+  "internal.sidebar.groups.reference-data": "البيانات المرجعية",
+  "internal.sidebar.groups.audit-logs": "سجلات التدقيق"
 }

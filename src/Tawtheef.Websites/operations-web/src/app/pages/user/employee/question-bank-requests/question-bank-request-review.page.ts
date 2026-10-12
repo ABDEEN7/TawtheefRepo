@@ -93,7 +93,6 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
   }
 
   value(itemId: string): ReviewFormValue {
-    if (!this.values.has(itemId)) this.values.set(itemId, { reviewNote: '' });
     return this.values.get(itemId)!;
   }
 
@@ -183,13 +182,17 @@ export class QuestionBankRequestReviewPage implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (review) => {
-          this.review.set(review);
+          this.values.clear();
           review.items.forEach((item) => {
-            this.values.set(item.requestItemId, { reviewNote: '' });
+            this.values.set(item.requestItemId, {
+              decisionId: item.decisionId ?? this.decisions.Approved,
+              reviewNote: item.reviewNote ?? '',
+            });
             if (item.imageUrl) this.loadImage(item.requestItemId, item.imageUrl);
             if (item.originalImageUrl)
               this.loadImage(`original-${item.requestItemId}`, item.originalImageUrl);
           });
+          this.review.set(review);
         },
         error: () => {
           this.notification.error(

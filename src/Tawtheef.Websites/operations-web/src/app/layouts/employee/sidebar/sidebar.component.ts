@@ -1,6 +1,7 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, DestroyRef, inject, OnInit, Output } from '@angular/core';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Tooltip } from 'primeng/tooltip';
@@ -8,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { routes } from '../../../routes/routes';
 import { AuthService } from '../../../core/auth/auth.service';
 import { FaDirArrowDirective } from '../../../shared/directives/dir-arrow.directive';
-import { MenuItem, Sidebar } from '../../admin/sidebar/sidebar.models';
+import { isMenuGroup, MenuGroup, MenuItem, Sidebar, SidebarItem } from '../../admin/sidebar/sidebar.models';
 import { Permissions } from '../../../core/constants/permissions';
 import { HasPermissionDirective } from '../../../shared/directives/has-permission.directive';
 import { environment } from '../../../../environments/environment';
@@ -24,20 +25,47 @@ export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
   private navigationAudit = inject(NavigationAuditService);
+  private readonly destroyRef = inject(DestroyRef);
+  readonly isGroup = isMenuGroup;
+  readonly expandedGroups = new Set<string>();
   @Output() toggleSidebar = new EventEmitter<void>();
 
   isCollapsed = false;
   activeItem = '';
 
-  menuItems: MenuItem[] = [...Sidebar.menuItems];
+  menuItems: SidebarItem[] = [...Sidebar.groupedMenuItems];
   searchTerm: string = '';
 
-  get filteredMenuItems(): MenuItem[] {
-    if (!this.searchTerm) return this.menuItems;
-    const term = this.searchTerm.toLowerCase();
-    return this.menuItems.filter(item =>
-      this.translate.instant(item.label).toLowerCase().includes(term)
-    );
+  get filteredMenuItems(): SidebarItem[] {
+    const term = this.searchTerm.trim().toLowerCase();
+    const matches = (item: SidebarItem) =>
+      this.translate.instant(item.label).toLowerCase().includes(term);
+    return this.menuItems.flatMap((item): SidebarItem[] => {
+      if (!isMenuGroup(item)) {
+        return this.authService.hasPermission(item.permission) && (!term || matches(item))
+          ? [item] : [];
+      }
+      const children = item.children.filter((child) =>
+        this.authService.hasPermission(child.permission) &&
+        (!term || matches(item) || matches(child)),
+      );
+      return children.length ? [{ ...item, children }] : [];
+    });
+  }
+
+  groupExpanded(group: MenuGroup): boolean {
+    return !!this.searchTerm.trim() || this.expandedGroups.has(group.key);
+  }
+
+  toggleGroup(group: MenuGroup): void {
+    if (this.isCollapsed) {
+      this.toggle();
+      this.expandedGroups.add(group.key);
+    } else if (this.expandedGroups.has(group.key)) {
+      this.expandedGroups.delete(group.key);
+    } else {
+      this.expandedGroups.add(group.key);
+    }
   }
 
   constructor(private router: Router) { }
@@ -56,15 +84,28 @@ export class SidebarComponent implements OnInit {
     this.highlightActive(this.router.url);
 
     this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
+      .pipe(filter(e => e instanceof NavigationEnd), takeUntilDestroyed(this.destroyRef))
       .subscribe((event: NavigationEnd) => {
         this.highlightActive(event.urlAfterRedirects);
       });
   }
 
-  highlightActive(url: string) {
-    const matched = this.menuItems.find(i => url.includes(i.route));
-    this.activeItem = matched ? matched.key : '';
+  highlightActive(url: string): void {
+    const path = url.split(/[?#]/)[0];
+    let matched: MenuItem | undefined;
+    let parent: MenuGroup | undefined;
+    for (const item of this.menuItems) {
+      for (const child of isMenuGroup(item) ? item.children : [item]) {
+        if (this.authService.hasPermission(child.permission) &&
+            (path === child.route || path.startsWith(`${child.route}/`)) &&
+            (!matched || child.route.length > matched.route.length)) {
+          matched = child;
+          parent = isMenuGroup(item) ? item : undefined;
+        }
+      }
+    }
+    this.activeItem = matched?.key ?? '';
+    if (parent) this.expandedGroups.add(parent.key);
   }
 
   toggle() {

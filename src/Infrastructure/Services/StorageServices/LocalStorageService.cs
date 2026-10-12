@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Options;
 using Tawtheef.Application.Common.Interfaces.Logging;
 using Tawtheef.Application.Common.Interfaces.Services.Resources;
+using Tawtheef.Application.Common.Services;
 using Tawtheef.Domain.Configurations.Settings;
 using Tawtheef.Domain.Constants;
 using Directory = System.IO.Directory;
@@ -28,6 +29,7 @@ public sealed class LocalStorageService : IFileStorageService
 
     public async Task<IResult<FileSaved>> SaveAsync(Stream stream, string blobKey, CancellationToken ct = default)
     {
+        string? temporaryPath = null;
         try
         {
             ct.ThrowIfCancellationRequested();
@@ -43,14 +45,16 @@ public sealed class LocalStorageService : IFileStorageService
             Directory.CreateDirectory(dir);
 
             // atomic write: .tmp then move
-            var tmp = full + ".tmp";
-            await using (var fs = new FileStream(tmp, FileMode.Create, FileAccess.Write, FileShare.None, 64 * 1024, useAsync: true))
+            var tmp = full + "." + Guid.NewGuid().ToString("N") + ".tmp";
+            await using (var fs = new FileStream(tmp, FileMode.CreateNew, FileAccess.Write, FileShare.None, 64 * 1024, useAsync: true))
             {
+                temporaryPath = tmp;
                 await stream.CopyToAsync(fs, ct);
             }
 
             if (File.Exists(full)) File.Delete(full);
             File.Move(tmp, full);
+            temporaryPath = null;
 
             var size = new FileInfo(full).Length;
             return Result.Ok(new FileSaved(blobKey, (ulong)size));
@@ -74,6 +78,14 @@ public sealed class LocalStorageService : IFileStorageService
         {
             _logger.Error(ex, "SaveAsync error for {BlobKey}", blobKey);
             return Result.Fail<FileSaved>(ErrorsCodes.IoError);
+        }
+        finally
+        {
+            if (temporaryPath != null)
+            {
+                try { File.Delete(temporaryPath); }
+                catch (Exception ex) { _logger.Error(ex, "Failed to remove temporary upload for {BlobKey}", blobKey); }
+            }
         }
     }
 
@@ -120,10 +132,16 @@ public sealed class LocalStorageService : IFileStorageService
         if (string.IsNullOrWhiteSpace(_publicBaseUrl))
             return Result.Fail<string>(ErrorsCodes.ConfigMissing);
 
-        if (!blobKey.StartsWith("public/", StringComparison.OrdinalIgnoreCase))
+        if (!StoragePathRules.TryNormalizeKey(blobKey, out var key))
+            return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
+
+        if (!key.StartsWith("public/", StringComparison.Ordinal))
             return Result.Fail<string>(ErrorsCodes.NotPublicResource);
 
-        var url = _publicBaseUrl.TrimEnd('/') + "/" + Uri.EscapeDataString(blobKey["public/".Length..].Replace("\\", "/"));
+        var mapped = MapPath(key);
+        if (mapped.IsFailed) return Result.Fail<string>(mapped.Errors);
+
+        var url = _publicBaseUrl.TrimEnd('/') + "/" + Uri.EscapeDataString(key["public/".Length..]);
         return Result.Ok(url);
     }
 
@@ -131,16 +149,19 @@ public sealed class LocalStorageService : IFileStorageService
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(blobKey))
+            if (!StoragePathRules.TryNormalizeKey(blobKey, out var key))
                 return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
 
-            var combined = Path.GetFullPath(
-                Path.Combine(_rootFull, blobKey.Replace('/', Path.DirectorySeparatorChar))
-            );
+            var combined = Path.GetFullPath(Path.Combine(_rootFull, key.Replace('/', Path.DirectorySeparatorChar)));
+            var scope = key[..key.IndexOf('/')];
+            var scopeRoot = Path.GetFullPath(Path.Combine(_rootFull, scope));
+            var scopePrefix = Path.EndsInDirectorySeparator(scopeRoot)
+                ? scopeRoot : scopeRoot + Path.DirectorySeparatorChar;
+            var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
-            // allow the case where combined == _rootFull (prefix pointing to root subdir)
-            // Validate path traversal first
-            if (!combined.StartsWith(_rootFull, StringComparison.Ordinal))
+            // A separator-terminated prefix prevents sibling-prefix matches. Each
+            // scope has its own boundary: public keys can never resolve to private.
+            if (!combined.StartsWith(scopePrefix, comparison) || HasLinkedComponent(key))
                 return Result.Fail<string>(ErrorsCodes.InvalidBlobKey);
 
             // If not read operation → just return path
@@ -162,14 +183,17 @@ public sealed class LocalStorageService : IFileStorageService
     
     public Task<bool> ExistsAsync(string path, CancellationToken ct)
     {
-        var full = GetFullPath(path);
-        return Task.FromResult(File.Exists(full));
+        ct.ThrowIfCancellationRequested();
+        var mapped = MapPath(path, isReadOperation: true);
+        return Task.FromResult(mapped.IsSuccess);
     }
 
     public Task<StoredFileStream?> OpenReadAsync(string path, CancellationToken ct)
     {
-        var full = GetFullPath(path);
-        if (!File.Exists(full)) return Task.FromResult<StoredFileStream?>(null);
+        ct.ThrowIfCancellationRequested();
+        var mapped = MapPath(path, isReadOperation: true);
+        if (mapped.IsFailed) return Task.FromResult<StoredFileStream?>(null);
+        var full = mapped.Value;
 
         var stream = File.OpenRead(full);
         if (!Ct.TryGetContentType(full, out var contentType))
@@ -188,15 +212,24 @@ public sealed class LocalStorageService : IFileStorageService
         ));
     }
 
-    private string GetFullPath(string path)
+    private bool HasLinkedComponent(string key)
     {
-        path = path.Replace('\\', '/').TrimStart('/');
-        var full = Path.GetFullPath(Path.Combine(_rootFull, path));
-        if (!full.StartsWith(_rootFull, StringComparison.OrdinalIgnoreCase))
-            throw new InvalidOperationException("Invalid path traversal.");
-
-        return full;
+        var current = _rootFull;
+        foreach (var segment in key.Split('/'))
+        {
+            current = Path.Combine(current, segment);
+            try
+            {
+                // Includes file/directory symlinks and Windows junctions. Reject
+                // rather than following a link across the scope's directory boundary.
+                if ((File.GetAttributes(current) & FileAttributes.ReparsePoint) != 0) return true;
+            }
+            catch (FileNotFoundException) { return false; }
+            catch (DirectoryNotFoundException) { return false; }
+        }
+        return false;
     }
+
     public Task<IResult<string>> GetSignedReadUrlAsync(string blobKey, TimeSpan ttl, string? downloadName = null, CancellationToken ct = default)
         => Task.FromResult<IResult<string>>(Result.Fail<string>(ErrorsCodes.NotSupported));
 }

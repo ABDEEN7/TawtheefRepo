@@ -68,6 +68,10 @@ public sealed class GetQuestionBankRequestReviewQueryHandler(IUnitOfWork unitOfW
                         EmployeeNameEn = i.QuestionBankAssignment.Employee.FullNameEn,
                         ChangeTypeId = i.ChangeTypeId,
                         ItemStatusId = i.StatusId,
+                        DecisionId = i.Reviews.Where(r => !r.IsDeleted).OrderByDescending(r => r.ReviewRound)
+                            .Select(r => (Guid?)r.DecisionId).FirstOrDefault(),
+                        ReviewNote = i.Reviews.Where(r => !r.IsDeleted).OrderByDescending(r => r.ReviewRound)
+                            .Select(r => r.ReviewNote).FirstOrDefault(),
                         CurrentProposedRevisionId = i.CurrentProposedRevisionId ?? i.OriginalRevisionId!.Value,
                         OriginalRevisionId = i.OriginalRevisionId,
                         OriginalQuestionTextAr = i.OriginalRevision == null ? null : i.OriginalRevision.QuestionTextAr,

@@ -8,7 +8,7 @@
   padding: 16px 0;
   height: 100%;
   box-sizing: border-box;
-  border-right: 1px solid #CBCBCB;
+  border-inline-end: 1px solid #CBCBCB;
   position: relative;
   z-index: 998;
 
@@ -153,7 +153,7 @@
       .label {
         transition: all 0.3s ease;
         white-space: wrap;
-        text-align: left;
+        text-align: start;
       }
 
       .icons {
@@ -282,4 +282,33 @@
 
   transform: rotate(0deg) !important;
 
+}
+
+.sidebar .sidebar-nav {
+  .group-toggle {
+    min-height: 2.75rem;
+    text-align: start;
+    font: inherit;
+
+    .group-chevron {
+      margin-inline-start: auto;
+      font-size: 0.75rem;
+      min-width: 0;
+      color: inherit;
+    }
+  }
+
+  .group-children {
+    padding-inline-start: 12px;
+    border-inline-start: 1px solid #e0e0e0;
+    margin-inline-start: 20px;
+
+    .nav-item {
+      min-height: 2.5rem;
+    }
+  }
+}
+
+.sidebar.collapsed .group-chevron {
+  display: none;
 }

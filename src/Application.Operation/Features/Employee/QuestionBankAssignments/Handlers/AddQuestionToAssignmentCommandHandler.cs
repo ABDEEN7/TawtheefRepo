@@ -23,12 +23,17 @@ public sealed class AddQuestionToAssignmentCommandHandler(
 {
     public async Task<IResult<Guid>> Handle(AddQuestionToAssignmentCommand r, CancellationToken ct)
     {
+        var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, ct);
+        if (employeeId is null) return Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier);
+        var access = await AssignmentAccess.ValidateAsync(uow, r.AssignmentId, employeeId.Value, ct);
+        if (access.IsFailed) return Result.Fail<Guid>(access.Errors);
         var questionInput = QuestionEntryRules.Sanitize(r.Question, richTextSanitizer);
         if (!QuestionEntryRules.Valid(questionInput, richTextSanitizer) ||
             !await QuestionEntryRules.ValidResource(uow, questionInput.ResourceId, ct))
             return Result.Fail<Guid>(ErrorsCodes.InvalidQuestionEntry);
-        var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, ct);
-        if (employeeId is null) return Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier);
+        var imageAccess = await CheckQuestionBankImageAccessQueryHandler.ValidateResourceReferenceAsync(
+            uow, employeeId.Value, questionInput.ResourceId, ct);
+        if (imageAccess.IsFailed) return Result.Fail<Guid>(imageAccess.Errors);
         return await uow.ExecuteInTransactionAsync<IResult<Guid>>(async token =>
         {
             var a = await uow.GetEntityRepository<QuestionBankAssignment>().DbSet.Include(x => x.QuestionBankRequest)

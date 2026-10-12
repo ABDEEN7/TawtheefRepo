@@ -17,6 +17,8 @@ public sealed class DeleteBaseVersionQuestionCommandHandler(IUnitOfWork uow, ICu
     {
         var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, cancellationToken);
         if (employeeId is null) return Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier);
+        var access = await AssignmentAccess.ValidateAsync(uow, command.AssignmentId, employeeId.Value, cancellationToken);
+        if (access.IsFailed) return Result.Fail<Guid>(access.Errors);
         return await uow.ExecuteInTransactionAsync<IResult<Guid>>(async ct =>
         {
             var assignment = await uow.GetEntityRepository<QuestionBankAssignment>().DbSet

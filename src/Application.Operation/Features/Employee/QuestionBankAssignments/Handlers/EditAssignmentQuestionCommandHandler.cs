@@ -23,12 +23,17 @@ public sealed class EditAssignmentQuestionCommandHandler(
 {
     public async Task<IResult<Unit>> Handle(EditAssignmentQuestionCommand r, CancellationToken ct)
     {
+        var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, ct);
+        if (employeeId is null) return Result.Fail<Unit>(ErrorsCodes.InvalidUserIdentifier);
+        var access = await AssignmentAccess.ValidateAsync(uow, r.AssignmentId, employeeId.Value, ct);
+        if (access.IsFailed) return Result.Fail<Unit>(access.Errors);
         var questionInput = QuestionEntryRules.Sanitize(r.Question, richTextSanitizer);
         if (!QuestionEntryRules.Valid(questionInput, richTextSanitizer) ||
             !await QuestionEntryRules.ValidResource(uow, questionInput.ResourceId, ct))
             return Result.Fail<Unit>(ErrorsCodes.InvalidQuestionEntry);
-        var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, ct);
-        if (employeeId is null) return Result.Fail<Unit>(ErrorsCodes.InvalidUserIdentifier);
+        var imageAccess = await CheckQuestionBankImageAccessQueryHandler.ValidateResourceReferenceAsync(
+            uow, employeeId.Value, questionInput.ResourceId, ct);
+        if (imageAccess.IsFailed) return Result.Fail<Unit>(imageAccess.Errors);
         return await uow.ExecuteInTransactionAsync<IResult<Unit>>(async token =>
         {
             var item = await uow.GetEntityRepository<QuestionBankRequestItem>().DbSet

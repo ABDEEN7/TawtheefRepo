@@ -23,6 +23,7 @@ public sealed class ListMyQuestionBankAssignmentsQueryHandler(IUnitOfWork uow, I
         if (employeeId is null) return Result.Fail<PaginatedResult<MyQuestionBankAssignmentDto>>(ErrorsCodes.InvalidUserIdentifier);
         var query = uow.GetEntityRepository<QuestionBankAssignment>().DbSet.AsNoTracking()
             .Where(x => x.EmployeeId == employeeId && !x.IsDeleted);
+        var accessibleIds = query.Where(AssignmentAccess.Accessible).Select(x => x.Id);
         var countableItems = uow.GetEntityRepository<QuestionBankRequestItem>().DbSet.AsNoTracking()
             .Where(QuestionAssignmentProgress.Countable);
         var sorted = ApplySorting(query, countableItems, r.SortBy, r.SortDirection);
@@ -35,7 +36,7 @@ public sealed class ListMyQuestionBankAssignmentsQueryHandler(IUnitOfWork uow, I
                 x.QuestionBankRequest.QuestionBank.JobTitle == null ? null : x.QuestionBankRequest.QuestionBank.JobTitle.JobNameEn,
                 x.StatusId, x.Status.NameAr, x.Status.NameEn, x.MinimumQuestionCount,
                 countableItems.Count(i => i.QuestionBankAssignmentId == x.Id && i.RequestId == x.QuestionBankRequestId),
-                x.AssignedAt, x.QuestionEntryStartedAt, x.QuestionEntryCompletedAt));
+                x.AssignedAt, x.QuestionEntryStartedAt, x.QuestionEntryCompletedAt, accessibleIds.Contains(x.Id)));
         var count = await projected.CountAsync(ct);
         var items = await projected.Skip((r.PageNumber - 1) * r.PageSize).Take(r.PageSize).ToListAsync(ct);
         return Result.Ok(new PaginatedResult<MyQuestionBankAssignmentDto>(items, count, r.PageNumber, r.PageSize));

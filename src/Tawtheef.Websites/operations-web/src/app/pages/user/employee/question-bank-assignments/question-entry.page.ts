@@ -279,6 +279,7 @@ export class QuestionEntryPage {
       .subscribe({
         next: (workspace) => this.workspace.set(workspace),
         error: () => {
+          this.workspace.set(null);
           this.notification.error();
           this.back();
         },

@@ -134,6 +134,8 @@ export interface QuestionBankReviewItem {
   employeeNameEn?: string;
   changeTypeId: string;
   itemStatusId: string;
+  decisionId?: string | null;
+  reviewNote?: string | null;
   currentProposedRevisionId: string;
   originalRevisionId?: string;
   originalQuestionTextAr?: string;

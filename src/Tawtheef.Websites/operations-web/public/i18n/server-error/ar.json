@@ -460,5 +460,7 @@
   "server-error.INTERVIEW_COMMITTEE_REVIEW_OVERRIDE_FORBIDDEN": "ليست لديك صلاحية تعديل مقترح النظام.",
   "server-error.INTERVIEW_SCHOOL_STAGE_NOT_FOUND": "المرحلة الدراسية المختارة غير متاحة.",
   "server-error.TEST_SESSION_SCHEDULED_TIME_EXPIRED": "لا يمكن إرسال جلسة اختبار للاعتماد أو اعتمادها بتاريخ أو وقت سابق. يرجى إعادتها للتعديل واختيار فترة صالحة.",
-  "server-error.QUESTION_BANK_QUESTION_ALREADY_ASSIGNED_FOR_MAINTENANCE": "يعمل موظف آخر على هذا السؤال بالفعل. تم تحديث مساحة العمل."
+  "server-error.QUESTION_BANK_QUESTION_ALREADY_ASSIGNED_FOR_MAINTENANCE": "يعمل موظف آخر على هذا السؤال بالفعل. تم تحديث مساحة العمل.",
+  "server-error.QUESTION_BANK_ASSIGNMENT_NOT_EDITABLE": "لا يمكن فتح مهمة الأسئلة هذه أو تعديلها في مرحلتها الحالية.",
+  "server-error.QUESTION_BANK_ASSIGNMENT_NOT_FOUND": "مهمة الأسئلة غير موجودة أو غير متاحة."
 }

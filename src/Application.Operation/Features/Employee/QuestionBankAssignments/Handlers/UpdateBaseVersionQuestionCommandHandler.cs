@@ -17,12 +17,17 @@ public sealed class UpdateBaseVersionQuestionCommandHandler(
 {
     public async Task<IResult<Guid>> Handle(UpdateBaseVersionQuestionCommand command, CancellationToken cancellationToken)
     {
+        var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, cancellationToken);
+        if (employeeId is null) return Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier);
+        var access = await AssignmentAccess.ValidateAsync(uow, command.AssignmentId, employeeId.Value, cancellationToken);
+        if (access.IsFailed) return Result.Fail<Guid>(access.Errors);
         var input = QuestionEntryRules.Sanitize(command.Question, sanitizer);
         if (!QuestionEntryRules.Valid(input, sanitizer) ||
             !await QuestionEntryRules.ValidResource(uow, input.ResourceId, cancellationToken))
             return Result.Fail<Guid>(ErrorsCodes.InvalidQuestionEntry);
-        var employeeId = await AssignmentIdentity.CurrentEmployeeId(uow, currentUser, cancellationToken);
-        if (employeeId is null) return Result.Fail<Guid>(ErrorsCodes.InvalidUserIdentifier);
+        var imageAccess = await CheckQuestionBankImageAccessQueryHandler.ValidateResourceReferenceAsync(
+            uow, employeeId.Value, input.ResourceId, cancellationToken);
+        if (imageAccess.IsFailed) return Result.Fail<Guid>(imageAccess.Errors);
 
         return await uow.ExecuteInTransactionAsync<IResult<Guid>>(async ct =>
         {

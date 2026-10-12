@@ -9,6 +9,8 @@ public sealed record QuestionBankReviewItemDto
     public string? EmployeeNameEn { get; init; }
     public Guid ChangeTypeId { get; init; }
     public Guid ItemStatusId { get; init; }
+    public Guid? DecisionId { get; init; }
+    public string? ReviewNote { get; init; }
     public Guid CurrentProposedRevisionId { get; init; }
     public Guid? OriginalRevisionId { get; init; }
     public string? OriginalQuestionTextAr { get; init; }
